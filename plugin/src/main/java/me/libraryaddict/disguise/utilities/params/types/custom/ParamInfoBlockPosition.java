@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.utilities.params.types.custom;
 
-import com.comphenix.protocol.wrappers.BlockPosition;
+import com.github.retrooper.packetevents.util.Vector3i;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 
 /**
@@ -19,12 +19,12 @@ public class ParamInfoBlockPosition extends ParamInfo {
             return null;
         }
 
-        return new BlockPosition(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+        return new Vector3i(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
     }
 
     @Override
     public String toString(Object object) {
-        BlockPosition position = (BlockPosition) object;
+        Vector3i position = (Vector3i) object;
 
         return String.format("%s,%s,%s", position.getX(), position.getY(), position.getZ());
     }

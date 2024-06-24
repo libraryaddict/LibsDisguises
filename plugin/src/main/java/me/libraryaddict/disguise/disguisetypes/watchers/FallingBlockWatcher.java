@@ -1,15 +1,16 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMove;
+import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodMappedAs;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Location;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class FallingBlockWatcher extends FlagWatcher {
     private int blockCombinedId = 1;
+    @Getter
     private boolean gridLocked;
 
     public FallingBlockWatcher(Disguise disguise) {
@@ -39,10 +41,6 @@ public class FallingBlockWatcher extends FlagWatcher {
         return watcher;
     }
 
-    public boolean isGridLocked() {
-        return gridLocked;
-    }
-
     public void setGridLocked(boolean gridLocked) {
         if (isGridLocked() == gridLocked) {
             return;
@@ -51,33 +49,21 @@ public class FallingBlockWatcher extends FlagWatcher {
         this.gridLocked = gridLocked;
 
         if (getDisguise().isDisguiseInUse() && getDisguise().getEntity() != null) {
-            PacketContainer relMove = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
-            relMove.getModifier().write(0, getDisguise().getEntity().getEntityId());
-
             Location loc = getDisguise().getEntity().getLocation();
-
-            if (NmsVersion.v1_14.isSupported()) {
-                StructureModifier<Short> shorts = relMove.getShorts();
-
-                shorts.write(0, conRel(loc.getX(), loc.getBlockX() + 0.5));
-                shorts.write(1, conRel(loc.getY(), loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0)));
-                shorts.write(2, conRel(loc.getZ(), loc.getBlockZ() + 0.5));
-            } else {
-                StructureModifier<Integer> ints = relMove.getIntegers();
-
-                ints.write(0, (int) conRel(loc.getX(), loc.getBlockX() + 0.5));
-                ints.write(1, (int) conRel(loc.getY(), loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0)));
-                ints.write(2, (int) conRel(loc.getZ(), loc.getBlockZ() + 0.5));
-            }
+            double x = conRel(loc.getX(), loc.getBlockX() + 0.5);
+            double y = conRel(loc.getY(), loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0));
+            double z = conRel(loc.getZ(), loc.getBlockZ() + 0.5);
 
             for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-                if (player == getDisguise().getEntity()) {
-                    PacketContainer temp = relMove.shallowClone();
-                    temp.getModifier().write(0, DisguiseAPI.getSelfDisguiseId());
+                int entityId =
+                    getDisguise().getEntity() == player ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId();
 
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, temp, isGridLocked());
+                WrapperPlayServerEntityRelativeMove relMov = new WrapperPlayServerEntityRelativeMove(entityId, x, y, z, true);
+
+                if (isGridLocked()) {
+                    PacketEvents.getAPI().getPlayerManager().sendPacket(player, relMov);
                 } else {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, relMove, isGridLocked());
+                    PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, relMov);
                 }
             }
         }
@@ -108,6 +94,16 @@ public class FallingBlockWatcher extends FlagWatcher {
         }
     }
 
+    @MethodMappedAs("getBlockData")
+    public WrappedBlockState getBlockState() {
+        return WrappedBlockState.getByGlobalId(getBlockCombinedId());
+    }
+
+    @MethodMappedAs("setBlockData")
+    public void setBlockState(WrappedBlockState state) {
+        setBlockCombinedId(state.getType().getName(), state.getGlobalId());
+    }
+
     @NmsAddedIn(NmsVersion.v1_13)
     public BlockData getBlockData() {
         return ReflectionManager.getBlockDataByCombinedId(getBlockCombinedId());
@@ -120,11 +116,15 @@ public class FallingBlockWatcher extends FlagWatcher {
             return;
         }
 
-        this.blockCombinedId = ReflectionManager.getCombinedIdByBlockData(data);
+        setBlockCombinedId(data.getMaterial().name(), ReflectionManager.getCombinedIdByBlockData(data));
+    }
+
+    private void setBlockCombinedId(String materialName, int combinedId) {
+        this.blockCombinedId = combinedId;
 
         if (!getDisguise().isCustomDisguiseName()) {
             getDisguise().setDisguiseName(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("Block") + " " +
-                TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(ReflectionManager.toReadable(data.getMaterial().name(), " ")));
+                TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(ReflectionManager.toReadable(materialName, " ")));
         }
 
         if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {

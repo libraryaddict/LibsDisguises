@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
 
 public class AgeableWatcher extends InsentientWatcher {
     public AgeableWatcher(Disguise disguise) {
@@ -16,6 +17,7 @@ public class AgeableWatcher extends InsentientWatcher {
         return getData(MetaIndex.AGEABLE_BABY);
     }
 
+    @MethodDescription("Is this a baby?")
     public void setBaby(boolean isBaby) {
         setData(MetaIndex.AGEABLE_BABY, isBaby);
         sendData(MetaIndex.AGEABLE_BABY);

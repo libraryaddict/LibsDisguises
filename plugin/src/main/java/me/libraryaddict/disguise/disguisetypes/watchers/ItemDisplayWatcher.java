@@ -28,11 +28,11 @@ public class ItemDisplayWatcher extends DisplayWatcher {
     }
 
     public ItemDisplay.ItemDisplayTransform getItemDisplayTransform() {
-        return ItemDisplay.ItemDisplayTransform.values()[getData(MetaIndex.ITEM_DISPLAY_TRANSFORM)];
+        return getData(MetaIndex.ITEM_DISPLAY_TRANSFORM);
     }
 
     public void setItemDisplayTransform(ItemDisplay.ItemDisplayTransform display) {
-        setData(MetaIndex.ITEM_DISPLAY_TRANSFORM, (byte) display.ordinal());
+        setData(MetaIndex.ITEM_DISPLAY_TRANSFORM, display);
         sendData(MetaIndex.ITEM_DISPLAY_TRANSFORM);
     }
 }

@@ -58,7 +58,7 @@ public class PlayerDisguiseParam extends ExtraDisguiseParam<String> {
             }
         }
 
-        usedOptions.add(getParameterMethod().toLowerCase());
+        usedOptions.add(getParameterMethod().toLowerCase(Locale.ENGLISH));
 
         if (!permissions.isAllowedDisguise(disguisePerm, usedOptions)) {
             throw new DisguiseParseException(LibsMsg.D_PARSE_NOPERM, usedOptions.stream().reduce((first, second) -> second).orElse(null));

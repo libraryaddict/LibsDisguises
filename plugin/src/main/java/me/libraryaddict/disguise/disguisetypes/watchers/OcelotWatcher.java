@@ -30,13 +30,13 @@ public class OcelotWatcher extends AgeableWatcher {
     @NmsRemovedIn(NmsVersion.v1_14)
     @Deprecated
     public Ocelot.Type getType() {
-        return Ocelot.Type.getType(getData(MetaIndex.OCELOT_TYPE));
+        return getData(MetaIndex.OCELOT_TYPE);
     }
 
     @NmsRemovedIn(NmsVersion.v1_14)
     @Deprecated
     public void setType(Ocelot.Type newType) {
-        setData(MetaIndex.OCELOT_TYPE, newType.getId());
+        setData(MetaIndex.OCELOT_TYPE, newType);
         sendData(MetaIndex.OCELOT_TYPE);
     }
 

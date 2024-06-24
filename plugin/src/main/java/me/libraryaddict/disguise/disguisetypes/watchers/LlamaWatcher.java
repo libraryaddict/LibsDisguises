@@ -13,11 +13,11 @@ public class LlamaWatcher extends ChestedHorseWatcher {
     }
 
     public Llama.Color getColor() {
-        return Llama.Color.values()[getData(MetaIndex.LLAMA_COLOR)];
+        return getData(MetaIndex.LLAMA_COLOR);
     }
 
     public void setColor(Llama.Color color) {
-        setData(MetaIndex.LLAMA_COLOR, color.ordinal());
+        setData(MetaIndex.LLAMA_COLOR, color);
         sendData(MetaIndex.LLAMA_COLOR);
     }
 

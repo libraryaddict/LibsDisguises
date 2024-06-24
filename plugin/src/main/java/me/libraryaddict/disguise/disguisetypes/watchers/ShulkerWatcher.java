@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import com.comphenix.protocol.wrappers.BlockPosition;
-import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
+import com.github.retrooper.packetevents.util.Vector3i;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -24,16 +23,16 @@ public class ShulkerWatcher extends InsentientWatcher {
     }
 
     public void setFacingDirection(BlockFace face) {
-        setData(MetaIndex.SHULKER_FACING, Direction.valueOf(face.name()));
+        setData(MetaIndex.SHULKER_FACING, com.github.retrooper.packetevents.protocol.world.BlockFace.valueOf(face.name()));
         sendData(MetaIndex.SHULKER_FACING);
     }
 
-    public BlockPosition getAttachmentPosition() {
-        return getData(MetaIndex.SHULKER_ATTACHED).orElse(BlockPosition.ORIGIN);
+    public Vector3i getAttachmentPosition() {
+        return getData(MetaIndex.SHULKER_ATTACHED).orElse(Vector3i.zero());
     }
 
-    public void setAttachmentPosition(BlockPosition pos) {
-        setData(MetaIndex.SHULKER_ATTACHED, Optional.of(pos));
+    public void setAttachmentPosition(Vector3i pos) {
+        setData(MetaIndex.SHULKER_ATTACHED, Optional.ofNullable(pos));
         sendData(MetaIndex.SHULKER_ATTACHED);
     }
 
@@ -55,7 +54,7 @@ public class ShulkerWatcher extends InsentientWatcher {
     }
 
     public DyeColor getColor() {
-        if (!hasValue(MetaIndex.SHULKER_COLOR)) {
+        if (!hasValue(MetaIndex.SHULKER_COLOR) || getData(MetaIndex.SHULKER_COLOR) == (byte) 16) {
             return DyeColor.PURPLE;
         }
 
@@ -72,7 +71,7 @@ public class ShulkerWatcher extends InsentientWatcher {
             return;
         }
 
-        setData(MetaIndex.SHULKER_COLOR, newColor.getWoolData());
+        setData(MetaIndex.SHULKER_COLOR, newColor == null ? (byte) 16 : newColor.getWoolData());
         sendData(MetaIndex.SHULKER_COLOR);
     }
 }

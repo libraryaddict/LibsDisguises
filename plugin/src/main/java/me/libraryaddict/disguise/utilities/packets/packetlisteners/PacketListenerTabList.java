@@ -1,17 +1,14 @@
 package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
-import com.comphenix.protocol.wrappers.PlayerInfoData;
+import com.github.retrooper.packetevents.event.SimplePacketListenerAbstract;
+import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfo;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfo.PlayerData;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate;
 import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -20,19 +17,14 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
-public class PacketListenerTabList extends PacketAdapter {
-
-    public PacketListenerTabList(LibsDisguises plugin) {
-        super(plugin, ListenerPriority.NORMAL, PacketType.Play.Server.PLAYER_INFO);
-    }
-
+public class PacketListenerTabList extends SimplePacketListenerAbstract {
     @Override
-    public void onPacketSending(final PacketEvent event) {
-        if (event.isCancelled()) {
+    public void onPacketPlaySend(PacketPlaySendEvent event) {
+        if (event.isCancelled() || event.getPacketType() != PacketType.Play.Server.PLAYER_INFO) {
             return;
         }
 
-        Player observer = event.getPlayer();
+        Player observer = (Player) event.getPlayer();
 
         Function<UUID, Boolean> shouldRemove = uuid -> {
             Player player = Bukkit.getPlayer(uuid);
@@ -47,28 +39,40 @@ public class PacketListenerTabList extends PacketAdapter {
         };
 
         if (NmsVersion.v1_19_R2.isSupported()) {
-            ReflectionManager.getNmsReflection().handleTablistPacket(event, shouldRemove);
+            WrapperPlayServerPlayerInfoUpdate packet = new WrapperPlayServerPlayerInfoUpdate(event);
+
+            if (!packet.getActions().contains(WrapperPlayServerPlayerInfoUpdate.Action.ADD_PLAYER)) {
+                return;
+            }
+
+            packet.getEntries().removeIf(p -> shouldRemove.apply(p.getGameProfile().getUUID()));
+
+            if (packet.getEntries().isEmpty()) {
+                event.setCancelled(true);
+            }
+
+            event.markForReEncode(true);
             return;
         }
 
-        PacketContainer packet = event.getPacket();
+        WrapperPlayServerPlayerInfo packet = new WrapperPlayServerPlayerInfo(event);
 
-        if (packet.getPlayerInfoAction().read(0) != PlayerInfoAction.ADD_PLAYER) {
+        if (packet.getAction() != WrapperPlayServerPlayerInfo.Action.ADD_PLAYER) {
             return;
         }
 
-        List<PlayerInfoData> list = packet.getPlayerInfoDataLists().read(0);
-        Iterator<PlayerInfoData> itel = list.iterator();
+        List<PlayerData> list = packet.getPlayerDataList();
+        Iterator<PlayerData> itel = list.iterator();
         boolean modified = false;
 
         while (itel.hasNext()) {
-            PlayerInfoData data = itel.next();
+            PlayerData data = itel.next();
 
-            if (data == null) {
+            if (data == null || data.getUser() == null) {
                 continue;
             }
 
-            if (!shouldRemove.apply(data.getProfile().getUUID())) {
+            if (!shouldRemove.apply(data.getUser().getUUID())) {
                 continue;
             }
 
@@ -82,9 +86,8 @@ public class PacketListenerTabList extends PacketAdapter {
 
         if (list.isEmpty()) {
             event.setCancelled(true);
-            return;
         }
 
-        packet.getPlayerInfoDataLists().write(0, list);
+        event.markForReEncode(true);
     }
 }

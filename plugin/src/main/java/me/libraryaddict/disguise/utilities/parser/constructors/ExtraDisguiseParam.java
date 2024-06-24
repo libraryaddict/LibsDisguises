@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 
 public abstract class ExtraDisguiseParam<T> {
     public abstract boolean isApplicable(DisguiseType disguiseType);
@@ -37,7 +38,7 @@ public abstract class ExtraDisguiseParam<T> {
 
     public void checkParameterPermission(DisguisePermissions permissions, HashMap<String, HashMap<String, Boolean>> disguiseOptions,
                                          ArrayList<String> usedOptions, DisguisePerm disguisePerm, T param) throws DisguiseParseException {
-        usedOptions.add(getParameterMethod().toLowerCase());
+        usedOptions.add(getParameterMethod().toLowerCase(Locale.ENGLISH));
 
         if (!permissions.isAllowedDisguise(disguisePerm, usedOptions)) {
             throw new DisguiseParseException(LibsMsg.D_PARSE_NOPERM, usedOptions.stream().reduce((first, second) -> second).orElse(null));

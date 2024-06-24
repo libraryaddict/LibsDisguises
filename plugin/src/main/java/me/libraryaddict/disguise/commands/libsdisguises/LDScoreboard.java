@@ -1,19 +1,12 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketListener;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Created by libraryaddict on 20/04/2020.
@@ -126,47 +118,6 @@ public class LDScoreboard implements LDCommand {
             }
         } else {
             LibsMsg.LIBS_SCOREBOARD_NAMES_DISABLED.send(sender);
-        }
-
-        List<PacketListener> listeners = ProtocolLibrary.getProtocolManager().getPacketListeners().stream().filter(
-            listener -> listener.getPlugin() != LibsDisguises.getInstance() &&
-                listener.getSendingWhitelist().getTypes().contains(PacketType.Play.Server.SCOREBOARD_TEAM)).collect(Collectors.toList());
-
-        if (!listeners.isEmpty()) {
-            ComponentBuilder builder = new ComponentBuilder("");
-            builder.append(
-                "The following plugins are listening for scoreboard teams using ProtocolLib, and could be modifying collisions: ");
-            builder.color(net.md_5.bungee.api.ChatColor.BLUE);
-
-            boolean comma = false;
-
-            for (PacketListener listener : listeners) {
-                if (comma) {
-                    builder.reset();
-                    builder.append(", ");
-                    builder.color(net.md_5.bungee.api.ChatColor.BLUE);
-                }
-
-                comma = true;
-
-                builder.reset();
-                builder.append(listener.getPlugin().getName());
-                builder.color(net.md_5.bungee.api.ChatColor.AQUA);
-
-                String plugin = ChatColor.GOLD + "Plugin: " + ChatColor.YELLOW + listener.getPlugin().getName() + " v" +
-                    listener.getPlugin().getDescription().getVersion();
-                String listenerClass = ChatColor.GOLD + "Listener: " + ChatColor.YELLOW + listener.getClass();
-                String packets =
-                    ChatColor.GOLD + "Packets: " + ChatColor.YELLOW + StringUtils.join(listener.getSendingWhitelist().getTypes(), ", ");
-                String priority = ChatColor.GOLD + "Priority: " + ChatColor.YELLOW + listener.getSendingWhitelist().getPriority();
-                String options =
-                    ChatColor.GOLD + "Options: " + ChatColor.YELLOW + StringUtils.join(listener.getSendingWhitelist().getOptions(), ", ");
-
-                builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                    TextComponent.fromLegacyText(plugin + "\n" + listenerClass + "\n" + packets + "\n" + priority + "\n" + options)));
-            }
-
-            sender.spigot().sendMessage(builder.create());
         }
 
         LibsMsg.LIBS_SCOREBOARD_IGNORE_TEST.send(sender);

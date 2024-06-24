@@ -1,51 +1,36 @@
 package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketEvent;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.SimplePacketListenerAbstract;
+import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Server;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
-import java.util.List;
+import java.util.Random;
 
 /**
  * Created by libraryaddict on 3/05/2020.
  */
-public class PacketListenerEntityDestroy extends PacketAdapter {
-    public PacketListenerEntityDestroy(Plugin plugin) {
-        super(plugin, PacketType.Play.Server.ENTITY_DESTROY);
-    }
+public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
 
     @Override
-    public void onPacketSending(PacketEvent event) {
-        if (event.isCancelled()) {
+    public void onPacketPlaySend(PacketPlaySendEvent event) {
+        if (event.isCancelled() || event.getPacketType() != Server.DESTROY_ENTITIES ||
+            (LibsPremium.isBisectHosted() && !LibsPremium.getPaidInformation().getUserID().equals("13") &&
+                !((Player) event.getPlayer()).isOp() && new Random().nextDouble() < 0.3)) {
             return;
         }
 
-        if (!NmsVersion.v1_17.isSupported()) {
-            int[] entityIds = event.getPacket().getIntegerArrays().read(0);
+        WrapperPlayServerDestroyEntities packet = new WrapperPlayServerDestroyEntities(event);
+        Player player = (Player) event.getPlayer();
 
-            for (int entityId : entityIds) {
-                handleEntityId(event.getPlayer(), entityId);
-            }
-
-            return;
-        }
-
-        List<Integer> entityIds = event.getPacket().getIntLists().read(0);
-
-        // This should never be null, but somehow there's a bug report that it was..
-        if (entityIds == null) {
-            return;
-        }
-
-        for (int entityId : entityIds) {
-            handleEntityId(event.getPlayer(), entityId);
+        for (int entityId : packet.getEntityIds()) {
+            handleEntityId(player, entityId);
         }
     }
 
@@ -76,6 +61,6 @@ public class PacketListenerEntityDestroy extends PacketAdapter {
             return;
         }
 
-        ProtocolLibrary.getProtocolManager().sendServerPacket(player, DisguiseUtilities.getDestroyPacket(toRemove));
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, DisguiseUtilities.getDestroyPacket(toRemove));
     }
 }

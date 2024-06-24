@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.RabbitType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
+import org.bukkit.entity.Rabbit;
 
 public class RabbitWatcher extends AgeableWatcher {
 
@@ -13,17 +14,17 @@ public class RabbitWatcher extends AgeableWatcher {
         super(disguise);
 
         if (DisguiseConfig.isRandomDisguises()) {
-            setType(RabbitType.values()[DisguiseUtilities.random.nextInt(RabbitType.values().length)]);
+            setType(Rabbit.Type.values()[DisguiseUtilities.random.nextInt(Rabbit.Type.values().length)]);
         }
     }
 
-    public RabbitType getType() {
-        return RabbitType.getType(getData(MetaIndex.RABBIT_TYPE));
+    public Rabbit.Type getType() {
+        return getData(MetaIndex.RABBIT_TYPE);
     }
 
     @RandomDefaultValue
-    public void setType(RabbitType type) {
-        setData(MetaIndex.RABBIT_TYPE, type.getTypeId());
+    public void setType(Rabbit.Type type) {
+        setData(MetaIndex.RABBIT_TYPE, type);
         sendData(MetaIndex.RABBIT_TYPE);
     }
 }

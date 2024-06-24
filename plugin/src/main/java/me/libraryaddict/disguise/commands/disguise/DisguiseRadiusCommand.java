@@ -12,7 +12,6 @@ import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
@@ -80,8 +79,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
             Collections.sort(classes);
 
-            LibsMsg.DRADIUS_ENTITIES.send(sender,
-                ChatColor.GREEN + StringUtils.join(classes, ChatColor.DARK_GREEN + ", " + ChatColor.GREEN));
+            LibsMsg.DRADIUS_ENTITIES.send(sender, StringUtils.join(classes, LibsMsg.DRADIUS_JOINER.getRaw()));
             return true;
         }
 

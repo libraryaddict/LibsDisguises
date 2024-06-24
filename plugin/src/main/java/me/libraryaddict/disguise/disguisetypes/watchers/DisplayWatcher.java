@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import com.github.retrooper.packetevents.util.Quaternion4f;
+import com.github.retrooper.packetevents.util.Vector3f;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -8,7 +10,6 @@ import org.bukkit.Color;
 import org.bukkit.entity.Display;
 import org.bukkit.util.Transformation;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 public abstract class DisplayWatcher extends FlagWatcher {
     public DisplayWatcher(Disguise disguise) {
@@ -16,60 +17,68 @@ public abstract class DisplayWatcher extends FlagWatcher {
     }
 
     public Transformation getTransformation() {
-        Vector3f transformation = getData(MetaIndex.DISPLAY_TRANSLATION);
-        Quaternionf leftRotation = getData(MetaIndex.DISPLAY_LEFT_ROTATION);
-        Quaternionf rightRotation = getData(MetaIndex.DISPLAY_RIGHT_ROTATION);
-        Vector3f scale = getData(MetaIndex.DISPLAY_SCALE);
-
-        return new Transformation(transformation, leftRotation, scale, rightRotation);
+        return new Transformation(getTranslation(), getLeftRotation(), getScale(), getRightRotation());
     }
 
     // Because BlockDisplayWatcher modifies this on startup..
     @RandomDefaultValue
     public void setTransformation(Transformation transformation) {
-        setData(MetaIndex.DISPLAY_TRANSLATION, transformation.getTranslation());
-        setData(MetaIndex.DISPLAY_LEFT_ROTATION, transformation.getLeftRotation());
-        setData(MetaIndex.DISPLAY_RIGHT_ROTATION, transformation.getRightRotation());
-        setData(MetaIndex.DISPLAY_SCALE, transformation.getScale());
+        org.joml.Vector3f trans = transformation.getTranslation();
+        Quaternionf rl = transformation.getLeftRotation();
+        Quaternionf rr = transformation.getRightRotation();
+        org.joml.Vector3f scale = transformation.getScale();
+
+        setData(MetaIndex.DISPLAY_TRANSLATION, new Vector3f(trans.x, trans.y, trans.z));
+        setData(MetaIndex.DISPLAY_LEFT_ROTATION, new Quaternion4f(rl.x, rl.y, rl.z, rl.w));
+        setData(MetaIndex.DISPLAY_RIGHT_ROTATION, new Quaternion4f(rr.x, rr.y, rr.z, rr.w));
+        setData(MetaIndex.DISPLAY_SCALE, new Vector3f(scale.x, scale.y, scale.z));
 
         sendData(MetaIndex.DISPLAY_TRANSLATION, MetaIndex.DISPLAY_LEFT_ROTATION, MetaIndex.DISPLAY_RIGHT_ROTATION, MetaIndex.DISPLAY_SCALE);
     }
 
-    public Vector3f getTranslation() {
-        return getData(MetaIndex.DISPLAY_TRANSLATION);
+    public org.joml.Vector3f getTranslation() {
+        Vector3f vec = getData(MetaIndex.DISPLAY_TRANSLATION);
+
+        return new org.joml.Vector3f(vec.x, vec.y, vec.z);
     }
 
     // Because BlockDisplayWatcher modifies this on startup..
     @RandomDefaultValue
-    public void setTranslation(Vector3f translation) {
-        setData(MetaIndex.DISPLAY_TRANSLATION, translation);
+    public void setTranslation(org.joml.Vector3f translation) {
+        setData(MetaIndex.DISPLAY_TRANSLATION, new Vector3f(translation.x, translation.y, translation.z));
         sendData(MetaIndex.DISPLAY_TRANSLATION);
     }
 
-    public Vector3f getScale() {
-        return getData(MetaIndex.DISPLAY_SCALE);
+    public org.joml.Vector3f getScale() {
+        Vector3f vec = getData(MetaIndex.DISPLAY_SCALE);
+
+        return new org.joml.Vector3f(vec.x, vec.y, vec.z);
     }
 
-    public void setScale(Vector3f scale) {
-        setData(MetaIndex.DISPLAY_SCALE, scale);
+    public void setScale(org.joml.Vector3f scale) {
+        setData(MetaIndex.DISPLAY_SCALE, new Vector3f(scale.x, scale.y, scale.z));
         sendData(MetaIndex.DISPLAY_SCALE);
     }
 
     public Quaternionf getLeftRotation() {
-        return getData(MetaIndex.DISPLAY_LEFT_ROTATION);
+        Quaternion4f rot = getData(MetaIndex.DISPLAY_LEFT_ROTATION);
+
+        return new Quaternionf(rot.getX(), rot.getY(), rot.getZ(), rot.getW());
     }
 
     public void setLeftRotation(Quaternionf rotation) {
-        setData(MetaIndex.DISPLAY_LEFT_ROTATION, rotation);
+        setData(MetaIndex.DISPLAY_LEFT_ROTATION, new Quaternion4f(rotation.x, rotation.y, rotation.z, rotation.w));
         sendData(MetaIndex.DISPLAY_LEFT_ROTATION);
     }
 
     public Quaternionf getRightRotation() {
-        return getData(MetaIndex.DISPLAY_LEFT_ROTATION);
+        Quaternion4f rot = getData(MetaIndex.DISPLAY_RIGHT_ROTATION);
+
+        return new Quaternionf(rot.getX(), rot.getY(), rot.getZ(), rot.getW());
     }
 
     public void setRightRotation(Quaternionf rotation) {
-        setData(MetaIndex.DISPLAY_RIGHT_ROTATION, rotation);
+        setData(MetaIndex.DISPLAY_RIGHT_ROTATION, new Quaternion4f(rotation.x, rotation.y, rotation.z, rotation.w));
         sendData(MetaIndex.DISPLAY_RIGHT_ROTATION);
     }
 

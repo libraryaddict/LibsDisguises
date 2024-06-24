@@ -1,7 +1,8 @@
 package me.libraryaddict.disguise.utilities.packets.packethandlers;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.PacketContainer;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerAttachEntity;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
@@ -13,14 +14,14 @@ import org.bukkit.entity.Player;
 /**
  * Created by libraryaddict on 19/09/2020.
  */
-public class PacketHandlerAttachEntity implements IPacketHandler {
+public class PacketHandlerAttachEntity implements IPacketHandler<WrapperPlayServerAttachEntity> {
     @Override
-    public PacketType[] getHandledPackets() {
-        return new PacketType[]{PacketType.Play.Server.MOUNT};
+    public PacketTypeCommon[] getHandledPackets() {
+        return new PacketTypeCommon[]{PacketType.Play.Server.ATTACH_ENTITY};
     }
 
     @Override
-    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
+    public void handle(Disguise disguise, LibsPackets<WrapperPlayServerAttachEntity> packets, Player observer, Entity entity) {
         if (observer.getVehicle() == null) {
             DisguiseUtilities.removeInvisibleSlime(observer);
             return;
@@ -31,9 +32,9 @@ public class PacketHandlerAttachEntity implements IPacketHandler {
             return;
         }
 
-        int[] ints = sentPacket.getIntegerArrays().read(0);
+        WrapperPlayServerAttachEntity packet = packets.getOriginalPacket();
 
-        if (ints.length > 0 && ints[0] == observer.getEntityId()) {
+        if (packet.getAttachedId() == observer.getEntityId()) {
             packets.clear();
 
             DisguiseUtilities.sendInvisibleSlime(observer, entity.getEntityId());

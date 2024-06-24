@@ -1,8 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import com.comphenix.protocol.wrappers.Vector3F;
+import com.github.retrooper.packetevents.util.Vector3f;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
 import org.bukkit.util.EulerAngle;
 
 public class ArmorStandWatcher extends LivingWatcher {
@@ -18,6 +19,7 @@ public class ArmorStandWatcher extends LivingWatcher {
         return getPose(MetaIndex.ARMORSTAND_BODY);
     }
 
+    @MethodDescription("The body rotation of the ArmorStand")
     public void setBody(EulerAngle vector) {
         setPose(MetaIndex.ARMORSTAND_BODY, vector);
     }
@@ -26,6 +28,7 @@ public class ArmorStandWatcher extends LivingWatcher {
         return getPose(MetaIndex.ARMORSTAND_HEAD);
     }
 
+    @MethodDescription("The head rotation of the ArmorStand")
     public void setHead(EulerAngle vector) {
         setPose(MetaIndex.ARMORSTAND_HEAD, vector);
     }
@@ -34,6 +37,7 @@ public class ArmorStandWatcher extends LivingWatcher {
         return getPose(MetaIndex.ARMORSTAND_LEFT_ARM);
     }
 
+    @MethodDescription("The left arm rotation of the ArmorStand")
     public void setLeftArm(EulerAngle vector) {
         setPose(MetaIndex.ARMORSTAND_LEFT_ARM, vector);
     }
@@ -42,16 +46,17 @@ public class ArmorStandWatcher extends LivingWatcher {
         return getPose(MetaIndex.ARMORSTAND_LEFT_LEG);
     }
 
+    @MethodDescription("The left leg rotation of the ArmorStand")
     public void setLeftLeg(EulerAngle vector) {
         setPose(MetaIndex.ARMORSTAND_LEFT_LEG, vector);
     }
 
-    private EulerAngle getPose(MetaIndex<Vector3F> type) {
+    private EulerAngle getPose(MetaIndex<Vector3f> type) {
         if (!hasValue(type)) {
             return new EulerAngle(0, 0, 0);
         }
 
-        Vector3F vec = getData(type);
+        Vector3f vec = getData(type);
 
         return new EulerAngle(vec.getX(), vec.getY(), vec.getZ());
     }
@@ -60,6 +65,7 @@ public class ArmorStandWatcher extends LivingWatcher {
         return getPose(MetaIndex.ARMORSTAND_RIGHT_ARM);
     }
 
+    @MethodDescription("The right arm rotation of the ArmorStand")
     public void setRightArm(EulerAngle vector) {
         setPose(MetaIndex.ARMORSTAND_RIGHT_ARM, vector);
     }
@@ -68,6 +74,7 @@ public class ArmorStandWatcher extends LivingWatcher {
         return getPose(MetaIndex.ARMORSTAND_RIGHT_LEG);
     }
 
+    @MethodDescription("The right leg rotation of the ArmorStand")
     public void setRightLeg(EulerAngle vector) {
         setPose(MetaIndex.ARMORSTAND_RIGHT_LEG, vector);
     }
@@ -76,6 +83,7 @@ public class ArmorStandWatcher extends LivingWatcher {
         return getArmorStandFlag(16);
     }
 
+    @MethodDescription("Can this ArmorStand be interacted with?")
     public void setMarker(boolean isMarker) {
         setArmorStandFlag(16, isMarker);
     }
@@ -84,6 +92,7 @@ public class ArmorStandWatcher extends LivingWatcher {
         return getArmorStandFlag(8);
     }
 
+    @MethodDescription("Does this ArmorStand have a base plate?")
     public void setNoBasePlate(boolean noBasePlate) {
         setArmorStandFlag(8, noBasePlate);
     }
@@ -92,6 +101,7 @@ public class ArmorStandWatcher extends LivingWatcher {
         return getArmorStandFlag(2);
     }
 
+    @MethodDescription
     public void setNoGravity(boolean noGravity) {
         setArmorStandFlag(2, noGravity);
     }
@@ -100,6 +110,7 @@ public class ArmorStandWatcher extends LivingWatcher {
         return getArmorStandFlag(4);
     }
 
+    @MethodDescription("Can you see this ArmorStand's arms?")
     public void setShowArms(boolean showArms) {
         setArmorStandFlag(4, showArms);
     }
@@ -108,6 +119,7 @@ public class ArmorStandWatcher extends LivingWatcher {
         return getArmorStandFlag(1);
     }
 
+    @MethodDescription("Is this ArmorStand small?")
     public void setSmall(boolean isSmall) {
         setArmorStandFlag(1, isSmall);
     }
@@ -125,8 +137,8 @@ public class ArmorStandWatcher extends LivingWatcher {
         sendData(MetaIndex.ARMORSTAND_META);
     }
 
-    private void setPose(MetaIndex<Vector3F> type, EulerAngle vector) {
-        setData(type, new Vector3F((float) vector.getX(), (float) vector.getY(), (float) vector.getZ()));
+    private void setPose(MetaIndex<Vector3f> type, EulerAngle vector) {
+        setData(type, new Vector3f((float) vector.getX(), (float) vector.getY(), (float) vector.getZ()));
         sendData(type);
     }
 }

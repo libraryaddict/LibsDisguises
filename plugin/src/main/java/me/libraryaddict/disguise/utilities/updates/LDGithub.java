@@ -15,6 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,11 @@ public class LDGithub {
         @Override
         public boolean isReleaseBuild() {
             return true;
+        }
+
+        @Override
+        public List<String> getDownloads() {
+            throw new IllegalStateException("Not implemented");
         }
     }
 
@@ -60,7 +66,7 @@ public class LDGithub {
         try {
             String ourVersion = LibsDisguises.getInstance().getDescription().getVersion();
 
-            if (!getChecker().isGoSilent()) {
+            if (!getChecker().isQuiet()) {
                 DisguiseUtilities.getLogger().info("Now looking for update on Github..");
             }
 
@@ -68,74 +74,81 @@ public class LDGithub {
             URL url = new URL("https://api.github.com/repos/libraryaddict/LibsDisguises/releases/latest");
             // Creating a connection
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestProperty("User-Agent", "libraryaddict/LibsDisguises");
-            con.setRequestProperty("Accept", "application/vnd.github.v3+json");
 
-            // We believe we're on the latest version and know what the last etag was
-            if (Objects.equals(ourVersion, DisguiseConfig.getLastPluginUpdateVersion()) &&
-                DisguiseConfig.getLastGithubUpdateETag() != null) {
-                con.setRequestProperty("If-None-Match", DisguiseConfig.getLastGithubUpdateETag());
-            }
+            try {
+                con.setRequestProperty("User-Agent", "libraryaddict/LibsDisguises");
+                con.setRequestProperty("Accept", "application/vnd.github.v3+json");
 
-            if (con.getResponseCode() == 304) {
-                // Its the same as the last one we checked
-                return null;
-            }
+                // We believe we're on the latest version and know what the last etag was
+                if (Objects.equals(ourVersion, DisguiseConfig.getLastPluginUpdateVersion()) &&
+                    DisguiseConfig.getLastGithubUpdateETag() != null) {
+                    con.setRequestProperty("If-None-Match", DisguiseConfig.getLastGithubUpdateETag());
+                }
 
-            GithubData gitData;
+                if (con.getResponseCode() == 304) {
+                    // Its the same as the last one we checked
+                    return null;
+                }
 
-            // Get the input stream, what we receive
-            try (InputStream input = con.getInputStream()) {
-                // Read it to string
-                String json =
-                    new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
+                GithubData gitData;
 
-                gitData = new Gson().fromJson(json, GithubData.class);
-            } catch (IOException ex) {
-                try (InputStream error = con.getErrorStream()) {
-                    String line =
-                        new BufferedReader(new InputStreamReader(error, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
+                // Get the input stream, what we receive
+                try (InputStream input = con.getInputStream()) {
+                    // Read it to string
+                    String json =
+                        new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
 
-                    DisguiseUtilities.getLogger().severe("Error with Github! " + line);
+                    gitData = new Gson().fromJson(json, GithubData.class);
+                } catch (IOException ex) {
+                    try (InputStream error = con.getErrorStream()) {
+                        String line = new BufferedReader(new InputStreamReader(error, StandardCharsets.UTF_8)).lines()
+                            .collect(Collectors.joining("\n"));
 
-                    if (line.contains("rate limit") && !DisguiseConfig.isHittingRateLimit()) {
-                        DisguiseConfig.setHittingRateLimit(true);
-                        DisguiseUtilities.getLogger()
-                            .severe("Changed update checker to be every 36 hours due to rate limiting from this IP");
-                        return null;
+                        DisguiseUtilities.getLogger().severe("Error with Github! " + line);
+
+                        if (line.contains("rate limit") && !DisguiseConfig.isHittingRateLimit()) {
+                            DisguiseConfig.setHittingRateLimit(true);
+                            DisguiseUtilities.getLogger()
+                                .severe("Changed update checker to be every 36 hours due to rate limiting from this IP");
+                            return null;
+                        }
+                    } catch (Exception ex1) {
+                        DisguiseUtilities.getLogger().severe("Error when trying to read error stream! Inception!");
+                        ex1.printStackTrace();
                     }
-                } catch (Exception ex1) {
-                    DisguiseUtilities.getLogger().severe("Error when trying to read error stream! Inception!");
-                    ex1.printStackTrace();
+
+                    return null;
                 }
 
-                return null;
-            }
+                String download = null;
 
-            String download = null;
+                for (GithubData.Asset asset : gitData.getAssets()) {
+                    if (!asset.getName().endsWith(".jar")) {
+                        continue;
+                    }
 
-            for (GithubData.Asset asset : gitData.getAssets()) {
-                if (!asset.getName().endsWith(".jar")) {
-                    continue;
+                    download = asset.getBrowser_download_url();
+                    break;
                 }
 
-                download = asset.getBrowser_download_url();
-                break;
+                if (download == null) {
+                    throw new IllegalStateException("Download url is missing");
+                }
+
+                GithubUpdate update =
+                    new GithubUpdate(gitData.getTag_name().replace("v", ""), gitData.getBody().split("(\\r|\\n)+"), download);
+
+                if (Objects.equals(update.getVersion(), ourVersion)) {
+                    DisguiseConfig.setLastGithubUpdateETag(con.getHeaderField("ETag"));
+                    DisguiseConfig.setLastPluginUpdateVersion(ourVersion);
+                    DisguiseConfig.saveInternalConfig();
+                }
+
+                return update;
+            } finally {
+                con.disconnect();
             }
 
-            if (download == null) {
-                throw new IllegalStateException("Download url is missing");
-            }
-
-            GithubUpdate update = new GithubUpdate(gitData.getTag_name().replace("v", ""), gitData.getBody().split("(\\r|\\n)+"), download);
-
-            if (Objects.equals(update.getVersion(), ourVersion)) {
-                DisguiseConfig.setLastGithubUpdateETag(con.getHeaderField("ETag"));
-                DisguiseConfig.setLastPluginUpdateVersion(ourVersion);
-                DisguiseConfig.saveInternalConfig();
-            }
-
-            return update;
         } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning("Failed to check for a release on Github");
             ex.printStackTrace();

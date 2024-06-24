@@ -1,11 +1,8 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import com.comphenix.protocol.wrappers.ComponentConverter;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Color;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.TextDisplay;
@@ -19,14 +16,11 @@ public class TextDisplayWatcher extends DisplayWatcher {
     }
 
     public String getText() {
-        BaseComponent[] base = ComponentConverter.fromWrapper(getData(MetaIndex.TEXT_DISPLAY_TEXT));
-
-        return DisguiseUtilities.getSimpleString(base);
+        return DisguiseUtilities.getSimpleString(getData(MetaIndex.TEXT_DISPLAY_TEXT));
     }
 
     public void setText(String string) {
-        setData(MetaIndex.TEXT_DISPLAY_TEXT,
-            WrappedChatComponent.fromJson(DisguiseUtilities.serialize(DisguiseUtilities.getAdventureChat(string))));
+        setData(MetaIndex.TEXT_DISPLAY_TEXT, DisguiseUtilities.getAdventureChat(string));
         sendData(MetaIndex.TEXT_DISPLAY_TEXT);
     }
 

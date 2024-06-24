@@ -57,41 +57,45 @@ public class LDUploadLogs implements LDCommand {
             URL url = new URL("https://api.mclo.gs/1/log");
             HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
 
-            con.setRequestMethod("POST");
-            con.setRequestProperty("User-Agent", "Mozilla/5.0");
+            try {
+                con.setRequestMethod("POST");
+                con.setRequestProperty("User-Agent", "Mozilla/5.0");
 
-            List<SimpleEntry<String, String>> params = new LinkedList<>();
-            params.add(new SimpleEntry<>("api_paste_code", text));
+                List<SimpleEntry<String, String>> params = new LinkedList<>();
+                params.add(new SimpleEntry<>("api_paste_code", text));
 
-            StringBuilder output = new StringBuilder();
+                StringBuilder output = new StringBuilder();
 
-            output.append(URLEncoder.encode("content", "UTF-8"));
-            output.append('=');
-            output.append(URLEncoder.encode(text, "UTF-8"));
+                output.append(URLEncoder.encode("content", "UTF-8"));
+                output.append('=');
+                output.append(URLEncoder.encode(text, "UTF-8"));
 
-            con.setDoOutput(true);
-            try (DataOutputStream dos = new DataOutputStream(con.getOutputStream())) {
-                dos.writeBytes(output.toString());
-                dos.flush();
-            }
-
-            int status = con.getResponseCode();
-
-            if (status >= 200 && status < 300) {
-                try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-                    String inputLine;
-                    StringBuilder response = new StringBuilder();
-
-                    while ((inputLine = br.readLine()) != null) {
-                        response.append(inputLine);
-                    }
-
-                    MCLogs logs = new Gson().fromJson(response.toString(), MCLogs.class);
-
-                    return new URL(logs.url);
+                con.setDoOutput(true);
+                try (DataOutputStream dos = new DataOutputStream(con.getOutputStream())) {
+                    dos.writeBytes(output.toString());
+                    dos.flush();
                 }
-            } else {
-                throw new IllegalStateException("Unexpected response code " + status);
+
+                int status = con.getResponseCode();
+
+                if (status >= 200 && status < 300) {
+                    try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+                        String inputLine;
+                        StringBuilder response = new StringBuilder();
+
+                        while ((inputLine = br.readLine()) != null) {
+                            response.append(inputLine);
+                        }
+
+                        MCLogs logs = new Gson().fromJson(response.toString(), MCLogs.class);
+
+                        return new URL(logs.url);
+                    }
+                } else {
+                    throw new IllegalStateException("Unexpected response code " + status);
+                }
+            } finally {
+                con.disconnect();
             }
         }
     }

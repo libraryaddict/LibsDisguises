@@ -1,7 +1,9 @@
 package me.libraryaddict.disguise.utilities.packets.packethandlers;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.PacketContainer;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
+import com.github.retrooper.packetevents.util.Vector3d;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityVelocity;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
@@ -14,12 +16,12 @@ import org.bukkit.entity.Player;
  */
 public class PacketHandlerVelocity implements IPacketHandler {
     @Override
-    public PacketType[] getHandledPackets() {
-        return new PacketType[]{PacketType.Play.Server.ENTITY_VELOCITY};
+    public PacketTypeCommon[] getHandledPackets() {
+        return new PacketTypeCommon[]{PacketType.Play.Server.ENTITY_VELOCITY};
     }
 
     @Override
-    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
+    public void handle(Disguise disguise, LibsPackets packets, Player observer, Entity entity) {
         // If the disguise is not a misc type or the disguised is the same type
         if ((!disguise.getType().isMisc() && disguise.getType() != DisguiseType.SQUID) ||
             DisguiseType.getType(entity) == disguise.getType()) {
@@ -28,8 +30,6 @@ public class PacketHandlerVelocity implements IPacketHandler {
 
         packets.clear();
 
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_VELOCITY);
-        packet.getIntegers().write(0, entity.getEntityId());
-        packets.addPacket(packet);
+        packets.addPacket(new WrapperPlayServerEntityVelocity(entity.getEntityId(), Vector3d.zero()));
     }
 }

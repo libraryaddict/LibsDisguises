@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import com.github.retrooper.packetevents.protocol.entity.sniffer.SnifferState;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import org.bukkit.entity.Sniffer;
@@ -10,11 +11,11 @@ public class SnifferWatcher extends AgeableWatcher {
     }
 
     public Sniffer.State getSnifferState() {
-        return getData(MetaIndex.SNIFFER_STATE);
+        return Sniffer.State.valueOf(getData(MetaIndex.SNIFFER_STATE).name());
     }
 
     public void setSnifferState(Sniffer.State state) {
-        setData(MetaIndex.SNIFFER_STATE, state);
+        setData(MetaIndex.SNIFFER_STATE, SnifferState.valueOf(state.name()));
         sendData(MetaIndex.SNIFFER_STATE);
     }
 }

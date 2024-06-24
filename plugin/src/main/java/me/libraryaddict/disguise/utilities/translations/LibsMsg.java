@@ -1,8 +1,10 @@
 package me.libraryaddict.disguise.utilities.translations;
 
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -14,20 +16,22 @@ import java.util.Locale;
 public enum LibsMsg {
     NO_DISGUISES_IN_USE("<red>There are no disguises in use!"),
     ACTIVE_DISGUISES_COUNT("<dark_green>There are %s disguises active"),
-    ACTIVE_DISGUISES_DISGUISE("<green>%s: <aqua>%s"),
-    ACTIVE_DISGUISES("<dark_green>The disguises in use are: %s"),
-    ACTIVE_DISGUISES_SEPERATOR("<red>, <green>"),
+    ACTIVE_DISGUISES_DISGUISE("<green>%s:</green> <aqua>%s</aqua>"),
+    ACTIVE_DISGUISES("<dark_green>The disguises in use are:</dark_green> <green>%s</green>"),
+    ACTIVE_DISGUISES_SEPERATOR("<red>,</red>"),
     BLOWN_DISGUISE("<red>Your disguise was blown!"),
+    BLOWN_DISGUISE_BLOCK_PLACE("<red>Placing a block blew your disguise!"),
+    BLOWN_DISGUISE_BLOCK_BREAK("<red>Breaking a block blew your disguise!"),
     EXPIRED_DISGUISE("<red>Your disguise has expired!"),
-    CAN_USE_DISGS("<dark_green>You can use the disguises:<green> %s"),
-    CAN_USE_DISGS_SEPERATOR("<red>, <green>"),
+    CAN_USE_DISGS("<dark_green>You can use the disguises:</dark_green> <green>%s</green>"),
+    CAN_USE_DISGS_SEPERATOR("<red>, </red>"),
     CANNOT_FIND_PLAYER("<red>Cannot find the player/uuid '%s'"),
     CANNOT_FIND_PLAYER_NAME("<red>Cannot find the player '%s'"),
     CANNOT_FIND_PLAYER_UUID("<red>Cannot find the uuid '%s'"),
     CLICK_TIMER("<red>Right click a entity in the next %s seconds to grab the disguise reference!"),
     CLONE_HELP1("<dark_green>Right click a entity to get a disguise reference you can pass to other disguise commands!"),
     CLONE_HELP2("<dark_green>Security note: Any references you create will be available to all players able to use disguise references."),
-    CLONE_HELP3("<dark_green>/disguiseclone IgnoreEquipment<dark_green>(<green>Optional<dark_green>)"),
+    CLONE_HELP3("<dark_green>/disguiseclone IgnoreEquipment<dark_green>(<green>Optional</green>)"),
     CUSTOM_DISGUISE_SAVED("<gold>Custom disguise has been saved as '%s'!"),
     D_HELP1("<dark_green>Disguise another player!"),
     D_HELP3("<dark_green>/disguiseplayer <PlayerName> player <Name>"),
@@ -38,12 +42,17 @@ public enum LibsMsg {
     DHELP_HELP1("<red>/disguisehelp <DisguiseType> <green>" +
         "- View the methods you can set on a disguise. Add 'show' to reveal the methods you don't have permission to use"),
     DHELP_HELP2("<red>/disguisehelp <DisguiseOption> <green>- View information about the disguise values such as 'RabbitType'"),
-    DHELP_HELP3("<red>/disguisehelp <dark_green>%s<green> - %s"),
-    DHELP_HELP4("<red>%s: <green>%s"),
-    DHELP_HELP4_SEPERATOR("<red>, <green>"),
-    DHELP_HELP5("<red>%s: <green>%s"),
-    DHELP_HELP6("<red>%s: <dark_green>%s <green>%s"),
-    DHELP_OPTIONS("%s options: %s"),
+    DHELP_HELP3("<red>/disguisehelp <dark_green>%s</dark_green> - <green>%s</green>"),
+    DHELP_HELP4("<red>%s:</red> <green>%s</green>"),
+    DHELP_HELP4_SEPERATOR("<red>, </red>"),
+    DHELP_HELP5("<red>%s:</red> <green>%s</green>"),
+    DHELP_HELP6("<red>%s:</red> <dark_green>%s</dark_green> <green>%s</green>"),
+    DHELP_OPTIONS("<gold>%s options:</gold> <green>%s</green>"),
+    DHELP_OPTIONS_JOINER("<dark_red>, </dark_red>"),
+    DHELP_OPTIONS_METHOD("%s<dark_red>(<green>%s</green>)</dark_red>"),
+    DHELP_OPTIONS_METHOD_VERY_SPECIFIC("<yellow>%s</yellow>"),
+    DHELP_OPTIONS_METHOD_SOMEWHAT_SPECIFIC("<aqua>%s</aqua>"),
+    DHELP_OPTIONS_METHOD_GENERIC("<gray>%s</gray>"),
     DISABLED_LIVING_TO_MISC("<red>Can't disguise a living entity as a misc disguise. This has been disabled in the config!"),
     DISG_ENT_CLICK("<red>Right click an entity in the next %s seconds to disguise it as a %s!"),
     DISG_ENT_HELP1("<dark_green>Choose a disguise then right click an entity to disguise it!"),
@@ -62,7 +71,7 @@ public enum LibsMsg {
     DMODENT_HELP1("<dark_green>Choose the options for a disguise then right click a entity to modify it!"),
     DMODIFY_HELP1("<dark_green>Modify your own disguise as you wear it!"),
     DMODIFY_HELP2("<dark_green>/disguisemodify setBaby true setSprinting true"),
-    DMODIFY_HELP3("<dark_green>You can modify the disguises:<green> %s"),
+    DMODIFY_HELP3("<dark_green>You can modify the disguises:</dark_green> <green>%s</green>"),
     DMODIFY_MODIFIED("<red>Your disguise has been modified!"),
     DMODIFY_NO_PERM("<red>No permission to modify your disguise!"),
     DMODIFYENT_CLICK("<red>Right click a disguised entity in the next %s seconds to modify their disguise!"),
@@ -77,27 +86,25 @@ public enum LibsMsg {
     DHELP_NO_OPTIONS("<red>No options with permission to use"),
     DCLONE_EQUIP("ignoreEquip"),
     DCLONE_ADDEDANIMATIONS("doAddedAnimations"),
-    DMODRADIUS_HELP2(
-        "<dark_green>/disguisemodifyradius <<green>DisguiseType<dark_green>(<green>Optional<dark_green>)> <<green>Radius<dark_green>> " +
-            "<<green>Disguise " + "Methods<dark_green>>"),
+    DMODRADIUS_HELP2("<dark_green>/disguisemodifyradius <<green>DisguiseType</green>(<green>Optional</green>)> <<green>Radius</green>> " +
+        "<<green>Disguise " + "Methods</green>>"),
     DMODRADIUS_HELP3("<dark_green>See the DisguiseType's usable by <green>/disguisemodifyradius DisguiseType"),
     DMODRADIUS_NEEDOPTIONS("<red>You need to supply the disguise methods as well as the radius"),
     DMODRADIUS_NEEDOPTIONS_ENTITY("<red>You need to supply the disguise methods as well as the radius and EntityType"),
     DMODRADIUS_NOENTS("<red>Couldn't find any disguised entities!"),
     DMODRADIUS_NOPERM("<red>No permission to modify %s disguises!"),
     DMODRADIUS_UNRECOGNIZED("<red>Unrecognised DisguiseType %s"),
-    DMODRADIUS_USABLE("<dark_green>DisguiseTypes usable are: %s<dark_green>."),
+    DMODRADIUS_USABLE("<dark_green>DisguiseTypes usable are: %s.</dark_green>"),
     DPLAYER_SUPPLY("<red>You need to supply a disguise as well as the player/uuid"),
-    DRADIUS_ENTITIES("<dark_green>EntityTypes usable are: %s"),
+    DRADIUS_ENTITIES("<dark_green>EntityTypes usable are:</dark_green> <green>%s</green>"),
+    DRADIUS_JOINER("<dark_green>, </dark_green>"),
     DRADIUS_HELP1("<dark_green>Disguise all entities in a radius! Caps at %s blocks!"),
-    DRADIUS_HELP3(
-        "<dark_green>/disguiseradius <<green>EntityType<dark_green>(<green>Optional<dark_green>)> <<green>Radius<dark_green>> player " +
-            "<<green>Name<dark_green>>"),
-    DRADIUS_HELP4("<dark_green>/disguiseradius <<green>EntityType<dark_green>(<green>Optional<dark_green>)> <<green>Radius<dark_green>> " +
-        "<<green>DisguiseType<dark_green>> <<green>Baby<dark_green>(<green>Optional<dark_green>)>"),
-    DRADIUS_HELP5("<dark_green>/disguiseradius <<green>EntityType<dark_green>(<green>Optional<dark_green>)> <<green>Radius<dark_green>> " +
-        "<<green>Dropped_Item/Falling_Block<dark_green>> <<green>Id<dark_green>> <<green>Durability<dark_green>" +
-        "(<green>Optional<dark_green>)" + ">"),
+    DRADIUS_HELP3("<dark_green>/disguiseradius <<green>EntityType</green>(<green>Optional</green>)> <<green>Radius</green>> player " +
+        "<<green>Name<dark_green>>"),
+    DRADIUS_HELP4("<dark_green>/disguiseradius <<green>EntityType</green>(<green>Optional</green>)> <<green>Radius</green>> " +
+        "<<green>DisguiseType</green>> <<green>Baby</green>(<green>Optional</green>)>"),
+    DRADIUS_HELP5("</green>/disguiseradius <<green>EntityType</green>(<green>Optional</green>)> <<green>Radius</green>> " +
+        "<<green>Dropped_Item/Falling_Block<dark_green>> <<green>Id</green>> <<green>Durability</green>" + "(<green>Optional</green>)>"),
     DRADIUS_HELP6("<dark_green>See the EntityType's usable by <green>/disguiseradius EntityTypes"),
     DRADIUS_MISCDISG(
         "<red>Failed to disguise %s entities because the option to disguise a living entity as a non-living has been disabled in the " +
@@ -147,14 +154,36 @@ public enum LibsMsg {
     DISGUISE_REQUIRED("<red>You must be disguised to run this command!"),
     TARGET_NOT_DISGUISED("<red>That entity is not disguised!"),
     NOT_NUMBER("<red>Error! %s is not a number"),
-    PARSE_CANT_DISG_UNKNOWN("<red>Error! You cannot disguise as <green>Unknown!"),
+    PARSE_BLOCK_STATE_UNKNOWN_BLOCK("<red>Error! The block <green>%s</green> could not be found when parsing <green>%s</green>"),
+    PARSE_BLOCK_STATE_ILLEGAL_BLOCK("<red>Error! <green>%s</green> can not be parsed to a valid block state!"),
+    PARSE_BLOCK_STATE_UNKNOWN_BLOCK_SYNTAX(
+        "<red>Error! Invalid <green>block_data<dark_green>[</dark_green>key<dark_green>=</dark_green>value<dark_green>," +
+            "</dark_green>key<dark_green>=</dark_green>value<dark_green>]</dark_green></green> syntax was encountered when parsing " +
+            "<green>%s</green>!"),
+    PARSE_BLOCK_STATE_UNKNOWN_BLOCK_DATA_KEY(
+        "<red>Error! Unknown block data key <green>%s</green> was not found on block <green>%s</green> when parsing <green>%s</green>!"),
+    PARSE_BLOCK_STATE_UNKNOWN_BLOCK_DATA_VALUE(
+        "<red>Error! Unknown block data value <green>%s</green> for key <green>%s</green> on block <green>%s</green> when parsing " +
+            "<green>%s</green>!"),
+    PARSE_CANT_DISG_UNKNOWN("<red>Error! You cannot disguise as <green>Unknown!</green>>"),
     PARSE_CANT_LOAD("<red>Error! This disguise couldn't be loaded!"),
-    PARSE_CANT_LOAD_DETAILS("<red>Error! This disguise couldn't be loaded! Tried to parse <green>%s<red> for <green>%s"),
-    PARSE_DISG_NO_EXIST("<red>Error! The disguise <green>%s<red> doesn't exist!"),
-    PARSE_EXPECTED_RECEIVED("<red>Expected <green>%s<red>, received <green>%s<red> instead for <green>%s"),
-    PARSE_PARTICLE_BLOCK("<red>Expected <green>%s:Material<red>, received <green>%s<red> instead"),
-    PARSE_PARTICLE_ITEM("<red>Expected <green>%s:Material,Amount?,Glow?<red>, received <green>%s<red> instead"),
-    PARSE_PARTICLE_REDSTONE("<red>Expected <green>%s:Color,Size.0?<red>, received <green>%s<red> instead"),
+    PARSE_CANT_LOAD_DETAILS("<red>Error! This disguise couldn't be loaded! Tried to parse <green>%s</green> for <green>%s</green>"),
+    PARSE_DISG_NO_EXIST("<red>Error! The disguise <green>%s</green> doesn't exist!"),
+    PARSE_EXPECTED_RECEIVED("<red>Expected <green>%s</green>, received <green>%s</green> instead for <green>%s"),
+    PARSE_PARTICLE_BLOCK("<red>Expected <green>%s:Material</green>, received <green>%s</green> instead"),
+    PARSE_COLOR("<red>Expected <green>Color(3 numbers or color name)</green>, received <green>%s</green> instead</red>"),
+    PARSE_PARTICLE_COLOR("<red>Expected <green>%s:Color(3 numbers, 1 number, or color name)</green>, received <green>%s</green> instead"),
+    PARSE_PARTICLE_VIBRATION(
+        "<red>Expected <green>%s:SourceBlockX,SourceBlockY,SourceBlockZ,(Optional: StartBlockX,StartBlockY,StartBlockZ),Ticks</green>, " +
+            "received <green>%s</green> instead"),
+    PARSE_PARTICLE_ITEM("<red>Expected <green>%s:Material,Amount?,Glow?<red>, received <green>%s</green> instead"),
+    PARSE_PARTICLE_SHULK_CHARGE("<red>Expected <green>%s:Roll(number.0)</green>, received <green>%s</green> instead"),
+    PARSE_PARTICLE_SHRIEK("<red>Expected <green>%s:Delay(number.0)</green>, received <green>%s</green> instead"),
+    PARSE_PARTICLE_DUST(
+        "<red>Expected <green>%s:Size(Optional Number),Color(3 numbers or red/blue/etc)</green>, received <green>%s</green> instead"),
+    PARSE_PARTICLE_DUST_TRANSITION(
+        "<red>Expected <green>%s:Size(Optional),Color(3 numbers or red/blue/etc),Color(Same)</green>, received <green>%s</green> instead"),
+    PARSE_DISPLAY_BRIGHTNESS("<red>Expected <green>(Block Light),(Sky Light)</green> from 0-15, received <green>%s</green> instead"),
     PARSE_NO_ARGS("No arguments defined"),
     PARSE_NO_OPTION_VALUE("<red>No value was given for the method %s"),
     PARSE_NO_PERM_NAME("<red>Error! You don't have permission to use that name!"),
@@ -178,24 +207,27 @@ public enum LibsMsg {
     UNDISG_PLAYER_HELP("<red>/undisguiseplayer <Name>"),
     UNDISRADIUS("<red>Successfully undisguised %s entities!"),
     UPDATE_READY(
-        "<red>[LibsDisguises] <dark_red>There is a update ready to be downloaded! You are using <red>v%s<dark_red>, the new version is " +
-            "<red>v%s<dark_red>!"),
+        "<red>[LibsDisguises] <dark_red>There is a update ready to be downloaded! You are using <red>v%s</red>, the new version is " +
+            "<red>v%s</red>!"),
     UPDATE_READY_SNAPSHOT(
-        "<red>[LibsDisguises] <dark_red>There is a new build of Lib's Disguises! You are using <red>%s<dark_red>, the latest build is " +
-            "<red>#%s<dark_red>!"),
-    UPDATE_HOW("<dark_aqua>Use <aqua>/libsdisgusies changelog<dark_aqua> to see what changed, use <aqua>/libsdisguises update!" +
-        "<dark_aqua> to download the update!"),
+        "<red>[LibsDisguises]</red> <dark_red>There is a new build of Lib's Disguises! You are using <red>%s</red>, the latest build " +
+            "is</dark_red> " + "<red>#%s</red>!"),
+    UPDATE_HOW("<dark_aqua>Use <aqua>/libsdisgusies changelog</aqua> to see what changed, use <aqua>/libsdisguises update!" +
+        "</aqua> to download the update!"),
     VIEW_SELF_ON("<green>Toggled viewing own disguise on!"),
     VIEW_SELF_OFF("<green>Toggled viewing own disguise off!"),
+    VIEW_SELF_TALL_NOTE(
+        "<green>Your disguise is too tall, self disguise is automatically disabled. You wouldn't be able to see anything otherwise!"),
     VIEW_BAR_ON("<green>Toggled disguised notify bar on!"),
     VIEW_BAR_OFF("<green>Toggled disguised notify bar off!"),
-    CLICK_TO_COPY("<green>Click to Copy:"),
+    CLICK_TO_COPY("<green>Click to Copy: </green>"),
     SKIN_DATA("<green>Skin Data: <yellow>%s"),
     CLICK_TO_COPY_DATA("<yellow>Data"),
     CLICK_TO_COPY_WITH_SKIN("<green>Version with skin data:"),
     CLICK_TO_COPY_WITH_SKIN_NO_COPY("<green>Version with skin data: <yellow>%s"),
     COPY_DISGUISE_NO_COPY("<green>Data: <yellow>%s"),
-    CLICK_TO_COPY_HOVER("<gold>Click to Copy"),
+    CLICK_TO_COPY_HOVER("<gold>%s / %s. Click to Copy</gold>\n<green>%s</green>"),
+    CLICK_TO_COPY_HOVER_CLIPBOARD("<gold>%s / %s. Click to Copy to Clipboard</gold>\n<green>%s</green>"),
     CLICK_COPY("<yellow><bold>%s"),
     SKIN_API_UUID_3("<red>Using account with UUID version 3. If skin is incorrect, try change 'UUIDVersion' in protocol.yml" +
         " to 3. If skin is still incorrect and you did not purchase Minecraft, this cannot be fixed."),
@@ -221,6 +253,14 @@ public enum LibsMsg {
     SKIN_API_USING_UUID("<gray>UUID successfully parsed, now attempting to connect to mineskin.org"),
     SKIN_API_USING_EXISTING_NAME("<gray>Found a saved skin under that name locally! Using that!"),
     SKIN_API_USING_NAME("<gray>Determined to be player name, now attempting to validate and connect to mineskin.org"),
+    SKIN_API_TOO_MANY_FAILURES(
+        "<red>Too many failures when trying to resolve skin for <light_purple>%s</light_purple>, to prevent backend spam you will not be " +
+            "able to make" +
+            " any more requests until" + " a hour has passed from your last failed request. Try /grabskin if you need to test."),
+    SKIN_API_TOO_MANY_FAILURES_NON_PLAYER(
+        "<red>Too many failures when trying to resolve skin for <light_purple>%s</light_purple>, Lib's Disguises will not attempt to grab" +
+            " this skin. " +
+            "This timeout is only for that specific skin and will increase with every failure."),
     SAVE_DISG_HELP_1("<green>The <DisguiseName> is what the disguise will be called in Lib's Disguises"),
     SAVE_DISG_HELP_2("<green>/savedisguise <DisguiseName> - If you don't provide arguments, it'll try make a disguise from your" +
         " current disguise. This will not work if you are not disguised!"),
@@ -244,12 +284,12 @@ public enum LibsMsg {
     CUSTOM_DISGUISE_NAME_CONFLICT("<red>Cannot create the custom disguise '%s' as there is a name conflict!"),
     ERROR_LOADING_CUSTOM_DISGUISE("<red>Error while loading custom disguise '%s'%s"),
     SKIN_API_INTERNAL_ERROR("<red>Internal error in the skin API, perhaps bad data?"),
-    META_INFO("<green>Name: %s, Watcher: %s, Index: %s, Type: %s, Default: %s"),
+    META_INFO("<green>Name: %s, Watcher: %s, Index: %s, Type: %s, Serializer Type: %s, Default: %s"),
     META_NOT_FOUND("<red>No meta exists under that name!"),
     META_VALUES("<blue>Metas: <dark_aqua>"),
     META_VALUES_NO_CLICK("<blue>Metas, use as param for more info: <dark_aqua>"),
-    META_VALUE_SEPERATOR("<aqua>, <dark_aqua>"),
-    META_CLICK_SHOW("<gold>Click to show %s"),
+    META_VALUE_SEPERATOR("<aqua>, </aqua>"),
+    META_CLICK_SHOW("<gold>Click to show %s</gold>"),
     LIBS_PERM_CHECK_NON_PREM("<red>This server is not premium, non-admins should not be able to use commands"),
     LIBS_PERM_CHECK_CAN_TARGET("<gold>You can specify a player target with /ld permtest <Target> instead!"),
     LIBS_PERM_CHECK_USING_TARGET("<gold>Running the permission test on '%s'"),
@@ -267,14 +307,14 @@ public enum LibsMsg {
     CANT_ATTACK_DISGUISED("<red>Cannot fight while disguised!"),
     CANT_ATTACK_DISGUISED_RECENTLY("<red>You were disguised recently! Can't attack yet!"),
     SWITCH_WORLD_DISGUISE_REMOVED("<red>Disguise removed as you've switched worlds!"),
-    ACTION_BAR_MESSAGE("<gold>Currently disguised as %s"),
-    ITEM_SERIALIZED("<gold>Json Serialized, click to copy: "),
-    ITEM_SERIALIZED_MC("<gold>MC Serialized, click to copy: "),
-    ITEM_SERIALIZED_MC_LD("<gold>MC Serialized for LD, click to copy: "),
-    ITEM_SIMPLE_STRING("<gold>Simple, click to copy: "),
-    ITEM_SERIALIZED_NO_COPY("<gold>Json Serialized: <yellow>%s"),
-    ITEM_SERIALIZED_MC_NO_COPY("<gold>MC Serialized: <yellow>%s"),
-    ITEM_SERIALIZED_MC_LD_NO_COPY("<gold>MC Serialized for LD: <yellow>%s"),
+    ACTION_BAR_MESSAGE("<gold>Currently disguised as %s</gold>"),
+    ITEM_SERIALIZED("<gold>Json Serialized, click to copy: </gold>"),
+    ITEM_SERIALIZED_MC("<gold>MC Serialized, click to copy: </gold>"),
+    ITEM_SERIALIZED_MC_LD("<gold>MC Serialized for LD, click to copy: </gold>"),
+    ITEM_SIMPLE_STRING("<gold>Simple, click to copy: </gold>"),
+    ITEM_SERIALIZED_NO_COPY("<gold>Json Serialized:</gold> <yellow>%s</yellow>"),
+    ITEM_SERIALIZED_MC_NO_COPY("<gold>MC Serialized:</gold> <yellow>%s</yellow>"),
+    ITEM_SERIALIZED_MC_LD_NO_COPY("<gold>MC Serialized for LD:</gold> <yellow>%s</yellow>"),
     ITEM_SIMPLE_STRING_NO_COPY("<gold>Simple: <yellow>%s"),
     LIBS_SCOREBOARD_NO_TEAM("<red>Not on a scoreboard team!"),
     LIBS_SCOREBOARD_SUCCESS(
@@ -284,10 +324,10 @@ public enum LibsMsg {
             "still need help with this, or we'll assume you can't read."),
     LIBS_SCOREBOARD_NAMES_DISABLED("<red>Scoreboard names has been disabled, the test for player disguises has failed before it started"),
     LIBS_SCOREBOARD_IGNORE_TEST("<green>This was a seperate test from the self disguising collision test that will follow!"),
-    USING_DEFAULT_CONFIG("<dark_green>Using the default config!"),
-    LIBS_SCOREBOARD_ISSUES("<green>Too many issues found, hidden %s"),
+    USING_DEFAULT_CONFIG("<dark_green>Using the default config!</dark_green>"),
+    LIBS_SCOREBOARD_ISSUES("<green>Too many issues found, hidden %s</green>"),
     LIBS_SCOREBOARD_NO_ISSUES("<green>No issues found in player disguise scoreboard name teams"),
-    LD_COMMAND_UPDATEPROTOCOLLIB("<blue>/libsdisguises updateprotocollib - <aqua>Updates ProtocolLib to the latest development version"),
+    LD_COMMAND_UPDATE_PACKET_EVENTS("<blue>/libsdisguises updatepacketevents - <aqua>Updates PacketEvents to the latest release"),
     LD_COMMAND_HELP("<blue>/libsdisguises help - <aqua>Returns this!"),
     LD_COMMAND_COUNT("<blue>/libsdisguises count - <aqua>Tells you how many active disguises there are"),
     LD_COMMAND_METAINFO("<blue>/libsdisguises metainfo - <aqua>Debugging info, tells you what the metadata is for a disguise"),
@@ -316,21 +356,11 @@ public enum LibsMsg {
         this.string = string;
     }
 
-    public String getVanillaFormat(String[] params) {
-        String raw = get((Object[]) params);
-
-        for (ChatColor c : ChatColor.values()) {
-            raw = raw.replace("<" + c.name().toLowerCase(Locale.ROOT) + ">", "§" + c.getChar());
-        }
-
-        return raw;
-    }
-
     public String getVanillaFormat() {
         String raw = getRaw();
 
         for (ChatColor c : ChatColor.values()) {
-            raw = raw.replace("<" + c.name().toLowerCase(Locale.ROOT) + ">", "§" + c.getChar());
+            raw = raw.replace("<" + c.name().toLowerCase(Locale.ENGLISH) + ">", "§" + c.getChar());
         }
 
         return raw;
@@ -347,6 +377,26 @@ public enum LibsMsg {
     @Deprecated
     public BaseComponent[] getBase(Object... strings) {
         return DisguiseUtilities.getColoredChat(get(strings));
+    }
+
+    public Component getAdv(Object... strings) {
+        return DisguiseUtilities.getAdventureChat(get(strings));
+    }
+
+    public void validateArgCount(String... args) {
+        int matches = StringUtils.countMatches(getRaw(), "%s");
+
+        if (matches == args.length) {
+            return;
+        }
+
+        if (Bukkit.getServer() == null) {
+            throw new IllegalArgumentException(
+                "Error for " + name() + ", incorrect arg count supplied. Expected " + matches + " args, received " + args.length);
+        } else {
+            DisguiseUtilities.getLogger().severe("Mismatch in messages, incorrect parameters supplied for " + name() +
+                ". Please inform plugin author if not using translations.");
+        }
     }
 
     @Deprecated

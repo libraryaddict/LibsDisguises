@@ -15,15 +15,14 @@ public class DisguiseTypesTest {
     @ParameterizedTest
     @EnumSource(EntityType.class)
     public void testDisguiseType(EntityType entityType) {
-        if (entityType == EntityType.LIGHTNING) {
-            return;
-        } else if (entityType == EntityType.UNKNOWN) {
+        if (entityType == EntityType.LIGHTNING_BOLT || entityType == EntityType.UNKNOWN) {
             return;
         }
 
         DisguiseType disguiseType = DisguiseType.getType(entityType);
 
-        Assertions.assertSame(disguiseType.name(), entityType.name(), entityType.name() + " has no DisguiseType registered!");
+        Assertions.assertSame(entityType.name(), disguiseType.getEntityType().name(),
+            entityType.name() + " (" + entityType.getName() + ") has no DisguiseType registered!");
     }
 
     @ParameterizedTest

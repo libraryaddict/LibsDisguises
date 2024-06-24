@@ -1,8 +1,10 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import com.comphenix.protocol.wrappers.nbt.NbtCompound;
-import com.comphenix.protocol.wrappers.nbt.NbtFactory;
+import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
+import com.github.retrooper.packetevents.protocol.nbt.NBTInt;
+import com.github.retrooper.packetevents.protocol.nbt.NBTNumber;
+import com.github.retrooper.packetevents.protocol.nbt.NBTString;
+import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -157,8 +159,8 @@ public class PlayerWatcher extends LivingWatcher {
         sendData(MetaIndex.PLAYER_SKIN);
     }
 
-    public WrappedGameProfile getSkin() {
-        return ((PlayerDisguise) getDisguise()).getGameProfile();
+    public UserProfile getSkin() {
+        return ((PlayerDisguise) getDisguise()).getUserProfile();
     }
 
     public void setSkin(String playerName) {
@@ -166,7 +168,7 @@ public class PlayerWatcher extends LivingWatcher {
     }
 
     @RandomDefaultValue
-    public void setSkin(WrappedGameProfile profile) {
+    public void setSkin(UserProfile profile) {
         ((PlayerDisguise) getDisguise()).setSkin(profile);
     }
 
@@ -181,43 +183,23 @@ public class PlayerWatcher extends LivingWatcher {
     }
 
     public Parrot.Variant getRightShoulderParrot() {
-        NbtCompound nbt = (NbtCompound) getData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY);
-
-        return Parrot.Variant.values()[nbt.getIntegerOrDefault("Variant")];
+        return getParrot(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY);
     }
 
     public void setRightShoulderParrot(Parrot.Variant variant) {
-        NbtCompound nbt = NbtFactory.ofCompound("");
-
-        if (variant != null) {
-            nbt.put("id", "minecraft:parrot");
-            nbt.put("Variant", variant.ordinal());
-        }
-
-        setData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY, nbt);
-        sendData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY);
+        setParrot(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY, variant);
     }
 
     public Parrot.Variant getLeftShoulderParrot() {
-        NbtCompound nbt = (NbtCompound) getData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY);
-
-        return Parrot.Variant.values()[nbt.getIntegerOrDefault("Variant")];
+        return getParrot(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY);
     }
 
     public void setLeftShoulderParrot(Parrot.Variant variant) {
-        NbtCompound nbt = NbtFactory.ofCompound("");
-
-        if (variant != null) {
-            nbt.put("id", "minecraft:parrot");
-            nbt.put("Variant", variant.ordinal());
-        }
-
-        setData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY, nbt);
-        sendData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY);
+        setParrot(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY, variant);
     }
 
     public boolean isRightShoulderHasParrot() {
-        return ((NbtCompound) getData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY)).containsKey("id");
+        return getData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY).getStringTagOrNull("id") != null;
     }
 
     public void setRightShoulderHasParrot(boolean hasParrot) {
@@ -233,7 +215,7 @@ public class PlayerWatcher extends LivingWatcher {
     }
 
     public boolean isLeftShoulderHasParrot() {
-        return ((NbtCompound) getData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY)).containsKey("id");
+        return getData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY).getStringTagOrNull("id") != null;
     }
 
     public void setLeftShoulderHasParrot(boolean hasParrot) {
@@ -246,5 +228,29 @@ public class PlayerWatcher extends LivingWatcher {
         } else {
             setLeftShoulderParrot(null);
         }
+    }
+
+    private Parrot.Variant getParrot(MetaIndex<NBTCompound> meta) {
+        NBTCompound nbt = getData(meta);
+
+        NBTNumber number = nbt.getNumberTagOrNull("Variant");
+
+        if (number == null) {
+            return Parrot.Variant.RED;
+        }
+
+        return Parrot.Variant.values()[number.getAsInt()];
+    }
+
+    private void setParrot(MetaIndex<NBTCompound> meta, Parrot.Variant variant) {
+        NBTCompound nbt = new NBTCompound();
+
+        if (variant != null) {
+            nbt.setTag("id", new NBTString("minecraft:parrot"));
+            nbt.setTag("Variant", new NBTInt(variant.ordinal()));
+        }
+
+        setData(meta, nbt);
+        sendData(meta);
     }
 }

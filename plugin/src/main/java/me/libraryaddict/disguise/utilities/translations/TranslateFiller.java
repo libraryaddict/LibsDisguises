@@ -67,7 +67,7 @@ public class TranslateFiller {
                     className = "Illager";
                 }
 
-                TranslateType.DISGUISE_OPTIONS.save(method.getName(),
+                TranslateType.DISGUISE_OPTIONS.save(method.getMappedName(),
                     "Found in the disguise options for " + className + " and uses " + (para.isArray() ? "multiple" + " " : "a ") +
                         para.getSimpleName().replace("[]", "s"));
             }

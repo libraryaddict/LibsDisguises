@@ -1,9 +1,12 @@
 package me.libraryaddict.disguise.utilities.packets.packethandlers;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.mojang.datafixers.util.Pair;
+import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
+import com.github.retrooper.packetevents.protocol.player.Equipment;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
+import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -17,6 +20,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,179 +28,104 @@ import java.util.List;
 /**
  * Created by libraryaddict on 3/01/2019.
  */
-public class PacketHandlerEquipment implements IPacketHandler {
-
+public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerEntityEquipment> {
     @Override
-    public PacketType[] getHandledPackets() {
-        return new PacketType[]{PacketType.Play.Server.ENTITY_EQUIPMENT};
+    public PacketTypeCommon[] getHandledPackets() {
+        return new PacketTypeCommon[]{PacketType.Play.Server.ENTITY_EQUIPMENT};
     }
 
     @Override
-    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
-        if (NmsVersion.v1_16.isSupported()) {
-            handleNew(disguise, sentPacket, packets, observer, entity);
-        } else {
-            handleOld(disguise, sentPacket, packets, observer, entity);
-        }
-    }
-
-    public void handleNew(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
+    public void handle(Disguise disguise, LibsPackets<WrapperPlayServerEntityEquipment> packets, Player observer, Entity entity) {
         // Else if the disguise is updating equipment
+        WrapperPlayServerEntityEquipment packet = packets.getOriginalPacket();
+        WrapperPlayServerEntityEquipment toModify = null;
+        List<Equipment> newSlots = new ArrayList<>();
 
-        List<Pair<Object, Object>> slots = (List<Pair<Object, Object>>) packets.getPackets().get(0).getModifier().read(1);
-        List<Pair<Object, Object>> newSlots = new ArrayList<>();
-        boolean constructed = false;
+        for (Equipment equipment : packet.getEquipment()) {
+            if (equipment.getSlot() == null) {
+                continue;
+            }
 
-        for (Pair<Object, Object> pair : slots) {
-            EquipmentSlot slot = ReflectionManager.createEquipmentSlot(pair.getFirst());
+            EquipmentSlot slot = ReflectionManager.getSlot(equipment.getSlot());
+            ItemStack sItem = disguise.getWatcher().getItemStack(slot);
 
-            org.bukkit.inventory.ItemStack itemStack = disguise.getWatcher().getItemStack(slot);
-
-            if (itemStack != null) {
-                if (!constructed) {
-                    constructed = true;
-
+            // If it's not 1.16, then there should only be 1 equipment in the list which means only 1 equipment added to the list!
+            if (sItem != null) {
+                if (toModify == null) {
                     if (packets.getPackets().size() > 1) {
                         packets.getPackets().remove(1);
                     } else {
                         packets.clear();
                     }
 
-                    PacketContainer equipPacket = sentPacket.shallowClone();
-
-                    packets.getPackets().add(packets.getPackets().size(), equipPacket);
-
-                    equipPacket.getModifier().write(1, newSlots);
+                    toModify = new WrapperPlayServerEntityEquipment(packet.getEntityId(), newSlots);
+                    packets.addPacket(toModify);
                 }
 
-                newSlots.add(
-                    Pair.of(pair.getFirst(), ReflectionManager.getNmsItem(itemStack.getType() == Material.AIR ? null : itemStack)));
+                newSlots.add(new Equipment(equipment.getSlot(),
+                    sItem.getType() == Material.AIR ? com.github.retrooper.packetevents.protocol.item.ItemStack.EMPTY :
+                        SpigotConversionUtil.fromBukkitItemStack(sItem)));
+
             } else {
-                newSlots.add(pair);
-                itemStack = ReflectionManager.getBukkitItem(pair.getSecond());
+                newSlots.add(equipment);
+                sItem = SpigotConversionUtil.toBukkitItemStack(equipment.getItem());
             }
 
-            if ((disguise.getWatcher().isMainHandRaised() && slot == EquipmentSlot.HAND) ||
-                (disguise.getWatcher() instanceof LivingWatcher && ((LivingWatcher) disguise.getWatcher()).isOffhandRaised() &&
-                    slot == EquipmentSlot.OFF_HAND)) {
-                if (itemStack != null && itemStack.getType() != Material.AIR) {
-                    // Convert the datawatcher
-                    List<WatcherValue> list = new ArrayList<>();
+            // If item not exists, either naturally or as part of the disguise
+            if (sItem == null || sItem.getType() == Material.AIR) {
+                continue;
+            }
 
-                    if (DisguiseConfig.isMetaPacketsEnabled()) {
-                        WatcherValue watch = new WatcherValue(MetaIndex.LIVING_META,
-                            WrappedDataWatcher.getEntityWatcher(entity).getByte(MetaIndex.LIVING_META.getIndex()));
+            // If not raising the hand of the equipment slot this is
+            if (!((slot == EquipmentSlot.HAND && disguise.getWatcher().isMainHandRaised()) ||
+                (slot == EquipmentSlot.OFF_HAND && disguise.getWatcher() instanceof LivingWatcher &&
+                    ((LivingWatcher) disguise.getWatcher()).isOffhandRaised()))) {
+                continue;
+            }
 
-                        if (watch != null) {
-                            list.add(watch);
-                        }
+            // Convert the datawatcher
+            List<WatcherValue> list = new ArrayList<>();
+            MetaIndex toUse = NmsVersion.v1_13.isSupported() ? MetaIndex.LIVING_META : MetaIndex.ENTITY_META;
 
-                        list = disguise.getWatcher().convert(observer, list);
-                    } else {
-                        for (WatcherValue obj : disguise.getWatcher().getWatchableObjects()) {
-                            if (obj.getIndex() == MetaIndex.LIVING_META.getIndex()) {
-                                list.add(obj);
-                                break;
-                            }
-                        }
+            if (DisguiseConfig.isMetaPacketsEnabled()) {
+                List<EntityData> data = ReflectionManager.getEntityWatcher(entity);
+                byte b = (byte) toUse.getDefault();
+
+                for (EntityData d : data) {
+                    if (d.getIndex() != toUse.getIndex()) {
+                        continue;
                     }
 
-                    // Construct the packets to return
-                    PacketContainer packetBlock = ReflectionManager.getMetadataPacket(entity.getEntityId(), list);
+                    b = (byte) d.getValue();
+                    break;
+                }
 
-                    list.forEach(v -> v.setValue((byte) 0));
+                list.add(new WatcherValue(toUse, b, true));
 
-                    // Make a packet to send the 'unblock'
-                    PacketContainer packetUnblock = ReflectionManager.getMetadataPacket(entity.getEntityId(), list);
-
-                    // Send the unblock before the itemstack change so that the 2nd metadata packet works. Why?
-                    // Scheduler
-                    // delay.
-
-                    PacketContainer packet1 = packets.getPackets().get(0);
-
-                    packets.clear();
-
-                    packets.addPacket(packetUnblock);
-                    packets.addPacket(packet1);
-                    packets.addPacket(packetBlock);
-                    // Silly mojang made the right clicking datawatcher value only valid for one use. So I have
-                    // to reset
-                    // it.
+                list = disguise.getWatcher().convert(observer, list);
+            } else {
+                for (WatcherValue obj : disguise.getWatcher().getWatchableObjects()) {
+                    if (obj.getIndex() == toUse.getIndex()) {
+                        list.add(obj);
+                        break;
+                    }
                 }
             }
+
+            // Construct the packets to return
+            WrapperPlayServerEntityMetadata packetBlock = ReflectionManager.getMetadataPacket(entity.getEntityId(), list);
+
+            list.forEach(v -> v.setValue(NmsVersion.v1_13.isSupported() ? (byte) 0 : (byte) ((byte) v.getValue() & ~(1 << 4))));
+
+            // Make a packet to send the 'unblock'
+            WrapperPlayServerEntityMetadata packetUnblock = ReflectionManager.getMetadataPacket(entity.getEntityId(), list);
+
+            // Send the unblock before the itemstack change so that the 2nd metadata packet works. Why?
+            // Scheduler delay.
+            packets.getPackets().add(0, packetUnblock);
+            packets.addPacket(packetBlock);
+            // Silly mojang made the right clicking datawatcher value only valid for one use. So I have to reset it.
         }
     }
 
-    public void handleOld(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
-        // Else if the disguise is updating equipment
-
-        EquipmentSlot slot = ReflectionManager.createEquipmentSlot(packets.getPackets().get(0).getModifier().read(1));
-
-        org.bukkit.inventory.ItemStack itemStack = disguise.getWatcher().getItemStack(slot);
-
-        if (itemStack != null) {
-            packets.clear();
-
-            PacketContainer equipPacket = sentPacket.shallowClone();
-
-            packets.addPacket(equipPacket);
-
-            equipPacket.getModifier().write(2, ReflectionManager.getNmsItem(itemStack.getType() == Material.AIR ? null : itemStack));
-        }
-
-        if ((disguise.getWatcher().isMainHandRaised() && slot == EquipmentSlot.HAND) ||
-            (disguise.getWatcher() instanceof LivingWatcher && ((LivingWatcher) disguise.getWatcher()).isOffhandRaised() &&
-                slot == EquipmentSlot.OFF_HAND)) {
-            if (itemStack == null) {
-                itemStack = packets.getPackets().get(0).getItemModifier().read(0);
-            }
-
-            if (itemStack != null && itemStack.getType() != Material.AIR) {
-                // Convert the datawatcher
-                List<WatcherValue> list = new ArrayList<>();
-                MetaIndex toUse = NmsVersion.v1_13.isSupported() ? MetaIndex.LIVING_META : MetaIndex.ENTITY_META;
-
-                if (DisguiseConfig.isMetaPacketsEnabled()) {
-                    WatcherValue watch = new WatcherValue(toUse, WrappedDataWatcher.getEntityWatcher(entity).getByte(toUse.getIndex()));
-
-                    if (watch != null) {
-                        list.add(watch);
-                    }
-
-                    list = disguise.getWatcher().convert(observer, list);
-                } else {
-                    for (WatcherValue obj : disguise.getWatcher().getWatchableObjects()) {
-                        if (obj.getIndex() == toUse.getIndex()) {
-                            list.add(obj);
-                            break;
-                        }
-                    }
-                }
-
-                // Construct the packets to return
-                PacketContainer packetBlock = ReflectionManager.getMetadataPacket(entity.getEntityId(), list);
-
-                list.forEach(v -> v.setValue(NmsVersion.v1_13.isSupported() ? (byte) 0 : (byte) ((byte) v.getValue() & ~(1 << 4))));
-
-                // Make a packet to send the 'unblock'
-                PacketContainer packetUnblock = ReflectionManager.getMetadataPacket(entity.getEntityId(), list);
-
-                // Send the unblock before the itemstack change so that the 2nd metadata packet works. Why?
-                // Scheduler
-                // delay.
-
-                PacketContainer packet1 = packets.getPackets().get(0);
-
-                packets.clear();
-
-                packets.addPacket(packetUnblock);
-                packets.addPacket(packet1);
-                packets.addPacket(packetBlock);
-                // Silly mojang made the right clicking datawatcher value only valid for one use. So I have
-                // to reset
-                // it.
-            }
-        }
-    }
 }

@@ -35,7 +35,7 @@ public class UpdateChecker {
     private String[] updateMessage = new String[0];
     @Getter
     @Setter
-    private boolean goSilent;
+    private boolean quiet;
 
     public boolean isServerLatestVersion() {
         return isOnLatestUpdate(false);
@@ -88,7 +88,7 @@ public class UpdateChecker {
     }
 
     public void notifyUpdate(CommandSender player) {
-        if (isGoSilent() || !DisguiseConfig.isNotifyUpdate() || !player.hasPermission("libsdisguises.update")) {
+        if (isQuiet() || !DisguiseConfig.isNotifyUpdate() || !player.hasPermission("libsdisguises.update")) {
             return;
         }
 
@@ -110,7 +110,7 @@ public class UpdateChecker {
             DisguiseUpdate oldUpdate = getUpdate();
 
             updateMessage = new String[0];
-            boolean alreadySilent = isGoSilent();
+            boolean alreadySilent = isQuiet();
 
             doUpdateCheck();
 
@@ -120,7 +120,7 @@ public class UpdateChecker {
 
             notifyUpdate(Bukkit.getConsoleSender());
 
-            if (isGoSilent() ? !alreadySilent : DisguiseConfig.isAutoUpdate()) {
+            if (isQuiet() ? !alreadySilent : DisguiseConfig.isAutoUpdate()) {
                 // Update message changed by download
                 grabJarDownload(getUpdate().getDownload());
 
@@ -205,7 +205,7 @@ public class UpdateChecker {
 
         File dest = new File(Bukkit.getUpdateFolderFile(), LibsDisguises.getInstance().getFile().getName());
 
-        if (!isGoSilent()) {
+        if (!isQuiet()) {
             DisguiseUtilities.getLogger().info("Now downloading build of Lib's Disguises from " + urlString + " to " + dest.getName());
         }
 
@@ -227,7 +227,9 @@ public class UpdateChecker {
                 Files.copy(input, dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
 
-            if (!isGoSilent()) {
+            con.disconnect();
+
+            if (!isQuiet()) {
                 DisguiseUtilities.getLogger().info("Download success!");
             }
 

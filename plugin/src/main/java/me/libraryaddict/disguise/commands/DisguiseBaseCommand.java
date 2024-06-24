@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.commands;
 
-import com.comphenix.protocol.ProtocolLibrary;
+import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import me.libraryaddict.disguise.DisguiseConfig;
@@ -13,6 +13,7 @@ import me.libraryaddict.disguise.commands.modify.DisguiseModifyEntityCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyPlayerCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyRadiusCommand;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
@@ -22,7 +23,7 @@ import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
-import org.apache.commons.lang.StringUtils;
+import me.libraryaddict.disguise.utilities.updates.PacketEventsUpdater;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -80,12 +81,12 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
     }
 
     protected boolean isNotPremium(CommandSender sender) {
-        String requiredProtocolLib = StringUtils.join(DisguiseUtilities.getProtocolLibRequiredVersion(), " or build #");
-        String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
+        String requiredPacketEvents = PacketEventsUpdater.getMinimumPacketEventsVersion();
+        String version = Bukkit.getPluginManager().getPlugin("packetevents").getDescription().getVersion();
 
-        if (!DisguiseConfig.isNeverUpdateProtocolLib() && DisguiseUtilities.isProtocolLibOutdated() &&
+        if (!DisguiseConfig.isNeverUpdatePacketEvents() && DisguiseUtilities.isPacketEventsOutdated() &&
             sender.hasPermission("libsdisguises.update")) {
-            DisguiseUtilities.sendProtocolLibUpdateMessage(sender, version, requiredProtocolLib);
+            DisguiseUtilities.sendPacketEventsUpdateMessage(sender, version, requiredPacketEvents);
         }
 
         // Already sent the message, assign after the previous
@@ -155,7 +156,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
             for (WatcherMethod method : methods) {
                 String arg = allArgs[i];
 
-                if (!method.getName().equalsIgnoreCase(arg)) {
+                if (!method.getMappedName().equalsIgnoreCase(arg)) {
                     continue;
                 }
 
@@ -181,13 +182,14 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         String methodName = null;
 
         if (allArgs.length == startsAt) {
-            if (disguisePerm.getType() == DisguiseType.FALLING_BLOCK || disguisePerm.getType() == DisguiseType.BLOCK_DISPLAY) {
-                info = ParamInfoManager.getParamInfoItemBlock();
+            if (disguisePerm.getType() == DisguiseType.FALLING_BLOCK || disguisePerm.getType() == DisguiseType.BLOCK_DISPLAY ||
+                MinecartWatcher.class.isAssignableFrom(disguisePerm.getWatcherClass())) {
+                info = ParamInfoManager.getParamInfo(WrappedBlockState.class);
                 methodName = "setBlock";
             } else if (disguisePerm.getType() == DisguiseType.DROPPED_ITEM || disguisePerm.getType() == DisguiseType.ITEM_DISPLAY) {
                 info = ParamInfoManager.getParamInfo(ItemStack.class);
                 methodName = "setItemStack";
-            } else if (disguisePerm.getType() == DisguiseType.ITEM_FRAME) {
+            } else if (disguisePerm.getType() == DisguiseType.ITEM_FRAME || disguisePerm.getType() == DisguiseType.GLOW_ITEM_FRAME) {
                 info = ParamInfoManager.getParamInfo(ItemStack.class);
                 methodName = "setItem";
             } else if (disguisePerm.getType() == DisguiseType.PAINTING) {
@@ -207,7 +209,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
 
             // Enderman can't hold non-blocks
             if (disguisePerm.getType() == DisguiseType.ENDERMAN && prevArg.equalsIgnoreCase("setItemInMainHand")) {
-                info = ParamInfoManager.getParamInfoItemBlock();
+                info = ParamInfoManager.getParamInfo(WrappedBlockState.class);
             }
         }
 
@@ -216,7 +218,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
             Collection<String> wantToUse = null;
 
             // If there is a list of default values
-            if (info.hasValues()) {
+            if (info.hasTabCompletion()) {
                 wantToUse = info.getEnums(currentArg);
             } else if (info.isParam(String.class)) {
                 wantToUse = new ArrayList<>();
@@ -253,12 +255,12 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         if (addMethods) {
             // If this is a method, add. Else if it can be a param of the previous argument, add.
             for (WatcherMethod method : ParamInfoManager.getDisguiseWatcherMethods(disguisePerm.getWatcherClass())) {
-                if (!perms.isAllowedDisguise(disguisePerm, Collections.singletonList(method.getName())) ||
-                    !method.isUsable(disguisePerm.getType())) {
+                if (!perms.isAllowedDisguise(disguisePerm, Collections.singletonList(method.getMappedName())) ||
+                    method.isHidden(disguisePerm.getType())) {
                     continue;
                 }
 
-                tabs.add(method.getName());
+                tabs.add(method.getMappedName());
             }
         }
 

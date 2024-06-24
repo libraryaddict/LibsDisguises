@@ -12,6 +12,15 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <dependencies>
+        <dependency>
+            <groupId>LibsDisguises</groupId>
+            <artifactId>shared</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
     <modules>
         <module>v1_17_R1</module>
         <module>v1_18_R1</module>
@@ -22,6 +31,7 @@
         <module>v1_20_R1</module>
         <module>v1_20_R2</module>
         <module>v1_20_R3</module>
+        <module>v1_20_R4</module>
     </modules>
 
 </project>

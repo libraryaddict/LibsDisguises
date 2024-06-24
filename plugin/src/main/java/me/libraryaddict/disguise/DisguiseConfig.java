@@ -211,6 +211,7 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static BarColor bossBarColor = BarColor.GREEN;
+    @Getter
     private static PermissionDefault commandVisibility = PermissionDefault.TRUE;
     @Getter
     @Setter
@@ -286,7 +287,10 @@ public class DisguiseConfig {
     private static List<String> disabledMethods = new ArrayList<>();
     @Getter
     @Setter
-    private static boolean neverUpdateProtocolLib;
+    private static boolean neverUpdatePacketEvents;
+    @Getter
+    @Setter
+    private static boolean removeDisguiseBlockPlace, removeDisguiseBlockBreak;
 
     public static boolean isArmorstandsName() {
         return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
@@ -440,10 +444,6 @@ public class DisguiseConfig {
         }
     }
 
-    public static PermissionDefault getCommandVisibility() {
-        return commandVisibility;
-    }
-
     public static void setCommandVisibility(PermissionDefault permissionDefault) {
         if (permissionDefault == null || getCommandVisibility() == permissionDefault) {
             return;
@@ -557,9 +557,50 @@ public class DisguiseConfig {
         TranslateType.refreshTranslations();
     }
 
-    public static void loadConfig() {
+    private static ConfigLoader getConfig() {
         ConfigLoader configLoader = new ConfigLoader();
         configLoader.saveMissingConfigs();
+
+        return configLoader;
+    }
+
+    public static ConfigLoader loadPreConfig() {
+        ConfigLoader configLoader = getConfig();
+
+        loadPreConfig(configLoader);
+
+        return configLoader;
+    }
+
+    /**
+     * Only called for DisguiseMethods.class so we know what the defaults of disguise parameters are, eg, tall disguises visible
+     */
+    private static ConfigurationSection loadPreConfig(ConfigLoader configLoader) {
+        ConfigurationSection config = configLoader.load();
+
+        setAddEntityAnimations(config.getBoolean("AddEntityAnimations"));
+        setDisguiseCloneExpire(config.getInt("DisguiseCloneExpire"));
+        setDisguiseEntityExpire(config.getInt("DisguiseEntityExpire"));
+        setDynamicExpiry(config.getBoolean("DynamicExpiry"));
+        setHideDisguisedPlayers(config.getBoolean("HideDisguisedPlayersFromTab"));
+        setPlayerHideArmor(config.getBoolean("PlayerHideArmor"));
+        setTallSelfDisguises(config.getBoolean("TallSelfDisguises"));
+        setRandomDisguises(config.getBoolean("RandomDisguiseOptions"));
+        setViewDisguises(config.getBoolean("ViewSelfDisguises"));
+        setViewSelfDisguisesDefault(config.getBoolean("ViewSelfDisguisesDefault"));
+        setSelfDisguisesSoundsReplaced(config.getBoolean("HearSelfDisguise"));
+        setShowDisguisedPlayersInTab(config.getBoolean("ShowPlayerDisguisesInTab"));
+        setVelocitySent(config.getBoolean("SendVelocity"));
+
+        setHideHeldItemFromSelf(config.getBoolean("RemoveHeldItem"));
+        setHideArmorFromSelf(config.getBoolean("RemoveArmor"));
+
+        return config;
+    }
+
+    public static void loadConfig() {
+        ConfigLoader configLoader = getConfig();
+        ConfigurationSection config = loadPreConfig(configLoader);
 
         loadModdedDisguiseTypes();
 
@@ -582,11 +623,8 @@ public class DisguiseConfig {
             }
         }
 
-        ConfigurationSection config = configLoader.load();
-
         PacketsManager.setViewDisguisesListener(true);
 
-        setAddEntityAnimations(config.getBoolean("AddEntityAnimations"));
         setAnimationPacketsEnabled(config.getBoolean("PacketsEnabled.Animation"));
         setCatDyeable(config.getBoolean("DyeableCat"));
         setCollectPacketsEnabled(config.getBoolean("PacketsEnabled.Collect"));
@@ -597,16 +635,10 @@ public class DisguiseConfig {
         setPvPTimer(config.getDouble("PvPTimer"));
         setDisguiseBlownWhenAttacked(config.getBoolean("BlowDisguisesWhenAttacked"));
         setDisguiseBlownWhenAttacking(config.getBoolean("BlowDisguisesWhenAttacking"));
-        setDisguiseCloneExpire(config.getInt("DisguiseCloneExpire"));
-        setDisguiseEntityExpire(config.getInt("DisguiseEntityExpire"));
-        setDynamicExpiry(config.getBoolean("DynamicExpiry"));
         setEntityStatusPacketsEnabled(config.getBoolean("PacketsEnabled.EntityStatus"));
         setEquipmentPacketsEnabled(config.getBoolean("PacketsEnabled.Equipment"));
         setExplicitDisguisePermissions(config.getBoolean("Permissions.ExplicitDisguises"));
-        setHideArmorFromSelf(config.getBoolean("RemoveArmor"));
         setHidingCreativeEquipmentFromSelf(config.getBoolean("RemoveCreativeEquipment"));
-        setHideDisguisedPlayers(config.getBoolean("HideDisguisedPlayersFromTab"));
-        setHideHeldItemFromSelf(config.getBoolean("RemoveHeldItem"));
         setHorseSaddleable(config.getBoolean("SaddleableHorse"));
         setKeepDisguiseOnPlayerDeath(config.getBoolean("KeepDisguises.PlayerDeath"));
         setLlamaCarpetable(config.getBoolean("CarpetableLlama"));
@@ -622,38 +654,32 @@ public class DisguiseConfig {
         setNameAboveHeadAlwaysVisible(config.getBoolean("NameAboveHeadAlwaysVisible"));
         setNameOfPlayerShownAboveDisguise(config.getBoolean("ShowNamesAboveDisguises"));
         setNameAboveDisguise(config.getString("NameAboveDisguise"));
-        setPlayerHideArmor(config.getBoolean("PlayerHideArmor"));
         setRetaliationCombat(config.getBoolean("RetaliationCombat"));
         setSaveGameProfiles(config.getBoolean("SaveGameProfiles"));
         setSavePlayerDisguises(config.getBoolean("SaveDisguises.Players"));
         setSaveEntityDisguises(config.getBoolean("SaveDisguises.Entities"));
-        setSelfDisguisesSoundsReplaced(config.getBoolean("HearSelfDisguise"));
         setSheepDyeable(config.getBoolean("DyeableSheep"));
-        setShowDisguisedPlayersInTab(config.getBoolean("ShowPlayerDisguisesInTab"));
-        setSoundsEnabled(config.getBoolean("DisguiseSounds"));
         setStopShulkerDisguisesFromMoving(config.getBoolean("StopShulkerDisguisesFromMoving", true));
         setUUIDGeneratedVersion(config.getInt("UUIDVersion"));
         setUndisguiseOnWorldChange(config.getBoolean("UndisguiseOnWorldChange"));
         setUpdateGameProfiles(config.getBoolean("UpdateGameProfiles"));
         setUseTranslations(config.getBoolean("Translations"));
-        setVelocitySent(config.getBoolean("SendVelocity"));
-        setViewDisguises(config.getBoolean("ViewSelfDisguises"));
         setWarnScoreboardConflict(config.getBoolean("Scoreboard.WarnConflict"));
         setCopyPlayerTeamInfo(config.getBoolean("Scoreboard.CopyPlayerTeamInfo"));
         setWitherSkullPacketsEnabled(config.getBoolean("PacketsEnabled.WitherSkull"));
         setWolfDyeable(config.getBoolean("DyeableWolf"));
         setTablistRemoveDelay(config.getInt("TablistRemoveDelay"));
         setAutoUpdate(config.getBoolean("AutoUpdate"));
-        setTallSelfDisguises(config.getBoolean("TallSelfDisguises"));
         setOverrideCustomNames(config.getBoolean("OverrideCustomNames"));
-        setRandomDisguises(config.getBoolean("RandomDisguiseOptions"));
         setSaveUserPreferences(config.getBoolean("SaveUserPreferences"));
         setPlayerDisguisesSkinExpiresMove(config.getInt("PlayerDisguisesTablistExpiresMove"));
-        setViewSelfDisguisesDefault(config.getBoolean("ViewSelfDisguisesDefault"));
         setContactMojangServers(config.getBoolean("ContactMojangServers"));
         setDisguiseRadiusMax(config.getInt("DisguiseRadiusMax"));
         setRandomUUIDS(config.getBoolean("RandomUUIDs"));
+        setRemoveDisguiseBlockBreak(config.getBoolean("UndisguiseOnBlockBreak"));
+        setRemoveDisguiseBlockPlace(config.getBoolean("UndisguiseOnBlockPlace"));
         String apiKey = config.getString("MineSkinAPIKey");
+        setSoundsEnabled(config.getBoolean("DisguiseSounds"));
 
         if (apiKey != null && apiKey.matches("[a-zA-Z\\d]{8,}")) {
             DisguiseUtilities.getMineSkinAPI().setApiKey(apiKey);
@@ -708,16 +734,16 @@ public class DisguiseConfig {
 
         try {
             setDisabledDisguises(
-                config.getStringList("DisabledDisguises").stream().map(s -> DisguiseType.valueOf(s.toUpperCase(Locale.ROOT)))
+                config.getStringList("DisabledDisguises").stream().map(s -> DisguiseType.valueOf(s.toUpperCase(Locale.ENGLISH)))
                     .collect(Collectors.toList()));
         } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning("Cannot load 'DisabledDisguises' in features.yml, invalid disguise types provided?");
         }
 
         setDisabledMethods(
-            config.getStringList("DisabledMethods").stream().map(s -> s.toLowerCase(Locale.ROOT)).collect(Collectors.toList()));
+            config.getStringList("DisabledMethods").stream().map(s -> s.toLowerCase(Locale.ENGLISH)).collect(Collectors.toList()));
 
-        setNeverUpdateProtocolLib(config.getBoolean("NeverUpdateProtocolLib", false));
+        setNeverUpdatePacketEvents(config.getBoolean("NeverUpdatePacketEvents", config.getBoolean("NeverUpdateProtocolLib", false)));
 
         String seeCommands = config.getString("Permissions.SeeCommands");
         PermissionDefault commandVisibility = seeCommands == null ? null : PermissionDefault.getByName(seeCommands);
@@ -854,7 +880,7 @@ public class DisguiseConfig {
                     requireMessage = DisguiseUtilities.translateAlternateColorCodes(requireMessage);
                 }
 
-                ModdedEntity entity = new ModdedEntity(null, name, living, mod, version, requireMessage, 0);
+                ModdedEntity entity = new ModdedEntity(null, null, name, living, mod, version, requireMessage, 0);
 
                 if (ModdedManager.getModdedEntity(name) != null) {
                     DisguiseUtilities.getLogger()
@@ -1021,46 +1047,52 @@ public class DisguiseConfig {
     }
 
     public static void setAnimationPacketsEnabled(boolean enabled) {
-        if (enabled != isAnimationPacketsEnabled()) {
-            animationPacketsEnabled = enabled;
-
-            PacketsManager.setupMainPacketsListener();
+        if (enabled == isAnimationPacketsEnabled()) {
+            return;
         }
+
+        animationPacketsEnabled = enabled;
+
+        PacketsManager.setupMainPacketsListener();
     }
 
     public static void setCollectPacketsEnabled(boolean enabled) {
-        if (enabled != isCollectPacketsEnabled()) {
-            collectPacketsEnabled = enabled;
-
-            PacketsManager.setupMainPacketsListener();
+        if (enabled == isCollectPacketsEnabled()) {
+            return;
         }
+
+        collectPacketsEnabled = enabled;
+
+        PacketsManager.setupMainPacketsListener();
     }
 
     public static void setEntityStatusPacketsEnabled(boolean enabled) {
-        if (enabled != isEntityStatusPacketsEnabled()) {
-            entityStatusPacketsEnabled = enabled;
-
-            PacketsManager.setupMainPacketsListener();
+        if (enabled == isEntityStatusPacketsEnabled()) {
+            return;
         }
+
+        entityStatusPacketsEnabled = enabled;
+
+        PacketsManager.setupMainPacketsListener();
     }
 
     public static void setEquipmentPacketsEnabled(boolean enabled) {
-        if (enabled != isEquipmentPacketsEnabled()) {
-            equipmentPacketsEnabled = enabled;
-
-            PacketsManager.setupMainPacketsListener();
+        if (enabled == isEquipmentPacketsEnabled()) {
+            return;
         }
+
+        equipmentPacketsEnabled = enabled;
+
+        PacketsManager.setupMainPacketsListener();
     }
 
     /**
      * Set the plugin to hide self disguises armor from theirselves
      */
     public static void setHideArmorFromSelf(boolean hideArmor) {
-        if (hidingArmorFromSelf != hideArmor) {
-            hidingArmorFromSelf = hideArmor;
+        hidingArmorFromSelf = hideArmor;
 
-            PacketsManager.setInventoryListenerEnabled(isHidingHeldItemFromSelf() || isHidingArmorFromSelf());
-        }
+        updateInventoryListener();
     }
 
     /**
@@ -1068,27 +1100,33 @@ public class DisguiseConfig {
      * self disguise
      */
     public static void setHideHeldItemFromSelf(boolean hideHelditem) {
-        if (hidingHeldItemFromSelf != hideHelditem) {
-            hidingHeldItemFromSelf = hideHelditem;
+        hidingHeldItemFromSelf = hideHelditem;
 
-            PacketsManager.setInventoryListenerEnabled(isHidingHeldItemFromSelf() || isHidingArmorFromSelf());
-        }
+        updateInventoryListener();
+    }
+
+    private static void updateInventoryListener() {
+        PacketsManager.setInventoryListenerEnabled(isHidingHeldItemFromSelf() || isHidingArmorFromSelf());
     }
 
     public static void setMiscDisguisesForLivingEnabled(boolean enabled) {
-        if (enabled != isMiscDisguisesForLivingEnabled()) {
-            miscDisguisesForLivingEnabled = enabled;
-
-            PacketsManager.setupMainPacketsListener();
+        if (enabled == isMiscDisguisesForLivingEnabled()) {
+            return;
         }
+
+        miscDisguisesForLivingEnabled = enabled;
+
+        PacketsManager.setupMainPacketsListener();
     }
 
     public static void setMovementPacketsEnabled(boolean enabled) {
-        if (enabled != isMovementPacketsEnabled()) {
-            movementPacketsEnabled = enabled;
-
-            PacketsManager.setupMainPacketsListener();
+        if (enabled == isMovementPacketsEnabled()) {
+            return;
         }
+
+        movementPacketsEnabled = enabled;
+
+        PacketsManager.setupMainPacketsListener();
     }
 
     /**

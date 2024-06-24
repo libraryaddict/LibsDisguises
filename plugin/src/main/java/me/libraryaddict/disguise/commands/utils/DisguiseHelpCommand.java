@@ -47,7 +47,7 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                 }
 
                 if (help != null) {
-                    if (help.hasValues() && help.canTranslateValues()) {
+                    if (help.hasTabCompletion() && help.canTranslateValues()) {
                         LibsMsg.DHELP_HELP4.send(sender, help.getName(),
                             StringUtils.join(help.getEnums(""), LibsMsg.DHELP_HELP4_SEPERATOR.get()));
                     } else {
@@ -79,12 +79,12 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
 
                 try {
                     for (WatcherMethod method : ParamInfoManager.getDisguiseWatcherMethods(watcher)) {
-                        if (!method.isUsable(type.getType())) {
+                        if (method.isHidden(type.getType())) {
                             continue;
                         }
 
                         if (args.length < 2 || !args[1].equalsIgnoreCase(LibsMsg.DHELP_SHOW.get())) {
-                            if (!perms.isAllowedDisguise(type, Collections.singleton(method.getName().toLowerCase(Locale.ENGLISH)))) {
+                            if (!perms.isAllowedDisguise(type, Collections.singleton(method.getMappedName().toLowerCase(Locale.ENGLISH)))) {
                                 ignored++;
                                 continue;
                             }
@@ -93,18 +93,19 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                         ParamInfo info = ParamInfoManager.getParamInfo(method);
 
                         int value = ParamInfoManager.getValue(method);
-                        ChatColor methodColor = ChatColor.YELLOW;
+                        LibsMsg methodC = LibsMsg.DHELP_OPTIONS_METHOD_VERY_SPECIFIC;
 
                         if (value == 1) {
-                            methodColor = ChatColor.AQUA;
+                            methodC = LibsMsg.DHELP_OPTIONS_METHOD_SOMEWHAT_SPECIFIC;
                         } else if (value == 2) {
-                            methodColor = ChatColor.GRAY;
+                            methodC = LibsMsg.DHELP_OPTIONS_METHOD_GENERIC;
                         }
 
-                        String str = TranslateType.DISGUISE_OPTIONS.get(method.getName()) + ChatColor.DARK_RED + "(" + ChatColor.GREEN +
-                            info.getName() + ChatColor.DARK_RED + ")";
+                        String str =
+                            LibsMsg.DHELP_OPTIONS_METHOD.get(methodC.get(TranslateType.DISGUISE_OPTIONS.get(method.getMappedName())),
+                                info.getName());
 
-                        methods.add(methodColor + str);
+                        methods.add(str);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -114,8 +115,7 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                     methods.add(LibsMsg.DHELP_NO_OPTIONS.get());
                 }
 
-                LibsMsg.DHELP_OPTIONS.send(sender, ChatColor.DARK_RED + type.toReadable(),
-                    StringUtils.join(methods, ChatColor.DARK_RED + ", "));
+                LibsMsg.DHELP_OPTIONS.send(sender, type.toReadable(), StringUtils.join(methods, LibsMsg.DHELP_OPTIONS_JOINER.getRaw()));
 
                 if (ignored > 0) {
                     LibsMsg.NO_PERMS_USE_OPTIONS.send(sender, ignored);

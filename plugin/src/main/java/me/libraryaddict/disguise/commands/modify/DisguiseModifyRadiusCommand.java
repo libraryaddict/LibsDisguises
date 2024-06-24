@@ -265,7 +265,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
             for (WatcherMethod method : ParamInfoManager.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
                 for (String arg : args) {
-                    if (!method.getName().equalsIgnoreCase(arg) || usedOptions.contains(arg)) {
+                    if (!method.getMappedName().equalsIgnoreCase(arg) || usedOptions.contains(arg)) {
                         continue;
                     }
 

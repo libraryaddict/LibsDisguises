@@ -1,20 +1,20 @@
 package me.libraryaddict.disguise.utilities.params.types.custom;
 
-import com.comphenix.protocol.utility.MinecraftReflection;
-import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
+import me.libraryaddict.disguise.utilities.reflection.ItemStackSerializer;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -23,10 +23,6 @@ import java.util.Locale;
 public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Object> {
     public ParamInfoItemStack(Class paramClass, String name, String valueType, String description, Enum[] possibleValues) {
         super(paramClass, name, valueType, description, possibleValues);
-
-        if (this instanceof ParamInfoItemBlock) {
-            return;
-        }
 
         setOtherValues("null", "%held-item%", "%offhand-item%", "%helmet%", "%chestplate%", "%leggings%", "%boots%");
     }
@@ -51,8 +47,8 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
         ItemStack item = (ItemStack) object;
         ItemStack temp = new ItemStack(item.getType(), item.getAmount());
 
-        if (item.containsEnchantment(Enchantment.DURABILITY)) {
-            temp.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+        if (item.containsEnchantment(DisguiseUtilities.getDurabilityEnchantment())) {
+            temp.addUnsafeEnchantment(DisguiseUtilities.getDurabilityEnchantment(), 1);
         }
 
         if (temp.isSimilar(item)) {
@@ -62,43 +58,16 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
                 name += ":" + item.getAmount();
             }
 
-            if (item.containsEnchantment(Enchantment.DURABILITY)) {
+            if (item.containsEnchantment(DisguiseUtilities.getDurabilityEnchantment())) {
                 name += ":" + TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("glow");
             }
 
             return name;
         }
 
-        // If its not a CraftItemStack
-        if (!MinecraftReflection.isCraftItemStack(item) && item.hasItemMeta()) {
-            item = ReflectionManager.getCraftItem(item);
-        }
-
-        String itemName = ReflectionManager.getItemName(item.getType());
-        ArrayList<String> mcArray = new ArrayList<>();
-
-        if (NmsVersion.v1_13.isSupported() && item.hasItemMeta()) {
-            mcArray.add(itemName + DisguiseUtilities.serialize(NbtFactory.fromItemTag(item)));
-        } else {
-            mcArray.add(itemName);
-        }
-
-        if (item.getAmount() != 1) {
-            mcArray.add(String.valueOf(item.getAmount()));
-        }
-
-        if (!NmsVersion.v1_13.isSupported()) {
-            if (item.getDurability() != 0) {
-                mcArray.add(String.valueOf(item.getDurability()));
-            }
-
-            if (item.hasItemMeta()) {
-                mcArray.add(DisguiseUtilities.serialize(NbtFactory.fromItemTag(item)));
-            }
-        }
-
-        return StringUtils.join(mcArray, "-");
+        return StringUtils.join(ItemStackSerializer.serialize(item), "-");
     }
+
 
     protected static ItemStack parseToItemstack(String string) {
         if (string.isEmpty()) {
@@ -109,47 +78,56 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
             } catch (Exception ex) {
                 throw new IllegalArgumentException();
             }
-        } else if (!string.matches("[a-zA-Z0-9_:,]+")) { // If it can't be simple parsed due to invalid chars
+        } else if (!string.matches("[a-zA-Z0-9_:,]+")) {
+            // If it can't be simple parsed due to invalid chars
             String[] split;
+            String materialName;
 
-            // If it matches /give @p stone {data}
-            if (string.matches("^[^{]+?[ -]\\{[.].+?}$")) {
-                split = string.substring(0, string.indexOf("{") - 1).split("[ -]");
-                split = Arrays.copyOf(split, split.length + 1);
-                split[split.length - 1] = string.substring(string.indexOf("{"));
-            } else if (string.matches("^[^{ -]+?\\{.+?}([ -][0-9]+)?$")) { // /give @p stone[data] <amount?>
-                split = new String[string.endsWith("}") ? 2 : 3];
-                split[0] = string.substring(0, string.indexOf("{"));
-                split[string.endsWith("}") ? 1 : 2] = string.substring(string.indexOf("{"), string.lastIndexOf("}") + 1);
+            if (!NmsVersion.v1_20_R4.isSupported()) {
+                // If it matches /give @p stone {data}
+                if (string.matches("^[^{]+?[ -]\\{[.].+?}$")) {
+                    split = string.substring(0, string.indexOf("{") - 1).split("[ -]");
+                    split = Arrays.copyOf(split, split.length + 1);
+                    split[split.length - 1] = string.substring(string.indexOf("{"));
+                } else if (string.matches("^[^{ -]+?\\{.+?}([ -][0-9]+)?$")) { // /give @p stone[data] <amount?>
+                    split = new String[string.endsWith("}") ? 2 : 3];
+                    split[0] = string.substring(0, string.indexOf("{"));
+                    split[string.endsWith("}") ? 1 : 2] = string.substring(string.indexOf("{"), string.lastIndexOf("}") + 1);
 
-                if (!string.endsWith("}")) {
-                    split[1] = string.substring(string.lastIndexOf(" ") + 1);
+                    if (!string.endsWith("}")) {
+                        split[1] = string.substring(string.lastIndexOf(" ") + 1);
+                    }
+                } else {
+                    split = string.split("[ -]");
                 }
+
+                materialName = split[0];
             } else {
-                split = string.split("[ -]");
+                split = string.split(" (?=\\d+)");
+                materialName = split[0];
+
+                if (materialName.contains("[")) {
+                    materialName = materialName.substring(0, materialName.indexOf("["));
+                }
             }
 
-            Material material = ReflectionManager.getMaterial(split[0].toLowerCase(Locale.ENGLISH));
+            Material material = ReflectionManager.getMaterial(materialName.toUpperCase(Locale.ENGLISH));
 
             if (material == null) {
-                material = Material.getMaterial(split[0].toUpperCase(Locale.ENGLISH));
+                material = Material.getMaterial(materialName.toUpperCase(Locale.ENGLISH));
             }
 
-            if (material == null || (material == Material.AIR && !split[0].equalsIgnoreCase("air"))) {
-                throw new IllegalArgumentException();
+            ItemStack itemStack = getItemStack(material, split);
+
+            String s = split[split.length - 1];
+
+            // Because now we have to provide the item, lets just hope the user gave the right args
+            if (NmsVersion.v1_20_R4.isSupported()) {
+                s = split[0];
             }
 
-            int amount = split.length > 1 && split[1].matches("[0-9]+") ? Integer.parseInt(split[1]) : 1;
-            ItemStack itemStack;
-
-            if (!NmsVersion.v1_13.isSupported() && split.length > 2 && split[2].matches("[0-9]+")) {
-                itemStack = new ItemStack(material, amount, Short.parseShort(split[2]));
-            } else {
-                itemStack = new ItemStack(material, amount);
-            }
-
-            if (split[split.length - 1].contains("{")) {
-                Bukkit.getUnsafe().modifyItemStack(itemStack, split[split.length - 1]);
+            if (s.contains("{") || s.contains("[")) {
+                Bukkit.getUnsafe().modifyItemStack(itemStack, s);
             }
 
             return itemStack;
@@ -158,12 +136,33 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
         return parseToItemstack(string.split("[:,]")); // Split on colon or comma
     }
 
+    @NotNull
+    private static ItemStack getItemStack(Material material, String[] split) {
+        if (material == null || (material == Material.AIR && !split[0].equalsIgnoreCase("air"))) {
+            throw new IllegalArgumentException();
+        }
+
+        int amount = split.length > 1 && split[1].matches("[0-9]+") ? Integer.parseInt(split[1]) : 1;
+        ItemStack itemStack;
+
+        if (!NmsVersion.v1_13.isSupported() && split.length > 2 && split[2].matches("[0-9]+")) {
+            itemStack = new ItemStack(material, amount, Short.parseShort(split[2]));
+        } else {
+            itemStack = new ItemStack(material, amount);
+        }
+
+        return itemStack;
+    }
+
     protected static ItemStack parseToItemstack(String[] split) {
         if (split[0].isEmpty() || split[0].equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("null"))) {
             return null;
         }
+        Material material = ReflectionManager.getMaterial(split[0].toUpperCase(Locale.ENGLISH));
 
-        Material material = Material.getMaterial(split[0].toUpperCase(Locale.ENGLISH));
+        if (material == null) {
+            material = Material.getMaterial(split[0].toUpperCase(Locale.ENGLISH));
+        }
 
         if (material == null || (material == Material.AIR && !split[0].equalsIgnoreCase("air"))) {
             throw new IllegalArgumentException();
@@ -187,7 +186,7 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
         ItemStack itemStack = new ItemStack(material, amount == null ? 1 : amount);
 
         if (enchanted) {
-            itemStack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+            itemStack.addUnsafeEnchantment(DisguiseUtilities.getDurabilityEnchantment(), 1);
         }
 
         return itemStack;

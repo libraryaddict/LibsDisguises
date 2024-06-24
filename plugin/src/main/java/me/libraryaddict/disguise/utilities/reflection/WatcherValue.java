@@ -1,13 +1,11 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.WrappedDataValue;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
+import com.github.retrooper.packetevents.protocol.entity.data.EntityDataType;
 import lombok.Getter;
 import lombok.Setter;
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import org.bukkit.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,75 +14,38 @@ import java.util.List;
 @Setter
 public class WatcherValue {
     private final MetaIndex metaIndex;
+    private final EntityDataType dataType;
     private final int index;
+    private boolean bukkitReadable;
     private Object value;
 
-    public WatcherValue(int index, Object value) {
+    public WatcherValue(EntityData entityData) {
         this.metaIndex = null;
-        this.index = index;
-        this.value = value;
+        this.dataType = entityData.getType();
+        this.index = entityData.getIndex();
+        this.value = entityData.getValue();
+        this.bukkitReadable = false;
     }
 
-    public WatcherValue(MetaIndex index, Object value) {
+    public WatcherValue(MetaIndex index, Object value, boolean bukkitReadable) {
+        this.dataType = index.getDataType();
         this.index = index.getIndex();
         this.metaIndex = index;
         this.value = value;
+        this.bukkitReadable = bukkitReadable;
     }
 
-    public WatcherValue(FlagWatcher flagWatcher, WrappedDataValue dataValue) {
-        this.index = dataValue.getIndex();
-        metaIndex = MetaIndex.getMetaIndex(flagWatcher, dataValue.getIndex());
-        value = dataValue.getRawValue();
+    public EntityData getDataValue() {
+        return ReflectionManager.getEntityData(getMetaIndex(), getValue(), isBukkitReadable());
     }
 
-    public WatcherValue(FlagWatcher flagWatcher, WrappedWatchableObject dataValue) {
-        this.index = dataValue.getIndex();
-        metaIndex = MetaIndex.getMetaIndex(flagWatcher, dataValue.getIndex());
-        value = dataValue.getRawValue();
-    }
-
-    public WrappedWatchableObject getWatchableObject() {
-        return ReflectionManager.createWatchable(getMetaIndex(), getValue());
-    }
-
-    public WrappedDataValue getDataValue() {
-        return new WrappedDataValue(getMetaIndex().getIndex(), getMetaIndex().getSerializer(),
-            ReflectionManager.convertInvalidMeta(getValue()));
-    }
-
-    public static List<WatcherValue> getValues(WrappedDataWatcher dataWatcher) {
+    public static List<WatcherValue> getValues(Entity entity) {
         List<WatcherValue> list = new ArrayList<>();
 
-        for (WrappedWatchableObject object : dataWatcher.getWatchableObjects()) {
-            list.add(new WatcherValue(object.getIndex(), object.getRawValue()));
+        for (EntityData data : ReflectionManager.getEntityWatcher(entity)) {
+            list.add(new WatcherValue(data));
         }
 
         return list;
-    }
-
-    public static List<WatcherValue> getValues(FlagWatcher watcher, WrappedDataWatcher dataWatcher) {
-        List<WatcherValue> newList = new ArrayList<>();
-
-        for (WrappedWatchableObject object : dataWatcher.getWatchableObjects()) {
-            newList.add(new WatcherValue(watcher, object));
-        }
-
-        return newList;
-    }
-
-    public static List<WatcherValue> getValues(FlagWatcher watcher, PacketContainer packetContainer) {
-        List<WatcherValue> newList = new ArrayList<>();
-
-        if (NmsVersion.v1_19_R2.isSupported()) {
-            for (WrappedDataValue dataValue : packetContainer.getDataValueCollectionModifier().read(0)) {
-                newList.add(new WatcherValue(watcher, dataValue));
-            }
-        } else {
-            for (WrappedWatchableObject object : packetContainer.getWatchableCollectionModifier().read(0)) {
-                newList.add(new WatcherValue(watcher, object));
-            }
-        }
-
-        return newList;
     }
 }

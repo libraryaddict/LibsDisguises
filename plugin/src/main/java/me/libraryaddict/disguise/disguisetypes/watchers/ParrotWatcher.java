@@ -13,11 +13,11 @@ public class ParrotWatcher extends TameableWatcher {
     }
 
     public Parrot.Variant getVariant() {
-        return Parrot.Variant.values()[getData(MetaIndex.PARROT_VARIANT)];
+        return getData(MetaIndex.PARROT_VARIANT);
     }
 
     public void setVariant(Parrot.Variant variant) {
-        setData(MetaIndex.PARROT_VARIANT, variant.ordinal());
+        setData(MetaIndex.PARROT_VARIANT, variant);
         sendData(MetaIndex.PARROT_VARIANT);
     }
 }

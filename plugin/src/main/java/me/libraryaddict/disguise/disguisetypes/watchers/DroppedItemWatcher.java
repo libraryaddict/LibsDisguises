@@ -5,6 +5,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -18,6 +19,7 @@ public class DroppedItemWatcher extends FlagWatcher {
         return getData(MetaIndex.DROPPED_ITEM);
     }
 
+    @MethodDescription("What Item was dropped?")
     public void setItemStack(ItemStack item) {
         setData(MetaIndex.DROPPED_ITEM, item);
         sendData(MetaIndex.DROPPED_ITEM);

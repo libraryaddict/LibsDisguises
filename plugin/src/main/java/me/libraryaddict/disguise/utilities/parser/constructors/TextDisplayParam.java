@@ -24,7 +24,7 @@ public class TextDisplayParam extends ExtraDisguiseParam<String> {
             return false;
         }
 
-        return Arrays.stream(methods).noneMatch(m -> m.getParam() != null && m.getName().equalsIgnoreCase(arg));
+        return Arrays.stream(methods).noneMatch(m -> m.getParam() != null && m.getMappedName().equalsIgnoreCase(arg));
     }
 
     @Override

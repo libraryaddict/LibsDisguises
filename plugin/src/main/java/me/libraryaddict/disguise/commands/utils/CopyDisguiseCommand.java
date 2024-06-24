@@ -9,10 +9,11 @@ import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent.Builder;
+import libsdisg.shaded.net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -21,7 +22,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -87,16 +90,32 @@ public class CopyDisguiseCommand implements CommandExecutor {
         return true;
     }
 
-    public void sendMessage(CommandSender sender, LibsMsg msg, LibsMsg oldVer, String string, boolean forceAbbrev) {
-     /*   if (!NmsVersion.v1_13.isSupported()) {
-            oldVer.send(sender, string);
-            return;
-        }*/
+    private Component createComponent(String text, int section, int max) {
+        Component component = LibsMsg.CLICK_COPY.getAdv(section);
 
-        ComponentBuilder builder = new ComponentBuilder("").append(msg.getBase()).append(" ");
+        if (NmsVersion.v1_15.isSupported()) {
+            component = component.clickEvent(net.kyori.adventure.text.event.ClickEvent.copyToClipboard(text));
+        } else {
+            component = component.clickEvent(net.kyori.adventure.text.event.ClickEvent.suggestCommand(text));
+        }
+
+        LibsMsg hover = NmsVersion.v1_15.isSupported() ? LibsMsg.CLICK_TO_COPY_HOVER_CLIPBOARD : LibsMsg.CLICK_TO_COPY_HOVER;
+        Component hoverText = hover.getAdv(section, max, DisguiseUtilities.getMiniMessage().escapeTags(text));
+        component = component.hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(hoverText));
+
+        return component;
+    }
+
+    public void sendMessage(CommandSender sender, LibsMsg msg, LibsMsg oldVer, String string, boolean forceAbbrev) {
+        Builder builder = Component.text().append(msg.getAdv()).appendSpace();
 
         if (string.length() > 256 || forceAbbrev) {
             String[] split = DisguiseUtilities.split(string);
+
+            // Because the splitter removes the quotes..
+            for (int i = 0; i < split.length; i++) {
+                split[i] = DisguiseUtilities.quote(split[i]);
+            }
 
             for (int i = 0; i < split.length; i++) {
                 if (split[i].length() <= 256) {
@@ -113,7 +132,7 @@ public class CopyDisguiseCommand implements CommandExecutor {
                 split[i] = split[i].substring(0, 256);
             }
 
-            int sections = 0;
+            List<String> sections = new ArrayList<>();
             StringBuilder current = new StringBuilder();
 
             for (int i = 0; i < split.length; i++) {
@@ -128,26 +147,26 @@ public class CopyDisguiseCommand implements CommandExecutor {
                     continue;
                 }
 
-                if (sections != 0) {
-                    builder.append(" ");
-                    builder.reset();
+                // Have non-final end with a space
+                if (i + 1 < split.length) {
+                    current.append(" ");
                 }
 
-                sections++;
-
-                builder.append(LibsMsg.CLICK_COPY.getBase(sections));
-                builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, current.toString()));
-                builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                    new ComponentBuilder("").append(LibsMsg.CLICK_TO_COPY_HOVER.getBase()).append(" " + sections).create()));
-
+                sections.add(current.toString());
                 current = new StringBuilder();
             }
+
+            for (int i = 0; i < sections.size(); i++) {
+                if (i > 0) {
+                    builder.appendSpace();
+                }
+
+                builder.append(createComponent(sections.get(i), i + 1, sections.size()));
+            }
         } else {
-            builder.append(LibsMsg.CLICK_COPY.getBase(string));
-            builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, string));
-            builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, LibsMsg.CLICK_TO_COPY_HOVER.getBase()));
+            builder.append(createComponent(string, 1, 1));
         }
 
-        sender.spigot().sendMessage(builder.create());
+        DisguiseUtilities.sendMessage(sender, builder.build());
     }
 }

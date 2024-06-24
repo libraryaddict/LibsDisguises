@@ -1,13 +1,13 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
 import lombok.Getter;
 
 @Getter
 public class LibsProfileLookupCaller implements ProfileLookupCallback {
-    private WrappedGameProfile gameProfile;
+    private UserProfile userProfile;
 
     @Override
     public void onProfileLookupFailed(String s, Exception e) {
@@ -19,6 +19,6 @@ public class LibsProfileLookupCaller implements ProfileLookupCallback {
 
     @Override
     public void onProfileLookupSucceeded(GameProfile profile) {
-        gameProfile = WrappedGameProfile.fromHandle(profile);
+        userProfile = ReflectionManager.getUserProfile(profile);
     }
 }

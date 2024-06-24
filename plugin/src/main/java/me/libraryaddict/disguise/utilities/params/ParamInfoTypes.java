@@ -1,27 +1,27 @@
 package me.libraryaddict.disguise.utilities.params;
 
-import com.comphenix.protocol.wrappers.BlockPosition;
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import com.comphenix.protocol.wrappers.WrappedParticle;
+import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
+import com.github.retrooper.packetevents.protocol.player.UserProfile;
+import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
+import com.github.retrooper.packetevents.util.Vector3i;
 import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.disguisetypes.EntityPose;
 import me.libraryaddict.disguise.disguisetypes.GolemCrack;
-import me.libraryaddict.disguise.disguisetypes.RabbitType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.params.types.base.ParamInfoBoolean;
+import me.libraryaddict.disguise.utilities.params.types.base.ParamInfoByte;
 import me.libraryaddict.disguise.utilities.params.types.base.ParamInfoDouble;
 import me.libraryaddict.disguise.utilities.params.types.base.ParamInfoFloat;
 import me.libraryaddict.disguise.utilities.params.types.base.ParamInfoFloatNullable;
 import me.libraryaddict.disguise.utilities.params.types.base.ParamInfoInteger;
 import me.libraryaddict.disguise.utilities.params.types.base.ParamInfoString;
-import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoBlockData;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoBlockPosition;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoBoatType;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoChatColor;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoColor;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoComponent;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoDisplayBrightness;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoEulerAngle;
-import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoGameProfile;
-import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemBlock;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemStack;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemStackArray;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoParticle;
@@ -30,10 +30,14 @@ import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoQuaterni
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoSoundGroup;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoTime;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoTransformation;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoUserProfile;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoVector3f;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoWrappedBlockData;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Art;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
@@ -41,10 +45,10 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.TreeSpecies;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Axolotl;
+import org.bukkit.entity.Boat;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Fox;
@@ -56,6 +60,8 @@ import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Panda;
 import org.bukkit.entity.Parrot;
+import org.bukkit.entity.Pose;
+import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Sniffer;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.entity.TropicalFish;
@@ -75,16 +81,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by libraryaddict on 7/09/2018.
  */
 public class ParamInfoTypes {
-    public ParamInfoItemBlock getParamInfoBlock() {
-        return new ParamInfoItemBlock(ItemStack.class, "ItemStack", "ItemStack (Material)", "An ItemStack compromised of Material",
-            getMaterials());
-    }
-
     /**
      * Constructor values are listed here for continuity
      */
@@ -105,21 +107,25 @@ public class ParamInfoTypes {
 
         paramInfos.add(new ParamInfoEnum(BlockFace.class, "Direction", "Direction (North, East, South, West, Up, Down)",
             "View the directions usable on player setSleeping and shulker direction", Arrays.copyOf(BlockFace.values(), 6)));
-        paramInfos.add(new ParamInfoEnum(RabbitType.class, "Rabbit Type", "View the kinds of rabbits you can turn into"));
-        paramInfos.add(new ParamInfoEnum(TreeSpecies.class, "Tree Species", "View the different types of tree species"));
+        paramInfos.add(new ParamInfoEnum(Rabbit.Type.class, "Rabbit Type", "View the kinds of rabbits you can turn into"));
 
         paramInfos.add(new ParamInfoEnum(MainHand.class, "Main Hand", "Set the main hand for an entity"));
         paramInfos.add(new ParamInfoEnum(Llama.Color.class, "Llama Color", "View all the colors you can use for a llama color"));
         paramInfos.add(new ParamInfoEnum(Parrot.Variant.class, "Parrot Variant", "View the different colors a parrot can be"));
+        paramInfos.add(new ParamInfoComponent(Component.class, "Component", "A kyori adventure text component"));
+
+        Material[] materials = getMaterials();
 
         if (NmsVersion.v1_13.isSupported()) {
-            paramInfos.add(
-                new ParamInfoParticle(WrappedParticle.class, "Particle", "The different particles of Minecraft", Particle.values(),
-                    getMaterials()));
+            paramInfos.add(new ParamInfoParticle("Particle", "The different particles of Minecraft", materials));
+            paramInfos.add(new ParamInfoEnum(Particle.class, "ParticleType", "The different particles of Minecraft"));
             paramInfos.add(new ParamInfoEnum(TropicalFish.Pattern.class, "Pattern", "Patterns of a tropical fish"));
-            paramInfos.add(
-                new ParamInfoBlockData(BlockData.class, "BlockData", "The block data states, barrel[facing=north,open=false] as example",
-                    getMaterials()));
+            //   paramInfos.add(
+            //      new ParamInfoBlockData(BlockData.class, "BlockData", "The block data states, barrel[facing=north,open=false] as
+            //      example",
+            //         getMaterials()));
+            paramInfos.add(new ParamInfoWrappedBlockData(WrappedBlockState.class, "BlockData",
+                "The block data states, barrel[facing=north,open=false] as example"));
         } else {
             paramInfos.add(new ParamInfoEnum(Particle.class, "Particle", "The different particles of Minecraft"));
         }
@@ -128,7 +134,14 @@ public class ParamInfoTypes {
         paramInfos.add(new ParamInfoEnum(Horse.Style.class, "Horse Style", "Horse style which is the patterns on the horse"));
 
         if (NmsVersion.v1_14.isSupported()) {
-            paramInfos.add(new ParamInfoEnum(EntityPose.class, "EntityPose", "The pose the entity should strike"));
+            paramInfos.add(new ParamInfoEnum(EntityPose.class, "EntityPose", "The pose the entity should strike",
+                Arrays.stream(Pose.values()).map(pose -> {
+                    try {
+                        return EntityPose.valueOf(pose == Pose.SNEAKING ? "CROUCHING" : pose.name());
+                    } catch (Exception ignored) {
+                    }
+                    return null;
+                }).filter(Objects::nonNull).toArray(EntityPose[]::new)));
             paramInfos.add(new ParamInfoEnum(Cat.Type.class, "Cat Type", "The type of cat"));
             paramInfos.add(new ParamInfoEnum(Fox.Type.class, "Fox Type", "The type of fox"));
             paramInfos.add(new ParamInfoEnum(Panda.Gene.class, "Panda Gene", "The panda gene type"));
@@ -145,6 +158,9 @@ public class ParamInfoTypes {
 
         if (NmsVersion.v1_19_R1.isSupported()) {
             paramInfos.add(new ParamInfoEnum(Frog.Variant.class, "Frog Variant", "The variant of Frog"));
+            paramInfos.add(new ParamInfoBoatType(Boat.Type.class, "Boat Type", "The different types of boats"));
+        } else {
+            paramInfos.add(new ParamInfoEnum(TreeSpecies.class, "Tree Species", "View the different types of tree species"));
         }
 
         if (NmsVersion.v1_19_R3.isSupported()) {
@@ -158,6 +174,8 @@ public class ParamInfoTypes {
             paramInfos.add(
                 new ParamInfoEnum(ItemDisplay.ItemDisplayTransform.class, "Item Display Transform", "How the Item Display is transformed"));
             paramInfos.add(new ParamInfoEnum(Display.Billboard.class, "Display Billboard", "How the billboard is aligned"));
+            paramInfos.add(new ParamInfoDisplayBrightness(Display.Brightness.class, "Display Brightness",
+                "The block and sky light brightness of the display"));
 
             try {
                 paramInfos.add(
@@ -181,19 +199,18 @@ public class ParamInfoTypes {
         paramInfos.add(
             new ParamInfoEulerAngle(EulerAngle.class, "Euler Angle", "Euler Angle (X,Y,Z)", "Set the X,Y,Z directions on an armorstand"));
         paramInfos.add(new ParamInfoColor(Color.class, "Color", "Colors that can also be defined through RGB", getColors()));
-        paramInfos.add(new ParamInfoEnum(Material.class, "Material", "A material used for blocks and items", getMaterials()));
+        paramInfos.add(new ParamInfoEnum(Material.class, "Material", "A material used for blocks and items", materials));
         paramInfos.add(new ParamInfoItemStack(ItemStack.class, "ItemStack", "ItemStack (Material,Amount?,Glow?)",
-            "An ItemStack compromised of Material,Amount,Glow. Only requires Material", getMaterials()));
+            "An ItemStack compromised of Material,Amount,Glow. Only requires Material", materials));
         paramInfos.add(new ParamInfoItemStackArray(ItemStack[].class, "ItemStack[]",
-            "Four ItemStacks (Material:Amount?:Glow?,Material:Amount?:Glow?..)", "Four ItemStacks separated by a comma", getMaterials()));
+            "Four ItemStacks (Material:Amount?:Glow?,Material:Amount?:Glow?..)", "Four ItemStacks separated by a comma", materials));
         paramInfos.add(
             new ParamInfoPotionEffect(PotionEffectType.class, "Potion Effect", "View all the potion effects you can add", getPotions()));
 
-        paramInfos.add(new ParamInfoBlockPosition(BlockPosition.class, "Block Position", "Block Position (num,num,num)",
-            "Three numbers separated by a ,"));
-        paramInfos.add(new ParamInfoGameProfile(WrappedGameProfile.class, "GameProfile",
-            "Get the gameprofile here https://sessionserver.mojang" +
-                ".com/session/minecraft/profile/PLAYER_UUID_GOES_HERE?unsigned=false"));
+        paramInfos.add(
+            new ParamInfoBlockPosition(Vector3i.class, "Block Position", "Block Position (num,num,num)", "Three numbers separated by a ,"));
+        paramInfos.add(new ParamInfoUserProfile(UserProfile.class, "UserProfile", "Get the userprofile here https://sessionserver.mojang" +
+            ".com/session/minecraft/profile/PLAYER_UUID_GOES_HERE?unsigned=false"));
         paramInfos.add(new ParamInfoTime(long.class, "Expiry Time",
             "Set how long the disguise lasts, <Num><Time><Num>... where <Time> is (s/sec)(m/min)(h/hour)(d/day) " +
                 "etc. 30m20secs = 30 minutes, 20 seconds"));
@@ -212,6 +229,7 @@ public class ParamInfoTypes {
         paramInfos.add(new ParamInfoFloat("Number.0", "A number which can have decimal places"));
         paramInfos.add(new ParamInfoFloatNullable("Number.0", "A number which can have decimal places or be null"));
         paramInfos.add(new ParamInfoDouble("Number.0", "A number which can have decimal places"));
+        paramInfos.add(new ParamInfoByte("Number", "A whole number from -127 to 128"));
         paramInfos.add(new ParamInfoSoundGroup());
 
         return paramInfos;
@@ -264,6 +282,10 @@ public class ParamInfoTypes {
 
     private Map<String, Object> getPotions() {
         Map<String, Object> map = new HashMap<>();
+
+        if (Bukkit.getServer() == null) {
+            return map;
+        }
 
         for (PotionEffectType effectType : PotionEffectType.values()) {
             if (effectType == null) {

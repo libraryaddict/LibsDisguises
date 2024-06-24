@@ -1,32 +1,27 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.github.retrooper.packetevents.protocol.player.UserProfile;
+import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
+import io.netty.buffer.ByteBuf;
 import org.bukkit.Art;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Cat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Frog;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
-import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.util.Vector;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 
 public interface ReflectionManagerAbstract {
     boolean hasInvul(Entity entity);
@@ -40,12 +35,6 @@ public interface ReflectionManagerAbstract {
     Object getPlayerConnectionOrPlayer(Player player);
 
     Object createEntityInstance(String entityName);
-
-    Object getMobEffectList(int id);
-
-    Object createMobEffect(PotionEffect effect);
-
-    Object createMobEffect(int id, int duration, int amplification, boolean ambient, boolean particles);
 
     Object getBoundingBox(Entity entity);
 
@@ -63,20 +52,9 @@ public interface ReflectionManagerAbstract {
 
     ItemStack getCraftItem(ItemStack bukkitItem);
 
-    Object getCraftSound(Sound sound);
-
     Object getEntityTrackerEntry(Entity target) throws Exception;
 
     Object getMinecraftServer();
-
-    String getEnumArt(Art art);
-
-    Object getBlockPosition(int x, int y, int z);
-
-    Enum getEnumDirection(int direction);
-
-    PacketContainer getTabListPacket(String displayName, WrappedGameProfile gameProfile, boolean nameVisible,
-                                     EnumWrappers.PlayerInfoAction... actions);
 
     Object getNmsEntity(Entity entity);
 
@@ -92,39 +70,15 @@ public interface ReflectionManagerAbstract {
 
     void setBoundingBox(Entity entity, double x, double y, double z);
 
-    Enum getSoundCategory(String category);
+    String getSoundString(Sound sound);
 
-    Enum createEnumItemSlot(EquipmentSlot slot);
-
-    Object getSoundString(Sound sound);
-
-    Optional<?> convertOptional(Object val);
-
-    Object convertVec3(Object object);
-
-    Object convertDirection(EnumWrappers.Direction direction);
+    ByteBuf getDataWatcherValues(Entity entity);
 
     Material getMaterial(String name);
 
     String getItemName(Material material);
 
-    Object getNmsItem(ItemStack itemStack);
-
-    Object getNmsVillagerData(Villager.Type villagerType, Villager.Profession villagerProfession, int level);
-
-    Object getVillagerType(Villager.Type type);
-
-    Object getVillagerProfession(Villager.Profession profession);
-
-    <T> Object createDataWatcherItem(WrappedDataWatcher.WrappedDataWatcherObject wrappedDataWatcherObject, T metaItem);
-
-    default Object createSoundEvent(String minecraftKey) {
-        return createMinecraftKey(minecraftKey);
-    }
-
     Object createMinecraftKey(String name);
-
-    Object getVec3D(Vector vector);
 
     Object getEntityType(EntityType entityType);
 
@@ -135,8 +89,6 @@ public interface ReflectionManagerAbstract {
     int getEntityTypeId(EntityType entityType);
 
     Object getEntityType(NamespacedKey name);
-
-    Object getNmsEntityPose(String enumPose);
 
     int getCombinedIdByBlockData(BlockData data);
 
@@ -150,26 +102,41 @@ public interface ReflectionManagerAbstract {
 
     ItemMeta getDeserializedItemMeta(Map<String, Object> meta);
 
-    default void handleTablistPacket(PacketEvent event, Function<UUID, Boolean> shouldRemove) {
+    GameProfile getMCGameProfile(Player player);
+
+    static UserProfile getUserProfile(UUID uuid, String playerName) {
+        return new UserProfile(uuid, playerName == null || playerName.length() < 17 ? playerName : playerName.substring(0, 16));
     }
 
-    /**
-     * Implement this for custom metadata values that are not backwards compatible
-     */
-    default Object convertInvalidMeta(Object value) {
-        return value;
+    default Cat.Type getCatTypeFromInt(int catType) {
+        return Cat.Type.values()[catType];
     }
 
-    default Class getNmsClass(Class cl) {
-        return cl;
+    default int getCatVariantAsInt(Cat.Type type) {
+        return type.ordinal();
     }
 
-    static WrappedGameProfile getGameProfile(UUID uuid, String playerName) {
-        try {
-            return new WrappedGameProfile(uuid, playerName == null || playerName.length() < 17 ? playerName : playerName.substring(0, 16));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
+    Art getPaintingFromInt(int paintingId);
+
+    int getPaintingAsInt(Art type);
+
+    default Frog.Variant getFrogVariantFromInt(int frogType) {
+        return Frog.Variant.values()[frogType];
+    }
+
+    default int getFrogVariantAsInt(Frog.Variant type) {
+        return type.ordinal();
+    }
+
+    default Wolf.Variant getWolfVariantFromInt(int wolfVariant) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    default int getWolfVariantAsInt(Wolf.Variant type) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    default Object serializeComponents(ItemStack itemStack) {
+        throw new IllegalStateException("Not implemented");
     }
 }

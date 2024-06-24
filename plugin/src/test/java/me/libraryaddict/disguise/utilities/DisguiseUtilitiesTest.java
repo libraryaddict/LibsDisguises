@@ -1,7 +1,9 @@
 package me.libraryaddict.disguise.utilities;
 
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.Arrays;
 
@@ -130,5 +132,33 @@ public class DisguiseUtilitiesTest {
         Assert.assertArrayEquals(expect, splitted);
 
         splitAndBack(toSplit);
+    }
+
+    @Test
+    public void testVersioning() {
+        Assertions.assertTrue(DisguiseUtilities.isOlderThan("1.0", "0.9"));
+        Assertions.assertTrue(DisguiseUtilities.isOlderThan("3.0", "2.9"));
+        Assertions.assertTrue(DisguiseUtilities.isOlderThan("3.0", "2.99.9"));
+        Assertions.assertTrue(DisguiseUtilities.isOlderThan("3", "2.99.9"));
+
+        Assertions.assertFalse(DisguiseUtilities.isOlderThan("3", "4.99.9"));
+        Assertions.assertFalse(DisguiseUtilities.isOlderThan("3.0", "4.99.9"));
+        Assertions.assertFalse(DisguiseUtilities.isOlderThan("1.0", "1"));
+        Assertions.assertFalse(DisguiseUtilities.isOlderThan("1.0", "1.0"));
+        Assertions.assertFalse(DisguiseUtilities.isOlderThan("1", "1.0"));
+    }
+
+    @Test
+    public void testYaw() {
+        Assertions.assertEquals(180, DisguiseUtilities.getYaw(DisguiseType.MINECART, DisguiseType.PLAYER, 90));
+    }
+
+    @Test
+    public void testQuoter() {
+        Assertions.assertEquals("\"&c10.0 ❤ &8| &5Prokurator &8(&7poz. 1&8)\"",
+            DisguiseUtilities.quote("&c10.0 ❤ &8| &5Prokurator &8(&7poz. 1&8)"));
+        Assertions.assertEquals("String", DisguiseUtilities.quote("String"));
+        Assertions.assertEquals("\"\"String\"", DisguiseUtilities.quote("\"String"));
+        Assertions.assertEquals("\"String 2\"", DisguiseUtilities.quote("String 2"));
     }
 }

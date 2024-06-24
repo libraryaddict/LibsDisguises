@@ -1,10 +1,11 @@
 package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.SimplePacketListenerAbstract;
+import com.github.retrooper.packetevents.event.simple.PacketPlayReceiveEvent;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPluginMessage;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.entity.Player;
@@ -16,33 +17,20 @@ import java.util.ArrayList;
 /**
  * Created by libraryaddict on 21/05/2020.
  */
-public class PacketListenerClientCustomPayload extends PacketAdapter {
-    public PacketListenerClientCustomPayload() {
-        super(LibsDisguises.getInstance(), PacketType.Play.Client.CUSTOM_PAYLOAD);
-    }
+public class PacketListenerClientCustomPayload extends SimplePacketListenerAbstract {
+    private final String mcChannel = NmsVersion.v1_13.isSupported() ? "minecraft:brand" : "MC|Brand";
 
     @Override
-    public void onPacketReceiving(PacketEvent event) {
-        if (event.isPlayerTemporary()) {
+    public void onPacketPlayReceive(PacketPlayReceiveEvent event) {
+        if (event.isCancelled() || event.getPacketType() != PacketType.Play.Client.PLUGIN_MESSAGE) {
             return;
         }
 
-        if (NmsVersion.v1_20_R2.isSupported()) {
-            if (!event.getPacket().getCustomPacketPayloads().read(0).getId().getFullKey().equals("minecraft:brand")) {
-                return;
-            }
+        if (!mcChannel.equals(new WrapperPlayClientPluginMessage(event).getChannelName())) {
             return;
-        } else if (NmsVersion.v1_13.isSupported()) {
-            if (!event.getPacket().getMinecraftKeys().read(0).getFullKey().equals("minecraft:brand")) {
-                return;
-            }
-        } else {
-            if (!event.getPacket().getStrings().read(0).equals("MC|Brand")) {
-                return;
-            }
         }
 
-        Player player = event.getPlayer();
+        Player player = (Player) event.getPlayer();
 
         if (player == null) {
             return;
@@ -56,12 +44,12 @@ public class PacketListenerClientCustomPayload extends PacketAdapter {
                 }
 
                 if (player.hasMetadata("ld_tabsend") && !player.getMetadata("ld_tabsend").isEmpty()) {
-                    ArrayList<PacketContainer> packets = (ArrayList<PacketContainer>) player.getMetadata("ld_tabsend").get(0).value();
+                    ArrayList<PacketWrapper> packets = (ArrayList<PacketWrapper>) player.getMetadata("ld_tabsend").get(0).value();
 
                     player.removeMetadata("ld_tabsend", LibsDisguises.getInstance());
 
-                    for (PacketContainer packet : packets) {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+                    for (PacketWrapper packet : packets) {
+                        PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
                     }
                 }
 

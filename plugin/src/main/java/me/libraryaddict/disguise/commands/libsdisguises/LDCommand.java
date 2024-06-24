@@ -18,4 +18,8 @@ public interface LDCommand {
     void onCommand(CommandSender sender, String[] args);
 
     LibsMsg getHelp();
+
+    default boolean isEnabled() {
+        return true;
+    }
 }

@@ -3,6 +3,8 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodHiddenFor;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsedBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 
@@ -16,6 +18,7 @@ public class AllayWatcher extends InsentientWatcher {
     }
 
     @NmsAddedIn(NmsVersion.v1_19_R1)
+    @MethodDescription("Is the Allay dancing?")
     public void setDancing(boolean dancing) {
         setData(MetaIndex.ALLAY_DANCING, dancing);
         sendData(MetaIndex.ALLAY_DANCING);
@@ -26,7 +29,7 @@ public class AllayWatcher extends InsentientWatcher {
     }
 
     @NmsAddedIn(NmsVersion.v1_19_R1)
-    @MethodOnlyUsedBy(value = {}) // Hide from command
+    @MethodHiddenFor(value = {}) // Hide from command
     public void setCanDuplicate(boolean canDuplicate) {
         setData(MetaIndex.ALLAY_CAN_DUPLICATE, canDuplicate);
         sendData(MetaIndex.ALLAY_CAN_DUPLICATE);

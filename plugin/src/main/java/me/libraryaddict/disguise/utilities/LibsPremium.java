@@ -185,7 +185,7 @@ public class LibsPremium {
             String fileInfo =
                 String.format("v%s, build %s, created %s", plugin.getVersion(), plugin.getBuildNumber(), plugin.getBuildDate());
 
-            if (plugin.isPremium()) {
+            if (thisPluginIsPaidFor = plugin.isPremium()) {
                 if (!isValidVersion(version, plugin.getVersion()) || plugin.getUserID() == null || plugin.getDownloadID() == null ||
                     plugin.getUserID().equals("666666")) {
                     DisguiseUtilities.getLogger().warning("You have an old Lib's Disguises jar (" + file.getName() + " " + fileInfo +
@@ -196,7 +196,6 @@ public class LibsPremium {
 
                 paidInformation = plugin;
 
-                thisPluginIsPaidFor = true;
                 /* Found a premium Lib's Disguises jar (v5.2.6, build #40, created 16/02/2019) */
                 DisguiseUtilities.getLogger().info("Found a premium Lib's Disguises jar (" + fileInfo + ")");
                 DisguiseUtilities.getLogger().info("Registered to: " + getSanitizedUser(plugin.getUserID()));
@@ -224,7 +223,7 @@ public class LibsPremium {
             if (bisectHosted) {
                 DisguiseUtilities.getLogger().info("Hosted by BisectHosting! Premium enabled!");
 
-                paidInformation = new PluginInformation(0, "2", "32453", "2", true, "0", "#1", "0");
+                paidInformation = new PluginInformation(0, "13", "32453", "2", true, "0", "#1", "0");
 
                 thisPluginIsPaidFor = true;
             } else {
@@ -253,7 +252,7 @@ public class LibsPremium {
     }
 
     public static void check(String version, File file) {
-        thisPluginIsPaidFor = isPremium();
+        thisPluginIsPaidFor = LibsDisguises.getInstance().isNumberedBuild() && isPremium();
 
         try {
             pluginInformation = getInformation(file);

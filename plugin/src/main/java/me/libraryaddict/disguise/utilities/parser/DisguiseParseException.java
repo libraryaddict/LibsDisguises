@@ -18,7 +18,11 @@ public class DisguiseParseException extends Exception {
     }
 
     public DisguiseParseException(LibsMsg message, String... params) {
-        super(message.getVanillaFormat(params));
+        super(message.get((Object[]) params));
+
+        if (message != null) {
+            message.validateArgCount(params);
+        }
 
         this.msg = message;
         this.params = params;

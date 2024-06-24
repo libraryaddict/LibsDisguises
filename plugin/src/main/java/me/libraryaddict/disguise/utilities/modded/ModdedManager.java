@@ -1,7 +1,7 @@
 package me.libraryaddict.disguise.utilities.modded;
 
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.utility.StreamSerializer;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import lombok.Getter;
@@ -20,7 +20,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -52,86 +52,79 @@ public class ModdedManager {
         }
 
         if (fmlRegistries == null && DisguiseConfig.isLoginPayloadPackets()) {
-            ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListenerModdedClient());
+            //PacketEvents.getAPI().getEventManager().registerListener(new PacketListenerModdedClient());
             Bukkit.getPluginManager().registerEvents(new ModdedListener(), LibsDisguises.getInstance());
         }
 
         createPayloads(channels);
     }
 
+    private void writeString(Object buff, String string) {
+        ByteBufHelper.writeVarInt(buff, string.length());
+        ByteBufHelper.writeBytes(buff, string.getBytes(StandardCharsets.UTF_8));
+    }
+
     private void createPayloads(ArrayList<String> channels) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         DataOutputStream output = new DataOutputStream(stream);
 
-        StreamSerializer s = StreamSerializer.getDefault();
+        // Packet id 1
+        ByteBufHelper.writeVarInt(output, 1);
+        // We have no mods to declare
+        ByteBufHelper.writeVarInt(output, 0);
 
-        try {
-            // Packet id 1
-            s.serializeVarInt(output, 1);
-            // We have no mods to declare
-            s.serializeVarInt(output, 0);
+        // We want to declare some channels
+        ByteBufHelper.writeVarInt(output, channels.size());
 
-            // We want to declare some channels
-            s.serializeVarInt(output, channels.size());
-
-            for (String channel : channels) {
-                // Here's the channel name
-                s.serializeString(output, channel.substring(0, channel.indexOf("|")));
-                // Here's the channel version, yes <Client Mod> we're using your version!
-                s.serializeString(output, channel.substring(channel.indexOf("|") + 1));
-            }
-
-            // We want to declare some entities. Wait. No we don't?
-            // Weird, am I missing something..
-            s.serializeVarInt(output, 0);
-
-            // Only this one thx
-            // s.serializeString(output, "minecraft:entity_type");
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (String channel : channels) {
+            // Here's the channel name
+            writeString(output, channel.substring(0, channel.indexOf("|")));
+            // Here's the channel version, yes <Client Mod> we're using your version!
+            writeString(output, channel.substring(channel.indexOf("|") + 1));
         }
+
+        // We want to declare some entities. Wait. No we don't?
+        // Weird, am I missing something..
+        ByteBufHelper.writeVarInt(output, 0);
+
+        // Only this one thx
+        // s.serializeString(output, "minecraft:entity_type");
 
         fmlHandshake = stream.toByteArray();
 
         stream = new ByteArrayOutputStream();
         output = new DataOutputStream(stream);
 
-        s = StreamSerializer.getDefault();
+        // Packet id 3
+        ByteBufHelper.writeVarInt(output, 3);
 
-        try {
-            // Packet id 3
-            s.serializeVarInt(output, 3);
+        // What registry we're modifying
+        writeString(output, "minecraft:entity_type");
+        // Yes... We're doing custom data
+        ByteBufHelper.writeVarInt(output, 1);
 
-            // What registry we're modifying
-            s.serializeString(output, "minecraft:entity_type");
-            // Yes... We're doing custom data
-            s.serializeVarInt(output, 1);
+        // We have this many entities
+        ByteBufHelper.writeVarInt(output, entities.size());
 
-            // We have this many entities
-            s.serializeVarInt(output, entities.size());
-
-            // Write the entity names and ids
-            for (Map.Entry<NamespacedKey, ModdedEntity> entry : entities.entrySet()) {
-                // We are registering librarymod:librarian
-                s.serializeString(output, entry.getKey().toString());
-                // It's got the type ID of 85
-                s.serializeVarInt(output, entry.getValue().getTypeId());
-            }
-
-            // Sir, we do not want to declare aliases
-            s.serializeVarInt(output, 0);
-
-            // Or overrides
-            s.serializeVarInt(output, 0);
-
-            // No.. Not even blocked
-            s.serializeVarInt(output, 0);
-
-            // Or dummied. What is dummied anyways. What are these others?
-            s.serializeVarInt(output, 0);
-        } catch (IOException e) {
-            e.printStackTrace();
+        // Write the entity names and ids
+        for (Map.Entry<NamespacedKey, ModdedEntity> entry : entities.entrySet()) {
+            // We are registering librarymod:librarian
+            writeString(output, entry.getKey().toString());
+            // It's got the type ID of 85
+            ByteBufHelper.writeVarInt(output, entry.getValue().getTypeId());
         }
+
+        // Sir, we do not want to declare aliases
+        ByteBufHelper.writeVarInt(output, 0);
+
+        // Or overrides
+        ByteBufHelper.writeVarInt(output, 0);
+
+        // No.. Not even blocked
+        ByteBufHelper.writeVarInt(output, 0);
+
+        // Or dummied. What is dummied anyways. What are these others?
+        ByteBufHelper.writeVarInt(output, 0);
 
         fmlRegistries = stream.toByteArray();
     }

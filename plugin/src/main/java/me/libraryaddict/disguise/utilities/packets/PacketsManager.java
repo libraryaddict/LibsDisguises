@@ -1,13 +1,10 @@
 package me.libraryaddict.disguise.utilities.packets;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.PacketType.Play.Server;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketListener;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Server;
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerClientCustomPayload;
@@ -26,29 +23,37 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 
 public class PacketsManager {
-    private static PacketListener clientInteractEntityListener;
-    private static PacketListener inventoryListener;
-    private static boolean inventoryModifierEnabled;
-    private static PacketListener mainListener;
-    private static PacketListener soundsListener;
+    private static final PacketListenerClientInteract clientInteractEntityListener = new PacketListenerClientInteract();
+    private static final PacketListenerTabList tablistListener = new PacketListenerTabList();
+    private static final PacketListenerClientCustomPayload customPayload = new PacketListenerClientCustomPayload();
+    private static PacketListenerInventory inventoryListener;
+    @Getter
+    private static boolean inventoryListenerEnabled;
+    private static PacketListenerMain mainListener;
+    private static PacketListenerSounds soundsListener;
     private static boolean soundsListenerEnabled;
-    private static PacketListener viewDisguisesListener;
+    private static PacketListenerViewSelfDisguise viewDisguisesListener;
     @Getter
     private static boolean viewDisguisesListenerEnabled;
     @Getter
     private static PacketsHandler packetsHandler;
+    @Getter
+    private static boolean initialListenersRegistered;
 
     public static void addPacketListeners() {
-        // Add a client listener to cancel them interacting with uninteractable disguised entitys.
-        // You ain't supposed to be allowed to 'interact' with a item that cannot be clicked.
-        // Because it kicks you for hacking.
+        if (!initialListenersRegistered) {
+            // Add a client listener to cancel them interacting with uninteractable disguised entitys.
+            // You ain't supposed to be allowed to 'interact' with a item that cannot be clicked.
+            // Because it kicks you for hacking.
+            PacketEvents.getAPI().getEventManager().registerListener(clientInteractEntityListener);
+            PacketEvents.getAPI().getEventManager().registerListener(tablistListener);
 
-        clientInteractEntityListener = new PacketListenerClientInteract(LibsDisguises.getInstance());
-        PacketListener tabListListener = new PacketListenerTabList(LibsDisguises.getInstance());
+            if (DisguiseConfig.isLoginPayloadPackets()) {
+                PacketEvents.getAPI().getEventManager().registerListener(customPayload);
+            }
 
-        ProtocolLibrary.getProtocolManager().addPacketListener(clientInteractEntityListener);
-        ProtocolLibrary.getProtocolManager().addPacketListener(tabListListener);
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListenerClientCustomPayload());
+            initialListenersRegistered = true;
+        }
 
         // Now I call this and the main listener is registered!
         setupMainPacketsListener();
@@ -58,12 +63,12 @@ public class PacketsManager {
      * Creates the packet listeners
      */
     public static void init() {
-        soundsListener = new PacketListenerSounds(LibsDisguises.getInstance());
+        soundsListener = new PacketListenerSounds();
 
         // Self disguise (/vsd) listener
-        viewDisguisesListener = new PacketListenerViewSelfDisguise(LibsDisguises.getInstance());
+        viewDisguisesListener = new PacketListenerViewSelfDisguise();
 
-        inventoryListener = new PacketListenerInventory(LibsDisguises.getInstance());
+        inventoryListener = new PacketListenerInventory();
         packetsHandler = new PacketsHandler();
     }
 
@@ -71,21 +76,17 @@ public class PacketsManager {
         return soundsListenerEnabled;
     }
 
-    public static boolean isInventoryListenerEnabled() {
-        return inventoryModifierEnabled;
-    }
-
     public static void setInventoryListenerEnabled(boolean enabled) {
-        if (inventoryModifierEnabled == enabled) {
+        if (isInventoryListenerEnabled() == enabled || inventoryListener == null) {
             return;
         }
 
-        inventoryModifierEnabled = enabled;
+        inventoryListenerEnabled = enabled;
 
-        if (inventoryModifierEnabled) {
-            ProtocolLibrary.getProtocolManager().addPacketListener(inventoryListener);
+        if (inventoryListenerEnabled) {
+            PacketEvents.getAPI().getEventManager().registerListener(inventoryListener);
         } else {
-            ProtocolLibrary.getProtocolManager().removePacketListener(inventoryListener);
+            PacketEvents.getAPI().getEventManager().unregisterListener(inventoryListener);
         }
 
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -112,89 +113,91 @@ public class PacketsManager {
     }
 
     public static void setHearDisguisesListener(boolean enabled) {
-        if (soundsListenerEnabled != enabled) {
-            soundsListenerEnabled = enabled;
+        if (soundsListenerEnabled == enabled) {
+            return;
+        }
 
-            if (soundsListenerEnabled) {
-                ProtocolLibrary.getProtocolManager().addPacketListener(soundsListener);
-            } else {
-                ProtocolLibrary.getProtocolManager().removePacketListener(soundsListener);
-            }
+        soundsListenerEnabled = enabled;
+
+        if (soundsListenerEnabled) {
+            PacketEvents.getAPI().getEventManager().registerListener(soundsListener);
+        } else {
+            PacketEvents.getAPI().getEventManager().unregisterListener(soundsListener);
         }
     }
 
     public static void setupMainPacketsListener() {
-        if (clientInteractEntityListener != null) {
-            if (mainListener != null) {
-                ProtocolLibrary.getProtocolManager().removePacketListener(mainListener);
+        if (!initialListenersRegistered) {
+            return;
+        }
+
+        if (mainListener != null) {
+            PacketEvents.getAPI().getEventManager().unregisterListener(mainListener);
+        }
+
+        ArrayList<Server> packetsToListen = new ArrayList<>();
+
+        // Add spawn packets
+        {
+            if (!NmsVersion.v1_20_R2.isSupported()) {
+                packetsToListen.add(Server.SPAWN_PLAYER);
             }
 
-            ArrayList<PacketType> packetsToListen = new ArrayList<>();
-            // Add spawn packets
-            {
-                if (!NmsVersion.v1_20_R2.isSupported()) {
-                    packetsToListen.add(Server.NAMED_ENTITY_SPAWN);
-                }
+            packetsToListen.add(Server.SPAWN_EXPERIENCE_ORB);
+            packetsToListen.add(Server.SPAWN_ENTITY);
 
-                packetsToListen.add(Server.SPAWN_ENTITY_EXPERIENCE_ORB);
-                packetsToListen.add(Server.SPAWN_ENTITY);
-
-                if (!NmsVersion.v1_19_R1.isSupported()) {
-                    packetsToListen.add(Server.SPAWN_ENTITY_LIVING);
-                    packetsToListen.add(Server.SPAWN_ENTITY_PAINTING);
-                }
+            if (!NmsVersion.v1_19_R1.isSupported()) {
+                packetsToListen.add(Server.SPAWN_LIVING_ENTITY);
+                packetsToListen.add(Server.SPAWN_PAINTING);
             }
+        }
 
-            // Add packets that always need to be enabled to ensure safety
-            {
-                packetsToListen.add(Server.ENTITY_METADATA);
-            }
+        // Add packets that always need to be enabled to ensure safety
+        {
+            packetsToListen.add(Server.ENTITY_METADATA);
+        }
 
-            if (DisguiseConfig.isCollectPacketsEnabled()) {
-                packetsToListen.add(Server.COLLECT);
-            }
+        if (DisguiseConfig.isCollectPacketsEnabled()) {
+            packetsToListen.add(Server.COLLECT_ITEM);
+        }
 
-            if (DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
-                packetsToListen.add(Server.UPDATE_ATTRIBUTES);
-            }
+        if (DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
+            packetsToListen.add(Server.UPDATE_ATTRIBUTES);
+        }
 
-            // Add movement packets
-            if (DisguiseConfig.isMovementPacketsEnabled()) {
-                packetsToListen.add(Server.ENTITY_LOOK);
-                packetsToListen.add(Server.REL_ENTITY_MOVE_LOOK);
-                packetsToListen.add(Server.ENTITY_HEAD_ROTATION);
-                packetsToListen.add(Server.ENTITY_TELEPORT);
-                packetsToListen.add(Server.REL_ENTITY_MOVE);
-                packetsToListen.add(Server.ENTITY_VELOCITY);
-                packetsToListen.add(Server.MOUNT);
-            }
+        // Add movement packets
+        if (DisguiseConfig.isMovementPacketsEnabled()) {
+            packetsToListen.add(Server.ENTITY_MOVEMENT);
+            packetsToListen.add(Server.ENTITY_RELATIVE_MOVE_AND_ROTATION);
+            packetsToListen.add(Server.ENTITY_HEAD_LOOK);
+            packetsToListen.add(Server.ENTITY_TELEPORT);
+            packetsToListen.add(Server.ENTITY_RELATIVE_MOVE);
+            packetsToListen.add(Server.ENTITY_VELOCITY);
+            packetsToListen.add(Server.ATTACH_ENTITY);
+        }
 
-            // Add equipment packet
-            if (DisguiseConfig.isEquipmentPacketsEnabled()) {
-                packetsToListen.add(Server.ENTITY_EQUIPMENT);
-            }
+        // Add equipment packet
+        if (DisguiseConfig.isEquipmentPacketsEnabled()) {
+            packetsToListen.add(Server.ENTITY_EQUIPMENT);
+        }
 
-            // Add the packet that ensures if they are sleeping or not
-            if (DisguiseConfig.isAnimationPacketsEnabled()) {
-                packetsToListen.add(Server.ANIMATION);
-            }
+        // Add the packet that ensures if they are sleeping or not
+        if (DisguiseConfig.isAnimationPacketsEnabled()) {
+            packetsToListen.add(Server.ENTITY_ANIMATION);
+        }
 
-            // Add the packet that makes sure that entities with armor do not send unpickupable armor on death
-            if (DisguiseConfig.isEntityStatusPacketsEnabled()) {
-                packetsToListen.add(Server.ENTITY_STATUS);
-            }
+        // Add the packet that makes sure that entities with armor do not send unpickupable armor on death
+        if (DisguiseConfig.isEntityStatusPacketsEnabled()) {
+            packetsToListen.add(Server.ENTITY_STATUS);
+        }
 
-            mainListener = new PacketListenerMain(LibsDisguises.getInstance(), packetsToListen);
-            PacketListener destroyListener = new PacketListenerEntityDestroy(LibsDisguises.getInstance());
+        mainListener = new PacketListenerMain(packetsToListen);
 
-            ProtocolLibrary.getProtocolManager().addPacketListener(mainListener);
-            ProtocolLibrary.getProtocolManager().addPacketListener(destroyListener);
+        PacketEvents.getAPI().getEventManager().registerListener(mainListener);
+        PacketEvents.getAPI().getEventManager().registerListener(new PacketListenerEntityDestroy());
 
-            if (NmsVersion.v1_13.isSupported() && DisguiseConfig.getPlayerNameType() != DisguiseConfig.PlayerNameType.ARMORSTANDS) {
-                PacketListener scoreboardTeamListener = new PacketListenerScoreboardTeam();
-
-                ProtocolLibrary.getProtocolManager().addPacketListener(scoreboardTeamListener);
-            }
+        if (NmsVersion.v1_13.isSupported() && DisguiseConfig.getPlayerNameType() != DisguiseConfig.PlayerNameType.ARMORSTANDS) {
+            PacketEvents.getAPI().getEventManager().registerListener(new PacketListenerScoreboardTeam());
         }
     }
 
@@ -206,9 +209,9 @@ public class PacketsManager {
         viewDisguisesListenerEnabled = enabled;
 
         if (viewDisguisesListenerEnabled) {
-            ProtocolLibrary.getProtocolManager().addPacketListener(viewDisguisesListener);
+            PacketEvents.getAPI().getEventManager().registerListener(viewDisguisesListener);
         } else {
-            ProtocolLibrary.getProtocolManager().removePacketListener(viewDisguisesListener);
+            PacketEvents.getAPI().getEventManager().unregisterListener(viewDisguisesListener);
         }
 
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -224,7 +227,7 @@ public class PacketsManager {
                 DisguiseUtilities.removeSelfDisguise(disguise);
             }
 
-            if (!inventoryModifierEnabled || !(disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
+            if (!inventoryListenerEnabled || !(disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
                 continue;
             }
 

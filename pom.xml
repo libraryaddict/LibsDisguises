@@ -11,6 +11,7 @@
     <modules>
         <module>shared</module>
         <module>nms</module>
+        <module>minimessage</module>
         <module>plugin</module>
     </modules>
 
@@ -18,28 +19,64 @@
         <build.number>unknown</build.number>
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>dd/MM/yyyy HH:mm</maven.build.timestamp.format>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <lombok.version>1.18.26</lombok.version>
-        <protocollib.version>80aa420</protocollib.version>
-        <spigot.version>1.20.3-R0.1-SNAPSHOT</spigot.version>
+        <lombok.version>1.18.32</lombok.version>
+        <packetevents.version>2.3.0</packetevents.version>
+        <spigot.version>1.20.6-R0.1-SNAPSHOT</spigot.version>
         <junit.version>4.13.2</junit.version>
         <junit-jupiter.version>5.9.3</junit-jupiter.version>
         <paper-api.version>1.20.3-R0.1-SNAPSHOT</paper-api.version>
         <bungeecord-chat.version>1.16-R0.4</bungeecord-chat.version>
-        <adventure-minimessage.version>4.2.0-SNAPSHOT</adventure-minimessage.version>
-        <adventure-text.version>4.9.3</adventure-text.version>
+        <adventure-minimessage.version>4.17.0</adventure-minimessage.version>
+        <adventure-text.version>4.17.0</adventure-text.version>
+        <mockito.version>5.12.0</mockito.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.github.retrooper.packetevents</groupId>
+            <artifactId>spigot</artifactId>
+            <optional>true</optional>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Tests -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+        </dependency>
+    </dependencies>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.github.dmulloy2</groupId>
-                <artifactId>ProtocolLib</artifactId>
-                <version>${protocollib.version}</version>
-                <optional>true</optional>
+                <groupId>com.github.retrooper.packetevents</groupId>
+                <artifactId>spigot</artifactId>
+                <version>${packetevents.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.spigotmc</groupId>
@@ -84,8 +121,8 @@
         </repository>
 
         <repository>
-            <id>dmulloy2-repo</id>
-            <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
+            <id>codemc-releases</id>
+            <url>https://repo.codemc.io/repository/maven-releases/</url>
         </repository>
     </repositories>
 

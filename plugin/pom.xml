@@ -98,20 +98,16 @@
                             <includes>
                                 <include>**</include>
                             </includes>
+                            <excludes>
+                                <exclude>META-INF/**/v*/**</exclude>
+                            </excludes>
                         </filter>
                     </filters>
                     <artifactSet>
                         <includes>
-                            <include>net.kyori:*</include>
                             <include>LibsDisguises:*</include>
                         </includes>
                     </artifactSet>
-                    <relocations>
-                        <relocation>
-                            <pattern>net.kyori</pattern>
-                            <shadedPattern>libsdisg.shaded.net.kyori</shadedPattern>
-                        </relocation>
-                    </relocations>
                 </configuration>
             </plugin>
         </plugins>
@@ -119,24 +115,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.github.dmulloy2</groupId>
-            <artifactId>ProtocolLib</artifactId>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -150,45 +135,17 @@
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-chat</artifactId>
             <version>${bungeecord-chat.version}</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-minimessage</artifactId>
-            <version>${adventure-minimessage.version}</version>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-serializer-gson</artifactId>
-            <version>${adventure-text.version}</version>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-api</artifactId>
-            <version>${adventure-text.version}</version>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-        <!-- Tests -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junit-jupiter.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
             <optional>true</optional>
         </dependency>
         <!--NMS Packages-->
+        <dependency>
+            <groupId>LibsDisguises</groupId>
+            <artifactId>minimessage</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>LibsDisguises</groupId>
             <artifactId>shared</artifactId>
@@ -263,6 +220,14 @@
         <dependency>
             <groupId>LibsDisguises</groupId>
             <artifactId>v1_20_R3</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <classifier>remapped-spigot</classifier>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>LibsDisguises</groupId>
+            <artifactId>v1_20_R4</artifactId>
             <version>1.0-SNAPSHOT</version>
             <classifier>remapped-spigot</classifier>
             <scope>compile</scope>

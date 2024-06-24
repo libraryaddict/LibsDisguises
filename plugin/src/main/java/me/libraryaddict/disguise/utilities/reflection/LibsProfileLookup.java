@@ -1,8 +1,7 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.github.retrooper.packetevents.protocol.player.UserProfile;
 
 public interface LibsProfileLookup {
-
-    void onLookup(WrappedGameProfile gameProfile);
+    void onLookup(UserProfile gameProfile);
 }

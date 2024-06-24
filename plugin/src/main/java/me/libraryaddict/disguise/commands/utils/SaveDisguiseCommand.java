@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.commands.utils;
 
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -138,7 +138,7 @@ public class SaveDisguiseCommand implements CommandExecutor {
                     }
 
                     @Override
-                    public void onSuccess(WrappedGameProfile profile) {
+                    public void onSuccess(UserProfile profile) {
                         runnable.cancel();
                         DisguiseUtilities.doSkinUUIDWarning(sender);
 

@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
+import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -33,12 +35,25 @@ public class MinecartWatcher extends FlagWatcher {
         sendData(MetaIndex.MINECART_BLOCK, MetaIndex.MINECART_BLOCK_VISIBLE);
     }
 
+    public WrappedBlockState getBlock() {
+        return WrappedBlockState.getByGlobalId(getData(MetaIndex.MINECART_BLOCK));
+    }
+
+    public void setBlock(WrappedBlockState state) {
+        setData(MetaIndex.MINECART_BLOCK, state == null || state.getType() == StateTypes.AIR ? 0 : state.getGlobalId());
+        setData(MetaIndex.MINECART_BLOCK_VISIBLE, state != null && state.getType() != StateTypes.AIR);
+
+        sendData(MetaIndex.MINECART_BLOCK, MetaIndex.MINECART_BLOCK_VISIBLE);
+    }
+
     @NmsAddedIn(NmsVersion.v1_13)
+    @Deprecated
     public BlockData getBlockData() {
         return ReflectionManager.getBlockDataByCombinedId(getData(MetaIndex.MINECART_BLOCK));
     }
 
     @NmsAddedIn(NmsVersion.v1_13)
+    @Deprecated
     public void setBlockData(BlockData data) {
         setData(MetaIndex.MINECART_BLOCK, ReflectionManager.getCombinedIdByBlockData(data));
         setData(MetaIndex.MINECART_BLOCK_VISIBLE, data != null && data.getMaterial() != Material.AIR);

@@ -1,6 +1,9 @@
 package me.libraryaddict.disguise.utilities.params.types.custom;
 
+import lombok.Getter;
 import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Color;
 
 import java.util.Map;
@@ -9,6 +12,7 @@ import java.util.Map;
  * Created by libraryaddict on 19/09/2018.
  */
 public class ParamInfoColor extends ParamInfoEnum {
+    @Getter
     private static Map<String, Color> staticColors;
 
     public ParamInfoColor(Class paramClass, String name, String description, Map possibleValues) {
@@ -17,7 +21,7 @@ public class ParamInfoColor extends ParamInfoEnum {
         staticColors = (Map<String, Color>) possibleValues;
     }
 
-    protected Color parseToColor(String string) {
+    protected Color parseToColor(String string) throws DisguiseParseException {
         string = string.replace("_", "");
 
         for (Map.Entry<String, Color> entry : staticColors.entrySet()) {
@@ -30,10 +34,22 @@ public class ParamInfoColor extends ParamInfoEnum {
 
         String[] split = string.split(",");
 
+        if (split.length != 1 && split.length != 3) {
+            throw new DisguiseParseException(LibsMsg.PARSE_COLOR, string);
+        }
+
+        for (String s : split) {
+            if (s.matches("\\d+(\\.\\d+)?")) {
+                continue;
+            }
+
+            throw new DisguiseParseException(LibsMsg.PARSE_COLOR, string);
+        }
+
         if (split.length == 1) {
-            return Color.fromRGB(Integer.parseInt(split[0]));
+            return Color.fromRGB((int) Float.parseFloat(split[0]));
         } else if (split.length == 3) {
-            return Color.fromRGB(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+            return Color.fromRGB((int) Float.parseFloat(split[0]), (int) Float.parseFloat(split[1]), (int) Float.parseFloat(split[2]));
         }
 
         return null;
@@ -57,7 +73,7 @@ public class ParamInfoColor extends ParamInfoEnum {
     }
 
     @Override
-    public Object fromString(String string) {
+    public Object fromString(String string) throws DisguiseParseException {
         return parseToColor(string);
     }
 

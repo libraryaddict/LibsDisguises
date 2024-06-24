@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
 import org.bukkit.entity.Creeper;
 
 public class CreeperWatcher extends InsentientWatcher {
@@ -15,6 +16,7 @@ public class CreeperWatcher extends InsentientWatcher {
         return getData(MetaIndex.CREEPER_IGNITED);
     }
 
+    @MethodDescription("Is this Creeper puffed up and about to explode")
     public void setIgnited(boolean ignited) {
         // If creeper is already ignited and they want to set it to unignited, then resend disguise
         boolean resend = !ignited && getDisguise() != null && getDisguise().isDisguiseInUse() &&
@@ -33,6 +35,7 @@ public class CreeperWatcher extends InsentientWatcher {
         return getData(MetaIndex.CREEPER_POWERED);
     }
 
+    @MethodDescription("Is this Creeper covered in lightning?")
     public void setPowered(boolean powered) {
         setData(MetaIndex.CREEPER_POWERED, powered);
         sendData(MetaIndex.CREEPER_POWERED);

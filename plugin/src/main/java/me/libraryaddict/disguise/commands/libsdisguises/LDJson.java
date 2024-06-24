@@ -1,9 +1,8 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
-import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
-import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ItemStackSerializer;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -14,7 +13,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,27 +46,7 @@ public class LDJson implements LDCommand {
         // item amount data {nbt}
 
         String itemName = ReflectionManager.getItemName(item.getType());
-        ArrayList<String> mcArray = new ArrayList<>();
-
-        if (NmsVersion.v1_13.isSupported() && item.hasItemMeta()) {
-            mcArray.add(itemName + DisguiseUtilities.serialize(NbtFactory.fromItemTag(item)));
-        } else {
-            mcArray.add(itemName);
-        }
-
-        if (item.getAmount() != 1) {
-            mcArray.add(String.valueOf(item.getAmount()));
-        }
-
-        if (!NmsVersion.v1_13.isSupported()) {
-            if (item.getDurability() != 0) {
-                mcArray.add(String.valueOf(item.getDurability()));
-            }
-
-            if (item.hasItemMeta()) {
-                mcArray.add(DisguiseUtilities.serialize(NbtFactory.fromItemTag(item)));
-            }
-        }
+        List<String> mcArray = ItemStackSerializer.serialize(item);
 
         String ldItem = StringUtils.join(mcArray, "-");
         String mcItem = StringUtils.join(mcArray, " ");

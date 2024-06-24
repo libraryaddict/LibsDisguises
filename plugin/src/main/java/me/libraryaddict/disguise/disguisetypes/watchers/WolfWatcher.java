@@ -15,7 +15,7 @@ public class WolfWatcher extends TameableWatcher {
     }
 
     public DyeColor getCollarColor() {
-        return AnimalColor.getColorByWool(getData(MetaIndex.WOLF_COLLAR)).getDyeColor();
+        return getData(MetaIndex.WOLF_COLLAR).getDyeColor();
     }
 
     @Deprecated
@@ -28,11 +28,11 @@ public class WolfWatcher extends TameableWatcher {
             setTamed(true);
         }
 
-        if (newColor == getCollarColor()) {
+        if (hasValue(MetaIndex.WOLF_COLLAR) && newColor == getCollarColor()) {
             return;
         }
 
-        setData(MetaIndex.WOLF_COLLAR, (int) newColor.getWoolData());
+        setData(MetaIndex.WOLF_COLLAR, AnimalColor.getColorByWool(newColor.getWoolData()));
         sendData(MetaIndex.WOLF_COLLAR);
     }
 

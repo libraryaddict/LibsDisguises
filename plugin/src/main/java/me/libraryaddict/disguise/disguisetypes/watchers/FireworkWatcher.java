@@ -8,6 +8,7 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Optional;
 import java.util.OptionalInt;
 
 public class FireworkWatcher extends FlagWatcher {
@@ -47,7 +48,7 @@ public class FireworkWatcher extends FlagWatcher {
     }
 
     @NmsAddedIn(NmsVersion.v1_14)
-    public OptionalInt getAttachedEntityOpt() {
+    public Optional<Integer> getAttachedEntityOpt() {
         return getData(MetaIndex.FIREWORK_ATTACHED_ENTITY);
     }
 
@@ -56,11 +57,11 @@ public class FireworkWatcher extends FlagWatcher {
     }
 
     public void setAttachedEntity(int entityId) {
-        setAttachedEntity(entityId == 0 ? OptionalInt.empty() : OptionalInt.of(entityId));
+        setAttachedEntity(entityId == 0 ? Optional.empty() : Optional.of(entityId));
     }
 
     @NmsAddedIn(NmsVersion.v1_14)
-    public void setAttachedEntity(OptionalInt entityId) {
+    public void setAttachedEntity(Optional<Integer> entityId) {
         if (NmsVersion.v1_14.isSupported()) {
             setData(MetaIndex.FIREWORK_ATTACHED_ENTITY, entityId);
             sendData(MetaIndex.FIREWORK_ATTACHED_ENTITY);

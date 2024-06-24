@@ -38,8 +38,10 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.github.dmulloy2</groupId>
-            <artifactId>ProtocolLib</artifactId>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>${paper-api.version}</version>
+            <scope>provided</scope>
             <optional>true</optional>
         </dependency>
     </dependencies>

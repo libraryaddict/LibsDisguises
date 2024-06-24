@@ -1,30 +1,16 @@
 package me.libraryaddict.disguise.utilities.reflection.v1_20_R2;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.wrappers.BlockPosition;
-import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
-import com.comphenix.protocol.wrappers.Vector3F;
-import com.comphenix.protocol.wrappers.WrappedBlockData;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.core.Vector3f;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
-import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.dedicated.DedicatedServer;
@@ -36,25 +22,16 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.network.ServerPlayerConnection;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.animal.CatVariant;
 import net.minecraft.world.entity.animal.FrogVariant;
 import net.minecraft.world.entity.decoration.PaintingVariant;
-import net.minecraft.world.entity.npc.VillagerData;
-import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.entity.player.ChatVisiblity;
 import net.minecraft.world.flag.FeatureFlagSet;
-import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -68,7 +45,9 @@ import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R2.CraftSound;
 import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftCat;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftFrog;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
@@ -78,32 +57,33 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Frog;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Sniffer;
-import org.bukkit.entity.Villager;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.util.EulerAngle;
-import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class ReflectionManager implements ReflectionManagerAbstract {
+    private Field dataItemsField;
+
+    public ReflectionManager() {
+        for (Field f : SynchedEntityData.class.getDeclaredFields()) {
+            if (!f.getType().isArray()) {
+                continue;
+            }
+
+            f.setAccessible(true);
+            dataItemsField = f;
+        }
+    }
+
     public boolean hasInvul(Entity entity) {
         net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
 
@@ -114,15 +94,18 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         }
     }
 
+    @Override
     public int getIncrementedStateId(Player player) {
         ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         return serverPlayer.containerMenu.incrementStateId(); // TODO Check correct container
     }
 
+    @Override
     public int getNewEntityId() {
         return getNewEntityId(true);
     }
 
+    @Override
     public int getNewEntityId(boolean increment) {
         try {
             Field entityCounter = net.minecraft.world.entity.Entity.class.getDeclaredField("d");
@@ -140,22 +123,24 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return -1;
     }
 
+    @Override
     public ServerGamePacketListenerImpl getPlayerConnectionOrPlayer(Player player) {
         return ((CraftPlayer) player).getHandle().connection;
     }
 
+    @Override
     public net.minecraft.world.entity.Entity createEntityInstance(String entityName) {
         Optional<net.minecraft.world.entity.EntityType<?>> optional =
-            net.minecraft.world.entity.EntityType.byString(entityName.toLowerCase(Locale.ROOT));
+            net.minecraft.world.entity.EntityType.byString(entityName.toLowerCase(Locale.ENGLISH));
         if (optional.isPresent()) {
             net.minecraft.world.entity.EntityType<?> entityType = optional.get();
             ServerLevel world = getWorldServer(Bukkit.getWorlds().get(0));
             net.minecraft.world.entity.Entity entity;
             if (entityType == net.minecraft.world.entity.EntityType.PLAYER) {
-                WrappedGameProfile gameProfile = ReflectionManagerAbstract.getGameProfile(new UUID(0, 0), "Steve");
+                GameProfile gameProfile = new GameProfile(new UUID(0, 0), "Steve");
                 ClientInformation information =
                     new ClientInformation("english", 10, ChatVisiblity.FULL, true, 0, HumanoidArm.RIGHT, true, true);
-                entity = new ServerPlayer(getMinecraftServer(), world, (GameProfile) gameProfile.getHandle(), information);
+                entity = new ServerPlayer(getMinecraftServer(), world, gameProfile, information);
             } else {
                 entity = entityType.create(world);
             }
@@ -173,55 +158,47 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return null;
     }
 
-    public MobEffect getMobEffectList(int id) {
-        return BuiltInRegistries.MOB_EFFECT.byId(id);
-    }
-
-    public MobEffectInstance createMobEffect(PotionEffect effect) {
-        return createMobEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(),
-            effect.hasParticles());
-    }
-
-    public MobEffectInstance createMobEffect(int id, int duration, int amplification, boolean ambient, boolean particles) {
-        return new MobEffectInstance(getMobEffectList(id), duration, amplification, ambient, particles);
-    }
-
+    @Override
     public AABB getBoundingBox(Entity entity) {
         return ((CraftEntity) entity).getHandle().getBoundingBox();
     }
 
+    @Override
     public double getXBoundingBox(Entity entity) {
         return getBoundingBox(entity).maxX - getBoundingBox(entity).minX;
     }
 
+    @Override
     public double getYBoundingBox(Entity entity) {
         return getBoundingBox(entity).maxY - getBoundingBox(entity).minY;
     }
 
+    @Override
     public double getZBoundingBox(Entity entity) {
         return getBoundingBox(entity).maxZ - getBoundingBox(entity).minZ;
     }
 
+    @Override
     public ServerPlayer getPlayerFromPlayerConnection(Object nmsEntity) {
         return ((ServerPlayerConnection) nmsEntity).getPlayer();
     }
 
+    @Override
     public Entity getBukkitEntity(Object nmsEntity) {
         return ((net.minecraft.world.entity.Entity) nmsEntity).getBukkitEntity();
     }
 
+    @Override
     public ItemStack getBukkitItem(Object nmsItem) {
         return CraftItemStack.asBukkitCopy((net.minecraft.world.item.ItemStack) nmsItem);
     }
 
+    @Override
     public ItemStack getCraftItem(ItemStack bukkitItem) {
         return CraftItemStack.asCraftCopy(bukkitItem);
     }
 
-    public Holder<SoundEvent> getCraftSound(Sound sound) {
-        return CraftSound.bukkitToMinecraftHolder(sound);
-    }
-
+    @Override
     public ServerEntity getEntityTrackerEntry(Entity target) throws Exception {
         ServerLevel world = ((CraftWorld) target.getWorld()).getHandle();
         ServerChunkCache chunkSource = world.getChunkSource();
@@ -238,95 +215,34 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return (ServerEntity) field.get(trackedEntity);
     }
 
+    @Override
     public DedicatedServer getMinecraftServer() {
         return ((CraftServer) Bukkit.getServer()).getServer();
     }
 
-    public String getEnumArt(Art art) {
-        return BuiltInRegistries.PAINTING_VARIANT.getKey(CraftArt.bukkitToMinecraft(art)).getPath();
-    }
-
-    public BlockPos getBlockPosition(int x, int y, int z) {
-        return new BlockPos(x, y, z);
-    }
-
-    public net.minecraft.core.Direction getEnumDirection(int direction) {
-        return net.minecraft.core.Direction.from2DDataValue(direction);
-    }
-
     @Override
-    public void handleTablistPacket(PacketEvent event, Function<UUID, Boolean> shouldRemove) {
-        ClientboundPlayerInfoUpdatePacket packet = (ClientboundPlayerInfoUpdatePacket) event.getPacket().getHandle();
-
-        if (!packet.actions().contains(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER)) {
-            return;
-        }
-
-        List<ClientboundPlayerInfoUpdatePacket.Entry> canKeep = new ArrayList<>();
-
-        for (ClientboundPlayerInfoUpdatePacket.Entry entry : packet.entries()) {
-            if (shouldRemove.apply(entry.profileId())) {
-                continue;
-            }
-
-            canKeep.add(entry);
-        }
-
-        if (canKeep.size() == packet.entries().size()) {
-            return;
-        }
-
-        if (canKeep.isEmpty()) {
-            event.setCancelled(true);
-            return;
-        }
-
-        event.getPacket().getModifier().write(1, canKeep);
-    }
-
-    public PacketContainer getTabListPacket(String displayName, WrappedGameProfile gameProfile, boolean nameVisible,
-                                            EnumWrappers.PlayerInfoAction... actions) {
-        if (actions[0] == EnumWrappers.PlayerInfoAction.REMOVE_PLAYER) {
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO_REMOVE);
-            packet.getModifier().write(0, Collections.singletonList(gameProfile.getUUID()));
-
-            return packet;
-        }
-
-        ClientboundPlayerInfoUpdatePacket.Entry entry =
-            new ClientboundPlayerInfoUpdatePacket.Entry(gameProfile.getUUID(), (GameProfile) gameProfile.getHandle(), nameVisible, 0,
-                GameType.SURVIVAL, Component.literal(displayName), null);
-
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-        StructureModifier<Object> modifier = packet.getModifier();
-        EnumSet<ClientboundPlayerInfoUpdatePacket.Action> enumSet = EnumSet.copyOf(
-            Arrays.stream(actions).map(action -> ClientboundPlayerInfoUpdatePacket.Action.valueOf(action.name()))
-                .collect(Collectors.toList()));
-
-        modifier.write(0, enumSet);
-        modifier.write(1, Collections.singletonList(entry));
-
-        return packet;
-    }
-
     public Object getNmsEntity(Entity entity) {
         return ((CraftEntity) entity).getHandle();
     }
 
+    @Override
     public double getPing(Player player) {
         return player.getPing();
     }
 
+    @Override
     public float[] getSize(Entity entity) {
         net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
         EntityDimensions dimensions = nmsEntity.getDimensions(net.minecraft.world.entity.Pose.STANDING);
         return new float[]{dimensions.width, nmsEntity.getEyeHeight()};
     }
 
+    @Override
     public MinecraftSessionService getMinecraftSessionService() {
         return getMinecraftServer().getSessionService();
     }
 
+    @Override
     public Float getSoundModifier(Object entity) {
         // Default is 1.0F on EntityLiving
         if (!(entity instanceof net.minecraft.world.entity.LivingEntity)) {
@@ -345,10 +261,12 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return 0f;
     }
 
+    @Override
     public void injectCallback(String playername, ProfileLookupCallback callback) {
         getMinecraftServer().getProfileRepository().findProfilesByNames(new String[]{playername}, callback);
     }
 
+    @Override
     public void setBoundingBox(Entity entity, double x, double y, double z) {
         Location loc = entity.getLocation();
         ((CraftEntity) entity).getHandle().setBoundingBox(
@@ -356,108 +274,19 @@ public class ReflectionManager implements ReflectionManagerAbstract {
                 loc.getZ() + z / 2));
     }
 
-    public Enum getSoundCategory(String category) {
-        return Arrays.stream(SoundSource.values()).filter(soundSource -> category.equalsIgnoreCase(soundSource.getName())).findAny().get();
-    }
-
-    /**
-     * Creates the NMS object EnumItemSlot from an EquipmentSlot.
-     *
-     * @param slot
-     * @return null if the equipment slot is null
-     */
-    public Enum createEnumItemSlot(EquipmentSlot slot) {
-        switch (slot) {
-            case HAND:
-                return net.minecraft.world.entity.EquipmentSlot.MAINHAND;
-            case OFF_HAND:
-                return net.minecraft.world.entity.EquipmentSlot.OFFHAND;
-            case FEET:
-                return net.minecraft.world.entity.EquipmentSlot.FEET;
-            case LEGS:
-                return net.minecraft.world.entity.EquipmentSlot.LEGS;
-            case CHEST:
-                return net.minecraft.world.entity.EquipmentSlot.CHEST;
-            case HEAD:
-                return net.minecraft.world.entity.EquipmentSlot.HEAD;
-            default:
-                return null;
-        }
-    }
-
-    public Object getSoundString(Sound sound) {
+    @Override
+    public String getSoundString(Sound sound) {
         return CraftSound.bukkitToMinecraft(sound).getLocation().toString();
     }
 
-    public Optional<?> convertOptional(Object val) {
-        if (val instanceof BlockPosition) {
-            BlockPosition pos = (BlockPosition) val;
-            return Optional.of(getBlockPosition(pos.getX(), pos.getY(), pos.getZ()));
-        } else if (val instanceof WrappedBlockData) {
-            Object obj = ((WrappedBlockData) val).getHandle();
-            return Optional.of(obj);
-        } else if (val instanceof ItemStack) {
-            Object obj = getNmsItem((ItemStack) val);
-            return Optional.of(obj);
-        } else if (val instanceof WrappedChatComponent) {
-            Object obj = ((WrappedChatComponent) val).getHandle();
-            return Optional.of(obj);
-        }
-
-        return Optional.of(val);
-    }
-
-    public Vector3f convertVec3(Object object) {
-        if (object instanceof Vector3F) {
-            Vector3F vector3F = (Vector3F) object;
-            return new Vector3f(vector3F.getX(), vector3F.getY(), vector3F.getZ());
-        } else if (object instanceof EulerAngle) {
-            EulerAngle eulerAngle = (EulerAngle) object;
-            return new Vector3f((float) eulerAngle.getX(), (float) eulerAngle.getY(), (float) eulerAngle.getZ());
-        }
-
-        return null;
-    }
-
-    public net.minecraft.core.Direction convertDirection(Direction direction) {
-        return net.minecraft.core.Direction.from3DDataValue(direction.ordinal());
-    }
-
+    @Override
     public Material getMaterial(String name) {
         return CraftMagicNumbers.INSTANCE.getMaterial(name, CraftMagicNumbers.INSTANCE.getDataVersion());
     }
 
+    @Override
     public String getItemName(Material material) {
         return BuiltInRegistries.ITEM.getKey(CraftMagicNumbers.getItem(material)).getPath();
-    }
-
-    public net.minecraft.world.item.ItemStack getNmsItem(ItemStack itemStack) {
-        return CraftItemStack.asNMSCopy(itemStack);
-    }
-
-    public VillagerData getNmsVillagerData(Villager.Type villagerType, Villager.Profession villagerProfession, int level) {
-        VillagerType nmsVillagerType = BuiltInRegistries.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(villagerType.getKey()));
-        VillagerProfession nmsVillagerProfession =
-            BuiltInRegistries.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(villagerProfession.getKey()));
-
-        return new net.minecraft.world.entity.npc.VillagerData(nmsVillagerType, nmsVillagerProfession, level);
-    }
-
-    public VillagerType getVillagerType(Villager.Type type) {
-        return BuiltInRegistries.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(type.getKey()));
-    }
-
-    public VillagerProfession getVillagerProfession(Villager.Profession profession) {
-        return BuiltInRegistries.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(profession.getKey()));
-    }
-
-    public <T> SynchedEntityData.DataItem<T> createDataWatcherItem(WrappedDataWatcher.WrappedDataWatcherObject wrappedDataWatcherObject,
-                                                                   T metaItem) {
-        return new SynchedEntityData.DataItem<>((EntityDataAccessor<T>) wrappedDataWatcherObject.getHandle(), metaItem);
-    }
-
-    public Holder<SoundEvent> createSoundEvent(String minecraftKey) {
-        return BuiltInRegistries.SOUND_EVENT.wrapAsHolder(SoundEvent.createVariableRangeEvent(createMinecraftKey(minecraftKey)));
     }
 
     @Override
@@ -465,15 +294,13 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return new ResourceLocation(name);
     }
 
-    public Vec3 getVec3D(Vector vector) {
-        return new Vec3(vector.getX(), vector.getY(), vector.getZ());
-    }
-
+    @Override
     public net.minecraft.world.entity.EntityType getEntityType(EntityType entityType) {
         return net.minecraft.world.entity.EntityType.byString(
             entityType.getName() == null ? entityType.name().toLowerCase(Locale.ENGLISH) : entityType.getName()).orElse(null);
     }
 
+    @Override
     public Object registerEntityType(NamespacedKey key) {
         net.minecraft.world.entity.EntityType<net.minecraft.world.entity.Entity> newEntity =
             new net.minecraft.world.entity.EntityType<>(null, null, false, false, false, false, null, null, 0, 0, FeatureFlagSet.of());
@@ -482,46 +309,51 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return newEntity; // TODO ??? Some reflection in legacy that I'm unsure about
     }
 
+    @Override
     public int getEntityTypeId(Object entityTypes) {
         net.minecraft.world.entity.EntityType entityType = (net.minecraft.world.entity.EntityType) entityTypes;
 
         return BuiltInRegistries.ENTITY_TYPE.getId(entityType);
     }
 
+    @Override
     public int getEntityTypeId(EntityType entityType) {
         return getEntityTypeId(getEntityType(entityType));
     }
 
+    @Override
     public Object getEntityType(NamespacedKey name) {
         return BuiltInRegistries.ENTITY_TYPE.get(CraftNamespacedKey.toMinecraft(name));
     }
 
-    public Object getNmsEntityPose(String enumPose) {
-        return net.minecraft.world.entity.Pose.valueOf(enumPose);
-    }
-
+    @Override
     public int getCombinedIdByBlockData(BlockData data) {
         BlockState state = ((CraftBlockData) data).getState();
         return Block.getId(state);
     }
 
+    @Override
     public int getCombinedIdByItemStack(ItemStack itemStack) {
         Block block = CraftMagicNumbers.getBlock(itemStack.getType());
         return Block.getId(block.defaultBlockState());
     }
 
+    @Override
     public BlockData getBlockDataByCombinedId(int id) {
         return CraftBlockData.fromData(Block.stateById(id));
     }
 
+    @Override
     public ItemStack getItemStackByCombinedId(int id) {
         return new ItemStack(CraftMagicNumbers.getMaterial(Block.stateById(id).getBlock()));
     }
 
+    @Override
     public ServerLevel getWorldServer(World w) {
         return ((CraftWorld) w).getHandle();
     }
 
+    @Override
     public ItemMeta getDeserializedItemMeta(Map<String, Object> meta) {
         try {
             Class<?> aClass = Class.forName("org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMetaItem$SerializableMeta");
@@ -537,57 +369,73 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     @Override
-    public Object convertInvalidMeta(Object value) {
-        if (value instanceof Frog.Variant) {
-            return getFrogVariant((Frog.Variant) value);
+    public ByteBuf getDataWatcherValues(Entity entity) {
+        net.minecraft.world.entity.Entity ent = (net.minecraft.world.entity.Entity) getNmsEntity(entity);
+        List<SynchedEntityData.DataValue<?>> dataList = ent.getEntityData().getNonDefaultValues();
+
+        if (dataList == null) {
+            return null;
         }
 
-        if (value instanceof Cat.Type) {
-            return getCatVariant((Cat.Type) value);
-        }
+        ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer();
+        FriendlyByteBuf serializer = new FriendlyByteBuf(buf);
 
-        if (value instanceof Art) {
-            return getArtVariant((Art) value);
-        }
+        dataList.forEach(d -> d.write(serializer));
+        serializer.writeByte(255);
 
-        if (value instanceof BlockData) {
-            return ((CraftBlockData) value).getState();
-        }
-
-        if (value instanceof Sniffer.State) {
-            return net.minecraft.world.entity.animal.sniffer.Sniffer.State.values()[((Sniffer.State) value).ordinal()];
-        }
-
-        return value;
-    }
-
-    private FrogVariant getFrogVariant(Frog.Variant variant) {
-        switch (variant) {
-            case COLD:
-                return FrogVariant.COLD;
-            case WARM:
-                return FrogVariant.WARM;
-            case TEMPERATE:
-                return FrogVariant.TEMPERATE;
-        }
-
-        return null;
-    }
-
-    private CatVariant getCatVariant(Cat.Type type) {
-        return BuiltInRegistries.CAT_VARIANT.byId(type.ordinal());
-    }
-
-    private Holder.Reference<PaintingVariant> getArtVariant(Art art) {
-        return BuiltInRegistries.PAINTING_VARIANT.getHolder(art.ordinal()).get();
+        return buf;
     }
 
     @Override
-    public Class getNmsClass(Class cl) {
-        if (Sniffer.State.class.isAssignableFrom(cl)) {
-            return net.minecraft.world.entity.animal.sniffer.Sniffer.State.class;
-        }
+    public GameProfile getMCGameProfile(Player player) {
+        return ((CraftPlayer) player).getProfile();
+    }
 
-        return cl;
+    @Override
+    public Cat.Type getCatTypeFromInt(int catType) {
+        Registry<CatVariant> registry = BuiltInRegistries.CAT_VARIANT;
+
+        Holder.Reference<CatVariant> ref = registry.getHolder(catType).get();
+
+        return CraftCat.CraftType.minecraftToBukkit(ref.value());
+    }
+
+    @Override
+    public int getCatVariantAsInt(Cat.Type type) {
+        Registry<CatVariant> registry = BuiltInRegistries.CAT_VARIANT;
+
+        return registry.getId(CraftCat.CraftType.bukkitToMinecraft(type));
+    }
+
+    @Override
+    public Frog.Variant getFrogVariantFromInt(int frogType) {
+        Registry<FrogVariant> registry = BuiltInRegistries.FROG_VARIANT;
+
+        Holder.Reference<FrogVariant> ref = registry.getHolder(frogType).get();
+
+        return CraftFrog.CraftVariant.minecraftToBukkit(ref.value());
+    }
+
+    @Override
+    public int getFrogVariantAsInt(Frog.Variant type) {
+        Registry<FrogVariant> registry = BuiltInRegistries.FROG_VARIANT;
+
+        return registry.getId(CraftFrog.CraftVariant.bukkitToMinecraft(type));
+    }
+
+    @Override
+    public Art getPaintingFromInt(int paintingId) {
+        Registry<PaintingVariant> registry = BuiltInRegistries.PAINTING_VARIANT;
+
+        Holder.Reference<PaintingVariant> ref = registry.getHolder(paintingId).get();
+
+        return CraftArt.minecraftHolderToBukkit(registry.getHolder(paintingId).get());
+    }
+
+    @Override
+    public int getPaintingAsInt(Art type) {
+        Registry<PaintingVariant> registry = BuiltInRegistries.PAINTING_VARIANT;
+
+        return registry.getId(CraftArt.bukkitToMinecraft(type));
     }
 }

@@ -108,7 +108,7 @@ public abstract class ParamInfo<T> {
         return 1;
     }
 
-    public boolean hasValues() {
+    public boolean hasTabCompletion() {
         return getValues() != null;
     }
 

@@ -7,7 +7,9 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.ClassGetter;
 import me.libraryaddict.disguise.utilities.reflection.WatcherInfo;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodHiddenFor;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodIgnoredBy;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodMappedAs;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsedBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
@@ -21,6 +23,7 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
@@ -48,7 +51,7 @@ public class CompileMethods {
 
     public static String[] ignoredDirectories() {
         return new String[]{"META-INF/", "libsdisg/", "me/libraryaddict/disguise/utilities/reflection/v",
-            "me/libraryaddict/disguise/utilities/reflection/ReflectionManagerAbstract.class", "fernflower_"};
+            "me/libraryaddict/disguise/utilities/reflection/ReflectionManagerAbstract.class", "fernflower_","net/kyori/adventure/"};
     }
 
     private static void doFileCount() {
@@ -136,20 +139,25 @@ public class CompileMethods {
         ArrayList<Class<?>> classes =
             ClassGetter.getClassesForPackage(FlagWatcher.class, "me.libraryaddict.disguise.disguisetypes.watchers");
 
+        if (classes.isEmpty()) {
+            throw new IllegalStateException("Classes were not found for FlagWatchers");
+        }
+
         ArrayList<Class> sorted = new ArrayList<>();
 
         for (Class c : classes) {
             addClass(sorted, c);
         }
 
-        ArrayList<String> methods = new ArrayList<>();
+        ArrayList<WatcherInfo> methods = new ArrayList<>();
 
         for (Class c : sorted) {
             for (Method method : c.getMethods()) {
-                if (!FlagWatcher.class.isAssignableFrom(method.getDeclaringClass())) {
+                if (Modifier.isStatic(method.getModifiers()) || !Modifier.isPublic(method.getModifiers()) ||
+                    !FlagWatcher.class.isAssignableFrom(method.getDeclaringClass())) {
                     continue;
-                } else if (method.getParameterCount() > 1 && !method.isAnnotationPresent(NmsAddedIn.class) &&
-                    !method.isAnnotationPresent(NmsRemovedIn.class)) {
+                } else if (method.getParameterCount() > 1/* && !method.isAnnotationPresent(NmsAddedIn.class) &&
+                    !method.isAnnotationPresent(NmsRemovedIn.class)*/) {
                     continue;
                 } else if (!(method.getName().startsWith("set") && method.getParameterCount() == 1) &&
                     !method.getName().startsWith("get") && !method.getName().startsWith("has") && !method.getName().startsWith("is")) {
@@ -158,11 +166,16 @@ public class CompileMethods {
                     continue;
                 } else if ((LibsPremium.isPremium() || !LibsPremium.getUserID().contains("%")) && new Random().nextBoolean()) {
                     continue;
+                } else if (method.getParameterCount() > 0 && method.getReturnType() != void.class) {
+                    // At 04/06/2024, this only hit `getItemStack`, `getMetadata`, `hasValue` and `hasPotionEffect`
+                    continue;
                 }
 
                 int added = -1;
                 int removed = -1;
                 DisguiseType[] unusableBy = new DisguiseType[0];
+                DisguiseType[] hiddenFor = new DisguiseType[0];
+                String mappedAs = method.getName();
 
                 if (method.isAnnotationPresent(NmsAddedIn.class)) {
                     added = method.getAnnotation(NmsAddedIn.class).value().ordinal();
@@ -194,13 +207,27 @@ public class CompileMethods {
                     }
                 }
 
+                if (method.isAnnotationPresent(MethodHiddenFor.class)) {
+                    hiddenFor = method.getAnnotation(MethodHiddenFor.class).value();
+
+                    if (hiddenFor.length == 0) {
+                        hiddenFor = DisguiseType.values();
+                    }
+                }
+
+                if (method.isAnnotationPresent(MethodMappedAs.class)) {
+                    mappedAs = method.getAnnotation(MethodMappedAs.class).value();
+                }
+
                 String param = method.getParameterCount() == 1 ? method.getParameterTypes()[0].getName() : null;
 
                 WatcherInfo info = new WatcherInfo();
                 info.setMethod(method.getName());
+                info.setMappedAs(mappedAs);
                 info.setAdded(added);
                 info.setRemoved(removed);
                 info.setUnusableBy(unusableBy);
+                info.setHiddenFor(hiddenFor);
                 info.setDeprecated(method.isAnnotationPresent(Deprecated.class));
                 info.setParam(param);
                 info.setDescriptor(getMethodDescriptor(method));
@@ -214,20 +241,24 @@ public class CompileMethods {
                             " does not met this criteria!");
                 }
 
-                String s = new Gson().toJson(info);
-
-                if (methods.contains(s)) {
+                if (methods.contains(info)) {
                     continue;
                 }
 
-                methods.add(s);
+                methods.add(info);
             }
         }
+
+        if (methods.isEmpty()) {
+            throw new IllegalStateException("Methods were not compiled");
+        }
+
+        String gson = new Gson().toJson(methods);
 
         File methodsFile = new File("plugin/target/classes/METHOD_MAPPINGS");
 
         try (FileOutputStream fos = new FileOutputStream(methodsFile)) {
-            fos.write(String.join("\n", methods).getBytes(StandardCharsets.UTF_8));
+            fos.write(gson.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
         }

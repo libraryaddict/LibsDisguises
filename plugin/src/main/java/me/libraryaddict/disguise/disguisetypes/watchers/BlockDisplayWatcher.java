@@ -1,9 +1,12 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
+import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
+import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodMappedAs;
 import org.bukkit.block.data.BlockData;
 import org.joml.Vector3f;
 
@@ -12,17 +15,28 @@ public class BlockDisplayWatcher extends DisplayWatcher {
         super(disguise);
 
         // So we're not seeing air
-        setBlock(Bukkit.createBlockData(Material.STONE));
+        setBlockState(WrappedBlockState.getDefaultState(StateTypes.STONE));
         // So its centered
         setTranslation(new Vector3f(-0.5f, 0f, -0.5f));
     }
 
-    public BlockData getBlock() {
+    @MethodMappedAs("getBlock")
+    public WrappedBlockState getBlockState() {
         return getData(MetaIndex.BLOCK_DISPLAY_BLOCK_STATE);
     }
 
-    public void setBlock(BlockData block) {
+    @MethodDescription("What block can players see?")
+    @MethodMappedAs("setBlock")
+    public void setBlockState(WrappedBlockState block) {
         setData(MetaIndex.BLOCK_DISPLAY_BLOCK_STATE, block);
+    }
+
+    public BlockData getBlock() {
+        return SpigotConversionUtil.toBukkitBlockData(getData(MetaIndex.BLOCK_DISPLAY_BLOCK_STATE));
+    }
+
+    public void setBlock(BlockData block) {
+        setData(MetaIndex.BLOCK_DISPLAY_BLOCK_STATE, SpigotConversionUtil.fromBukkitBlockData(block));
         sendData(MetaIndex.BLOCK_DISPLAY_BLOCK_STATE);
     }
 }

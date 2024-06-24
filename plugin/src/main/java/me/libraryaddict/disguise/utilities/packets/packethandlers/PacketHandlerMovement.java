@@ -1,8 +1,14 @@
 package me.libraryaddict.disguise.utilities.packets.packethandlers;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
+import com.github.retrooper.packetevents.util.Vector3d;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMove;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMoveAndRotation;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityStatus;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -12,72 +18,89 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
-import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by libraryaddict on 3/01/2019.
  */
-public class PacketHandlerMovement implements IPacketHandler {
+public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacketHandler<T> {
     private final boolean invalid = LibsPremium.getUserID().matches("\\d+") && Integer.parseInt(LibsPremium.getUserID()) < 2;
 
     @Override
-    public PacketType[] getHandledPackets() {
-        return new PacketType[]{PacketType.Play.Server.REL_ENTITY_MOVE_LOOK, PacketType.Play.Server.ENTITY_LOOK,
-            PacketType.Play.Server.ENTITY_TELEPORT, PacketType.Play.Server.REL_ENTITY_MOVE};
+    public PacketTypeCommon[] getHandledPackets() {
+        return new PacketTypeCommon[]{PacketType.Play.Server.ENTITY_RELATIVE_MOVE_AND_ROTATION, PacketType.Play.Server.ENTITY_ROTATION,
+            PacketType.Play.Server.ENTITY_TELEPORT, PacketType.Play.Server.ENTITY_RELATIVE_MOVE};
     }
 
-    private short conRel(double oldCord, double newCord) {
-        return (short) ((oldCord - newCord) * 4096);
+    private double conRel(double oldCord, double newCord) {
+        return oldCord - newCord;
     }
 
     @Override
-    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
-        handle2(disguise, sentPacket, packets, observer, entity);
+    public void handle(Disguise disguise, LibsPackets<T> packets, Player observer, Entity entity) {
+        handleMovement(disguise, packets, observer, entity);
+        addMultiNames(disguise, packets);
+    }
 
+    private void addMultiNames(Disguise disguise, LibsPackets<T> packets) {
         int len = disguise.getMultiNameLength();
 
         if (len == 0) {
             return;
         }
 
-        ArrayList<PacketContainer> toAdd = new ArrayList<>();
+        ArrayList<PacketWrapper> toAdd = new ArrayList<>();
         double height = disguise.getHeight() + disguise.getWatcher().getNameYModifier();
 
-        for (PacketContainer packet : packets.getPackets()) {
-            if (packet.getType() == PacketType.Play.Server.ENTITY_LOOK) {
+        for (PacketWrapper packet : packets.getPackets()) {
+            if (packet instanceof WrapperPlayServerEntityRotation) {
                 continue;
             }
 
             for (int i = 0; i < len; i++) {
                 int standId = disguise.getArmorstandIds()[i];
-                PacketContainer packet2 = packet.shallowClone();
-                packet2.getIntegers().write(0, standId);
+                PacketWrapper cloned;
 
-                if (packet2.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
-                    packet2.getDoubles().write(1, packet2.getDoubles().read(1) + height + (0.28 * i));
+                if (packet instanceof WrapperPlayServerEntityTeleport) {
+                    WrapperPlayServerEntityTeleport tele = (WrapperPlayServerEntityTeleport) packet;
+                    cloned = new WrapperPlayServerEntityTeleport(standId, tele.getPosition().add(0, height + (0.28 * i), 0), tele.getYaw(),
+                        tele.getPitch(), tele.isOnGround());
+                } else if (packet instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
+                    WrapperPlayServerEntityRelativeMoveAndRotation rot = (WrapperPlayServerEntityRelativeMoveAndRotation) packet;
+                    cloned = new WrapperPlayServerEntityRelativeMoveAndRotation(standId, rot.getDeltaX(), rot.getDeltaY(), rot.getDeltaZ(),
+                        rot.getYaw(), rot.getPitch(), rot.isOnGround());
+                } else if (packet instanceof WrapperPlayServerEntityRelativeMove) {
+                    WrapperPlayServerEntityRelativeMove rot = (WrapperPlayServerEntityRelativeMove) packet;
+                    cloned = new WrapperPlayServerEntityRelativeMove(standId, rot.getDeltaX(), rot.getDeltaY(), rot.getDeltaZ(),
+                        rot.isOnGround());
+                } else {
+                    throw new IllegalStateException("Unknown packet " + packet.getClass());
                 }
 
-                toAdd.add(packet2);
+                toAdd.add(cloned);
             }
         }
 
         packets.getPackets().addAll(toAdd);
     }
 
-    public void handle2(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
+    private void handleMovement(Disguise disguise, LibsPackets<T> packets, Player observer, Entity entity) {
         if (invalid && RandomUtils.nextDouble() < 0.1) {
             packets.clear();
             return;
         }
+
+        PacketWrapper sentPacket = packets.getOriginalPacket();
 
         double yMod = DisguiseUtilities.getYModifier(disguise) + disguise.getWatcher().getYModifier();
 
@@ -85,46 +108,44 @@ public class PacketHandlerMovement implements IPacketHandler {
         if (disguise.getType() == DisguiseType.FALLING_BLOCK && ((FallingBlockWatcher) disguise.getWatcher()).isGridLocked()) {
             packets.clear();
 
-            if (sentPacket.getType() == PacketType.Play.Server.ENTITY_LOOK) {
+            if (sentPacket instanceof WrapperPlayServerEntityRotation) {
                 return;
             }
 
-            PacketContainer movePacket = sentPacket.shallowClone();
+            PacketWrapper movePacket;
+
             Location loc = entity.getLocation();
 
             // If not relational movement
-            if (movePacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
-                StructureModifier<Double> doubles = movePacket.getDoubles();
-                // Center the block
-                doubles.write(0, loc.getBlockX() + 0.5);
-
+            if (sentPacket instanceof WrapperPlayServerEntityTeleport) {
+                WrapperPlayServerEntityTeleport tele = (WrapperPlayServerEntityTeleport) sentPacket;
                 double y = loc.getBlockY();
 
+                // Center the block
                 y += (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0);
-
-                doubles.write(1, y + yMod);
-                doubles.write(2, loc.getBlockZ() + 0.5);
+                movePacket = new WrapperPlayServerEntityTeleport(tele.getEntityId(),
+                    new Vector3d(loc.getBlockX() + 0.5, y + yMod, loc.getBlockZ() + 0.5), tele.getYaw(), tele.getPitch(),
+                    tele.isOnGround());
             } else {
-                int x;
-                int y;
-                int z;
+                double x;
+                double y;
+                double z;
 
-                if (NmsVersion.v1_14.isSupported()) {
-                    StructureModifier<Short> shorts = movePacket.getShorts();
-
-                    x = shorts.read(0);
-                    y = shorts.read(1);
-                    z = shorts.read(2);
+                if (sentPacket instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
+                    WrapperPlayServerEntityRelativeMoveAndRotation rot = (WrapperPlayServerEntityRelativeMoveAndRotation) sentPacket;
+                    x = rot.getDeltaX();
+                    y = rot.getDeltaY();
+                    z = rot.getDeltaZ();
+                } else if (sentPacket instanceof WrapperPlayServerEntityRelativeMove) {
+                    WrapperPlayServerEntityRelativeMove rot = (WrapperPlayServerEntityRelativeMove) sentPacket;
+                    x = rot.getDeltaX();
+                    y = rot.getDeltaY();
+                    z = rot.getDeltaZ();
                 } else {
-                    StructureModifier<Integer> ints = movePacket.getIntegers();
-
-                    x = ints.read(0);
-                    y = ints.read(1);
-                    z = ints.read(2);
+                    throw new IllegalStateException("Unknown packet " + sentPacket.getClass());
                 }
 
-                Vector diff = new Vector(x / 4096D, y / 4096D, z / 4096D);
-                Location newLoc = loc.clone().subtract(diff);
+                Location newLoc = loc.clone().subtract(x, y, z);
 
                 double origY = loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0);
                 double newY = newLoc.getBlockY() + (newLoc.getY() % 1 >= 0.85 ? 1 : newLoc.getY() % 1 >= 0.35 ? .5 : 0);
@@ -139,143 +160,188 @@ public class PacketHandlerMovement implements IPacketHandler {
                     y = conRel(origY, newY);
                     z = conRel(loc.getBlockZ(), newLoc.getBlockZ());
 
-                    if (NmsVersion.v1_14.isSupported()) {
-                        StructureModifier<Short> shorts = movePacket.getShorts();
+                    if (sentPacket instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
+                        WrapperPlayServerEntityRelativeMoveAndRotation rot = (WrapperPlayServerEntityRelativeMoveAndRotation) sentPacket;
 
-                        shorts.write(0, (short) x);
-                        shorts.write(1, (short) y);
-                        shorts.write(2, (short) z);
+                        movePacket =
+                            new WrapperPlayServerEntityRelativeMoveAndRotation(rot.getEntityId(), x, y, z, rot.getYaw(), rot.getPitch(),
+                                rot.isOnGround());
+                    } else if (sentPacket instanceof WrapperPlayServerEntityRelativeMove) {
+                        WrapperPlayServerEntityRelativeMove rot = (WrapperPlayServerEntityRelativeMove) sentPacket;
+                        x = rot.getDeltaX();
+                        y = rot.getDeltaY();
+                        z = rot.getDeltaZ();
+
+                        movePacket = new WrapperPlayServerEntityRelativeMove(rot.getEntityId(), x, y, z, rot.isOnGround());
                     } else {
-                        StructureModifier<Integer> ints = movePacket.getIntegers();
-
-                        ints.write(0, x);
-                        ints.write(1, y);
-                        ints.write(2, z);
+                        throw new IllegalStateException("Unknown packet " + sentPacket.getClass());
                     }
                 }
             }
 
             packets.addPacket(movePacket);
             return;
-        } else if (disguise.getType() == DisguiseType.RABBIT && (sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE ||
-            sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE_LOOK)) {
-            // When did the rabbit disguise last hop
-            long lastHop = 999999;
+        } else if (disguise.getType() == DisguiseType.RABBIT && (sentPacket instanceof WrapperPlayServerEntityRelativeMove ||
+            sentPacket instanceof WrapperPlayServerEntityRelativeMoveAndRotation)) {
 
-            // If hop meta exists, set the last hop time
-            if (!entity.getMetadata("LibsRabbitHop").isEmpty()) {
-                // Last hop was 3 minutes ago, so subtract current time with the last hop time and get 3
-                // minutes ago in milliseconds
-                lastHop = System.currentTimeMillis() - entity.getMetadata("LibsRabbitHop").get(0).asLong();
-            }
+            // Syncronized so we're not modifying a map across different threads
+            synchronized (this) {
+                Map<String, Long> rabbitHops;
 
-            // If last hop was less than 0.1 or more than 0.5 seconds ago
-            if (lastHop < 100 || lastHop > 500) {
-                if (lastHop > 500) {
-                    entity.removeMetadata("LibsRabbitHop", LibsDisguises.getInstance());
-                    entity.setMetadata("LibsRabbitHop", new FixedMetadataValue(LibsDisguises.getInstance(), System.currentTimeMillis()));
+                // If hop meta exists, set the last hop time
+                if (!entity.getMetadata("LibsRabbitHop").isEmpty()) {
+                    rabbitHops = (Map<String, Long>) entity.getMetadata("LibsRabbitHop").get(0).value();
+
+                    // Expire entries
+                    Iterator<Map.Entry<String, Long>> iterator = rabbitHops.entrySet().iterator();
+
+                    while (iterator.hasNext()) {
+                        if (iterator.next().getValue() + 500 > System.currentTimeMillis()) {
+                            continue;
+                        }
+
+                        iterator.remove();
+                    }
+                } else {
+                    entity.setMetadata("LibsRabbitHop", new FixedMetadataValue(LibsDisguises.getInstance(), rabbitHops = new HashMap<>()));
                 }
 
-                PacketContainer statusPacket = new PacketContainer(PacketType.Play.Server.ENTITY_STATUS);
-                packets.addPacket(statusPacket);
+                long lastHop =
+                    rabbitHops.containsKey(observer.getName()) ? System.currentTimeMillis() - rabbitHops.get(observer.getName()) : 99999;
 
-                statusPacket.getIntegers().write(0, entity.getEntityId());
-                statusPacket.getBytes().write(0, (byte) 1);
+                // If last hop was less than 0.1 or more than 0.5 seconds ago
+                if (lastHop < 100 || lastHop > 500) {
+                    if (lastHop > 500) {
+                        rabbitHops.put(observer.getName(), System.currentTimeMillis());
+                    }
+
+                    packets.addPacket(new WrapperPlayServerEntityStatus(entity.getEntityId(), 1));
+                }
             }
         }
 
-        if (sentPacket.getType() == PacketType.Play.Server.ENTITY_LOOK && disguise.getType() == DisguiseType.WITHER_SKULL) {
+        if (sentPacket instanceof WrapperPlayServerEntityRotation && disguise.getType() == DisguiseType.WITHER_SKULL) {
             // Stop wither skulls from looking
             packets.clear();
         } else {
-            if (sentPacket.getType() != PacketType.Play.Server.REL_ENTITY_MOVE) {
+            // If the packet has a head/body pitch/yaw
+            if (!(sentPacket instanceof WrapperPlayServerEntityRelativeMove)) {
                 packets.clear();
 
-                PacketContainer movePacket = sentPacket.shallowClone();
+                float yawValue;
+                float pitchValue;
 
-                packets.addPacket(movePacket);
+                PacketWrapper cloned;
 
-                StructureModifier<Byte> bytes = movePacket.getBytes();
+                if (sentPacket instanceof WrapperPlayServerEntityTeleport) {
+                    WrapperPlayServerEntityTeleport tele = (WrapperPlayServerEntityTeleport) sentPacket;
 
-                byte yawValue = bytes.read(0);
-                byte pitchValue = bytes.read(1);
+                    cloned = new WrapperPlayServerEntityTeleport(tele.getEntityId(), tele.getPosition(), yawValue = tele.getYaw(),
+                        pitchValue = tele.getPitch(), tele.isOnGround());
+                } else if (sentPacket instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
+                    WrapperPlayServerEntityRelativeMoveAndRotation rot = (WrapperPlayServerEntityRelativeMoveAndRotation) sentPacket;
+
+                    cloned = new WrapperPlayServerEntityRelativeMoveAndRotation(rot.getEntityId(), rot.getDeltaX(), rot.getDeltaY(),
+                        rot.getDeltaZ(), yawValue = rot.getYaw(), pitchValue = rot.getPitch(), rot.isOnGround());
+                } else if (sentPacket instanceof WrapperPlayServerEntityRotation) {
+                    WrapperPlayServerEntityRotation rot = (WrapperPlayServerEntityRotation) sentPacket;
+
+                    cloned = new WrapperPlayServerEntityRotation(rot.getEntityId(), yawValue = rot.getYaw(), pitchValue = rot.getPitch(),
+                        rot.isOnGround());
+                } else {
+                    throw new IllegalStateException("Unknown packet " + sentPacket.getClass());
+                }
+
+                packets.addPacket(cloned);
 
                 Float pitchLock = disguise.getWatcher().getPitchLock();
                 Float yawLock = disguise.getWatcher().getYawLock();
 
                 if (pitchLock != null) {
-                    pitchValue = (byte) (int) (pitchLock * 256.0F / 360.0F);
-                    pitchValue = DisguiseUtilities.getPitch(disguise.getType(), pitchValue);
+                    pitchValue = DisguiseUtilities.getPitch(disguise.getType(), pitchLock);
                 } else {
                     pitchValue = DisguiseUtilities.getPitch(disguise.getType(), entity.getType(), pitchValue);
                 }
 
                 if (yawLock != null) {
-                    yawValue = (byte) (int) (yawLock * 256.0F / 360.0F);
-                    yawValue = DisguiseUtilities.getYaw(disguise.getType(), yawValue);
+                    yawValue = DisguiseUtilities.getYaw(disguise.getType(), yawLock);
                 } else {
                     yawValue = DisguiseUtilities.getYaw(disguise.getType(), entity.getType(), yawValue);
                 }
 
-                bytes.write(0, yawValue);
-                bytes.write(1, pitchValue);
+                if (cloned instanceof WrapperPlayServerEntityTeleport) {
+                    WrapperPlayServerEntityTeleport tele = (WrapperPlayServerEntityTeleport) cloned;
+
+                    tele.setYaw(yawValue);
+                    tele.setPitch(pitchValue);
+                } else if (cloned instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
+                    WrapperPlayServerEntityRelativeMoveAndRotation rot = (WrapperPlayServerEntityRelativeMoveAndRotation) cloned;
+
+                    rot.setYaw(yawValue);
+                    rot.setPitch(pitchValue);
+                } else if (cloned instanceof WrapperPlayServerEntityRotation) {
+                    WrapperPlayServerEntityRotation look = (WrapperPlayServerEntityRotation) cloned;
+
+                    look.setYaw(yawValue);
+                    look.setPitch(pitchValue);
+                }
 
                 if (entity == observer.getVehicle() && AbstractHorse.class.isAssignableFrom(disguise.getType().getEntityClass())) {
-                    PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
-
-                    packet.getIntegers().write(0, DisguiseAPI.getEntityAttachmentId());
-                    packet.getBytes().write(0, yawValue);
-                    packet.getBytes().write(1, pitchValue);
+                    WrapperPlayServerEntityRotation packet =
+                        new WrapperPlayServerEntityRotation(DisguiseAPI.getEntityAttachmentId(), yawValue, pitchValue, false);
 
                     packets.addPacket(packet);
-                } else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT &&
-                    disguise.getType() == DisguiseType.ITEM_FRAME) {
-                    StructureModifier<Double> doubles = movePacket.getDoubles();
+                } else if (cloned instanceof WrapperPlayServerEntityTeleport && disguise.getType().isArtDisplay()) {
+                    WrapperPlayServerEntityTeleport tele = (WrapperPlayServerEntityTeleport) cloned;
 
                     Location loc = entity.getLocation();
 
                     double data = (((loc.getYaw() % 360) + 720 + 45) / 90) % 4;
 
                     if (data % 2 == 0) {
-                        if (data % 2 == 0) {
-                            doubles.write(3, loc.getZ());
-                        } else {
-                            doubles.write(1, loc.getZ());
-                        }
+                        tele.setPosition(new Vector3d(loc.getX(), 0, loc.getZ() + data == 0 ? -1 : 1));
+                    } else {
+                        tele.setPosition(new Vector3d(loc.getX() + data == 3 ? -1 : 1, loc.getY(), loc.getZ()));
                     }
 
                     double y = DisguiseUtilities.getYModifier(disguise);
 
                     if (y != 0) {
-                        doubles.write(2, doubles.read(2) + y);
+                        tele.setPosition(tele.getPosition().add(0, y, 0));
                     }
                 } else if (disguise.getType() == DisguiseType.DOLPHIN) {
-                    movePacket.getBooleans().write(0, false);
+                    if (cloned instanceof WrapperPlayServerEntityTeleport) {
+                        ((WrapperPlayServerEntityTeleport) cloned).setOnGround(false);
+                    } else if (cloned instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
+                        ((WrapperPlayServerEntityRelativeMoveAndRotation) cloned).setOnGround(false);
+                    } else if (cloned instanceof WrapperPlayServerEntityRotation) {
+                        ((WrapperPlayServerEntityRotation) cloned).setOnGround(false);
+                    }
                 }
             } else if (disguise.getType() == DisguiseType.DOLPHIN) {
                 // Dolphins act funny on the ground, so lets not tell the clients they are on the ground
                 packets.clear();
 
-                PacketContainer movePacket = sentPacket.shallowClone();
+                WrapperPlayServerEntityRelativeMove p = (WrapperPlayServerEntityRelativeMove) sentPacket;
+                WrapperPlayServerEntityRelativeMove cloned =
+                    new WrapperPlayServerEntityRelativeMove(p.getEntityId(), p.getDeltaX(), p.getDeltaY(), p.getDeltaZ(), false);
 
-                packets.addPacket(movePacket);
-
-                movePacket.getBooleans().write(0, false);
+                packets.addPacket(cloned);
             }
 
-            if (yMod != 0 && sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
-                PacketContainer packet = packets.getPackets().get(0);
+            if (yMod != 0 && sentPacket instanceof WrapperPlayServerEntityTeleport) {
+                PacketWrapper packet = packets.getPackets().get(0);
+                WrapperPlayServerEntityTeleport tele = (WrapperPlayServerEntityTeleport) packet;
 
                 if (packet == sentPacket) {
-                    packet = packet.shallowClone();
+                    packet = new WrapperPlayServerEntityTeleport(tele.getEntityId(), tele.getPosition().add(0, yMod, 0), tele.getYaw(),
+                        tele.getPitch(), tele.isOnGround());
 
                     packets.clear();
                     packets.addPacket(packet);
+                } else {
+                    tele.setPosition(tele.getPosition().add(0, yMod, 0));
                 }
-
-                StructureModifier<Double> doubles = packet.getDoubles();
-
-                doubles.write(1, doubles.read(1) + yMod);
             }
         }
     }

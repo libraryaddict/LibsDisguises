@@ -1,12 +1,10 @@
 package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.PacketType.Play.Server;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.SimplePacketListenerAbstract;
+import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Server;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
@@ -17,27 +15,39 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
-public class PacketListenerMain extends PacketAdapter {
-    public PacketListenerMain(LibsDisguises plugin, ArrayList<PacketType> packetsToListen) {
-        super(plugin, ListenerPriority.HIGH, packetsToListen);
+public class PacketListenerMain extends SimplePacketListenerAbstract {
+    private final boolean[] listenedPackets = new boolean[Server.values().length];
+
+    public PacketListenerMain(ArrayList<Server> packetsToListen) {
+        for (Server type : packetsToListen) {
+            listenedPackets[type.ordinal()] = true;
+        }
     }
 
     @Override
-    public void onPacketSending(final PacketEvent event) {
-        if (event.isCancelled() || event.isPlayerTemporary()) {
+    public void onPacketPlaySend(PacketPlaySendEvent event) {
+        if (event.isCancelled()) {
             return;
         }
 
-        final Player observer = event.getPlayer();
+        if (!listenedPackets[event.getPacketType().ordinal()]) {
+            return;
+        }
 
-        if (observer.getName().contains("UNKNOWN[")) // If the player is temporary
-        {
+        final Player observer = (Player) event.getPlayer();
+
+        if (observer == null) {
             return;
         }
 
         // First get the entity, the one sending this packet
 
-        int entityId = event.getPacket().getIntegers().read(Server.COLLECT == event.getPacketType() ? 1 : 0);
+        PacketWrapper wrapper = DisguiseUtilities.constructWrapper(event);
+        Integer entityId = DisguiseUtilities.getEntityId(wrapper);
+
+        if (entityId == null) {
+            throw new IllegalStateException("Entity id should not be null on " + wrapper.getClass());
+        }
 
         final Disguise disguise = DisguiseUtilities.getDisguise(observer, entityId);
 
@@ -48,10 +58,10 @@ public class PacketListenerMain extends PacketAdapter {
             return;
         }
 
-        LibsPackets packets;
+        LibsPackets<?> packets;
 
         try {
-            packets = PacketsManager.getPacketsHandler().transformPacket(event.getPacket(), disguise, observer, disguise.getEntity());
+            packets = PacketsManager.getPacketsHandler().transformPacket(wrapper, disguise, observer, disguise.getEntity());
 
             if (disguise.isPlayerDisguise()) {
                 LibsDisguises.getInstance().getSkinHandler().handlePackets(observer, (PlayerDisguise) disguise, packets);
@@ -66,10 +76,18 @@ public class PacketListenerMain extends PacketAdapter {
             return;
         }
 
-        event.setCancelled(true);
+        if (packets.shouldCancelPacketEvent()) {
+            event.setCancelled(true);
+        }
 
-        for (PacketContainer packet : packets.getPackets()) {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+        for (PacketWrapper packet : packets.getPackets()) {
+            if (packet == wrapper) {
+                event.markForReEncode(true);
+                continue;
+                //packet = DisguiseUtilities.unsafeClone(event, wrapper);
+            }
+
+            PacketEvents.getAPI().getPlayerManager().sendPacketSilently(observer, packet);
         }
 
         packets.sendDelayed(observer);

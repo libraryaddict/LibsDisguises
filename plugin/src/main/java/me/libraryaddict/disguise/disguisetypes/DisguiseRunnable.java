@@ -1,9 +1,10 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.util.Vector3d;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMove;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityVelocity;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
@@ -12,6 +13,7 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -76,7 +78,7 @@ class DisguiseRunnable extends BukkitRunnable {
         if (++actionBarTicks % 15 == 0) {
             actionBarTicks = 0;
 
-            disguise.doActionBar();
+            disguise.doPeriodicTick();
         }
 
         // If entity is no longer valid. Remove it.
@@ -126,106 +128,102 @@ class DisguiseRunnable extends BukkitRunnable {
         doVelocity(vectorY, alwaysSendVelocity);
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
-
-            packet.getIntegers().write(0, disguise.getEntity().getEntityId());
-
             for (Player player : DisguiseUtilities.getPerverts(disguise)) {
                 if (disguise.getEntity() != player) {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+                    WrapperPlayServerEntityRelativeMove packet =
+                        new WrapperPlayServerEntityRelativeMove(disguise.getEntity().getEntityId(), 0, 0, 0, true);
+
+                    PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
                     continue;
                 } else if (!disguise.isSelfDisguiseVisible() || !(disguise.getEntity() instanceof Player)) {
                     continue;
                 }
 
-                PacketContainer selfPacket = packet.shallowClone();
+                WrapperPlayServerEntityRelativeMove selfPacket =
+                    new WrapperPlayServerEntityRelativeMove(DisguiseAPI.getSelfDisguiseId(), 0, 0, 0, true);
 
-                selfPacket.getModifier().write(0, DisguiseAPI.getSelfDisguiseId());
-
-                ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), selfPacket, false);
+                PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, selfPacket);
             }
         }
     }
 
     private void doVelocity(Double vectorY, boolean alwaysSendVelocity) {
         // If the vectorY isn't 0. Cos if it is. Then it doesn't want to send any vectors.
+        if (vectorY == null || !disguise.isVelocitySent()) {
+            return;
+        }
+
+        Entity entity = disguise.getEntity();
+
         // If this disguise has velocity sending enabled and the entity is flying.
-        if (disguise.isVelocitySent() && vectorY != null && (alwaysSendVelocity || !disguise.getEntity().isOnGround())) {
-            Vector vector = disguise.getEntity().getVelocity();
+        if (!alwaysSendVelocity && entity.isOnGround()) {
+            return;
+        }
 
-            // If the entity doesn't have velocity changes already - You know. I really can't wrap my
-            // head about the
-            // if statement.
-            // But it doesn't seem to do anything wrong..
-            if (vector.getY() != 0 && !(vector.getY() < 0 && alwaysSendVelocity && disguise.getEntity().isOnGround())) {
-                return;
+        Vector vector = entity.getVelocity();
+
+        // If the entity doesn't have velocity changes already - You know. I really can't wrap my
+        // head about the
+        // if statement.
+        // But it doesn't seem to do anything wrong..
+        if (vector.getY() != 0 && !(vector.getY() < 0 && alwaysSendVelocity && entity.isOnGround())) {
+            return;
+        }
+
+        // If disguise isn't a experience orb, or the entity isn't standing on the ground
+        if (disguise.getType() == DisguiseType.EXPERIENCE_ORB && entity.isOnGround()) {
+            return;
+        }
+
+        WrapperPlayServerEntityRotation lookPacket = null;
+
+        if (disguise.getType() == DisguiseType.WITHER_SKULL && DisguiseConfig.isWitherSkullPacketsEnabled()) {
+            Location loc = entity.getLocation();
+            float yaw = DisguiseUtilities.getYaw(disguise.getType(), entity.getType(), loc.getYaw());
+            float pitch = DisguiseUtilities.getPitch(disguise.getType(), entity.getType(), loc.getPitch());
+            lookPacket = new WrapperPlayServerEntityRotation(entity.getEntityId(), yaw, pitch, entity.isOnGround());
+
+            if (disguise.isSelfDisguiseVisible() && entity instanceof Player) {
+                WrapperPlayServerEntityRotation selfPacket =
+                    new WrapperPlayServerEntityRotation(DisguiseAPI.getSelfDisguiseId(), yaw, pitch, entity.isOnGround());
+
+                PacketEvents.getAPI().getPlayerManager().sendPacketSilently(entity, selfPacket);
             }
+        }
 
-            // If disguise isn't a experience orb, or the entity isn't standing on the ground
-            if (disguise.getType() != DisguiseType.EXPERIENCE_ORB || !disguise.getEntity().isOnGround()) {
-                PacketContainer lookPacket = null;
+        try {
 
-                if (disguise.getType() == DisguiseType.WITHER_SKULL && DisguiseConfig.isWitherSkullPacketsEnabled()) {
-                    lookPacket = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
+            for (Player player : DisguiseUtilities.getPerverts(disguise)) {
+                int entityId = entity.getEntityId();
 
-                    StructureModifier<Object> mods = lookPacket.getModifier();
-                    lookPacket.getIntegers().write(0, disguise.getEntity().getEntityId());
-                    Location loc = disguise.getEntity().getLocation();
-
-                    mods.write(4, DisguiseUtilities.getYaw(disguise.getType(), disguise.getEntity().getType(),
-                        (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)));
-                    mods.write(5, DisguiseUtilities.getPitch(disguise.getType(), disguise.getEntity().getType(),
-                        (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F)));
-
-                    if (disguise.isSelfDisguiseVisible() && disguise.getEntity() instanceof Player) {
-                        PacketContainer selfLookPacket = lookPacket.shallowClone();
-
-                        selfLookPacket.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
-
-                        ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), selfLookPacket, false);
+                // If the viewing player is the disguised player
+                if (entity == player) {
+                    // If not using self disguise, continue
+                    if (!disguise.isSelfDisguiseVisible()) {
+                        continue;
                     }
+
+                    // Write self disguise ID
+                    entityId = DisguiseAPI.getSelfDisguiseId();
+                } else if (lookPacket != null) {
+                    PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player,
+                        new WrapperPlayServerEntityRotation(lookPacket.getEntityId(), lookPacket.getYaw(), lookPacket.getPitch(),
+                            lookPacket.isOnGround()));
                 }
 
-                try {
-                    PacketContainer velocityPacket = new PacketContainer(PacketType.Play.Server.ENTITY_VELOCITY);
+                // The number isn't me trying to be funny
+                WrapperPlayServerEntityVelocity velocity = new WrapperPlayServerEntityVelocity(entityId,
+                    new Vector3d(vector.getX(), (vectorY * ReflectionManager.getPing(player)) * 0.069D, vector.getZ()));
 
-                    StructureModifier<Integer> mods = velocityPacket.getIntegers();
-
-                    // Write entity ID
-                    mods.write(0, disguise.getEntity().getEntityId());
-                    mods.write(1, (int) (vector.getX() * 8000));
-                    mods.write(3, (int) (vector.getZ() * 8000));
-
-                    for (Player player : DisguiseUtilities.getPerverts(disguise)) {
-                        PacketContainer tempVelocityPacket = velocityPacket.shallowClone();
-                        mods = tempVelocityPacket.getIntegers();
-
-                        // If the viewing player is the disguised player
-                        if (disguise.getEntity() == player) {
-                            // If not using self disguise, continue
-                            if (!disguise.isSelfDisguiseVisible()) {
-                                continue;
-                            }
-
-                            // Write self disguise ID
-                            mods.write(0, DisguiseAPI.getSelfDisguiseId());
-                        }
-
-                        mods.write(2, (int) (8000D * (vectorY * ReflectionManager.getPing(player)) * 0.069D));
-
-                        if (lookPacket != null && player != disguise.getEntity()) {
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, lookPacket, false);
-                        }
-
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, tempVelocityPacket, false);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, velocity);
             }
-            // If we need to send a packet to update the exp position as it likes to gravitate client
-            // sided to
-            // players.
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+    // If we need to send a packet to update the exp position as it likes to gravitate client
+    // sided to
+    // players.
 }
+
+

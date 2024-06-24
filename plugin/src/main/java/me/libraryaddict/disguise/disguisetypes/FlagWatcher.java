@@ -1,14 +1,16 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import com.comphenix.protocol.PacketType.Play.Server;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.wrappers.ComponentConverter;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
+import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
+import com.github.retrooper.packetevents.protocol.player.Equipment;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
 import com.google.common.base.Strings;
-import com.mojang.datafixers.util.Pair;
+import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -22,22 +24,27 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodGroupType;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodHiddenFor;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodIgnoredBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsedBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
-import net.md_5.bungee.api.chat.BaseComponent;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -108,12 +115,14 @@ public class FlagWatcher {
             return;
         }
 
-        PacketContainer packet =
-            ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.ENTITY_TELEPORT, getDisguise().getEntity())
-                .createPacket(getDisguise().getEntity());
+        Entity entity = getDisguise().getEntity();
 
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            WrapperPlayServerEntityTeleport teleport =
+                new WrapperPlayServerEntityTeleport(entity.getEntityId(), SpigotConversionUtil.fromBukkitLocation(entity.getLocation()),
+                    entity.isOnGround());
+
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, teleport);
         }
     }
 
@@ -128,12 +137,14 @@ public class FlagWatcher {
             return;
         }
 
-        PacketContainer packet =
-            ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.ENTITY_TELEPORT, getDisguise().getEntity())
-                .createPacket(getDisguise().getEntity());
+        Entity entity = getDisguise().getEntity();
 
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            WrapperPlayServerEntityTeleport teleport =
+                new WrapperPlayServerEntityTeleport(entity.getEntityId(), SpigotConversionUtil.fromBukkitLocation(entity.getLocation()),
+                    entity.isOnGround());
+
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, teleport);
         }
     }
 
@@ -170,18 +181,14 @@ public class FlagWatcher {
     }
 
     private void sendHeadPacket() {
-        PacketContainer rotateHead = new PacketContainer(Server.ENTITY_HEAD_ROTATION);
-
-        StructureModifier<Object> mods = rotateHead.getModifier();
-
-        mods.write(0, getDisguise().getEntity().getEntityId());
-
-        Location loc = getDisguise().getEntity().getLocation();
-
-        mods.write(1, (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+        Entity entity = getDisguise().getEntity();
+        Location loc = entity.getLocation();
 
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, rotateHead);
+            WrapperPlayServerEntityRotation packet =
+                new WrapperPlayServerEntityRotation(entity.getEntityId(), loc.getYaw(), loc.getPitch(), entity.isOnGround());
+
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
         }
     }
 
@@ -343,9 +350,9 @@ public class FlagWatcher {
                     }
                 }
 
-                watch = new WatcherValue(index, value);
+                watch = new WatcherValue(index, value, true);
             } else {
-                watch = new WatcherValue(index, watch.getValue());
+                watch = new WatcherValue(index, watch.getValue(), watch.isBukkitReadable());
 
                 if (id == MetaIndex.ENTITY_META.getIndex()) {
                     doSneakCheck((Byte) watch.getValue());
@@ -377,7 +384,7 @@ public class FlagWatcher {
                     continue;
                 }
 
-                WatcherValue watch = new WatcherValue(MetaIndex.getMetaIndex(this, id), value);
+                WatcherValue watch = new WatcherValue(MetaIndex.getMetaIndex(this, id), value, true);
 
                 if (watch == null) {
                     continue;
@@ -488,6 +495,16 @@ public class FlagWatcher {
             return;
         }
 
+        if (!Bukkit.isPrimaryThread()) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    updateNameHeight();
+                }
+            }.runTask(LibsDisguises.getInstance());
+            return;
+        }
+
         // Not using this as it's "Smooth" and looks a bit weirder
         /*int[] ids = getDisguise().getArmorstandIds();
 
@@ -506,16 +523,16 @@ public class FlagWatcher {
             packets.add(packet);
         }*/
 
-        ArrayList<PacketContainer> packets = DisguiseUtilities.getNamePackets(getDisguise(), new String[0]);
-
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
             if (!DisguiseUtilities.isFancyHiddenTabs() && getDisguise().isPlayerDisguise() &&
                 LibsDisguises.getInstance().getSkinHandler().isSleeping(player, (PlayerDisguise) getDisguise())) {
                 continue;
             }
 
-            for (PacketContainer packet : packets) {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(getDisguise(), new String[0]);
+
+            for (PacketWrapper<?> packet : packets) {
+                PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
             }
         }
     }
@@ -541,17 +558,12 @@ public class FlagWatcher {
             return getData(MetaIndex.ENTITY_CUSTOM_NAME_OLD);
         }
 
-        Optional<WrappedChatComponent> optional = getData(MetaIndex.ENTITY_CUSTOM_NAME);
+        Optional<Component> optional = getData(MetaIndex.ENTITY_CUSTOM_NAME);
 
-        if (optional.isPresent()) {
-            BaseComponent[] base = ComponentConverter.fromWrapper(optional.get());
-
-            return DisguiseUtilities.getSimpleString(base);
-        }
-
-        return null;
+        return optional.map(DisguiseUtilities::getSimpleString).orElse(null);
     }
 
+    @MethodHiddenFor(DisguiseType.PLAYER)
     public void setCustomName(String name) {
         if (name != null && name.length() > 0 && ("159" + "2").equals("%%__USER__%%")) {
             name = name.substring(1);
@@ -604,10 +616,7 @@ public class FlagWatcher {
             }
 
             if (NmsVersion.v1_13.isSupported()) {
-                Optional<WrappedChatComponent> optional =
-                    Optional.of(WrappedChatComponent.fromJson(DisguiseUtilities.serialize(DisguiseUtilities.getAdventureChat(name))));
-
-                setData(MetaIndex.ENTITY_CUSTOM_NAME, optional);
+                setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.of(DisguiseUtilities.getAdventureChat(name)));
             } else {
                 setData(MetaIndex.ENTITY_CUSTOM_NAME_OLD, name);
             }
@@ -694,12 +703,12 @@ public class FlagWatcher {
         return getCustomName() != null;
     }
 
-    public boolean hasValue(MetaIndex no) {
-        if (no == null) {
+    public boolean hasValue(MetaIndex metaIndex) {
+        if (metaIndex == null) {
             return false;
         }
 
-        return entityValues.containsKey(no.getIndex());
+        return entityValues.containsKey(metaIndex.getIndex());
     }
 
     public boolean isBurning() {
@@ -860,9 +869,9 @@ public class FlagWatcher {
             WatcherValue watchable;
 
             if (entityValues.containsKey(i) && entityValues.get(i) != null) {
-                watchable = new WatcherValue(MetaIndex.getMetaIndex(this, i), entityValues.get(i));
+                watchable = new WatcherValue(MetaIndex.getMetaIndex(this, i), entityValues.get(i), true);
             } else if (backupEntityValues.containsKey(i) && backupEntityValues.get(i) != null) {
-                watchable = new WatcherValue(MetaIndex.getMetaIndex(this, i), backupEntityValues.get(i));
+                watchable = new WatcherValue(MetaIndex.getMetaIndex(this, i), backupEntityValues.get(i), true);
             } else {
                 continue;
             }
@@ -895,10 +904,22 @@ public class FlagWatcher {
 
             if (isEntityAnimationsAdded() && DisguiseConfig.isMetaPacketsEnabled() &&
                 (data == MetaIndex.ENTITY_META || data == MetaIndex.LIVING_META)) {
-                value = addEntityAnimations(data, (byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
+
+                byte b = (byte) data.getDefault();
+
+                for (EntityData d : ReflectionManager.getEntityWatcher(disguise.getEntity())) {
+                    if (d.getIndex() != data.getIndex()) {
+                        continue;
+                    }
+
+                    b = (byte) d.getValue();
+                    break;
+                }
+
+                value = addEntityAnimations(data, (byte) value, b);
             }
 
-            WatcherValue watch = new WatcherValue(data, value);
+            WatcherValue watch = new WatcherValue(data, value, true);
 
             if (watch == null) {
                 continue;
@@ -908,17 +929,13 @@ public class FlagWatcher {
         }
 
         if (!list.isEmpty()) {
-            PacketContainer packet = ReflectionManager.getMetadataPacket(getDisguise().getEntity().getEntityId(), list);
-
             for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-                if (player == getDisguise().getEntity()) {
-                    PacketContainer temp = packet.shallowClone();
-                    temp.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
+                int entityId =
+                    player == getDisguise().getEntity() ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId();
 
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, temp);
-                } else {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-                }
+                WrapperPlayServerEntityMetadata packet = ReflectionManager.getMetadataPacket(entityId, list);
+
+                PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
             }
         }
     }
@@ -978,26 +995,12 @@ public class FlagWatcher {
             itemStack = ReflectionManager.getEquipment(slot, getDisguise().getEntity());
         }
 
-        Object itemToSend = ReflectionManager.getNmsItem(itemStack);
-
-        PacketContainer packet = new PacketContainer(Server.ENTITY_EQUIPMENT);
-
-        StructureModifier<Object> mods = packet.getModifier();
-
-        mods.write(0, getDisguise().getEntity().getEntityId());
-
-        if (NmsVersion.v1_16.isSupported()) {
-            List<Pair<Object, Object>> list = new ArrayList<>();
-            list.add(Pair.of(ReflectionManager.createEnumItemSlot(slot), itemToSend));
-
-            mods.write(1, list);
-        } else {
-            mods.write(1, ReflectionManager.createEnumItemSlot(slot));
-            mods.write(2, itemToSend);
-        }
-
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            List<Equipment> list = Collections.singletonList(
+                new Equipment(ReflectionManager.getSlot(slot), SpigotConversionUtil.fromBukkitItemStack(itemStack)));
+            WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(getDisguise().getEntity().getEntityId(), list);
+
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
         }
     }
 
@@ -1042,7 +1045,7 @@ public class FlagWatcher {
         } else if (isSwimming()) {
             setEntityPose(EntityPose.SWIMMING);
         } else if (isSneaking()) {
-            setEntityPose(EntityPose.SNEAKING);
+            setEntityPose(EntityPose.CROUCHING);
         } else {
             setEntityPose(EntityPose.STANDING);
         }

@@ -1,34 +1,50 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import com.comphenix.protocol.wrappers.WrappedBlockData;
+import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
+import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodMappedAs;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Optional;
+import org.bukkit.material.MaterialData;
 
 public class EndermanWatcher extends InsentientWatcher {
-
     public EndermanWatcher(Disguise disguise) {
         super(disguise);
     }
 
     @Override
+    @Deprecated
     public ItemStack getItemInMainHand() {
-        Optional<WrappedBlockData> value = getData(MetaIndex.ENDERMAN_ITEM);
+        WrappedBlockState value = getHeldBlock();
 
-        if (value.isPresent()) {
-            WrappedBlockData pair = value.get();
-            return new ItemStack(pair.getType(), 1);
-        } else {
-            return null;
+        if (!NmsVersion.v1_13.isSupported()) {
+            return ReflectionManager.getItemStackByCombinedId(value.getGlobalId());
         }
+
+        MaterialData pair = SpigotConversionUtil.toBukkitMaterialData(value);
+
+        return new ItemStack(pair.getItemType(), 1, pair.getData());
     }
 
     @Override
+    @Deprecated
     public void setItemInMainHand(ItemStack itemstack) {
         setItemInMainHand(itemstack.getType());
+    }
+
+    @MethodMappedAs("setItemInMainHand")
+    public void setHeldBlock(WrappedBlockState state) {
+        setData(MetaIndex.ENDERMAN_ITEM, state);
+        sendData(MetaIndex.ENDERMAN_ITEM);
+    }
+
+    @MethodMappedAs("getItemInMainHand")
+    public WrappedBlockState getHeldBlock() {
+        return getData(MetaIndex.ENDERMAN_ITEM);
     }
 
     @Deprecated
@@ -37,16 +53,9 @@ public class EndermanWatcher extends InsentientWatcher {
             return;
         }
 
-        Optional<WrappedBlockData> optional;
+        WrappedBlockState item = SpigotConversionUtil.fromBukkitMaterialData(new MaterialData(type));
 
-        if (type == null) {
-            optional = Optional.empty();
-        } else {
-            optional = Optional.of(WrappedBlockData.createData(type));
-        }
-
-        setData(MetaIndex.ENDERMAN_ITEM, optional);
-        sendData(MetaIndex.ENDERMAN_ITEM);
+        setHeldBlock(item);
     }
 
     @Deprecated

@@ -13,7 +13,7 @@ There are a few features which you need to pay for, but none of it is needed to 
 Spigot page: <a href="https://www.spigotmc.org/resources/32453/">Link</a>
 Jenkins Downloads: <a href="https://ci.md-5.net/job/LibsDisguises/">Link</a>
 
-NOTE: These versions will NOT work with older versions of Minecraft. There is no support for older versions of this plugin.
+NOTE: These versions will NOT work with older versions of Minecraft than 1.12, there is no support for older versions of this plugin.
 
 When posting an issue:<br>
 Please make sure you<br>
@@ -21,7 +21,7 @@ Please make sure you<br>
 2) Post the exact steps you used in order to reproduce the issue.<br>
 3) Give as much information as possible as to what the issue is and why it occurred so that we can fix it.<br>
 
-Verify that there were no error messages while Lib's Disguises was loading, that you're using the appropiate version of <a href="https://www.spigotmc.org/resources/protocollib.1997/">ProtocolLib</a>.
+Verify that there were no error messages while Lib's Disguises was loading, that you're using the appropiate version of <a href="https://www.spigotmc.org/resources/packetevents-api.80279/">PacketEvents</a>.
 If you're using the development builds of Lib's Disguises, make sure you are up to date before reporting a bug.
 
 Important Note

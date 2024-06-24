@@ -17,7 +17,7 @@ import java.util.Map;
 public class DisguiseCloneTest {
 
     /**
-     * MetaIndex needs ProtocolLib to have initialized so.
+     * MetaIndex needs PacketEvents to have initialized so.
      */
     //  @Test
     public void testCloneDisguise() {

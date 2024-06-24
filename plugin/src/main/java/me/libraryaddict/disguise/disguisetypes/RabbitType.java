@@ -1,31 +1,43 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-public enum RabbitType {
-    BLACK(2),
-    BROWN(0),
-    GOLD(4),
-    KILLER_BUNNY(99),
-    PATCHES(3),
-    PEPPER(5),
-    WHITE(1);
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.bukkit.entity.Rabbit;
 
-    public static RabbitType getType(int id) {
+@RequiredArgsConstructor
+@Getter
+public enum RabbitType {
+    BLACK(2, Rabbit.Type.BLACK),
+    BROWN(0, Rabbit.Type.BROWN),
+    GOLD(4, Rabbit.Type.GOLD),
+    KILLER_BUNNY(99, Rabbit.Type.THE_KILLER_BUNNY),
+    PATCHES(3, Rabbit.Type.BLACK_AND_WHITE),
+    PEPPER(5, Rabbit.Type.SALT_AND_PEPPER),
+    WHITE(1, Rabbit.Type.WHITE);
+
+    public static Rabbit.Type getType(int id) {
         for (RabbitType type : values()) {
-            if (type.getTypeId() == id) {
-                return type;
+            if (type.getTypeId() != id) {
+                continue;
             }
+
+            return type.getType();
         }
 
         return null;
     }
+    public static int getTypeId(Rabbit.Type rabbitType) {
+        for (RabbitType type : values()) {
+            if (type.getType() != rabbitType) {
+                continue;
+            }
 
-    private final int type;
+            return type.getTypeId();
+        }
 
-    RabbitType(int type) {
-        this.type = type;
+        throw new IllegalStateException("Unknown rabbit type " + rabbitType);
     }
 
-    public int getTypeId() {
-        return type;
-    }
+    private final int typeId;
+    private final Rabbit.Type type;
 }

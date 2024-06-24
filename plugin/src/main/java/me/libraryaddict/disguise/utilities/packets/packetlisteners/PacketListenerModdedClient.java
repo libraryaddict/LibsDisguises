@@ -1,21 +1,18 @@
 package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.MinecraftKey;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.SimplePacketListenerAbstract;
+import com.github.retrooper.packetevents.event.simple.PacketLoginReceiveEvent;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType.Login.Client;
+import com.github.retrooper.packetevents.wrapper.login.client.WrapperLoginClientLoginStart;
+import com.github.retrooper.packetevents.wrapper.login.client.WrapperLoginClientPluginResponse;
+import com.github.retrooper.packetevents.wrapper.login.server.WrapperLoginServerPluginRequest;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
-import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
-import org.bukkit.entity.Player;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -24,13 +21,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by libraryaddict on 11/06/2020.
  */
-public class PacketListenerModdedClient extends PacketAdapter {
-    private final Cache<String, String> loginAttempts = CacheBuilder.newBuilder().expireAfterWrite(15, TimeUnit.SECONDS).build();
-    private final int packetId1 = 5555554, packetId2 = 5555555;
-
-    public PacketListenerModdedClient() {
-        super(LibsDisguises.getInstance(), PacketType.Login.Client.START, PacketType.Login.Client.CUSTOM_PAYLOAD);
-    }
+public class PacketListenerModdedClient extends SimplePacketListenerAbstract {
+    private final Cache<String, WrapperLoginClientLoginStart> loginAttempts =
+        CacheBuilder.newBuilder().expireAfterWrite(15, TimeUnit.SECONDS).build();
+    private static final int packetId1 = 5555554, packetId2 = 5555555;
 
     private int getInt(ByteBuf buf) {
         int i = 0;
@@ -48,7 +42,7 @@ public class PacketListenerModdedClient extends PacketAdapter {
         return i;
     }
 
-    private void handleModlist(Player player, String name, byte[] data) {
+    private void handleModlist(String name, byte[] data) {
         ByteBuf buf = Unpooled.copiedBuffer(data);
 
         int packetId = getInt(buf);
@@ -87,69 +81,43 @@ public class PacketListenerModdedClient extends PacketAdapter {
         }
     }
 
-    private void handleDataReceived(Player player, String name) {
-        // Continue
-        PacketContainer packet = new PacketContainer(PacketType.Login.Client.START);
-        packet.getModifier().write(0, new GameProfile(null, name));
-
-        ProtocolLibrary.getProtocolManager().receiveClientPacket(player, packet, false);
-    }
-
     @Override
-    public void onPacketReceiving(PacketEvent event) {
+    public void onPacketLoginReceive(PacketLoginReceiveEvent event) {
+        if (event.getPacketType() != Client.LOGIN_PLUGIN_RESPONSE && event.getPacketType() != Client.LOGIN_START) {
+            return;
+        }
+
         event.setCancelled(true);
 
-        if (event.getPacketType() == PacketType.Login.Client.CUSTOM_PAYLOAD) {
-            String address = event.getPlayer().getAddress().toString();
+        if (event.getPacketType() == Client.LOGIN_PLUGIN_RESPONSE) {
+            String address = event.getSocketAddress().toString();
 
-            String name = loginAttempts.getIfPresent(address);
+            WrapperLoginClientLoginStart startAttempt = loginAttempts.getIfPresent(address);
 
-            if (name == null) {
+            if (startAttempt == null) {
                 return;
             }
 
-            if (event.getPacket().getIntegers().read(0) == packetId2) {
+            WrapperLoginClientPluginResponse wrapper = new WrapperLoginClientPluginResponse(event);
+
+            if (wrapper.getMessageId() == packetId1 && wrapper.isSuccessful()) {
+                handleModlist(startAttempt.getUsername(), wrapper.getData());
+            } else if (wrapper.getMessageId() == packetId2) {
                 loginAttempts.invalidate(address);
-                handleDataReceived(event.getPlayer(), name);
-                return;
-            } else if (event.getPacket().getIntegers().read(0) == packetId1) {
-                ByteBuf buf = (ByteBuf) event.getPacket().getModifier().read(1);
-
-                if (buf != null) {
-                    byte[] bytes = new byte[buf.readableBytes()];
-                    buf.readBytes(bytes);
-
-                    handleModlist(event.getPlayer(), name, bytes);
-                }
+                PacketEvents.getAPI().getPlayerManager().receivePacketSilently(event.getPlayer(), startAttempt);
             }
 
             return;
         }
 
-        loginAttempts.put(event.getPlayer().getAddress().toString(), event.getPacket().getGameProfiles().read(0).getName());
+        loginAttempts.put(event.getSocketAddress().toString(), new WrapperLoginClientLoginStart(event.clone()));
 
-        PacketContainer packet1 = new PacketContainer(PacketType.Login.Server.CUSTOM_PAYLOAD);
-        packet1.getIntegers().write(0, packetId1);
-        packet1.getMinecraftKeys().write(0, new com.comphenix.protocol.wrappers.MinecraftKey("fml", "handshake"));
+        WrapperLoginServerPluginRequest packet1 =
+            new WrapperLoginServerPluginRequest(packetId1, "fml:handshake", ModdedManager.getFmlHandshake());
+        WrapperLoginServerPluginRequest packet2 =
+            new WrapperLoginServerPluginRequest(packetId2, "fml:handshake", ModdedManager.getFmlRegistries());
 
-        try {
-            Object obj1 = ReflectionManager.getNmsConstructor("PacketDataSerializer", ByteBuf.class)
-                .newInstance(Unpooled.wrappedBuffer(ModdedManager.getFmlHandshake()));
-
-            packet1.getModifier().write(2, obj1);
-
-            PacketContainer packet2 = new PacketContainer(PacketType.Login.Server.CUSTOM_PAYLOAD);
-            packet2.getIntegers().write(0, packetId2);
-            packet2.getMinecraftKeys().write(0, new MinecraftKey("fml", "handshake"));
-            Object obj2 = ReflectionManager.getNmsConstructor("PacketDataSerializer", ByteBuf.class)
-                .newInstance(Unpooled.wrappedBuffer(ModdedManager.getFmlRegistries()));
-
-            packet2.getModifier().write(2, obj2);
-
-            ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet1);
-            ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet2);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        PacketEvents.getAPI().getPlayerManager().sendPacket(event.getPlayer(), packet1);
+        PacketEvents.getAPI().getPlayerManager().sendPacket(event.getPlayer(), packet2);
     }
 }

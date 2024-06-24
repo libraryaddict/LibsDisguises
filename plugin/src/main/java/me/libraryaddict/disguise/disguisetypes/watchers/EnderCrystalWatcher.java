@@ -1,9 +1,10 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import com.comphenix.protocol.wrappers.BlockPosition;
+import com.github.retrooper.packetevents.util.Vector3i;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
 
 import java.util.Optional;
 
@@ -15,11 +16,11 @@ public class EnderCrystalWatcher extends FlagWatcher {
         super(disguise);
     }
 
-    public BlockPosition getBeamTarget() {
+    public Vector3i getBeamTarget() {
         return getData(MetaIndex.ENDER_CRYSTAL_BEAM).orElse(null);
     }
 
-    public void setBeamTarget(BlockPosition position) {
+    public void setBeamTarget(Vector3i position) {
         setData(MetaIndex.ENDER_CRYSTAL_BEAM, position == null ? Optional.empty() : Optional.of(position));
         sendData(MetaIndex.ENDER_CRYSTAL_BEAM);
     }
@@ -28,6 +29,7 @@ public class EnderCrystalWatcher extends FlagWatcher {
         return getData(MetaIndex.ENDER_CRYSTAL_PLATE);
     }
 
+    @MethodDescription("Can you see the Ender Crystal's base plate?")
     public void setShowBottom(boolean bool) {
         setData(MetaIndex.ENDER_CRYSTAL_PLATE, bool);
         sendData(MetaIndex.ENDER_CRYSTAL_PLATE);

@@ -1,22 +1,20 @@
 package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 
-import com.comphenix.protocol.PacketType.Play.Server;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.WrappedDataValue;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.SimplePacketListenerAbstract;
+import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
+import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Server;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityAnimation;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityStatus;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -29,31 +27,39 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class PacketListenerViewSelfDisguise extends PacketAdapter {
-    public PacketListenerViewSelfDisguise(LibsDisguises plugin) {
-        super(plugin, ListenerPriority.HIGH, NmsVersion.v1_20_R2.isSupported() ? Server.SPAWN_ENTITY : Server.NAMED_ENTITY_SPAWN,
-            Server.ATTACH_ENTITY, Server.REL_ENTITY_MOVE, Server.REL_ENTITY_MOVE_LOOK, Server.ENTITY_LOOK, Server.ENTITY_TELEPORT,
-            Server.ENTITY_HEAD_ROTATION, Server.ENTITY_METADATA, Server.ENTITY_EQUIPMENT, Server.ANIMATION, Server.ENTITY_EFFECT,
-            Server.ENTITY_VELOCITY, Server.UPDATE_ATTRIBUTES, Server.ENTITY_STATUS);
+public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract {
+    private final boolean[] listenedPackets = new boolean[Server.values().length];
+
+    public PacketListenerViewSelfDisguise() {
+        for (Server packet : new Server[]{NmsVersion.v1_20_R2.isSupported() ? Server.SPAWN_ENTITY : Server.SPAWN_PLAYER,
+            Server.ATTACH_ENTITY, Server.ENTITY_RELATIVE_MOVE_AND_ROTATION, Server.ENTITY_RELATIVE_MOVE, Server.ENTITY_HEAD_LOOK,
+            Server.ENTITY_ROTATION, Server.ENTITY_TELEPORT, Server.ENTITY_MOVEMENT, Server.ENTITY_METADATA, Server.ENTITY_EQUIPMENT,
+            Server.ENTITY_ANIMATION, Server.ENTITY_EFFECT, Server.ENTITY_VELOCITY, Server.UPDATE_ATTRIBUTES, Server.ENTITY_STATUS}) {
+            listenedPackets[packet.ordinal()] = true;
+        }
     }
 
     @Override
-    public void onPacketSending(final PacketEvent event) {
+    public void onPacketPlaySend(PacketPlaySendEvent event) {
         if (event.isCancelled()) {
             return;
         }
 
-        try {
-            final Player observer = event.getPlayer();
+        if (!listenedPackets[event.getPacketType().ordinal()]) {
+            return;
+        }
 
-            if (observer.getName().contains("UNKNOWN[")) {// If the player is temporary
+        try {
+            final Player observer = (Player) event.getPlayer();
+
+            if (observer == null) {
                 return;
             }
 
-            PacketContainer packet = event.getPacket();
+            PacketWrapper wrapper = DisguiseUtilities.constructWrapper(event);
 
             // If packet isn't meant for the disguised player's self disguise
-            if (packet.getIntegers().read(0) != observer.getEntityId()) {
+            if (DisguiseUtilities.getEntityId(wrapper) != observer.getEntityId()) {
                 return;
             }
 
@@ -68,36 +74,41 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
             }
 
             // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
-            LibsPackets transformed = PacketsManager.getPacketsHandler().transformPacket(packet, disguise, observer, observer);
+            LibsPackets<?> transformed = PacketsManager.getPacketsHandler().transformPacket(wrapper, disguise, observer, observer);
 
             if (transformed.isUnhandled()) {
-                transformed.addPacket(packet);
+                transformed.addPacket(DisguiseUtilities.unsafeClone(event, wrapper));
             }
 
-            LibsPackets selfTransformed = new LibsPackets(disguise);
+            LibsPackets<?> selfTransformed = new LibsPackets(wrapper, disguise);
             selfTransformed.setSkinHandling(transformed.isSkinHandling());
 
-            for (PacketContainer newPacket : transformed.getPackets()) {
-                if (newPacket.getType() != Server.PLAYER_INFO && newPacket.getType() != Server.ENTITY_DESTROY &&
-                    newPacket.getIntegers().read(0) == observer.getEntityId()) {
-                    if (newPacket == packet) {
-                        newPacket = newPacket.shallowClone();
-                    }
+            for (PacketWrapper newPacket : transformed.getPackets()) {
+                if (newPacket == selfTransformed.getOriginalPacket()) {
+                    newPacket = DisguiseUtilities.unsafeClone(event, newPacket);
+                }
 
-                    newPacket.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
+                if (newPacket.getPacketTypeData().getPacketType() != Server.PLAYER_INFO &&
+                    newPacket.getPacketTypeData().getPacketType() != Server.PLAYER_INFO_UPDATE &&
+                    newPacket.getPacketTypeData().getPacketType() != Server.DESTROY_ENTITIES &&
+                    DisguiseUtilities.getEntityId(newPacket) == observer.getEntityId()) {
+
+                    DisguiseUtilities.writeSelfDisguiseId(observer.getEntityId(), newPacket);
                 }
 
                 selfTransformed.addPacket(newPacket);
             }
 
-            for (Map.Entry<Integer, ArrayList<PacketContainer>> entry : transformed.getDelayedPacketsMap().entrySet()) {
-                for (PacketContainer newPacket : entry.getValue()) {
-                    if (newPacket == packet) {
-                        newPacket = newPacket.shallowClone();
+            for (Map.Entry<Integer, ArrayList<PacketWrapper>> entry : transformed.getDelayedPacketsMap().entrySet()) {
+                for (PacketWrapper newPacket : entry.getValue()) {
+                    if (newPacket == selfTransformed.getOriginalPacket()) {
+                        newPacket = DisguiseUtilities.unsafeClone(event, newPacket);
                     }
 
-                    if (newPacket.getType() != Server.PLAYER_INFO && newPacket.getType() != Server.ENTITY_DESTROY) {
-                        newPacket.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
+                    if (newPacket.getPacketTypeData().getPacketType() != Server.PLAYER_INFO &&
+                        newPacket.getPacketTypeData().getPacketType() != Server.PLAYER_INFO_UPDATE &&
+                        newPacket.getPacketTypeData().getPacketType() != Server.DESTROY_ENTITIES) {
+                        DisguiseUtilities.writeSelfDisguiseId(observer.getEntityId(), newPacket);
                     }
 
                     selfTransformed.addDelayedPacket(newPacket, entry.getKey());
@@ -108,46 +119,34 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
                 LibsDisguises.getInstance().getSkinHandler().handlePackets(observer, (PlayerDisguise) disguise, selfTransformed);
             }
 
-            for (PacketContainer newPacket : selfTransformed.getPackets()) {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(observer, newPacket, false);
+            for (PacketWrapper newPacket : selfTransformed.getPackets()) {
+                PacketEvents.getAPI().getPlayerManager().sendPacketSilently(observer, newPacket);
             }
 
             selfTransformed.sendDelayed(observer);
 
             if (event.getPacketType() == Server.ENTITY_METADATA) {
-                if (!LibsPremium.getPluginInformation().isPremium() || LibsPremium.getPaidInformation() != null ||
+                WrapperPlayServerEntityMetadata metadata = (WrapperPlayServerEntityMetadata) wrapper;
+
+               /* if (!LibsPremium.getPluginInformation().isPremium() || LibsPremium.getPaidInformation() != null ||
                     LibsPremium.getPluginInformation().getBuildNumber().matches("#\\d+")) {
+
                     event.setPacket(packet = packet.deepClone());
+                }*/
+
+                for (EntityData data : metadata.getEntityMetadata()) {
+                    if (data.getIndex() != 0) {
+                        continue;
+                    }
+                    byte b = (byte) data.getValue();
+
+                    // Add invisibility, remove glowing
+                    byte a = (byte) ((b | 1 << 5) & ~(1 << 6));
+
+                    data.setValue(a);
                 }
 
-                if (NmsVersion.v1_19_R2.isSupported()) {
-                    for (WrappedDataValue watch : packet.getDataValueCollectionModifier().read(0)) {
-                        if (watch.getIndex() != 0) {
-                            continue;
-                        }
-
-                        byte b = (byte) watch.getRawValue();
-
-                        // Add invisibility, remove glowing
-                        byte a = (byte) ((b | 1 << 5) & ~(1 << 6));
-
-                        watch.setValue(a);
-                    }
-                } else {
-                    for (WrappedWatchableObject watch : packet.getWatchableCollectionModifier().read(0)) {
-                        if (watch.getIndex() != 0) {
-                            continue;
-                        }
-
-                        byte b = (byte) watch.getRawValue();
-
-                        // Add invisibility, remove glowing
-                        byte a = (byte) ((b | 1 << 5) & ~(1 << 6));
-
-                        watch.setValue(a);
-                    }
-                }
-            } else if (event.getPacketType() == Server.NAMED_ENTITY_SPAWN || event.getPacketType() == Server.SPAWN_ENTITY) {
+            } else if (event.getPacketType() == Server.SPAWN_PLAYER || event.getPacketType() == Server.SPAWN_ENTITY) {
                 event.setCancelled(true);
 
                 List<WatcherValue> watchableList = new ArrayList<>();
@@ -157,45 +156,35 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
                     b = (byte) (b | 1 << 3);
                 }
 
-                WatcherValue watch = new WatcherValue(MetaIndex.ENTITY_META, b);
+                WatcherValue watch = new WatcherValue(MetaIndex.ENTITY_META, b, true);
 
                 watchableList.add(watch);
 
-                PacketContainer metaPacket = ReflectionManager.getMetadataPacket(observer.getEntityId(), watchableList);
+                WrapperPlayServerEntityMetadata metaPacket = ReflectionManager.getMetadataPacket(observer.getEntityId(), watchableList);
 
-                ProtocolLibrary.getProtocolManager().sendServerPacket(observer, metaPacket);
-            } else if (event.getPacketType() == Server.ANIMATION) {
-                if (packet.getIntegers().read(1) != 2) {
+                PacketEvents.getAPI().getPlayerManager().sendPacket(observer, metaPacket);
+            } else if (event.getPacketType() == Server.ENTITY_ANIMATION) {
+                if (((WrapperPlayServerEntityAnimation) wrapper).getType() !=
+                    WrapperPlayServerEntityAnimation.EntityAnimationType.WAKE_UP) {
                     event.setCancelled(true);
                 }
-            } else if (event.getPacketType() == Server.ATTACH_ENTITY || event.getPacketType() == Server.REL_ENTITY_MOVE ||
-                event.getPacketType() == Server.REL_ENTITY_MOVE_LOOK || event.getPacketType() == Server.ENTITY_LOOK ||
-                event.getPacketType() == Server.ENTITY_TELEPORT || event.getPacketType() == Server.ENTITY_HEAD_ROTATION ||
+            } else if (event.getPacketType() == Server.ATTACH_ENTITY || event.getPacketType() == Server.ENTITY_RELATIVE_MOVE ||
+                event.getPacketType() == Server.ENTITY_RELATIVE_MOVE_AND_ROTATION || event.getPacketType() == Server.ENTITY_HEAD_LOOK ||
+                event.getPacketType() == Server.ENTITY_TELEPORT || event.getPacketType() == Server.ENTITY_ROTATION ||
                 event.getPacketType() == Server.ENTITY_EQUIPMENT) {
                 event.setCancelled(true);
             } else if (event.getPacketType() == Server.ENTITY_STATUS) {
-                if (disguise.isSelfDisguiseSoundsReplaced() && !disguise.getType().isPlayer() && packet.getBytes().read(0) == 2) {
+                if (disguise.isSelfDisguiseSoundsReplaced() && !disguise.getType().isPlayer() &&
+                    ((WrapperPlayServerEntityStatus) wrapper).getStatus() == 2) {
                     event.setCancelled(true);
 
                     // As of 1.19.3, no sound is sent but instead the client is expected to play a hurt sound on entity status effect
                     if (NmsVersion.v1_19_R2.isSupported()) {
                         SoundGroup group = SoundGroup.getGroup(disguise);
-                        Object sound = group.getSound(SoundGroup.SoundType.HURT);
+                        String sound = group.getSound(SoundGroup.SoundType.HURT);
 
                         if (sound != null) {
-                            PacketContainer newPacket = new PacketContainer(Server.ENTITY_SOUND);
-                            StructureModifier mods = newPacket.getModifier();
-
-                            mods.write(0, sound);
-                            // Category
-                            mods.write(2, DisguiseAPI.getSelfDisguiseId());
-                            mods.write(3, 1f);
-                            mods.write(4, 1f);
-                            mods.write(5, (long) (Math.random() * 1000L));
-
-                            newPacket.getSoundCategories().write(0, EnumWrappers.SoundCategory.MASTER);
-
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, newPacket);
+                            observer.playSound(observer.getLocation(), sound, 1f, 1f);
                         }
                     }
                 }

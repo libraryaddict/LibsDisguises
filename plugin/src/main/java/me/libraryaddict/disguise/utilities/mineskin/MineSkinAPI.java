@@ -159,7 +159,7 @@ public class MineSkinAPI {
 
                 if (modelType == SkinUtils.ModelType.SLIM) {
                     writer.append("--").append(boundary).append(CRLF);
-                    writer.append("Content-Disposition: form-data; name=\"model\"").append(CRLF);
+                    writer.append("Content-Disposition: form-data; name=\"variant\"").append(CRLF);
                     writer.append(CRLF).append("slim").append(CRLF).flush();
                 }
 
@@ -252,8 +252,8 @@ public class MineSkinAPI {
 
                         // I don't think there's a reliable way to detect the page.
                         // They change the page layout, text and don't identify themselves clearly as this is not meant to be bottable
-                        if (response.toLowerCase(Locale.ROOT).contains("challenge") &&
-                            response.toLowerCase(Locale.ROOT).contains("javascript")) {
+                        if (response.toLowerCase(Locale.ENGLISH).contains("challenge") &&
+                            response.toLowerCase(Locale.ENGLISH).contains("javascript")) {
                             DisguiseUtilities.getLogger().warning(
                                 "We may have encountered a Cloudflare challenge page while connecting to MineSkin, unfortunately this " +
                                     "could be of several reasons. Foremost is the site suffering a bot attack, your IP could be " +
@@ -282,6 +282,10 @@ public class MineSkinAPI {
         } finally {
             nextRequest = System.currentTimeMillis() + nextRequestIn + 1000;
             lock.unlock();
+
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
 
         return null;
@@ -324,6 +328,7 @@ public class MineSkinAPI {
                 MineSkinResponse skinResponse = new Gson().fromJson(response, MineSkinResponse.class);
 
                 nextRequestIn = (long) (skinResponse.getNextRequest() * 1000);
+                con.disconnect();
 
                 return skinResponse;
             }

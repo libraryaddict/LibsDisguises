@@ -37,42 +37,22 @@ public class PandaWatcher extends AgeableWatcher {
     }
 
     public Panda.Gene getMainGene() {
-        int id = getData(MetaIndex.PANDA_MAIN_GENE);
-
-        for (Panda.Gene gene : Panda.Gene.values()) {
-            if (gene.ordinal() != id) {
-                continue;
-            }
-
-            return gene;
-        }
-
-        return Panda.Gene.NORMAL;
+        return getData(MetaIndex.PANDA_MAIN_GENE);
     }
 
     @MethodOnlyUsedBy(value = {}) // Hide from command
     public void setMainGene(Panda.Gene gene) {
-        setData(MetaIndex.PANDA_MAIN_GENE, (byte) gene.ordinal());
+        setData(MetaIndex.PANDA_MAIN_GENE, gene);
         sendData(MetaIndex.PANDA_MAIN_GENE);
     }
 
     public Panda.Gene getHiddenGene() {
-        int id = getData(MetaIndex.PANDA_HIDDEN_GENE);
-
-        for (Panda.Gene gene : Panda.Gene.values()) {
-            if (gene.ordinal() != id) {
-                continue;
-            }
-
-            return gene;
-        }
-
-        return Panda.Gene.NORMAL;
+        return getData(MetaIndex.PANDA_HIDDEN_GENE);
     }
 
     @MethodOnlyUsedBy(value = {}) // Hide from command
     public void setHiddenGene(Panda.Gene gene) {
-        setData(MetaIndex.PANDA_HIDDEN_GENE, (byte) gene.ordinal());
+        setData(MetaIndex.PANDA_HIDDEN_GENE, gene);
         sendData(MetaIndex.PANDA_HIDDEN_GENE);
     }
 

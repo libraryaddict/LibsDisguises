@@ -35,7 +35,7 @@ public class WitherWatcher extends InsentientWatcher {
 
     public void setTargets(int... targets) {
         if (targets.length != 3) {
-            throw new InvalidParameterException(ChatColor.RED + "Expected 3 numbers for wither setTargets. Received " + targets.length);
+            throw new InvalidParameterException("<red>Expected 3 numbers for wither setTargets. Received " + targets.length + "</red>");
         }
         setData(MetaIndex.WITHER_TARGET_1, targets[0]);
         setData(MetaIndex.WITHER_TARGET_2, targets[1]);

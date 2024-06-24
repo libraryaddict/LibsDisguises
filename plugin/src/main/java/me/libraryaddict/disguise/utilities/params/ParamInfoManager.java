@@ -2,18 +2,14 @@ package me.libraryaddict.disguise.utilities.params;
 
 import javax.annotation.Nullable;
 import lombok.Getter;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.EndermanWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
-import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemBlock;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoSoundGroup;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
 import me.libraryaddict.disguise.utilities.watchers.DisguiseMethods;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +19,6 @@ public class ParamInfoManager {
     private static final List<ParamInfo> paramList;
     @Getter
     private static final DisguiseMethods disguiseMethods;
-    @Getter
-    private static final ParamInfoItemBlock paramInfoItemBlock;
     @Getter
     private static final ParamInfoSoundGroup paramInfoSoundGroup;
 
@@ -47,19 +41,19 @@ public class ParamInfoManager {
     }
 
     public static ParamInfo getParamInfo(WatcherMethod method) {
-        if (method.getName().equalsIgnoreCase("setSoundGroup")) {
+        if (method.getMappedName().equalsIgnoreCase("setSoundGroup")) {
             return getParamInfoSoundGroup();
         }
 
         // Enderman can't hold non-blocks
-        if (method.getWatcherClass() == EndermanWatcher.class && method.getName().equalsIgnoreCase("setItemInMainHand")) {
+        /*if (method.getWatcherClass() == EndermanWatcher.class && method.getMappedName().equalsIgnoreCase("setItemInMainHand")) {
             return getParamInfoItemBlock();
         }
 
         if (method.getWatcherClass() == FallingBlockWatcher.class &&
             (method.getParam() == Material.class || method.getParam() == ItemStack.class)) {
             return getParamInfoItemBlock();
-        }
+        }*/
 
         return getParamInfo(method.getParam());
     }
@@ -86,7 +80,7 @@ public class ParamInfoManager {
 
     public static ParamInfo getParamInfo(DisguiseType disguiseType, String methodName) {
         for (WatcherMethod method : getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
-            if (!method.getName().toLowerCase(Locale.ENGLISH).equals(methodName.toLowerCase(Locale.ENGLISH))) {
+            if (!method.getMappedName().toLowerCase(Locale.ENGLISH).equals(methodName.toLowerCase(Locale.ENGLISH))) {
                 continue;
             }
 
@@ -99,9 +93,8 @@ public class ParamInfoManager {
     static {
         ParamInfoTypes infoTypes = new ParamInfoTypes();
         paramList = infoTypes.getParamInfos();
-        paramInfoItemBlock = infoTypes.getParamInfoBlock();
         paramInfoSoundGroup = (ParamInfoSoundGroup) paramList.stream().filter(p -> p instanceof ParamInfoSoundGroup).findAny().orElse(null);
-        disguiseMethods = new DisguiseMethods();
+        disguiseMethods = LibsDisguises.getInstance() == null ? null : new DisguiseMethods();
 
         //paramList.sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()));
     }
@@ -131,7 +124,7 @@ public class ParamInfoManager {
                 return v1 - v2;
             }
 
-            return String.CASE_INSENSITIVE_ORDER.compare(m1.getName(), m2.getName());
+            return String.CASE_INSENSITIVE_ORDER.compare(m1.getMappedName(), m2.getMappedName());
         });
 
         return methods.toArray(new WatcherMethod[0]);
