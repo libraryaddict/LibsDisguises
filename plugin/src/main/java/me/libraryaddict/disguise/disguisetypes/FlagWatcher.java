@@ -40,7 +40,6 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -725,6 +724,7 @@ public class FlagWatcher {
         return getData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE);
     }
 
+    @MethodHiddenFor(DisguiseType.PLAYER)
     public void setCustomNameVisible(boolean display) {
         if (getDisguise().isPlayerDisguise()) {
             ((PlayerDisguise) getDisguise()).setNameVisible(display);
