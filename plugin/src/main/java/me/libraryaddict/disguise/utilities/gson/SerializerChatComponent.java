@@ -6,8 +6,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import io.github.retrooper.packetevents.adventure.serializer.gson.GsonComponentSerializer;
+import io.github.retrooper.packetevents.adventure.serializer.json.JSONComponentSerializer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
 
 import java.lang.reflect.Type;
 
@@ -19,7 +20,7 @@ public class SerializerChatComponent implements JsonDeserializer<Component>, Jso
     @Override
     public Component deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         if (json.isJsonPrimitive()) {
-            return JSONComponentSerializer.json().deserialize(json.getAsString());
+            return GsonComponentSerializer.gson().deserialize(json.getAsString());
         }
 
         return null;
@@ -27,6 +28,6 @@ public class SerializerChatComponent implements JsonDeserializer<Component>, Jso
 
     @Override
     public JsonElement serialize(Component src, Type typeOfSrc, JsonSerializationContext context) {
-        return context.serialize(JSONComponentSerializer.json().serialize(src));
+        return context.serialize(GsonComponentSerializer.gson().serialize(src));
     }
 }
