@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
+import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
@@ -19,7 +20,6 @@ import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -42,12 +42,8 @@ public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerE
         List<Equipment> newSlots = new ArrayList<>();
 
         for (Equipment equipment : packet.getEquipment()) {
-            if (equipment.getSlot() == null) {
-                continue;
-            }
-
-            EquipmentSlot slot = ReflectionManager.getSlot(equipment.getSlot());
-            ItemStack sItem = disguise.getWatcher().getItemStack(slot);
+            EquipmentSlot slot = equipment.getSlot();
+            ItemStack sItem = disguise.getWatcher().getItemStack(ReflectionManager.getSlot(slot));
 
             // If it's not 1.16, then there should only be 1 equipment in the list which means only 1 equipment added to the list!
             if (sItem != null) {
@@ -62,7 +58,7 @@ public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerE
                     packets.addPacket(toModify);
                 }
 
-                newSlots.add(new Equipment(equipment.getSlot(),
+                newSlots.add(new Equipment(slot,
                     sItem.getType() == Material.AIR ? com.github.retrooper.packetevents.protocol.item.ItemStack.EMPTY :
                         SpigotConversionUtil.fromBukkitItemStack(sItem)));
 
@@ -77,7 +73,7 @@ public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerE
             }
 
             // If not raising the hand of the equipment slot this is
-            if (!((slot == EquipmentSlot.HAND && disguise.getWatcher().isMainHandRaised()) ||
+            if (!((slot == EquipmentSlot.MAIN_HAND && disguise.getWatcher().isMainHandRaised()) ||
                 (slot == EquipmentSlot.OFF_HAND && disguise.getWatcher() instanceof LivingWatcher &&
                     ((LivingWatcher) disguise.getWatcher()).isOffhandRaised()))) {
                 continue;

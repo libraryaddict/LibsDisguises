@@ -2547,7 +2547,7 @@ public class DisguiseUtilities {
             List<Equipment> list = new ArrayList<>();
 
             for (EquipmentSlot slot : EquipmentSlot.values()) {
-                if (slot == EquipmentSlot.BODY) {
+                if (slot == EquipmentSlot.BODY && !NmsVersion.v1_20_R4.isSupported()) {
                     continue;
                 }
 

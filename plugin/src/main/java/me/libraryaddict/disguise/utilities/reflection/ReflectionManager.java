@@ -1413,6 +1413,10 @@ public class ReflectionManager {
             case HEAD:
                 return ((LivingEntity) disguisedEntity).getEquipment().getHelmet();
             default:
+                if (NmsVersion.v1_20_R4.isSupported() && slot == EquipmentSlot.BODY) {
+                    return ((LivingEntity) disguisedEntity).getEquipment().getItem(slot);
+                }
+
                 return null;
         }
     }
@@ -2464,6 +2468,8 @@ public class ReflectionManager {
                 return EquipmentSlot.OFF_HAND;
             case CHEST_PLATE:
                 return EquipmentSlot.CHEST;
+            case BODY:
+                return EquipmentSlot.BODY;
             default:
                 throw new IllegalStateException("Unknown equip slot " + slot);
         }
@@ -2483,6 +2489,8 @@ public class ReflectionManager {
                 return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.CHEST_PLATE;
             case LEGS:
                 return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.LEGGINGS;
+            case BODY:
+                return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.BODY;
             default:
                 throw new IllegalStateException("Unknown equip slot " + slot);
         }

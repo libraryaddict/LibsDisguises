@@ -9,6 +9,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Material;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 public class HorseWatcher extends AbstractHorseWatcher {
@@ -42,29 +43,40 @@ public class HorseWatcher extends AbstractHorseWatcher {
     }
 
     public ItemStack getHorseArmor() {
+        if (NmsVersion.v1_20_R4.isSupported()) {
+            return getEquipment().getItem(EquipmentSlot.BODY);
+        }
+
         return getEquipment().getChestplate();
     }
 
     public void setHorseArmor(ItemStack item) {
-        getEquipment().setChestplate(item);
-
-        if (!NmsVersion.v1_14.isSupported()) {
-            int value = 0;
-
-            if (item != null) {
-                Material mat = item.getType();
-
-                if (mat == Material.IRON_HORSE_ARMOR) {
-                    value = 1;
-                } else if (mat == Material.GOLDEN_HORSE_ARMOR) {
-                    value = 2;
-                } else if (mat == Material.DIAMOND_HORSE_ARMOR) {
-                    value = 3;
-                }
-            }
-
-            setData(MetaIndex.HORSE_ARMOR, value);
-            sendData(MetaIndex.HORSE_ARMOR);
+        if (NmsVersion.v1_20_R4.isSupported()) {
+            getEquipment().setItem(EquipmentSlot.BODY, item);
+        } else {
+            getEquipment().setChestplate(item);
         }
+
+        if (NmsVersion.v1_14.isSupported()) {
+            return;
+        }
+
+        int value = 0;
+
+        if (item != null) {
+            Material mat = item.getType();
+
+            if (mat == Material.IRON_HORSE_ARMOR) {
+                value = 1;
+            } else if (mat == Material.GOLDEN_HORSE_ARMOR) {
+                value = 2;
+            } else if (mat == Material.DIAMOND_HORSE_ARMOR) {
+                value = 3;
+            }
+        }
+
+        setData(MetaIndex.HORSE_ARMOR, value);
+        sendData(MetaIndex.HORSE_ARMOR);
+
     }
 }

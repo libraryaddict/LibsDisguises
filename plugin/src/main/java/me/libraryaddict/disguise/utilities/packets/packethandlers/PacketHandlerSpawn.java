@@ -340,7 +340,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
         // This sends the armor packets so that the player isn't naked.
         if (DisguiseConfig.isEquipmentPacketsEnabled()) {
             for (EquipmentSlot slot : EquipmentSlot.values()) {
-                if (slot == EquipmentSlot.BODY) {
+                if (slot == EquipmentSlot.BODY && !NmsVersion.v1_20_R4.isSupported()) {
                     continue;
                 }
 
