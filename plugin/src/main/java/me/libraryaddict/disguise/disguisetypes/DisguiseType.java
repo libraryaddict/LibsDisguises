@@ -21,7 +21,7 @@ public enum DisguiseType {
 
     AREA_EFFECT_CLOUD(3),
 
-    @NmsAddedIn(NmsVersion.UNSUPPORTED) ARMADILLO,
+    @NmsAddedIn(NmsVersion.v1_21_R1) ARMADILLO,
 
     ARMOR_STAND(78),
 
@@ -39,11 +39,11 @@ public enum DisguiseType {
 
     BOAT(1),
 
-    @NmsAddedIn(NmsVersion.UNSUPPORTED) BOGGED,
+    @NmsAddedIn(NmsVersion.v1_21_R1) BOGGED,
 
-    @NmsAddedIn(NmsVersion.UNSUPPORTED) BREEZE,
+    @NmsAddedIn(NmsVersion.v1_21_R1) BREEZE,
 
-    @NmsAddedIn(NmsVersion.UNSUPPORTED) BREEZE_WIND_CHARGE,
+    @NmsAddedIn(NmsVersion.v1_21_R1) BREEZE_WIND_CHARGE,
 
     @NmsAddedIn(NmsVersion.v1_20_R1) CAMEL,
 
@@ -167,7 +167,7 @@ public enum DisguiseType {
 
     OCELOT,
 
-    @NmsAddedIn(NmsVersion.UNSUPPORTED) OMINOUS_ITEM_SPAWNER,
+    @NmsAddedIn(NmsVersion.v1_21_R1) OMINOUS_ITEM_SPAWNER,
 
     PAINTING,
 
@@ -263,7 +263,7 @@ public enum DisguiseType {
 
     @NmsAddedIn(NmsVersion.v1_19_R1) WARDEN,
 
-    @NmsAddedIn(NmsVersion.UNSUPPORTED) WIND_CHARGE,
+    @NmsAddedIn(NmsVersion.v1_21_R1) WIND_CHARGE,
 
     WITCH,
 

@@ -55,9 +55,10 @@ public class PacketEventsUpdater {
      * Returns the min required version, as in any older version will just not work.
      */
     public static String getMinimumPacketEventsVersion() {
-        // Unfortunately PacketEvents does not have build info, so we'll hope you are using the latest snapshot or release.
+        // Unfortunately PacketEvents does not have build info, so we'll hope you are using the latest snapshot if we fallback to that
 
         // At time of writing, release is 2.3.0, and snapshot builds are all "2.3.1-SNAPSHOT"
+        // This means we'll always fail a release check!
         return "2.3.1";
     }
 

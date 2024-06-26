@@ -73,7 +73,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReflectionManager implements ReflectionManagerAbstract {
     private Field dataItemsField;
+    private final Field trackedEntityField;
+    private final AtomicInteger entityCounter;
+    private final Method entityDefaultSoundMethod;
+    private final Method itemMetaDeserialize;
 
+    @SneakyThrows
     public ReflectionManager() {
         for (Field f : SynchedEntityData.class.getDeclaredFields()) {
             if (Modifier.isStatic(f.getModifiers()) || !Int2ObjectMap.class.isAssignableFrom(f.getType())) {
@@ -83,6 +88,20 @@ public class ReflectionManager implements ReflectionManagerAbstract {
             f.setAccessible(true);
             dataItemsField = f;
         }
+
+        Field entityCounter = net.minecraft.world.entity.Entity.class.getDeclaredField("d");
+        entityCounter.setAccessible(true);
+        this.entityCounter = (AtomicInteger) entityCounter.get(null);
+
+        trackedEntityField = ChunkMap.TrackedEntity.class.getDeclaredField("b");
+        trackedEntityField.setAccessible(true);
+
+        // Default is protected method, 1.0F on EntityLiving.class
+        entityDefaultSoundMethod = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("eW");
+        entityDefaultSoundMethod.setAccessible(true);
+
+        Class<?> aClass = Class.forName("org.bukkit.craftbukkit.v1_20_R3.inventory.CraftMetaItem$SerializableMeta");
+        itemMetaDeserialize = aClass.getDeclaredMethod("deserialize", Map.class);
     }
 
     public boolean hasInvul(Entity entity) {
@@ -108,20 +127,11 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     @Override
     public int getNewEntityId(boolean increment) {
-        try {
-            Field entityCounter = net.minecraft.world.entity.Entity.class.getDeclaredField("d");
-            entityCounter.setAccessible(true);
-            AtomicInteger atomicInteger = (AtomicInteger) entityCounter.get(null);
-            if (increment) {
-                return atomicInteger.incrementAndGet();
-            } else {
-                return atomicInteger.get();
-            }
-        } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
+        if (increment) {
+            return entityCounter.incrementAndGet();
+        } else {
+            return entityCounter.get();
         }
-
-        return -1;
     }
 
     @Override
@@ -211,10 +221,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
             return null;
         }
 
-        Field field = ChunkMap.TrackedEntity.class.getDeclaredField("b");
-        field.setAccessible(true);
-
-        return (ServerEntity) field.get(trackedEntity);
+        return (ServerEntity) trackedEntityField.get(trackedEntity);
     }
 
     @Override
@@ -251,11 +258,8 @@ public class ReflectionManager implements ReflectionManagerAbstract {
             return 0.0f;
         } else {
             try {
-                Method method = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("eW");
-                method.setAccessible(true);
-
-                return (Float) method.invoke(entity);
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                return (Float) entityDefaultSoundMethod.invoke(entity);
+            } catch (InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
@@ -358,11 +362,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     @Override
     public ItemMeta getDeserializedItemMeta(Map<String, Object> meta) {
         try {
-            Class<?> aClass = Class.forName("org.bukkit.craftbukkit.v1_20_R3.inventory.CraftMetaItem$SerializableMeta");
-            Method deserialize = aClass.getDeclaredMethod("deserialize", Map.class);
-            Object itemMeta = deserialize.invoke(null, meta);
-
-            return (ItemMeta) itemMeta;
+            return (ItemMeta) itemMetaDeserialize.invoke(null, meta);
         } catch (Exception e) {
             e.printStackTrace();
         }

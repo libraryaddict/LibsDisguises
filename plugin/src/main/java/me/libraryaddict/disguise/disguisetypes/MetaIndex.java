@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloState;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataType;
 import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.protocol.entity.sniffer.SnifferState;
@@ -23,6 +24,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.AbstractVillagerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AllayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AreaEffectCloudWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ArmadilloWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArmorStandWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AxolotlWatcher;
@@ -31,6 +33,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.BeeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BlazeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BlockDisplayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BoatWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.BoggedWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CamelWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ChestedHorseWatcher;
@@ -69,6 +72,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.MinecartFurnaceWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MushroomCowWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.OcelotWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.OminousItemSpawnerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PandaWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ParrotWatcher;
@@ -190,6 +194,9 @@ public class MetaIndex<Y> {
     @NmsRemovedIn(NmsVersion.v1_13)
     public static MetaIndex<Integer> AREA_EFFECT_PARTICLE_PARAM_2_OLD = new MetaIndex<>(AreaEffectCloudWatcher.class, 5, 0);
 
+    @NmsAddedIn(NmsVersion.v1_21_R1)
+    public static MetaIndex<ArmadilloState> ARMADILLO_STATE = new MetaIndex<>(ArmadilloWatcher.class, 0, ArmadilloState.IDLE);
+
     /**
      * Armorstand body eular vector
      */
@@ -295,6 +302,9 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_13)
     public static MetaIndex<Integer> BOAT_SHAKE = new MetaIndex<>(BoatWatcher.class, 6, 0);
 
+    @NmsAddedIn(NmsVersion.v1_21_R1)
+    public static MetaIndex<Boolean> BOGGED_SHEARED = new MetaIndex<>(BoggedWatcher.class, 0, false);
+
     @NmsAddedIn(NmsVersion.v1_19_R2)
     public static MetaIndex<Boolean> CAMEL_DASHING = new MetaIndex<>(CamelWatcher.class, 0, false);
 
@@ -343,12 +353,10 @@ public class MetaIndex<Y> {
     public static MetaIndex<Vector3f> DISPLAY_SCALE = new MetaIndex<>(DisplayWatcher.class, 4, new Vector3f(1F, 1F, 1F));
 
     @NmsAddedIn(NmsVersion.v1_19_R3)
-    public static MetaIndex<Quaternion4f> DISPLAY_LEFT_ROTATION =
-        new MetaIndex<>(DisplayWatcher.class, 5, new Quaternion4f(1F, 1F, 1F, 1F));
+    public static MetaIndex<Quaternion4f> DISPLAY_LEFT_ROTATION = new MetaIndex<>(DisplayWatcher.class, 5, new Quaternion4f(0, 0, 0, 1F));
 
     @NmsAddedIn(NmsVersion.v1_19_R3)
-    public static MetaIndex<Quaternion4f> DISPLAY_RIGHT_ROTATION =
-        new MetaIndex<>(DisplayWatcher.class, 6, new Quaternion4f(1F, 1F, 1F, 1F));
+    public static MetaIndex<Quaternion4f> DISPLAY_RIGHT_ROTATION = new MetaIndex<>(DisplayWatcher.class, 6, new Quaternion4f(0, 0, 0, 1F));
 
     public static MetaIndex<Byte> DISPLAY_BILLBOARD_RENDER_CONSTRAINTS = new MetaIndex<>(DisplayWatcher.class, 7, (byte) 0);
 
@@ -679,6 +687,10 @@ public class MetaIndex<Y> {
 
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<Boolean> OCELOT_TRUST = new MetaIndex<>(OcelotWatcher.class, 0, false);
+
+    @NmsAddedIn(NmsVersion.v1_21_R1)
+    public static MetaIndex<ItemStack> OMINOUS_ITEM_SPAWNER_ITEM =
+        new MetaIndex<>(OminousItemSpawnerWatcher.class, 0, new ItemStack(Material.AIR));
 
     @NmsAddedIn(NmsVersion.v1_19_R1)
     public static MetaIndex<Art> PAINTING = new MetaIndex<>(PaintingWatcher.class, 0, NmsVersion.v1_19_R1.isSupported() ? Art.KEBAB : null);
@@ -1251,7 +1263,8 @@ public class MetaIndex<Y> {
 
     public boolean isItemStack() {
         return this == ITEMFRAME_ITEM || this == ITEM_DISPLAY_ITEMSTACK || this == ENDER_SIGNAL_ITEM || this == DROPPED_ITEM ||
-            this == FIREBALL_ITEM || this == THROWABLE_ITEM || this == SPLASH_POTION_ITEM || this == FIREWORK_ITEM;
+            this == FIREBALL_ITEM || this == THROWABLE_ITEM || this == SPLASH_POTION_ITEM || this == FIREWORK_ITEM ||
+            this == OMINOUS_ITEM_SPAWNER_ITEM;
     }
 
     public boolean isBlock() {

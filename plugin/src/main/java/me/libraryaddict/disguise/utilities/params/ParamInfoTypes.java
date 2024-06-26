@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.params;
 
+import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloState;
 import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
@@ -189,6 +190,10 @@ public class ParamInfoTypes {
 
         if (NmsVersion.v1_20_R1.isSupported()) {
             paramInfos.add(new ParamInfoEnum(Sniffer.State.class, "Sniffer State", "The current mindset of a Sniffer"));
+        }
+
+        if (NmsVersion.v1_21_R1.isSupported()) {
+            paramInfos.add(new ParamInfoEnum(ArmadilloState.class, "Armadillo State", "The current state of an Armadillo"));
         }
 
         paramInfos.add(new ParamInfoEnum(DisguiseConfig.NotifyBar.class, "NotifyBar", "Where the disguised indicator should appear"));

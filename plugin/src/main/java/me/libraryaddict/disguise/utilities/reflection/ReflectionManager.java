@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
 import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
+import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloState;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataType;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
@@ -1557,7 +1558,8 @@ public class ReflectionManager {
             return SpigotConversionUtil.fromBukkitItemStack((ItemStack) value);
         } else if (value instanceof Rabbit.Type) {
             return RabbitType.getTypeId((Rabbit.Type) value);
-        } else if (value instanceof Enum && !(value instanceof SnifferState || value instanceof EntityPose || value instanceof BlockFace)) {
+        } else if (value instanceof Enum && !(value instanceof SnifferState || value instanceof EntityPose || value instanceof BlockFace ||
+            value instanceof ArmadilloState)) {
             int v = ((Enum) value).ordinal();
 
             if (index.isByteValues()) {
@@ -2111,6 +2113,10 @@ public class ReflectionManager {
                 case SNIFFER:
                 case BREEZE:
                 case WIND_CHARGE:
+                case BOGGED:
+                case ARMADILLO:
+                case BREEZE_WIND_CHARGE:
+                case OMINOUS_ITEM_SPAWNER:
                     nmsEntityName = disguiseType.toReadable().replace(" ", "");
                     break;
                 case DONKEY:
@@ -2230,6 +2236,7 @@ public class ReflectionManager {
                         continue;
                     }
 
+                    DisguiseUtilities.getLogger().severe(StringUtils.repeat("-", 20));
                     DisguiseUtilities.getLogger().severe("MetaIndex not found for " + disguiseType + "! Index: " + data.getIndex());
                     DisguiseUtilities.getLogger().severe(
                         "Value: " + data.getValue() + " (" + data.getValue().getClass() + ") (" + nmsEntity.getClass() + ") & " +
@@ -2248,8 +2255,14 @@ public class ReflectionManager {
                 if (minecraftDefaultBukkit == null) {
                     minecraftDefaultBukkit = "nullsy";
                 }
+
                 if (ourDefaultBukkit == null) {
                     ourDefaultBukkit = "nullsa";
+                }
+
+                if (minecraftDefaultBukkit.getClass().getSimpleName().equals("CraftItemStack") &&
+                    ourDefaultBukkit.getClass().getSimpleName().equals("ItemStack")) {
+                    ourDefaultBukkit = ReflectionManager.getCraftItem((ItemStack) ourDefaultBukkit);
                 }
 
                 if (ourDefaultBukkit.getClass() != minecraftDefaultBukkit.getClass() || metaIndex.getDataType() != data.getType() ||
@@ -2282,6 +2295,7 @@ public class ReflectionManager {
             }
 
             for (MetaIndex index : indexes) {
+                DisguiseUtilities.getLogger().severe(StringUtils.repeat("-", 20));
                 DisguiseUtilities.getLogger().severe(
                     disguiseType + " has MetaIndex remaining! " + index.getFlagWatcher().getSimpleName() + " at index " + index.getIndex());
             }
@@ -2494,6 +2508,8 @@ public class ReflectionManager {
                 return EntityDataTypes.ENTITY_POSE;
             } else if (index == MetaIndex.SNIFFER_STATE) {
                 return EntityDataTypes.SNIFFER_STATE;
+            } else if (index == MetaIndex.ARMADILLO_STATE) {
+                return EntityDataTypes.ARMADILLO_STATE;
             } else if (index == MetaIndex.SHULKER_FACING) {
                 return EntityDataTypes.BLOCK_FACE;
             } else if (index == MetaIndex.AREA_EFFECT_CLOUD_COLOR) {

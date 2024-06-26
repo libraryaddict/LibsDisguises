@@ -25,7 +25,7 @@
 
         <lombok.version>1.18.32</lombok.version>
         <packetevents.version>2.3.1-SNAPSHOT</packetevents.version>
-        <spigot.version>1.20.6-R0.1-SNAPSHOT</spigot.version>
+        <spigot.version>1.21-R0.1-SNAPSHOT</spigot.version>
         <junit.version>4.13.2</junit.version>
         <junit-jupiter.version>5.9.3</junit-jupiter.version>
         <paper-api.version>1.20.3-R0.1-SNAPSHOT</paper-api.version>
