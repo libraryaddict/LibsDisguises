@@ -455,12 +455,14 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public PlayerDisguise setSkin(String newSkin) {
+        // Attempt to load via json first
         UserProfile profile = getProfile(newSkin);
 
         if (profile != null) {
             return setSkin(profile);
         }
 
+        // If multiline name, only use the first line as the skin name
         if (newSkin != null) {
             String[] split = DisguiseUtilities.splitNewLine(newSkin);
 
@@ -469,46 +471,35 @@ public class PlayerDisguise extends TargetedDisguise {
             }
         }
 
-        if (newSkin != null && newSkin.length() > 16) {
-            newSkin = null;
-        }
-
         String oldSkin = skinToUse;
         skinToUse = newSkin;
 
         if (newSkin == null) {
             currentLookup = null;
             userProfile = null;
-        } else {
-            if (newSkin.length() > 16) {
-                skinToUse = newSkin.substring(0, 16);
-            }
+            return this;
+        } else if (newSkin.equals(oldSkin) || !isDisguiseInUse()) {
+            return this;
+        }
 
-            if (newSkin.equals(oldSkin)) {
-                return this;
-            }
-
-            if (isDisguiseInUse()) {
-                currentLookup = new LibsProfileLookup() {
-                    @Override
-                    public void onLookup(UserProfile userProfile) {
-                        if (currentLookup != this || userProfile == null || userProfile.getTextureProperties().isEmpty()) {
-                            return;
-                        }
-
-                        setSkin(userProfile);
-
-                        currentLookup = null;
-                    }
-                };
-
-                UserProfile userProfile =
-                    DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup, DisguiseConfig.isContactMojangServers());
-
-                if (userProfile != null) {
-                    setSkin(userProfile);
+        currentLookup = new LibsProfileLookup() {
+            @Override
+            public void onLookup(UserProfile userProfile) {
+                if (currentLookup != this || userProfile == null || userProfile.getTextureProperties().isEmpty()) {
+                    return;
                 }
+
+                setSkin(userProfile);
+
+                currentLookup = null;
             }
+        };
+
+        UserProfile userProfile =
+            DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup, DisguiseConfig.isContactMojangServers());
+
+        if (userProfile != null) {
+            setSkin(userProfile);
         }
 
         return this;

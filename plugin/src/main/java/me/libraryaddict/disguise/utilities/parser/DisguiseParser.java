@@ -254,11 +254,11 @@ public class DisguiseParser {
 
     private static void grabSkin(CommandSender sender, String skinFile, PlayerDisguise disguise) {
         // Only process if they are trying to use a skin pic
-        if (skinFile == null || !skinFile.toLowerCase(Locale.ENGLISH).endsWith(".png")) {
+        if (skinFile == null || !skinFile.toLowerCase(Locale.ENGLISH).matches(".*\\.png($|\\W.*)")) {
             return;
         }
 
-        if (DisguiseUtilities.hasUserProfile(skinFile)) {
+        if (DisguiseUtilities.hasUserProfile(skinFile, true)) {
             return;
         }
 

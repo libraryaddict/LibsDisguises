@@ -258,10 +258,12 @@ public class DisguiseUtilities {
     private static final HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<>();
     private static final HashSet<UUID> savedDisguiseList = new HashSet<>();
     private static final HashSet<String> cachedNames = new HashSet<>();
+    private static final HashMap<String, String> sanitySkinCacheMap = new LinkedHashMap<>();
     private static final HashMap<String, ArrayList<Object>> runnables = new HashMap<>();
     @Getter
     private static final HashSet<UUID> selfDisguised = new HashSet<>();
     private static final File profileCache;
+    private static final File sanitySkinCacheFile;
     private static final File savedDisguises;
     @Getter
     private static Gson gson;
@@ -311,10 +313,21 @@ public class DisguiseUtilities {
 
         if (LibsDisguises.getInstance() == null) {
             profileCache = null;
+            sanitySkinCacheFile = null;
             savedDisguises = null;
         } else {
             profileCache = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins");
+            sanitySkinCacheFile = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins/sanity.json");
             savedDisguises = new File(LibsDisguises.getInstance().getDataFolder(), "SavedDisguises");
+
+            try {
+                loadSanitySkinCache();
+            } catch (Exception e) {
+                LibsDisguises.getInstance().getLogger().severe(
+                    "Error while trying to load sanity.json for saved skins, the invalid file will be overwritten when a new skin is " +
+                        "saved");
+                e.printStackTrace();
+            }
         }
 
         entityItem = EntityType.fromName("item");
@@ -725,7 +738,13 @@ public class DisguiseUtilities {
     }
 
     public static boolean hasUserProfile(String playername) {
-        return cachedNames.contains(playername.toLowerCase(Locale.ENGLISH));
+        return hasUserProfile(playername, false);
+    }
+
+    public static boolean hasUserProfile(String playername, boolean checkSanityToo) {
+        String name = playername.toLowerCase(Locale.ENGLISH);
+
+        return cachedNames.contains(name) || (checkSanityToo && sanitySkinCacheMap.containsKey(name));
     }
 
     public static void createClonedDisguise(Player player, Entity toClone, Boolean[] options) {
@@ -1090,18 +1109,57 @@ public class DisguiseUtilities {
         runnable.runTaskLater(LibsDisguises.getInstance(), 20);
     }
 
+    public static void loadSanitySkinCache() throws IOException {
+        if (!sanitySkinCacheFile.exists()) {
+            return;
+        }
+
+        String cached = new String(Files.readAllBytes(sanitySkinCacheFile.toPath()));
+
+        LinkedHashMap<String, String> map = gson.fromJson(cached, LinkedHashMap.class);
+
+        sanitySkinCacheMap.putAll(map);
+    }
+
+    public static void saveSanitySkinCache() {
+        try {
+            PrintWriter writer = new PrintWriter(sanitySkinCacheFile);
+            writer.write(getGson().toJson(sanitySkinCacheMap));
+            writer.close();
+        } catch (Exception ex) {
+            LibsDisguises.getInstance().getLogger()
+                .severe("Error while trying to save sanity.json for player skins, this shouldn't happen");
+            ex.printStackTrace();
+        }
+    }
+
     public static void addUserProfile(String string, UserProfile userProfile) {
         try {
+            if (userProfile == null) {
+                return;
+            }
+
             if (!profileCache.exists()) {
                 profileCache.mkdirs();
             }
 
-            File file = new File(profileCache, string.toLowerCase(Locale.ENGLISH));
+            String saveAs = string.toLowerCase(Locale.ENGLISH);
+            String serialized = getGson().toJson(userProfile);
+
+            // If using illegal name, or long name, or illegal character in name
+            if (saveAs.equalsIgnoreCase(sanitySkinCacheFile.getName()) || saveAs.length() > 32 || saveAs.matches(".*[^\\w.!@#$^+=-].*")) {
+                sanitySkinCacheMap.put(saveAs, serialized);
+                saveSanitySkinCache();
+
+                return;
+            }
+
+            File file = new File(profileCache, saveAs);
             PrintWriter writer = new PrintWriter(file);
             writer.write(gson.toJson(userProfile));
             writer.close();
 
-            cachedNames.add(string.toLowerCase(Locale.ENGLISH));
+            cachedNames.add(saveAs);
         } catch (StackOverflowError | Exception e) {
             e.printStackTrace();
         }
@@ -1299,6 +1357,20 @@ public class DisguiseUtilities {
     public static UserProfile getUserProfile(String playerName) {
         playerName = playerName.toLowerCase(Locale.ENGLISH);
 
+        String sanityVal = sanitySkinCacheMap.get(playerName);
+
+        if (sanityVal != null) {
+            try {
+                return gson.fromJson(sanitySkinCacheMap.get(playerName), UserProfile.class);
+            } catch (JsonSyntaxException ex) {
+                DisguiseUtilities.getLogger().warning("UserProfile for " + playerName + " had invalid gson and has been deleted");
+                sanitySkinCacheMap.remove(playerName);
+                saveSanitySkinCache();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         if (!hasUserProfile(playerName)) {
             return null;
         }
@@ -1421,7 +1493,7 @@ public class DisguiseUtilities {
     private static UserProfile getProfileFromMojang(final String origName, final Object runnable, boolean contactMojang) {
         final String playerName = origName.toLowerCase(Locale.ENGLISH);
 
-        if (DisguiseConfig.isSaveGameProfiles() && hasUserProfile(playerName)) {
+        if (DisguiseConfig.isSaveGameProfiles() && hasUserProfile(playerName, true)) {
             UserProfile profile = getUserProfile(playerName);
 
             if (profile != null) {
@@ -1553,6 +1625,7 @@ public class DisguiseUtilities {
         }
 
         cachedNames.addAll(Arrays.asList(profileCache.list()));
+        cachedNames.remove(sanitySkinCacheFile.getName());
 
         invalidFile = LibsDisguises.getInstance().getFile().getName().toLowerCase(Locale.ENGLISH).matches(".*((crack)|(null)|(leak)).*");
 
@@ -1940,15 +2013,24 @@ public class DisguiseUtilities {
     }
 
     public static void removeUserProfile(String string) {
-        cachedNames.remove(string.toLowerCase(Locale.ENGLISH));
+        string = string.toLowerCase(Locale.ENGLISH);
 
-        if (!profileCache.exists()) {
-            profileCache.mkdirs();
+        if (string.equalsIgnoreCase(sanitySkinCacheFile.getName())) {
+            return;
         }
 
-        File file = new File(profileCache, string.toLowerCase(Locale.ENGLISH));
+        if (sanitySkinCacheMap.containsKey(string)) {
+            sanitySkinCacheMap.remove(string);
+            saveSanitySkinCache();
+        }
 
-        file.delete();
+        if (!cachedNames.contains(string) || !profileCache.exists()) {
+            return;
+        }
+
+        cachedNames.remove(string);
+
+        new File(profileCache, string).delete();
     }
 
     public static void removeSelfDisguise(Disguise disguise) {
