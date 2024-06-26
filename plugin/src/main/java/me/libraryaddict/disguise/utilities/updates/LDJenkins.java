@@ -30,7 +30,7 @@ public class LDJenkins extends BaseJenkins {
 
         @Override
         public String getDownload() {
-            return "https://ci.md-5.net/job/LibsDisguises/artifact/target/LibsDisguises.jar";
+            return "https://ci.md-5.net/job/LibsDisguises/lastSuccessfulBuild/artifact/target/LibsDisguises.jar";
         }
     }
 
