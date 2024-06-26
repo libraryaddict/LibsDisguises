@@ -2547,8 +2547,7 @@ public class DisguiseUtilities {
             List<Equipment> list = new ArrayList<>();
 
             for (EquipmentSlot slot : EquipmentSlot.values()) {
-                // TODO Change when it's an actual slot
-                if (slot.name().equals("BODY")) {
+                if (slot == EquipmentSlot.BODY) {
                     continue;
                 }
 

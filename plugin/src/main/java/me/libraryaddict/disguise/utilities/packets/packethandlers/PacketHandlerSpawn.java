@@ -340,8 +340,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
         // This sends the armor packets so that the player isn't naked.
         if (DisguiseConfig.isEquipmentPacketsEnabled()) {
             for (EquipmentSlot slot : EquipmentSlot.values()) {
-                // TODO Change when it's an actual slot
-                if (slot.name().equals("BODY")) {
+                if (slot == EquipmentSlot.BODY) {
                     continue;
                 }
 
