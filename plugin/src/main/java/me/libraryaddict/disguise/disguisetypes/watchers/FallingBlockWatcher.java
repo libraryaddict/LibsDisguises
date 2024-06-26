@@ -73,10 +73,12 @@ public class FallingBlockWatcher extends FlagWatcher {
         return (short) (((oldCord - newCord) * 4096) * (isGridLocked() ? -1 : 1));
     }
 
+    @Deprecated
     public ItemStack getBlock() {
         return ReflectionManager.getItemStackByCombinedId(getBlockCombinedId());
     }
 
+    @Deprecated
     public void setBlock(ItemStack block) {
         if (block == null || block.getType() == null || block.getType() == Material.AIR || !block.getType().isBlock()) {
             block = new ItemStack(Material.STONE);
@@ -94,12 +96,12 @@ public class FallingBlockWatcher extends FlagWatcher {
         }
     }
 
-    @MethodMappedAs("getBlockData")
+    @MethodMappedAs("getBlock")
     public WrappedBlockState getBlockState() {
         return WrappedBlockState.getByGlobalId(getBlockCombinedId());
     }
 
-    @MethodMappedAs("setBlockData")
+    @MethodMappedAs("setBlock")
     public void setBlockState(WrappedBlockState state) {
         setBlockCombinedId(state.getType().getName(), state.getGlobalId());
     }
