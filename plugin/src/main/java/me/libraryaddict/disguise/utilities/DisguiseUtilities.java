@@ -319,15 +319,6 @@ public class DisguiseUtilities {
             profileCache = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins");
             sanitySkinCacheFile = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins/sanity.json");
             savedDisguises = new File(LibsDisguises.getInstance().getDataFolder(), "SavedDisguises");
-
-            try {
-                loadSanitySkinCache();
-            } catch (Exception e) {
-                LibsDisguises.getInstance().getLogger().severe(
-                    "Error while trying to load sanity.json for saved skins, the invalid file will be overwritten when a new skin is " +
-                        "saved");
-                e.printStackTrace();
-            }
         }
 
         entityItem = EntityType.fromName("item");
@@ -1626,6 +1617,15 @@ public class DisguiseUtilities {
 
         cachedNames.addAll(Arrays.asList(profileCache.list()));
         cachedNames.remove(sanitySkinCacheFile.getName());
+
+        try {
+            loadSanitySkinCache();
+        } catch (Exception e) {
+            LibsDisguises.getInstance().getLogger().severe(
+                "Error while trying to load sanity.json for saved skins, the invalid file will be overwritten when a new skin is " +
+                    "saved");
+            e.printStackTrace();
+        }
 
         invalidFile = LibsDisguises.getInstance().getFile().getName().toLowerCase(Locale.ENGLISH).matches(".*((crack)|(null)|(leak)).*");
 
