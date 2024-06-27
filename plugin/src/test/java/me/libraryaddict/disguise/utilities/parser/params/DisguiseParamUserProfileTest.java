@@ -1,7 +1,12 @@
 package me.libraryaddict.disguise.utilities.parser.params;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.manager.server.ServerManager;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
+import io.github.retrooper.packetevents.manager.server.ServerManagerImpl;
 import lombok.SneakyThrows;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
@@ -9,8 +14,11 @@ import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoUserProf
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.UUID;
+
+import static org.mockito.Mockito.doReturn;
 
 public class DisguiseParamUserProfileTest {
     private final String oldProfileString =
@@ -25,6 +33,12 @@ public class DisguiseParamUserProfileTest {
 
     @BeforeAll
     public static void beforeAll() {
+        PacketEvents.setAPI(Mockito.spy(SpigotPacketEventsBuilder.build(null)));
+
+        ServerManager impl = Mockito.spy(new ServerManagerImpl());
+        doReturn(impl).when(PacketEvents.getAPI()).getServerManager();
+        doReturn(ServerVersion.getLatest()).when(impl).getVersion();
+
         DisguiseUtilities.recreateGsonSerializer();
     }
 
