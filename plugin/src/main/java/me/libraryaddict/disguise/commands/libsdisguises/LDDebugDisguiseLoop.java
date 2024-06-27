@@ -106,7 +106,7 @@ public class LDDebugDisguiseLoop implements LDCommand {
                     command = "player libraryaddict";
                     break;
                 case DROPPED_ITEM:
-                    command = "dropped_item grass";
+                    command = "dropped_item obsidian";
                     break;
                 default:
                     command = type.name();

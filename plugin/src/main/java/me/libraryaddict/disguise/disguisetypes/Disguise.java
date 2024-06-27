@@ -13,6 +13,7 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BoatWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SheepWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.events.DisguiseEvent;
@@ -27,6 +28,7 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -176,6 +178,32 @@ public abstract class Disguise {
     }
 
     public abstract double getHeight();
+
+    public double getNameHeightScale() {
+        if (!NmsVersion.v1_21_R1.isSupported()) {
+            return 1;
+        }
+
+        double finalScale;
+        Double watcherScale = getWatcher() instanceof LivingWatcher ? ((LivingWatcher) getWatcher()).getScale() : null;
+
+        if (watcherScale != null) {
+            finalScale = watcherScale;
+        } else if (getEntity() instanceof LivingEntity) {
+            finalScale = ((LivingEntity) getEntity()).getAttribute(Attribute.GENERIC_SCALE).getValue();
+        } else {
+            finalScale = 1;
+        }
+
+        // Clamp
+        if (finalScale < 0.06) {
+            finalScale = 0.06;
+        } else if (finalScale > 16) {
+            finalScale = 16;
+        }
+
+        return finalScale;
+    }
 
     protected void sendArmorStands(String[] oldName) {
         if (!isDisguiseInUse()) {

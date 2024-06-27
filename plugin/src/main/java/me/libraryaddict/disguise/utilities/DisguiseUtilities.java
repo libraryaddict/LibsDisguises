@@ -363,6 +363,10 @@ public class DisguiseUtilities {
         return true;
     }
 
+    public static double getNameSpacing() {
+        return 0.28;
+    }
+
     public static String serialize(Component component) {
         return AdventureSerializer.getGsonSerializer().serialize(component);
     }
@@ -3324,8 +3328,12 @@ public class DisguiseUtilities {
             destroyIds = Arrays.copyOfRange(standIds, newNames.length, internalOldNames.length);
         }
 
+        Location loc = disguise.getEntity().getLocation();
         // Don't need to offset with DisguiseUtilities.getYModifier, because that's a visual offset and not an actual location offset
         double height = disguise.getHeight() + disguise.getWatcher().getYModifier() + disguise.getWatcher().getNameYModifier();
+        double heightScale = disguise.getNameHeightScale();
+        double startingY = loc.getY() + (height * heightScale);
+        startingY += (DisguiseUtilities.getNameSpacing() * (heightScale - 1)) * 0.35;
 
         for (int i = 0; i < newNames.length; i++) {
             if (i < internalOldNames.length) {
@@ -3369,8 +3377,7 @@ public class DisguiseUtilities {
                     watcherValues.add(new WatcherValue(index, val, true).getDataValue());
                 }
 
-                Location loc = disguise.getEntity().getLocation();
-                double y = loc.getY() + height + (0.28 * i);
+                double y = startingY + (getNameSpacing() * i);
 
                 if (NmsVersion.v1_19_R1.isSupported()) {
                     WrapperPlayServerSpawnEntity spawnEntity =
@@ -3537,6 +3544,11 @@ public class DisguiseUtilities {
                 return ((LivingEntity) disguisedEntity).getEquipment().getHelmet();
             default:
                 if (NmsVersion.v1_20_R4.isSupported() && slot == org.bukkit.inventory.EquipmentSlot.BODY) {
+                    // Paper will throw an error, which is valid, but annoying
+                    if (disguisedEntity instanceof Player) {
+                        return new ItemStack(Material.AIR);
+                    }
+
                     return ((LivingEntity) disguisedEntity).getEquipment().getItem(slot);
                 }
 

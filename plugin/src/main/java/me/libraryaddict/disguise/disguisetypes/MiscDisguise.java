@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import me.libraryaddict.disguise.disguisetypes.watchers.DisplayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
@@ -71,6 +72,15 @@ public class MiscDisguise extends TargetedDisguise {
         }
 
         return values.getAdultBox().getY();
+    }
+
+    @Override
+    public double getNameHeightScale() {
+        if (getWatcher() instanceof DisplayWatcher) {
+            return ((DisplayWatcher) getWatcher()).getScale().y;
+        }
+
+        return 1;
     }
 
     private void apply(int id, ItemStack itemStack) {

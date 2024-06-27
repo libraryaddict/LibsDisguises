@@ -52,6 +52,17 @@ public class PacketHandlerAttributes implements IPacketHandler<WrapperPlayServer
             } else if (property.getAttribute() == Attributes.GENERIC_MOVEMENT_SPEED &&
                 disguise.getWatcher() instanceof AbstractHorseWatcher) {
                 attributes.add(property);
+            } else if (property.getAttribute() == Attributes.GENERIC_SCALE && disguise.getWatcher() instanceof LivingWatcher) {
+                // Override whatever they're sending if we're using a non-default scale
+                Double scale = ((LivingWatcher) disguise.getWatcher()).getScale();
+
+                if (scale == null) {
+                    attributes.add(property);
+                } else {
+                    attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, scale, new ArrayList<>()));
+                }
+            } else if (property.getAttribute() == Attributes.GENERIC_GRAVITY) {
+                attributes.add(property);
             }
         }
 

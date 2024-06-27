@@ -311,8 +311,18 @@ public class PacketHandlerSpawn implements IPacketHandler {
             packets.addPacket(newPacket);
         }
 
-        if (DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
-            if (disguise.getWatcher() instanceof LivingWatcher) {
+        if (disguise.getWatcher() instanceof LivingWatcher) {
+            List<WrapperPlayServerUpdateAttributes.Property> attributes = new ArrayList<>();
+
+            if (NmsVersion.v1_21_R1.isSupported()) {
+                Double scale = ((LivingWatcher) disguise.getWatcher()).getScale();
+
+                if (scale != null) {
+                    attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, scale, new ArrayList<>()));
+                }
+            }
+
+            if (DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
                 double health;
 
                 if (((LivingWatcher) disguise.getWatcher()).isMaxHealthSet()) {
@@ -323,11 +333,11 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     health = DisguiseValues.getDisguiseValues(disguise.getType()).getMaxHealth();
                 }
 
-                WrapperPlayServerUpdateAttributes packet = new WrapperPlayServerUpdateAttributes(disguisedEntity.getEntityId(),
-                    Collections.singletonList(
-                        new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_MAX_HEALTH, health, new ArrayList<>())));
+                attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_MAX_HEALTH, health, new ArrayList<>()));
+            }
 
-                packets.addPacket(packet);
+            if (!attributes.isEmpty()) {
+                packets.addPacket(new WrapperPlayServerUpdateAttributes(disguisedEntity.getEntityId(), attributes));
             }
         }
 
@@ -344,13 +354,13 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     continue;
                 }
 
-                org.bukkit.inventory.EquipmentSlot bSlot = ReflectionManager.getSlot(slot);
+                org.bukkit.inventory.EquipmentSlot bSlot = DisguiseUtilities.getSlot(slot);
                 // Get what the disguise wants to show for its armor
                 ItemStack itemToSend = disguise.getWatcher().getItemStack(bSlot);
 
                 // If the disguise armor isn't visible
                 if (itemToSend == null) {
-                    itemToSend = ReflectionManager.getEquipment(bSlot, disguisedEntity);
+                    itemToSend = DisguiseUtilities.getEquipment(bSlot, disguisedEntity);
 
                     // If natural armor isn't sent either
                     if (itemToSend == null || itemToSend.getType() == Material.AIR) {

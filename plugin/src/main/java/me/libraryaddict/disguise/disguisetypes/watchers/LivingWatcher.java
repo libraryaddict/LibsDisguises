@@ -16,6 +16,9 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.MethodGroupTyp
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsedBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import org.bukkit.Color;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
@@ -34,6 +37,8 @@ public class LivingWatcher extends FlagWatcher {
     private HashSet<String> potionEffects = new HashSet<>();
     @Getter
     private boolean[] modifiedLivingAnimations = new boolean[3];
+    private Double viewScale;
+    private boolean isScaleSet;
 
     public LivingWatcher(Disguise disguise) {
         super(disguise);
@@ -46,8 +51,65 @@ public class LivingWatcher extends FlagWatcher {
         clone.maxHealth = maxHealth;
         clone.maxHealthSet = maxHealthSet;
         clone.modifiedLivingAnimations = Arrays.copyOf(modifiedLivingAnimations, modifiedLivingAnimations.length);
+        clone.viewScale = viewScale;
 
         return clone;
+    }
+
+    @NmsAddedIn(NmsVersion.v1_21_R1)
+    public Double getScale() {
+        return viewScale;
+    }
+
+    @NmsAddedIn(NmsVersion.v1_21_R1)
+    public void setScale(Double viewScale) {
+        if (!NmsVersion.v1_21_R1.isSupported()) {
+            return;
+        }
+
+        // Clamping, the actual values are 0.06 to 16, but why do we need to force it?
+        if (viewScale != null) {
+            if (viewScale < 0) {
+                viewScale = 0D;
+            } else if (viewScale > 100) {
+                viewScale = 100D;
+            }
+        }
+
+        this.viewScale = viewScale;
+
+        if (getDisguise() == null || !getDisguise().isDisguiseInUse() || getDisguise().getWatcher() != this) {
+            return;
+        }
+
+        double scaleToSend;
+
+        if (getScale() != null) {
+            scaleToSend = getScale();
+        } else if (getDisguise().getEntity() instanceof LivingEntity) {
+            scaleToSend = (float) ((LivingEntity) getDisguise().getEntity()).getAttribute(Attribute.GENERIC_SCALE).getValue();
+        } else {
+            scaleToSend = 1;
+        }
+
+        Entity entity = getDisguise().getEntity();
+
+        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+            WrapperPlayServerUpdateAttributes.Property property =
+                new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, scaleToSend, new ArrayList<>());
+
+            WrapperPlayServerUpdateAttributes packet = new WrapperPlayServerUpdateAttributes(
+                player == getDisguise().getEntity() ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId(),
+                Collections.singletonList(property));
+
+            if (player == getDisguise().getEntity()) {
+                PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
+            } else {
+                PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
+            }
+        }
+
+        updateNameHeight();
     }
 
     @NmsAddedIn(NmsVersion.v1_14)

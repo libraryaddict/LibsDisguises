@@ -478,7 +478,7 @@ public class FlagWatcher {
     }
 
     protected void updateNameHeight() {
-        if (!getDisguise().isDisguiseInUse()) {
+        if (getDisguise() == null || !getDisguise().isDisguiseInUse()) {
             return;
         }
 
@@ -503,24 +503,6 @@ public class FlagWatcher {
             }.runTask(LibsDisguises.getInstance());
             return;
         }
-
-        // Not using this as it's "Smooth" and looks a bit weirder
-        /*int[] ids = getDisguise().getArmorstandIds();
-
-        ArrayList<PacketContainer> packets = new ArrayList<>();
-        Location loc = getDisguise().getEntity().getLocation();
-
-        for (int i = 0; i < getDisguise().getMultiNameLength(); i++) {
-            PacketContainer packet = new PacketContainer(Server.ENTITY_TELEPORT);
-            packet.getIntegers().write(0, ids[i]);
-
-            StructureModifier<Double> doubles = packet.getDoubles();
-            doubles.write(0, loc.getX());
-            doubles.write(1, loc.getY() + getDisguise().getHeight() + (0.28 * i));
-            doubles.write(2, loc.getZ());
-
-            packets.add(packet);
-        }*/
 
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
             if (!DisguiseUtilities.isFancyHiddenTabs() && getDisguise().isPlayerDisguise() &&
@@ -896,11 +878,11 @@ public class FlagWatcher {
                 continue;
             }
 
-            if (!entityValues.containsKey(data.getIndex()) || entityValues.get(data.getIndex()) == null) {
+            Object value = entityValues.get(data.getIndex());
+
+            if (value == null) {
                 continue;
             }
-
-            Object value = entityValues.get(data.getIndex());
 
             if (isEntityAnimationsAdded() && DisguiseConfig.isMetaPacketsEnabled() &&
                 (data == MetaIndex.ENTITY_META || data == MetaIndex.LIVING_META)) {
@@ -992,12 +974,12 @@ public class FlagWatcher {
         }
 
         if (itemStack == null && getDisguise().getEntity() instanceof LivingEntity) {
-            itemStack = ReflectionManager.getEquipment(slot, getDisguise().getEntity());
+            itemStack = DisguiseUtilities.getEquipment(slot, getDisguise().getEntity());
         }
 
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
             List<Equipment> list = Collections.singletonList(
-                new Equipment(ReflectionManager.getSlot(slot), SpigotConversionUtil.fromBukkitItemStack(itemStack)));
+                new Equipment(DisguiseUtilities.getSlot(slot), SpigotConversionUtil.fromBukkitItemStack(itemStack)));
             WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(getDisguise().getEntity().getEntityId(), list);
 
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);

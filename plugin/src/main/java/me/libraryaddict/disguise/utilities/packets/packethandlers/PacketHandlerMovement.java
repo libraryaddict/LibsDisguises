@@ -60,7 +60,10 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
         }
 
         ArrayList<PacketWrapper> toAdd = new ArrayList<>();
-        double height = disguise.getHeight() + disguise.getWatcher().getNameYModifier();
+        double height = (disguise.getHeight() + disguise.getWatcher().getNameYModifier());
+        double heightScale = disguise.getNameHeightScale();
+        height *= heightScale;
+        height += (DisguiseUtilities.getNameSpacing() * (heightScale - 1)) * 0.35;
 
         for (PacketWrapper packet : packets.getPackets()) {
             if (packet instanceof WrapperPlayServerEntityRotation) {
@@ -73,8 +76,9 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
 
                 if (packet instanceof WrapperPlayServerEntityTeleport) {
                     WrapperPlayServerEntityTeleport tele = (WrapperPlayServerEntityTeleport) packet;
-                    cloned = new WrapperPlayServerEntityTeleport(standId, tele.getPosition().add(0, height + (0.28 * i), 0), tele.getYaw(),
-                        tele.getPitch(), tele.isOnGround());
+                    cloned = new WrapperPlayServerEntityTeleport(standId,
+                        tele.getPosition().add(0, height + (DisguiseUtilities.getNameSpacing() * i), 0), tele.getYaw(), tele.getPitch(),
+                        tele.isOnGround());
                 } else if (packet instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
                     WrapperPlayServerEntityRelativeMoveAndRotation rot = (WrapperPlayServerEntityRelativeMoveAndRotation) packet;
                     cloned = new WrapperPlayServerEntityRelativeMoveAndRotation(standId, rot.getDeltaX(), rot.getDeltaY(), rot.getDeltaZ(),
