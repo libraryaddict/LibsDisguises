@@ -2633,8 +2633,7 @@ public class DisguiseUtilities {
                     continue;
                 }
 
-                list.add(new Equipment(slot,
-                    SpigotConversionUtil.fromBukkitItemStack(getSlot(player.getInventory(), ReflectionManager.getSlot(slot)))));
+                list.add(new Equipment(slot, SpigotConversionUtil.fromBukkitItemStack(getSlot(player.getInventory(), getSlot(slot)))));
             }
 
             sendSelfPacket(player, new WrapperPlayServerEntityEquipment(player.getEntityId(), list));
@@ -3510,5 +3509,80 @@ public class DisguiseUtilities {
         }
 
         return yMod;
+    }
+
+    /**
+     * Gets equipment from this entity based on the slot given.
+     *
+     * @param slot
+     * @return null if the disguisedEntity is not an instance of a living entity
+     */
+    public static ItemStack getEquipment(org.bukkit.inventory.EquipmentSlot slot, Entity disguisedEntity) {
+        if (!(disguisedEntity instanceof LivingEntity)) {
+            return null;
+        }
+
+        switch (slot) {
+            case HAND:
+                return ((LivingEntity) disguisedEntity).getEquipment().getItemInMainHand();
+            case OFF_HAND:
+                return ((LivingEntity) disguisedEntity).getEquipment().getItemInOffHand();
+            case FEET:
+                return ((LivingEntity) disguisedEntity).getEquipment().getBoots();
+            case LEGS:
+                return ((LivingEntity) disguisedEntity).getEquipment().getLeggings();
+            case CHEST:
+                return ((LivingEntity) disguisedEntity).getEquipment().getChestplate();
+            case HEAD:
+                return ((LivingEntity) disguisedEntity).getEquipment().getHelmet();
+            default:
+                if (NmsVersion.v1_20_R4.isSupported() && slot == org.bukkit.inventory.EquipmentSlot.BODY) {
+                    return ((LivingEntity) disguisedEntity).getEquipment().getItem(slot);
+                }
+
+                return null;
+        }
+    }
+
+    public static org.bukkit.inventory.EquipmentSlot getSlot(com.github.retrooper.packetevents.protocol.player.EquipmentSlot slot) {
+        switch (slot) {
+            case BOOTS:
+                return org.bukkit.inventory.EquipmentSlot.FEET;
+            case HELMET:
+                return org.bukkit.inventory.EquipmentSlot.HEAD;
+            case LEGGINGS:
+                return org.bukkit.inventory.EquipmentSlot.LEGS;
+            case MAIN_HAND:
+                return org.bukkit.inventory.EquipmentSlot.HAND;
+            case OFF_HAND:
+                return org.bukkit.inventory.EquipmentSlot.OFF_HAND;
+            case CHEST_PLATE:
+                return org.bukkit.inventory.EquipmentSlot.CHEST;
+            case BODY:
+                return org.bukkit.inventory.EquipmentSlot.BODY;
+            default:
+                throw new IllegalStateException("Unknown equip slot " + slot);
+        }
+    }
+
+    public static com.github.retrooper.packetevents.protocol.player.EquipmentSlot getSlot(org.bukkit.inventory.EquipmentSlot slot) {
+        switch (slot) {
+            case FEET:
+                return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.BOOTS;
+            case OFF_HAND:
+                return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.OFF_HAND;
+            case HEAD:
+                return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.HELMET;
+            case HAND:
+                return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.MAIN_HAND;
+            case CHEST:
+                return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.CHEST_PLATE;
+            case LEGS:
+                return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.LEGGINGS;
+            case BODY:
+                return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.BODY;
+            default:
+                throw new IllegalStateException("Unknown equip slot " + slot);
+        }
     }
 }

@@ -12,6 +12,7 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -36,39 +37,34 @@ public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerE
 
     @Override
     public void handle(Disguise disguise, LibsPackets<WrapperPlayServerEntityEquipment> packets, Player observer, Entity entity) {
-        // Else if the disguise is updating equipment
-        WrapperPlayServerEntityEquipment packet = packets.getOriginalPacket();
-        WrapperPlayServerEntityEquipment toModify = null;
-        List<Equipment> newSlots = new ArrayList<>();
+        WrapperPlayServerEntityEquipment originalPacket = packets.getOriginalPacket();
+        // This list is only actually used if we construct a new packet, because otherwise we're wasting time
+        List<Equipment> equipmentBeingSent = new ArrayList<>();
 
-        for (Equipment equipment : packet.getEquipment()) {
+        // Prior to 1.16, only one equipment is sent. But this means the loop will only run once, which means it's a non-issue as only
+        // one equipment will be written at most
+        for (Equipment equipment : originalPacket.getEquipment()) {
             EquipmentSlot slot = equipment.getSlot();
-            ItemStack sItem = disguise.getWatcher().getItemStack(ReflectionManager.getSlot(slot));
+            ItemStack itemInDisguise = disguise.getWatcher().getItemStack(DisguiseUtilities.getSlot(slot));
+            com.github.retrooper.packetevents.protocol.item.ItemStack itemInPacket = equipment.getItem();
 
-            // If it's not 1.16, then there should only be 1 equipment in the list which means only 1 equipment added to the list!
-            if (sItem != null) {
-                if (toModify == null) {
-                    if (packets.getPackets().size() > 1) {
-                        packets.getPackets().remove(1);
-                    } else {
-                        packets.clear();
-                    }
+            if (itemInDisguise != null) {
+                // If we haven't decided to send a new packet yet, then construct it
+                if (packets.getPackets().contains(originalPacket)) {
+                    packets.getPackets().remove(originalPacket);
 
-                    toModify = new WrapperPlayServerEntityEquipment(packet.getEntityId(), newSlots);
-                    packets.addPacket(toModify);
+                    packets.addPacket(new WrapperPlayServerEntityEquipment(originalPacket.getEntityId(), equipmentBeingSent));
                 }
 
-                newSlots.add(new Equipment(slot,
-                    sItem.getType() == Material.AIR ? com.github.retrooper.packetevents.protocol.item.ItemStack.EMPTY :
-                        SpigotConversionUtil.fromBukkitItemStack(sItem)));
-
+                itemInPacket = itemInDisguise.getType() == Material.AIR ? com.github.retrooper.packetevents.protocol.item.ItemStack.EMPTY :
+                    SpigotConversionUtil.fromBukkitItemStack(itemInDisguise);
+                equipmentBeingSent.add(new Equipment(slot, itemInPacket));
             } else {
-                newSlots.add(equipment);
-                sItem = SpigotConversionUtil.toBukkitItemStack(equipment.getItem());
+                equipmentBeingSent.add(equipment);
             }
 
             // If item not exists, either naturally or as part of the disguise
-            if (sItem == null || sItem.getType() == Material.AIR) {
+            if (itemInPacket.isEmpty()) {
                 continue;
             }
 

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import net.minecraft.network.protocol.Packet;
 import org.bukkit.Bukkit;
@@ -97,7 +98,7 @@ public class LibsPackets<T extends PacketWrapper<T>> {
 
         // If the disguise armor isn't visible
         if (itemToSend == null) {
-            itemToSend = ReflectionManager.getEquipment(slot, getDisguise().getEntity());
+            itemToSend = DisguiseUtilities.getEquipment(slot, getDisguise().getEntity());
 
             // If natural armor isn't sent either
             if (itemToSend == null || itemToSend.getType() == Material.AIR) {
@@ -108,6 +109,6 @@ public class LibsPackets<T extends PacketWrapper<T>> {
         }
 
         return new WrapperPlayServerEntityEquipment(getDisguise().getEntity().getEntityId(), Collections.singletonList(
-            new Equipment(ReflectionManager.getSlot(slot), SpigotConversionUtil.fromBukkitItemStack(itemToSend))));
+            new Equipment(DisguiseUtilities.getSlot(slot), SpigotConversionUtil.fromBukkitItemStack(itemToSend))));
     }
 }

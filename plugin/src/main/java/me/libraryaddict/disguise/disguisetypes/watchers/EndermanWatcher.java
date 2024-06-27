@@ -21,6 +21,10 @@ public class EndermanWatcher extends InsentientWatcher {
     public ItemStack getItemInMainHand() {
         WrappedBlockState value = getHeldBlock();
 
+        if (value == null) {
+            return null;
+        }
+
         if (!NmsVersion.v1_13.isSupported()) {
             return ReflectionManager.getItemStackByCombinedId(value.getGlobalId());
         }
@@ -33,7 +37,11 @@ public class EndermanWatcher extends InsentientWatcher {
     @Override
     @Deprecated
     public void setItemInMainHand(ItemStack itemstack) {
-        setItemInMainHand(itemstack.getType());
+        if (itemstack == null) {
+            setItemInMainHand((Material) null);
+        } else {
+            setItemInMainHand(itemstack.getType());
+        }
     }
 
     @MethodMappedAs("setItemInMainHand")
@@ -44,12 +52,17 @@ public class EndermanWatcher extends InsentientWatcher {
 
     @MethodMappedAs("getItemInMainHand")
     public WrappedBlockState getHeldBlock() {
+        if (!hasValue(MetaIndex.ENDERMAN_ITEM)) {
+            return null;
+        }
+
         return getData(MetaIndex.ENDERMAN_ITEM);
     }
 
     @Deprecated
     public void setItemInMainHand(Material type) {
-        if (!type.isBlock()) {
+        if (type == null || !type.isBlock()) {
+            setHeldBlock(null);
             return;
         }
 

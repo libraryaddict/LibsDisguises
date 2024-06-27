@@ -3,7 +3,6 @@ package me.libraryaddict.disguise.disguisetypes; // Its here so I can make use o
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
@@ -16,10 +15,6 @@ public class LibsEquipment implements EntityEquipment {
 
     public LibsEquipment(FlagWatcher flagWatcher) {
         this.flagWatcher = flagWatcher;
-
-        for (int i = 0; i < equipment.length; i++) {
-            equipment[i] = new ItemStack(Material.AIR);
-        }
 
         if (!cache) {
             return;
