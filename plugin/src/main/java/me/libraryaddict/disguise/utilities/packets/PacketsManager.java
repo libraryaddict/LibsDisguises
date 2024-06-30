@@ -53,6 +53,7 @@ public class PacketsManager {
             }
 
             initialListenersRegistered = true;
+            PacketEvents.getAPI().getSettings().fullStackTrace(true);
         }
 
         // Now I call this and the main listener is registered!
