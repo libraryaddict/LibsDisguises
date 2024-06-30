@@ -279,7 +279,7 @@ public class PacketEventsUpdater {
     /**
      * Copied from DisguiseUtilities
      */
-    private boolean isOlderThan(String requiredVersion, String theirVersion) {
+    public static boolean isOlderThan(String requiredVersion, String theirVersion) {
         int[] required = getNumericVersion(requiredVersion);
         int[] has = getNumericVersion(theirVersion);
 
@@ -297,7 +297,7 @@ public class PacketEventsUpdater {
     /**
      * Copied from DisguiseUtilities
      */
-    private int[] getNumericVersion(String version) {
+    public static int[] getNumericVersion(String version) {
         int[] v = new int[0];
         for (String split : version.split("[.\\-]")) {
             if (!split.matches("\\d+")) {
