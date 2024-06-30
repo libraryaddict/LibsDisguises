@@ -5,6 +5,9 @@ import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
+import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentType;
+import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentTypes;
+import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.particle.Particle;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
@@ -102,6 +105,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.KeyedBossBar;
@@ -293,7 +299,7 @@ public class DisguiseUtilities {
     private static boolean fancyHiddenTabs;
     @Getter
     private static NamespacedKey savedDisguisesKey;
-    private static final List<Enchantment> whitelistedEnchantments = new ArrayList<>();
+    private static final Map<Enchantment, EnchantmentType> whitelistedEnchantments = new HashMap<Enchantment, EnchantmentType>();
     @Getter
     private static Enchantment durabilityEnchantment, waterbreathingEnchantment;
     @Getter
@@ -303,6 +309,8 @@ public class DisguiseUtilities {
     private static final GsonComponentSerializer internalComponentSerializer = GsonComponentSerializer.gson();
     private static final io.github.retrooper.packetevents.adventure.serializer.gson.GsonComponentSerializer externalComponentSerializer =
         io.github.retrooper.packetevents.adventure.serializer.gson.GsonComponentSerializer.gson();
+    @Getter
+    private static NamespacedKey selfDisguiseScaleNamespace;
 
     static {
         try {
@@ -327,22 +335,37 @@ public class DisguiseUtilities {
             durabilityEnchantment = Enchantment.getByName("unbreaking");
             waterbreathingEnchantment = Enchantment.getByName("respiration");
 
-            whitelistedEnchantments.add(Enchantment.DEPTH_STRIDER);
-            whitelistedEnchantments.add(getWaterbreathingEnchantment());
+            whitelistedEnchantments.put(Enchantment.DEPTH_STRIDER, EnchantmentTypes.DEPTH_STRIDER);
+            whitelistedEnchantments.put(getWaterbreathingEnchantment(), EnchantmentTypes.RESPIRATION);
 
             if (Bukkit.getServer() != null && NmsVersion.v1_13.isSupported()) {
-                whitelistedEnchantments.add(Enchantment.RIPTIDE);
+                whitelistedEnchantments.put(Enchantment.RIPTIDE, EnchantmentTypes.RIPTIDE);
 
                 if (NmsVersion.v1_19_R1.isSupported()) {
-                    whitelistedEnchantments.add(Enchantment.SOUL_SPEED);
-                    whitelistedEnchantments.add(Enchantment.SWIFT_SNEAK);
+                    whitelistedEnchantments.put(Enchantment.SOUL_SPEED, EnchantmentTypes.SOUL_SPEED);
+                    whitelistedEnchantments.put(Enchantment.SWIFT_SNEAK, EnchantmentTypes.SWIFT_SNEAK);
                 }
             }
         }
     }
 
     public static boolean shouldBeHiddenSelfDisguise(com.github.retrooper.packetevents.protocol.item.ItemStack itemStack) {
-        return shouldBeHiddenSelfDisguise(SpigotConversionUtil.toBukkitItemStack(itemStack));
+        if (itemStack == null || itemStack.isEmpty() || itemStack.getType() == ItemTypes.AIR) {
+            return false;
+        }
+
+        List<com.github.retrooper.packetevents.protocol.item.enchantment.Enchantment> enchants =
+            itemStack.getEnchantments(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
+
+        for (com.github.retrooper.packetevents.protocol.item.enchantment.Enchantment enchantment : enchants) {
+            if (enchantment == null || !whitelistedEnchantments.containsValue(enchantment.getType())) {
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
     }
 
     public static boolean shouldBeHiddenSelfDisguise(ItemStack itemStack) {
@@ -353,7 +376,7 @@ public class DisguiseUtilities {
         Map<Enchantment, Integer> enchants = itemStack.getEnchantments();
 
         for (Enchantment enchantment : enchants.keySet()) {
-            if (!whitelistedEnchantments.contains(enchantment)) {
+            if (!whitelistedEnchantments.containsKey(enchantment)) {
                 continue;
             }
 
@@ -361,6 +384,16 @@ public class DisguiseUtilities {
         }
 
         return true;
+    }
+
+    public static void removeSelfDisguiseScale(Entity entity) {
+        if (!NmsVersion.v1_21_R1.isSupported() || isInvalidFile() || !(entity instanceof LivingEntity)) {
+            return;
+        }
+
+        AttributeInstance attribute = ((LivingEntity) entity).getAttribute(Attribute.GENERIC_SCALE);
+        attribute.getModifiers().stream().filter(a -> a.getKey().equals(DisguiseUtilities.getSelfDisguiseScaleNamespace()))
+            .forEach(attribute::removeModifier);
     }
 
     public static double getNameSpacing() {
@@ -617,6 +650,7 @@ public class DisguiseUtilities {
         Plugin plugin = Bukkit.getPluginManager().getPlugin("packetevents");
 
         if (plugin == null) {
+            DisguiseUtilities.getLogger().severe("PacketEvents not installed on server (as a plugin), must be missing!");
             return true;
         }
 
@@ -625,6 +659,7 @@ public class DisguiseUtilities {
         try {
             packetEventsVersion = plugin.getDescription().getVersion();
         } catch (Throwable throwable) {
+            throwable.printStackTrace();
             return true;
         }
 
@@ -1606,6 +1641,7 @@ public class DisguiseUtilities {
     public static void init() {
         fancyHiddenTabs = NmsVersion.v1_19_R2.isSupported() && Bukkit.getPluginManager().getPlugin("ViaBackwards") == null;
         savedDisguisesKey = new NamespacedKey(LibsDisguises.getInstance(), "SavedDisguises");
+        selfDisguiseScaleNamespace = new NamespacedKey(LibsDisguises.getInstance(), "Self_Disguise_Scaling");
 
         recreateGsonSerializer();
 
@@ -2752,17 +2788,7 @@ public class DisguiseUtilities {
     }
 
     public static int[] getNumericVersion(String version) {
-        int[] v = new int[0];
-        for (String split : version.split("[.\\-]")) {
-            if (!split.matches("\\d+")) {
-                return v;
-            }
-
-            v = Arrays.copyOf(v, v.length + 1);
-            v[v.length - 1] = Integer.parseInt(split);
-        }
-
-        return v;
+        return PacketEventsUpdater.getNumericVersion(version);
     }
 
     public static String getSimpleString(Component component) {
@@ -2822,18 +2848,7 @@ public class DisguiseUtilities {
      * "1.5" and "1.0" will return true
      */
     public static boolean isOlderThan(String requiredVersion, String theirVersion) {
-        int[] required = getNumericVersion(requiredVersion);
-        int[] has = getNumericVersion(theirVersion);
-
-        for (int i = 0; i < Math.min(required.length, has.length); i++) {
-            if (required[i] == has[i]) {
-                continue;
-            }
-
-            return required[i] >= has[i];
-        }
-
-        return false;
+        return PacketEventsUpdater.isOlderThan(requiredVersion, theirVersion);
     }
 
     public static Logger getLogger() {
@@ -3405,6 +3420,42 @@ public class DisguiseUtilities {
         }
 
         return packets;
+    }
+
+    /**
+     * Grabs the scale of the entity as if the LibsDisguises: attributes did not exist
+     */
+    public static double getActualEntityScale(Entity entity) {
+        if (!(entity instanceof LivingEntity)) {
+            return 1;
+        }
+
+        AttributeInstance attribute = ((LivingEntity) entity).getAttribute(Attribute.GENERIC_SCALE);
+
+        double scale = attribute.getBaseValue();
+        double modifiedScale = 0;
+
+        for (int operation = 0; operation < 3; operation++) {
+            if (operation == 1) {
+                modifiedScale = scale;
+            }
+
+            for (AttributeModifier modifier : attribute.getModifiers()) {
+                if (modifier.getKey().equals(getSelfDisguiseScaleNamespace())) {
+                    continue;
+                }
+
+                if (modifier.getOperation() == AttributeModifier.Operation.ADD_NUMBER && operation == 0) {
+                    scale += modifier.getAmount();
+                } else if (modifier.getOperation() == AttributeModifier.Operation.ADD_SCALAR && operation == 1) {
+                    modifiedScale += scale * modifier.getAmount();
+                } else if (modifier.getOperation() == AttributeModifier.Operation.MULTIPLY_SCALAR_1 && operation == 2) {
+                    modifiedScale *= 1 + modifier.getAmount();
+                }
+            }
+        }
+
+        return modifiedScale;
     }
 
     public static Disguise getDisguise(Player observer, int entityId) {
