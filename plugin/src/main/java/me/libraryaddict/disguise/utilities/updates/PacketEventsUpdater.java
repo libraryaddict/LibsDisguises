@@ -59,7 +59,7 @@ public class PacketEventsUpdater {
 
         // At time of writing, release is 2.3.0, and snapshot builds are all "2.3.1-SNAPSHOT"
         // This means we'll always fail a release check!
-        return "2.3.1";
+        return "2.4.0";
     }
 
     private boolean isNotBukkitPlugin(String name) {
