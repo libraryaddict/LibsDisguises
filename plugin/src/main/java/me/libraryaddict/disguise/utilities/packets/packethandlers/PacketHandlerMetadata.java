@@ -1,12 +1,13 @@
 package me.libraryaddict.disguise.utilities.packets.packethandlers;
 
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
+import com.github.retrooper.packetevents.protocol.item.ItemStack;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
@@ -45,6 +46,14 @@ public class PacketHandlerMetadata implements IPacketHandler<WrapperPlayServerEn
 
         if (watchableObjects.isEmpty()) {
             return;
+        }
+
+        // Workaround for this pending fix https://github.com/retrooper/packetevents/issues/869
+        for (WatcherValue object : watchableObjects) {
+            if (object.getDataValue().getValue() instanceof ItemStack &&
+                DisguiseUtilities.hasCustomEnchants((ItemStack) object.getDataValue().getValue())) {
+                object.getDataValue().setValue(DisguiseUtilities.stripEnchants((ItemStack) object.getDataValue().getValue()));
+            }
         }
 
         WrapperPlayServerEntityMetadata metaPacket = ReflectionManager.getMetadataPacket(entity.getEntityId(), watchableObjects);

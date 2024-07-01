@@ -2815,6 +2815,26 @@ public class DisguiseUtilities {
         return externalComponentSerializer.deserialize(serialized);
     }
 
+    public static com.github.retrooper.packetevents.protocol.item.ItemStack stripEnchants(
+        com.github.retrooper.packetevents.protocol.item.ItemStack itemStack) {
+        itemStack.setEnchantments(new ArrayList<>(), PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
+
+        return itemStack;
+    }
+
+    public static boolean hasCustomEnchants(com.github.retrooper.packetevents.protocol.item.ItemStack itemStack) {
+        for (com.github.retrooper.packetevents.protocol.item.enchantment.Enchantment enchant : itemStack.getEnchantments(
+            PacketEvents.getAPI().getServerManager().getVersion().toClientVersion())) {
+            if (enchant != null && enchant.getType() != null) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
     public static BaseComponent[] getColoredChat(String message) {
         if (message.isEmpty()) {
             return new BaseComponent[0];

@@ -48,6 +48,11 @@ public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerE
             ItemStack itemInDisguise = disguise.getWatcher().getItemStack(DisguiseUtilities.getSlot(slot));
             com.github.retrooper.packetevents.protocol.item.ItemStack itemInPacket = equipment.getItem();
 
+            // Workaround for this pending fix https://github.com/retrooper/packetevents/issues/869
+            if (DisguiseUtilities.hasCustomEnchants(itemInPacket)) {
+                equipment.setItem(itemInPacket = DisguiseUtilities.stripEnchants(itemInPacket));
+            }
+
             if (itemInDisguise != null) {
                 // If we haven't decided to send a new packet yet, then construct it
                 if (packets.getPackets().contains(originalPacket)) {
@@ -119,5 +124,4 @@ public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerE
             // Silly mojang made the right clicking datawatcher value only valid for one use. So I have to reset it.
         }
     }
-
 }
