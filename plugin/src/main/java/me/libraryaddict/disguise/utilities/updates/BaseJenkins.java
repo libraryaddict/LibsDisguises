@@ -58,6 +58,8 @@ public class BaseJenkins {
             URL url = new URL(baseUrl + "api/json?tree=builds[changeSet[items[msg]],id,result,artifacts[relativePath]]");
             // Creating a connection
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+            con.setUseCaches(false);
             con.setDefaultUseCaches(false);
             Map<String, Object> jsonObject;
 
