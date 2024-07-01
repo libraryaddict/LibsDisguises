@@ -3,6 +3,8 @@ package me.libraryaddict.disguise.utilities;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
+import com.github.retrooper.packetevents.protocol.component.ComponentTypes;
+import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemEnchantments;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentType;
@@ -2828,26 +2830,29 @@ public class DisguiseUtilities {
 
     public static com.github.retrooper.packetevents.protocol.item.ItemStack stripEnchants(
         com.github.retrooper.packetevents.protocol.item.ItemStack itemStack) {
-        if (hasCustomEnchants(itemStack)) {
-            itemStack.setEnchantments(new ArrayList<>(), PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
-        }
-
-        return itemStack;
-    }
-
-    public static boolean hasCustomEnchants(com.github.retrooper.packetevents.protocol.item.ItemStack itemStack) {
         // We have to copy/paste what PE does for reading enchants because it'll refuse to expose enchants that'll crash netty
         // So we have to read it ourselves
         // (This was decompiled instead of source code, no particular reason)
-        if (!NmsVersion.v1_13.isSupported()) {
+        if (!NmsVersion.v1_13.isSupported() || itemStack == null) {
             // Lets just skip 1.12, this is really a 1.20.6 issue anyways
-            return false;
+            return itemStack;
+        }
+
+        ItemEnchantments enchantsComp = itemStack.getComponentOr(ComponentTypes.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        ItemEnchantments storedEnchantsComp = itemStack.getComponentOr(ComponentTypes.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
+
+        if (!enchantsComp.isEmpty()) {
+            enchantsComp.setEnchantmentLevel(null, 0);
+        }
+
+        if (!storedEnchantsComp.isEmpty()) {
+            storedEnchantsComp.setEnchantmentLevel(null, 0);
         }
 
         @Nullable NBTCompound nbt = itemStack.getNBT();
 
         if (nbt == null) {
-            return false;
+            return itemStack;
         }
 
         String tagName = NmsVersion.v1_12.isSupported() ? "Enchantments" : "ench";
@@ -2858,20 +2863,26 @@ public class DisguiseUtilities {
         @Nullable NBTList<NBTCompound> nbtList = nbt.getCompoundListTagOrNull(tagName);
 
         if (nbtList == null) {
-            return false;
+            return itemStack;
         }
 
-        List<NBTCompound> compounds = nbtList.getTags();
+        int index = 0;
 
-        for (NBTCompound compound : compounds) {
-            EnchantmentType type = EnchantmentTypes.getByName(compound.getStringTagValueOrNull("id"));
+        for (NBTCompound nbtCompound : new ArrayList<>(nbtList.getTags())) {
+            EnchantmentType type = EnchantmentTypes.getByName(nbtCompound.getStringTagValueOrNull("id"));
 
             if (type != null) {
+                index++;
                 continue;
             }
 
-            return true;
+            nbtList.removeTag(index);
         }
+
+        return itemStack;
+    }
+
+    public static boolean hasCustomEnchants(com.github.retrooper.packetevents.protocol.item.ItemStack itemStack) {
 
         return false;
     }

@@ -12,7 +12,6 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCl
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCreativeInventoryAction;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetSlot;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerWindowItems;
-import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -73,7 +72,10 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
 
             // If they are in creative and clicked on a slot
             if (event.getPacketType() == Client.CREATIVE_INVENTORY_ACTION) {
-                int slot = new WrapperPlayClientCreativeInventoryAction(event).getSlot();
+                WrapperPlayClientCreativeInventoryAction wrapper = new WrapperPlayClientCreativeInventoryAction(event);
+                wrapper.setItemStack(DisguiseUtilities.stripEnchants(wrapper.getItemStack()));
+
+                int slot = wrapper.getSlot();
 
                 if (slot >= 5 && slot <= 8) {
                     if (disguise.isHidingArmorFromSelf()) {
@@ -110,6 +112,12 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
                 }
             } else if (event.getPacketType() == Client.CLICK_WINDOW) {
                 WrapperPlayClientClickWindow packet = new WrapperPlayClientClickWindow(event);
+
+                packet.setCarriedItemStack(DisguiseUtilities.stripEnchants(packet.getCarriedItemStack()));
+
+                if (packet.getSlots().isPresent()) {
+                    packet.getSlots().get().replaceAll((slot, item) -> DisguiseUtilities.stripEnchants(item));
+                }
 
                 int slot = packet.getSlot();
 
@@ -213,6 +221,8 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
             if (event.getPacketType() == Server.SET_SLOT) {
                 WrapperPlayServerSetSlot packet = new WrapperPlayServerSetSlot(event);
 
+                packet.setItem(DisguiseUtilities.stripEnchants(packet.getItem()));
+
                 // If the inventory is the players inventory
                 if (packet.getWindowId() != 0) {
                     return;
@@ -232,6 +242,7 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
 
                         if (DisguiseUtilities.shouldBeHiddenSelfDisguise(item) && item.getType() != Material.ELYTRA) {
                             packet.setItem(com.github.retrooper.packetevents.protocol.item.ItemStack.EMPTY);
+                            event.markForReEncode(true);
                         }
                     }
                     // Else if its a hotbar slot
@@ -245,12 +256,19 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
 
                             if (DisguiseUtilities.shouldBeHiddenSelfDisguise(item)) {
                                 packet.setItem(com.github.retrooper.packetevents.protocol.item.ItemStack.EMPTY);
+                                event.markForReEncode(true);
                             }
                         }
                     }
                 }
             } else if (event.getPacketType() == Server.WINDOW_ITEMS) {
                 WrapperPlayServerWindowItems packet = new WrapperPlayServerWindowItems(event);
+
+                packet.getItems().replaceAll(DisguiseUtilities::stripEnchants);
+
+                if (packet.getCarriedItem().isPresent()) {
+                    packet.setCarriedItem(DisguiseUtilities.stripEnchants(packet.getCarriedItem().get()));
+                }
 
                 // If the inventory is the players inventory
                 if (packet.getWindowId() != 0) {
