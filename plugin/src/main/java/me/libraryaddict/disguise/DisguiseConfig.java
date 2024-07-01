@@ -229,7 +229,7 @@ public class DisguiseConfig {
     private static BukkitTask updaterTask;
     @Getter
     @Setter
-    private static boolean tallSelfDisguises;
+    private static boolean tallSelfDisguises, tallSelfDisguisesScaling;
     @Getter
     @Setter
     private static PlayerNameType playerNameType = PlayerNameType.TEAMS;
@@ -291,6 +291,12 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static boolean removeDisguiseBlockPlace, removeDisguiseBlockBreak;
+    @Getter
+    @Setter
+    private static boolean scaleSelfDisguises;
+    @Getter
+    @Setter
+    private static double scaleSelfDisguisesMax;
 
     public static boolean isArmorstandsName() {
         return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
@@ -585,9 +591,12 @@ public class DisguiseConfig {
         setHideDisguisedPlayers(config.getBoolean("HideDisguisedPlayersFromTab"));
         setPlayerHideArmor(config.getBoolean("PlayerHideArmor"));
         setTallSelfDisguises(config.getBoolean("TallSelfDisguises"));
+        setTallSelfDisguisesScaling(config.getBoolean("TallSelfDisguisesScaling"));
         setRandomDisguises(config.getBoolean("RandomDisguiseOptions"));
         setViewDisguises(config.getBoolean("ViewSelfDisguises"));
         setViewSelfDisguisesDefault(config.getBoolean("ViewSelfDisguisesDefault"));
+        setScaleSelfDisguises(config.getBoolean("SelfDisguisesScaling"));
+        setScaleSelfDisguisesMax(config.getDouble("SelfDisguisesScaleMax"));
         setSelfDisguisesSoundsReplaced(config.getBoolean("HearSelfDisguise"));
         setShowDisguisedPlayersInTab(config.getBoolean("ShowPlayerDisguisesInTab"));
         setVelocitySent(config.getBoolean("SendVelocity"));

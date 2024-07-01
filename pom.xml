@@ -24,7 +24,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <lombok.version>1.18.32</lombok.version>
-        <packetevents.version>2.3.1-SNAPSHOT</packetevents.version>
+        <packetevents.version>2.4.0-SNAPSHOT</packetevents.version>
         <spigot.version>1.21-R0.1-SNAPSHOT</spigot.version>
         <junit.version>4.13.2</junit.version>
         <junit-jupiter.version>5.9.3</junit-jupiter.version>

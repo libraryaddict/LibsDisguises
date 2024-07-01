@@ -392,6 +392,7 @@ public class DisguiseListener implements Listener {
         Player p = event.getPlayer();
 
         p.removeMetadata("ld_loggedin", LibsDisguises.getInstance());
+        DisguiseUtilities.removeSelfDisguiseScale(p);
         plugin.getUpdateChecker().notifyUpdate(p);
 
         String requiredPacketEvents = PacketEventsUpdater.getMinimumPacketEventsVersion();

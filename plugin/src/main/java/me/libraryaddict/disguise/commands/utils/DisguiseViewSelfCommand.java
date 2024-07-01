@@ -1,8 +1,11 @@
 package me.libraryaddict.disguise.commands.utils;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -40,7 +43,9 @@ public class DisguiseViewSelfCommand implements CommandExecutor {
 
             // If they're disguised, tall disguises are hidden, it's a tall disguise
             // Then tell the player, it's not a bug! The disguise is too tall
-            if (disguise != null && !disguise.isTallDisguisesVisible() && disguise.canSee(player) &&
+            if (disguise != null && !disguise.isTallDisguisesVisible() &&
+                (!NmsVersion.v1_21_R1.isSupported() || !DisguiseConfig.isTallSelfDisguisesScaling() ||
+                    (disguise.isMiscDisguise() || disguise.getType() == DisguiseType.ENDER_DRAGON)) && disguise.canSee(player) &&
                 DisguiseUtilities.isTallDisguise(disguise)) {
                 LibsMsg.VIEW_SELF_TALL_NOTE.send(player);
             }

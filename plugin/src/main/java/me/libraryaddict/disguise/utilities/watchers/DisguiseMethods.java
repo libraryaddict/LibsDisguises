@@ -10,9 +10,11 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherInfo;
 import org.bukkit.boss.BarColor;
@@ -24,6 +26,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -177,10 +180,17 @@ public class DisguiseMethods {
 
             PlayerDisguise disguise = new PlayerDisguise("");
 
+            List<String> extraMethods = new ArrayList<>(
+                Arrays.asList("setSelfDisguiseVisible", "setHideHeldItemFromSelf", "setHideArmorFromSelf", "setHearSelfDisguise",
+                    "setHidePlayer", "setExpires", "setNotifyBar", "setBossBarColor", "setBossBarStyle", "setTallDisguisesVisible",
+                    "setDynamicName", "setSoundGroup", "setDisguiseName", "setDeadmau5Ears"));
+
+            if (NmsVersion.v1_21_R1.isSupported()) {
+                extraMethods.add("setScalePlayerToDisguise");
+            }
+
             // Add these last as it's what we want to present to be called the least
-            for (String methodName : new String[]{"setSelfDisguiseVisible", "setHideHeldItemFromSelf", "setHideArmorFromSelf",
-                "setHearSelfDisguise", "setHidePlayer", "setExpires", "setNotifyBar", "setBossBarColor", "setBossBarStyle",
-                "setTallDisguisesVisible", "setDynamicName", "setSoundGroup", "setDisguiseName", "setDeadmau5Ears"}) {
+            for (String methodName : extraMethods) {
                 try {
                     Class cl = boolean.class;
                     Class disguiseClass = Disguise.class;
@@ -226,11 +236,16 @@ public class DisguiseMethods {
                                 (a) -> new ArrayList<>()).add(method);
 
                             String getName = (cl == boolean.class ? "is" : "get") + methodName.substring(3);
+                            boolean[] hiddenFor = new boolean[DisguiseType.values().length];
+
+                            // No one really cares about it but don't let players see it if they don't have premium
+                            if (methodName.equals("setScalePlayerToDisguise") && !LibsPremium.isPremium()) {
+                                Arrays.fill(hiddenFor, true);
+                            }
 
                             WatcherMethod getMethod = new WatcherMethod(disguiseClass,
                                 MethodHandles.publicLookup().findVirtual(disguiseClass, getName, MethodType.methodType(cl)), getName,
-                                getName, cl, null, randomDefault, false, new boolean[DisguiseType.values().length],
-                                new boolean[DisguiseType.values().length]);
+                                getName, cl, null, randomDefault, false, new boolean[DisguiseType.values().length], hiddenFor);
 
                             methods.add(getMethod);
                             break;

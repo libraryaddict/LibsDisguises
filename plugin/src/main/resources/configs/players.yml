@@ -13,6 +13,17 @@ ViewSelfDisguises: true
 # Default is true
 ViewSelfDisguisesDefault: true
 
+# If this is enabled and the server is 1.21+, players will be given the scale attribute to scale them up/down to the disguise's size
+# This will only work on living disguises, and is false by default due to the possibility of abuse as it'd shrink hitboxes and the like
+# This may behave unexpectably if you're playing with other scaling modifiers outside of this plugin!
+# An example of what this setting does, is if you disguise as a cat you will be scaled down so your viewpoint is at the same height of an actual cat
+# The player's move, jump, etc is unchanged
+SelfDisguisesScaling: false
+
+# The max size a self disguise will change the player to match, 1 means they can only shrink, 2 means they can go up to 2x the size
+# There is no min set as there's not much of a point, disable this entirely if you need the min.
+SelfDisguisesScaleMax: 1
+
 # Shall the disguised hear their disguise sounds or their damage sounds.
 # I disable this as it can be a little confusing when not used with self disguises
 HearSelfDisguise: true
@@ -20,7 +31,14 @@ HearSelfDisguise: true
 # Some disguises are rather big and tall and block your vision
 # By default those disguises are disabled, such as zombies, players, etc.
 # The baby versions however, are normally short enough that it's a non-issue
+# false = hidden, true = shown
 TallSelfDisguises: false
+
+# This setting which is for servers that are 1.21+, allows the server to scale down the self disguise instead of hiding it completely
+# If a player looks down, they'll see a mini figure of the previously large disguise
+# This setting only works if the disguise wouldn't be shown as it's too tall, aka the above setting is false
+# This will only work on living disguises!
+TallSelfDisguisesScaling: true
 
 # Hide players in tab when disguised? This means a disguised player cannot be seen when you press tab! This can be toggled on/off per disguise
 HideDisguisedPlayersFromTab: false

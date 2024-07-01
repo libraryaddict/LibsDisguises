@@ -146,6 +146,14 @@ public class DisguiseUtilitiesTest {
         Assertions.assertFalse(DisguiseUtilities.isOlderThan("1.0", "1"));
         Assertions.assertFalse(DisguiseUtilities.isOlderThan("1.0", "1.0"));
         Assertions.assertFalse(DisguiseUtilities.isOlderThan("1", "1.0"));
+
+        Assertions.assertFalse(DisguiseUtilities.isOlderThan("3.0.0", "3.1.0"));
+        Assertions.assertFalse(DisguiseUtilities.isOlderThan("3.0.0", "3.0.1"));
+        Assertions.assertFalse(DisguiseUtilities.isOlderThan("3.0.0", "3.0.1-SNAPSHOT"));
+        Assertions.assertFalse(DisguiseUtilities.isOlderThan("3.1.0", "3.1.1-SNAPSHOT"));
+        Assertions.assertFalse(DisguiseUtilities.isOlderThan("3.1.1-SNAPSHOT", "3.4.0"));
+        Assertions.assertFalse(DisguiseUtilities.isOlderThan("3.1.1-SNAPSHOT", "3.4.0-SNAPSHOT"));
+        Assertions.assertFalse(DisguiseUtilities.isOlderThan("2.3.1", "2.4.0-SNAPSHOT"));
     }
 
     @Test

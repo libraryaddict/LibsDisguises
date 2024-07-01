@@ -6,6 +6,7 @@ import com.github.retrooper.packetevents.util.Vector3i;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateAttributes;
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
@@ -16,9 +17,7 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.MethodGroupTyp
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsedBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import org.bukkit.Color;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
@@ -82,21 +81,23 @@ public class LivingWatcher extends FlagWatcher {
             return;
         }
 
+        updateNameHeight();
         double scaleToSend;
 
         if (getScale() != null) {
             scaleToSend = getScale();
-        } else if (getDisguise().getEntity() instanceof LivingEntity) {
-            scaleToSend = (float) ((LivingEntity) getDisguise().getEntity()).getAttribute(Attribute.GENERIC_SCALE).getValue();
         } else {
-            scaleToSend = 1;
+            scaleToSend = DisguiseUtilities.getActualEntityScale(getDisguise().getEntity());
         }
 
         Entity entity = getDisguise().getEntity();
 
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+            double toSend = player == entity && DisguiseConfig.isTallSelfDisguisesScaling() ?
+                Math.min(getDisguise().getSelfDisguiseTallScaleMax(), scaleToSend) : scaleToSend;
+
             WrapperPlayServerUpdateAttributes.Property property =
-                new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, scaleToSend, new ArrayList<>());
+                new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, toSend, new ArrayList<>());
 
             WrapperPlayServerUpdateAttributes packet = new WrapperPlayServerUpdateAttributes(
                 player == getDisguise().getEntity() ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId(),
@@ -108,8 +109,6 @@ public class LivingWatcher extends FlagWatcher {
                 PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
             }
         }
-
-        updateNameHeight();
     }
 
     @NmsAddedIn(NmsVersion.v1_14)

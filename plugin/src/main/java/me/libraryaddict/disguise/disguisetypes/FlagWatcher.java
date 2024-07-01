@@ -504,6 +504,8 @@ public class FlagWatcher {
             return;
         }
 
+        getDisguise().adjustTallSelfDisguiseScale();
+
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
             if (!DisguiseUtilities.isFancyHiddenTabs() && getDisguise().isPlayerDisguise() &&
                 LibsDisguises.getInstance().getSkinHandler().isSleeping(player, (PlayerDisguise) getDisguise())) {
