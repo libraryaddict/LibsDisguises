@@ -91,24 +91,4 @@ public class LibsPackets<T extends PacketWrapper<T>> {
             }, entry.getKey());
         }
     }
-
-    private WrapperPlayServerEntityEquipment createPacket(EquipmentSlot slot) {
-        // Get what the disguise wants to show for its armor
-        ItemStack itemToSend = getDisguise().getWatcher().getItemStack(slot);
-
-        // If the disguise armor isn't visible
-        if (itemToSend == null) {
-            itemToSend = DisguiseUtilities.getEquipment(slot, getDisguise().getEntity());
-
-            // If natural armor isn't sent either
-            if (itemToSend == null || itemToSend.getType() == Material.AIR) {
-                return null;
-            }
-        } else if (itemToSend.getType() == Material.AIR) {
-            return null;
-        }
-
-        return new WrapperPlayServerEntityEquipment(getDisguise().getEntity().getEntityId(), Collections.singletonList(
-            new Equipment(DisguiseUtilities.getSlot(slot), DisguiseUtilities.fromBukkitItemStack(itemToSend))));
-    }
 }

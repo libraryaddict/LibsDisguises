@@ -971,7 +971,8 @@ public class FlagWatcher {
     }
 
     protected void sendItemStack(EquipmentSlot slot, ItemStack itemStack) {
-        if (!DisguiseAPI.isDisguiseInUse(getDisguise()) || getDisguise().getWatcher() != this || getDisguise().getEntity() == null) {
+        if (!DisguiseAPI.isDisguiseInUse(getDisguise()) || getDisguise().getWatcher() != this || getDisguise().getEntity() == null ||
+            !DisguiseConfig.isEquipmentPacketsEnabled()) {
             return;
         }
 
@@ -980,8 +981,8 @@ public class FlagWatcher {
         }
 
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-            List<Equipment> list = Collections.singletonList(
-                new Equipment(DisguiseUtilities.getSlot(slot), DisguiseUtilities.fromBukkitItemStack(itemStack)));
+            List<Equipment> list =
+                Collections.singletonList(new Equipment(DisguiseUtilities.getSlot(slot), DisguiseUtilities.fromBukkitItemStack(itemStack)));
             WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(getDisguise().getEntity().getEntityId(), list);
 
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);

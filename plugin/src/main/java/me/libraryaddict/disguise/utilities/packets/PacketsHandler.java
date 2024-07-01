@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -41,7 +42,11 @@ public class PacketsHandler {
         packetHandlers.add(new PacketHandlerAttributes());
         packetHandlers.add(new PacketHandlerAnimationCollect());
         packetHandlers.add(new PacketHandlerEntityStatus());
-        packetHandlers.add(new PacketHandlerEquipment());
+
+        if (DisguiseConfig.isEquipmentPacketsEnabled()) {
+            packetHandlers.add(new PacketHandlerEquipment());
+        }
+
         packetHandlers.add(new PacketHandlerAttachEntity());
 
         packetHandlers.add(new PacketHandlerHeadLook());

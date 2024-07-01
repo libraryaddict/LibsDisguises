@@ -2671,17 +2671,19 @@ public class DisguiseUtilities {
                 sendSelfPacket(player, new WrapperPlayServerAttachEntity(player.getPassenger().getEntityId(), player.getEntityId(), false));
             }
 
-            List<Equipment> list = new ArrayList<>();
+            if (DisguiseConfig.isEquipmentPacketsEnabled()) {
+                List<Equipment> list = new ArrayList<>();
 
-            for (EquipmentSlot slot : EquipmentSlot.values()) {
-                if (slot == EquipmentSlot.BODY && !NmsVersion.v1_20_R4.isSupported()) {
-                    continue;
+                for (EquipmentSlot slot : EquipmentSlot.values()) {
+                    if (slot == EquipmentSlot.BODY && !NmsVersion.v1_20_R4.isSupported()) {
+                        continue;
+                    }
+
+                    list.add(new Equipment(slot, DisguiseUtilities.fromBukkitItemStack(getSlot(player.getInventory(), getSlot(slot)))));
                 }
-
-                list.add(new Equipment(slot, DisguiseUtilities.fromBukkitItemStack(getSlot(player.getInventory(), getSlot(slot)))));
+                
+                sendSelfPacket(player, new WrapperPlayServerEntityEquipment(player.getEntityId(), list));
             }
-
-            sendSelfPacket(player, new WrapperPlayServerEntityEquipment(player.getEntityId(), list));
 
             // Resend any active potion effects
             for (PotionEffect potionEffect : player.getActivePotionEffects()) {
