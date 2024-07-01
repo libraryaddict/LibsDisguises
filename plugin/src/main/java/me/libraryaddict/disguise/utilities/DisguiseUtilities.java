@@ -2833,7 +2833,8 @@ public class DisguiseUtilities {
 
         p.sendMessage(ChatColor.RED + "Please ask the server owner to update PacketEvents! You are running " + version +
             " but the minimum version you should be on is " + requiredPacketEvents + "!");
-        p.sendMessage(ChatColor.RED + "https://www.spigotmc.org/resources/packetevents-api.80279/");
+        p.sendMessage(ChatColor.RED +
+            "Release: https://modrinth.com/plugin/packetevents - Snapshots: https://ci.codemc.io/job/retrooper/job/packetevents/");
         p.sendMessage(ChatColor.RED + "Or! Use " + ChatColor.DARK_RED + "/ld packetevents" + ChatColor.RED +
             " - To update to the latest release from Modrinth");
         p.sendMessage(
