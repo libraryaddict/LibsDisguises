@@ -23,6 +23,7 @@ import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import io.github.retrooper.packetevents.manager.server.ServerManagerImpl;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import lombok.SneakyThrows;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemStack;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoParticle;
@@ -363,8 +364,8 @@ public class DisguiseParamParticleTest {
         try (MockedStatic<SpigotConversionUtil> mockedStatic = Mockito.mockStatic(SpigotConversionUtil.class);
              MockedStatic<ParamInfoItemStack> mockedParam = Mockito.mockStatic(ParamInfoItemStack.class)) {
             // Mock itemstack conversion
-            mockedStatic.when(() -> SpigotConversionUtil.fromBukkitItemStack(ArgumentMatchers.any())).thenReturn(pPearl);
-            mockedStatic.when(() -> SpigotConversionUtil.toBukkitItemStack(ArgumentMatchers.any())).thenReturn(bPearl);
+            mockedStatic.when(() -> DisguiseUtilities.fromBukkitItemStack(ArgumentMatchers.any())).thenReturn(pPearl);
+            mockedStatic.when(() -> DisguiseUtilities.toBukkitItemStack(ArgumentMatchers.any())).thenReturn(bPearl);
 
             ParamInfoParticle param = (ParamInfoParticle) ParamInfoManager.getParamInfo(Particle.class);
 

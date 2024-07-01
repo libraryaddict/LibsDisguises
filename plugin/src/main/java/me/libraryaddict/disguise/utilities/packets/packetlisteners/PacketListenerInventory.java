@@ -139,7 +139,7 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
                         return;
                     }
 
-                    clickedItem = SpigotConversionUtil.fromBukkitItemStack(player.getItemOnCursor());
+                    clickedItem = DisguiseUtilities.fromBukkitItemStack(player.getItemOnCursor());
                 }
 
                 if (DisguiseUtilities.shouldBeHiddenSelfDisguise(clickedItem) && clickedItem.getType() != ItemTypes.ELYTRA) {

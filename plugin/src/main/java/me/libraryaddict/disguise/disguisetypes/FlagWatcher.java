@@ -981,7 +981,7 @@ public class FlagWatcher {
 
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
             List<Equipment> list = Collections.singletonList(
-                new Equipment(DisguiseUtilities.getSlot(slot), SpigotConversionUtil.fromBukkitItemStack(itemStack)));
+                new Equipment(DisguiseUtilities.getSlot(slot), DisguiseUtilities.fromBukkitItemStack(itemStack)));
             WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(getDisguise().getEntity().getEntityId(), list);
 
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);

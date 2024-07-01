@@ -109,6 +109,6 @@ public class LibsPackets<T extends PacketWrapper<T>> {
         }
 
         return new WrapperPlayServerEntityEquipment(getDisguise().getEntity().getEntityId(), Collections.singletonList(
-            new Equipment(DisguiseUtilities.getSlot(slot), SpigotConversionUtil.fromBukkitItemStack(itemToSend))));
+            new Equipment(DisguiseUtilities.getSlot(slot), DisguiseUtilities.fromBukkitItemStack(itemToSend))));
     }
 }

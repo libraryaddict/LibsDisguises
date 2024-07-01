@@ -287,7 +287,7 @@ public class DisguiseListener implements Listener {
             int stateId = NmsVersion.v1_17.isSupported() ? ReflectionManager.getIncrementedStateId(player) : 0;
 
             WrapperPlayServerSetSlot packet =
-                new WrapperPlayServerSetSlot(0, stateId, event.getNewSlot() + 36, SpigotConversionUtil.fromBukkitItemStack(currentlyHeld));
+                new WrapperPlayServerSetSlot(0, stateId, event.getNewSlot() + 36, DisguiseUtilities.fromBukkitItemStack(currentlyHeld));
 
             PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
         }

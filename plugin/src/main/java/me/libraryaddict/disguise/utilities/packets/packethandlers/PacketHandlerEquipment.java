@@ -7,7 +7,6 @@ import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
-import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -46,12 +45,10 @@ public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerE
         for (Equipment equipment : originalPacket.getEquipment()) {
             EquipmentSlot slot = equipment.getSlot();
             ItemStack itemInDisguise = disguise.getWatcher().getItemStack(DisguiseUtilities.getSlot(slot));
-            com.github.retrooper.packetevents.protocol.item.ItemStack itemInPacket = equipment.getItem();
+            com.github.retrooper.packetevents.protocol.item.ItemStack itemInPacket = DisguiseUtilities.stripEnchants(equipment.getItem());
 
             // Workaround for this pending fix https://github.com/retrooper/packetevents/issues/869
-            if (DisguiseUtilities.hasCustomEnchants(itemInPacket)) {
-                equipment.setItem(itemInPacket = DisguiseUtilities.stripEnchants(itemInPacket));
-            }
+            equipment.setItem(itemInPacket);
 
             if (itemInDisguise != null) {
                 // If we haven't decided to send a new packet yet, then construct it
@@ -62,7 +59,7 @@ public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerE
                 }
 
                 itemInPacket = itemInDisguise.getType() == Material.AIR ? com.github.retrooper.packetevents.protocol.item.ItemStack.EMPTY :
-                    SpigotConversionUtil.fromBukkitItemStack(itemInDisguise);
+                    DisguiseUtilities.fromBukkitItemStack(itemInDisguise);
                 equipmentBeingSent.add(new Equipment(slot, itemInPacket));
             } else {
                 equipmentBeingSent.add(equipment);

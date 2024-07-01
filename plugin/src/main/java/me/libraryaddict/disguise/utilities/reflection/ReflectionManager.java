@@ -1429,7 +1429,7 @@ public class ReflectionManager {
         } else if (index == MetaIndex.CAT_COLLAR || index == MetaIndex.WOLF_COLLAR) {
             return (T) AnimalColor.getColorByDye((int) value);
         } else if (index.isItemStack()) {
-            return (T) SpigotConversionUtil.toBukkitItemStack((com.github.retrooper.packetevents.protocol.item.ItemStack) value);
+            return (T) DisguiseUtilities.toBukkitItemStack((com.github.retrooper.packetevents.protocol.item.ItemStack) value);
         } else if (index.isBlock() || index.isBlockOpt()) {
             return (T) WrappedBlockState.getByGlobalId((int) value);
            /* BlockData data = getBlockDataByCombinedId((int) value);
@@ -1526,7 +1526,7 @@ public class ReflectionManager {
         } else if (value instanceof TreeSpecies) {
             return (int) ((TreeSpecies) value).getData();
         } else if (value instanceof ItemStack) {
-            return SpigotConversionUtil.fromBukkitItemStack((ItemStack) value);
+            return DisguiseUtilities.fromBukkitItemStack((ItemStack) value);
         } else if (value instanceof Rabbit.Type) {
             return RabbitType.getTypeId((Rabbit.Type) value);
         } else if (value instanceof Enum && !(value instanceof SnifferState || value instanceof EntityPose || value instanceof BlockFace ||

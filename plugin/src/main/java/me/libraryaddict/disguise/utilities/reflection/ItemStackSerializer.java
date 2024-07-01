@@ -13,6 +13,7 @@ import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import it.unimi.dsi.fastutil.bytes.ByteList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.longs.LongList;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.inventory.ItemStack;
 
@@ -43,7 +44,7 @@ public class ItemStackSerializer {
                     }
                 }
             } else {
-                NBT nbt = SpigotConversionUtil.fromBukkitItemStack(item).getNBT();
+                NBT nbt = DisguiseUtilities.fromBukkitItemStack(item).getNBT();
 
                 if (nbt != null) {
                     String asString = serialize(nbt);
@@ -67,7 +68,7 @@ public class ItemStackSerializer {
             }
 
             if (item.hasItemMeta()) {
-                NBT nbt = SpigotConversionUtil.fromBukkitItemStack(item).getNBT();
+                NBT nbt = DisguiseUtilities.fromBukkitItemStack(item).getNBT();
 
                 if (nbt != null) {
                     String asString = serialize(nbt);

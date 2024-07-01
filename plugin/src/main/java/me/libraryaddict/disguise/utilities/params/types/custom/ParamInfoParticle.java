@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
@@ -347,7 +348,7 @@ public class ParamInfoParticle extends ParamInfoEnum {
             if (split.length > 0) {
                 ItemStack item = ParamInfoItemStack.parseToItemstack(split);
 
-                data = new ParticleItemStackData(SpigotConversionUtil.fromBukkitItemStack(item));
+                data = new ParticleItemStackData(DisguiseUtilities.fromBukkitItemStack(item));
             } else {
                 data = new ParticleItemStackData(
                     com.github.retrooper.packetevents.protocol.item.ItemStack.builder().type(ItemTypes.STONE).build());

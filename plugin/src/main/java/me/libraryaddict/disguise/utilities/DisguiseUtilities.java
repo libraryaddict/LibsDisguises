@@ -8,6 +8,8 @@ import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentType;
 import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentTypes;
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
+import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
+import com.github.retrooper.packetevents.protocol.nbt.NBTList;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.particle.Particle;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
@@ -135,6 +137,7 @@ import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -2673,7 +2676,7 @@ public class DisguiseUtilities {
                     continue;
                 }
 
-                list.add(new Equipment(slot, SpigotConversionUtil.fromBukkitItemStack(getSlot(player.getInventory(), getSlot(slot)))));
+                list.add(new Equipment(slot, DisguiseUtilities.fromBukkitItemStack(getSlot(player.getInventory(), getSlot(slot)))));
             }
 
             sendSelfPacket(player, new WrapperPlayServerEntityEquipment(player.getEntityId(), list));
@@ -2815,17 +2818,55 @@ public class DisguiseUtilities {
         return externalComponentSerializer.deserialize(serialized);
     }
 
+    public static ItemStack toBukkitItemStack(com.github.retrooper.packetevents.protocol.item.ItemStack itemStack) {
+        return SpigotConversionUtil.toBukkitItemStack(stripEnchants(itemStack));
+    }
+
+    public static com.github.retrooper.packetevents.protocol.item.ItemStack fromBukkitItemStack(ItemStack itemStack) {
+        return stripEnchants(SpigotConversionUtil.fromBukkitItemStack(itemStack));
+    }
+
     public static com.github.retrooper.packetevents.protocol.item.ItemStack stripEnchants(
         com.github.retrooper.packetevents.protocol.item.ItemStack itemStack) {
-        itemStack.setEnchantments(new ArrayList<>(), PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
+        if (hasCustomEnchants(itemStack)) {
+            itemStack.setEnchantments(new ArrayList<>(), PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
+        }
 
         return itemStack;
     }
 
     public static boolean hasCustomEnchants(com.github.retrooper.packetevents.protocol.item.ItemStack itemStack) {
-        for (com.github.retrooper.packetevents.protocol.item.enchantment.Enchantment enchant : itemStack.getEnchantments(
-            PacketEvents.getAPI().getServerManager().getVersion().toClientVersion())) {
-            if (enchant != null && enchant.getType() != null) {
+        // We have to copy/paste what PE does for reading enchants because it'll refuse to expose enchants that'll crash netty
+        // So we have to read it ourselves
+        // (This was decompiled instead of source code, no particular reason)
+        if (!NmsVersion.v1_13.isSupported()) {
+            // Lets just skip 1.12, this is really a 1.20.6 issue anyways
+            return false;
+        }
+
+        @Nullable NBTCompound nbt = itemStack.getNBT();
+
+        if (nbt == null) {
+            return false;
+        }
+
+        String tagName = NmsVersion.v1_12.isSupported() ? "Enchantments" : "ench";
+        if (itemStack.getType() == ItemTypes.ENCHANTED_BOOK) {
+            tagName = "StoredEnchantments";
+        }
+
+        @Nullable NBTList<NBTCompound> nbtList = nbt.getCompoundListTagOrNull(tagName);
+
+        if (nbtList == null) {
+            return false;
+        }
+
+        List<NBTCompound> compounds = nbtList.getTags();
+
+        for (NBTCompound compound : compounds) {
+            EnchantmentType type = EnchantmentTypes.getByName(compound.getStringTagValueOrNull("id"));
+
+            if (type != null) {
                 continue;
             }
 

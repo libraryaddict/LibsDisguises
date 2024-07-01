@@ -378,10 +378,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     continue;
                 }
 
-                // Workaround for this pending fix https://github.com/retrooper/packetevents/issues/869
                 WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(disguisedEntity.getEntityId(),
-                    Collections.singletonList(
-                        new Equipment(slot, DisguiseUtilities.stripEnchants(SpigotConversionUtil.fromBukkitItemStack(itemToSend)))));
+                    Collections.singletonList(new Equipment(slot, DisguiseUtilities.fromBukkitItemStack(itemToSend))));
 
                 packets.addDelayedPacket(packet);
             }
