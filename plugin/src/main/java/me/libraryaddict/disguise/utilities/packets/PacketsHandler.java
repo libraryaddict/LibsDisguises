@@ -24,6 +24,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,7 +37,9 @@ public class PacketsHandler {
         registerPacketHandlers();
     }
 
-    private void registerPacketHandlers() {
+    public void registerPacketHandlers() {
+        Arrays.fill(packetHandlers, null);
+
         List<IPacketHandler> packetHandlers = new ArrayList<>();
 
         packetHandlers.add(new PacketHandlerAttributes());

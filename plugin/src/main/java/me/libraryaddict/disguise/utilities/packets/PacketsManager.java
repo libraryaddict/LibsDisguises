@@ -136,6 +136,8 @@ public class PacketsManager {
             PacketEvents.getAPI().getEventManager().unregisterListener(mainListener);
         }
 
+        getPacketsHandler().registerPacketHandlers();
+
         ArrayList<Server> packetsToListen = new ArrayList<>();
 
         // Add spawn packets
