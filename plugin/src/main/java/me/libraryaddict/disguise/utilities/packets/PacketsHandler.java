@@ -85,10 +85,9 @@ public class PacketsHandler {
 
             if (handler != null) {
                 handler.handle(disguise, packets, observer, entity);
-                return packets;
+            } else {
+                packets.setUnhandled(true);
             }
-
-            packets.setUnhandled(true);
         } catch (Exception e) {
             e.printStackTrace();
         }

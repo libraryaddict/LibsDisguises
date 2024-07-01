@@ -317,7 +317,14 @@ public class PacketHandlerSpawn implements IPacketHandler {
             if (NmsVersion.v1_21_R1.isSupported()) {
                 Double scale = ((LivingWatcher) disguise.getWatcher()).getScale();
 
-                if (scale != null) {
+                if (observer == disguisedEntity && DisguiseConfig.isTallSelfDisguisesScaling()) {
+                    if (scale == null) {
+                        scale = DisguiseUtilities.getActualEntityScale(observer);
+                    }
+
+                    attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE,
+                        Math.min(disguise.getSelfDisguiseTallScaleMax(), scale), new ArrayList<>()));
+                } else if (scale != null) {
                     attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, scale, new ArrayList<>()));
                 }
             }
@@ -371,8 +378,10 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     continue;
                 }
 
+                // Workaround for this pending fix https://github.com/retrooper/packetevents/issues/869
                 WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(disguisedEntity.getEntityId(),
-                    Collections.singletonList(new Equipment(slot, SpigotConversionUtil.fromBukkitItemStack(itemToSend))));
+                    Collections.singletonList(
+                        new Equipment(slot, DisguiseUtilities.stripEnchants(SpigotConversionUtil.fromBukkitItemStack(itemToSend)))));
 
                 packets.addDelayedPacket(packet);
             }
