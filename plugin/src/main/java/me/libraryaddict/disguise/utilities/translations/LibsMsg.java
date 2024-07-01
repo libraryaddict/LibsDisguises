@@ -237,7 +237,7 @@ public enum LibsMsg {
     SKIN_API_FAIL_TOO_FAST("<red>Too many requests accessing mineskin.org, please slow down!"),
     SKIN_API_BAD_URL("<red>Invalid url provided! Please ensure it is a .png file download!"),
     SKIN_API_FAILED_URL("<red>Invalid url provided! mineskin.org failed to grab it!"),
-    SKIN_API_FAIL_CODE("<red>Error %s! %s"),
+    SKIN_API_FAIL_CODE("<red>Error with MineSkin code %s! %s"),
     SKIN_API_403("mineskin.org denied access to that url"),
     SKIN_API_404("mineskin.org unable to find an image at that url"),
     SKIN_API_IMAGE_TIMEOUT("<red>Error! mineskin.org took too long to connect! Is your image valid?"),
