@@ -2898,10 +2898,20 @@ public class DisguiseUtilities {
     }
 
     public static void sendPacketEventsUpdateMessage(CommandSender p, String version, String requiredPacketEvents) {
+        // If we already automatically updated PE
         if (LibsDisguises.getInstance().isPacketEventsUpdateDownloaded()) {
+            // No need to be urgent about it if server uptime is less than a day and player is not an op
+            if (!p.isOp() && LibsDisguises.getInstance().getServerStarted() + TimeUnit.DAYS.toMillis(1) > System.currentTimeMillis()) {
+                return;
+            }
+            // If they are an op, give a 12 hour grace period
+            if (p.isOp() && LibsDisguises.getInstance().getServerStarted() + TimeUnit.HOURS.toMillis(12) > System.currentTimeMillis()) {
+                return;
+            }
+
             p.sendMessage(ChatColor.RED +
                 "Please ask the server owner to restart the server, an update for PacketEvents has been downloaded and is pending a " +
-                "server" + " restart to install.");
+                "server restart to install.");
             return;
         }
 
@@ -2912,8 +2922,7 @@ public class DisguiseUtilities {
         p.sendMessage(ChatColor.RED + "Or! Use " + ChatColor.DARK_RED + "/ld packetevents" + ChatColor.RED +
             " - To update to the latest release from Modrinth");
         p.sendMessage(
-            ChatColor.DARK_GREEN + "This message is `kindly` provided by Lib's Disguises on repeat to all players due to the sheer " +
-                "number of people who don't see it");
+            ChatColor.DARK_GREEN + "This message is provided by Lib's Disguises to all players with the permission 'libsdisguises.update'");
     }
 
     /**

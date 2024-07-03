@@ -88,6 +88,8 @@ public class LibsDisguises extends JavaPlugin {
     @Setter
     @Getter
     private boolean packetEventsUpdateDownloaded;
+    @Getter
+    private final long serverStarted = System.currentTimeMillis();
 
     @Override
     public void onLoad() {
