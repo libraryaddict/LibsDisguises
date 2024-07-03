@@ -18,6 +18,7 @@ import com.github.retrooper.packetevents.util.Quaternion4f;
 import com.github.retrooper.packetevents.util.Vector3f;
 import com.github.retrooper.packetevents.util.Vector3i;
 import lombok.Getter;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractSkeletonWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractVillagerWatcher;
@@ -979,7 +980,7 @@ public class MetaIndex<Y> {
                     }
 
                     if (found != null) {
-                        DisguiseUtilities.getLogger().severe(
+                        LibsDisguises.getInstance().getLogger().severe(
                             entry.getKey().getSimpleName() + " has multiple FlagType's registered for the index " + i + " (" +
                                 type.getFlagWatcher().getSimpleName() + ", " + found.getFlagWatcher().getSimpleName() + ")");
                         continue loop;
@@ -992,7 +993,8 @@ public class MetaIndex<Y> {
                     continue;
                 }
 
-                DisguiseUtilities.getLogger().severe(entry.getKey().getSimpleName() + " has no FlagType registered for the index " + i);
+                LibsDisguises.getInstance().getLogger()
+                    .severe(entry.getKey().getSimpleName() + " has no FlagType registered for the index " + i);
             }
         }
     }
@@ -1029,7 +1031,7 @@ public class MetaIndex<Y> {
         toPrint.sort(String.CASE_INSENSITIVE_ORDER);
 
         for (String s : toPrint) {
-            DisguiseUtilities.getLogger().info(s);
+            LibsDisguises.getInstance().getLogger().info(s);
         }
     }
 
@@ -1169,7 +1171,7 @@ public class MetaIndex<Y> {
                     continue;
                 }
 
-                DisguiseUtilities.getLogger().severe(
+                LibsDisguises.getInstance().getLogger().severe(
                     "MetaIndex " + metaIndex.getFlagWatcher().getSimpleName() + " at index " + metaIndex.getIndex() +
                         " has already registered this! (" + metaIndex.getDefault() + "," + index.getDefault() + ")");
             }

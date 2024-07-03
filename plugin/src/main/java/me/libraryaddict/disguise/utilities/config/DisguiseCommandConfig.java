@@ -4,7 +4,6 @@ import com.google.common.base.Strings;
 import lombok.Getter;
 import lombok.Setter;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -54,12 +53,13 @@ public class DisguiseCommandConfig {
             }
 
             if (command == null) {
-                DisguiseUtilities.getLogger().warning("Config defines '" + name + "' as a command but that command doesn't exist?");
+                LibsDisguises.getInstance().getLogger()
+                    .warning("Config defines '" + name + "' as a command but that command doesn't exist?");
                 continue;
             }
 
             if (!config.isConfigurationSection(name)) {
-                DisguiseUtilities.getLogger().warning("Improper config for " + name);
+                LibsDisguises.getInstance().getLogger().warning("Improper config for " + name);
                 continue;
             }
 

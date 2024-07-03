@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -127,7 +126,7 @@ public class ClassMappings {
 
             // Not the correct version
             if (line == null || !line.equals(getVersion())) {
-                DisguiseUtilities.getLogger().info("Outdated mappings cache, will rebuild.");
+                LibsDisguises.getInstance().getLogger().info("Outdated mappings cache, will rebuild.");
                 return;
             }
 

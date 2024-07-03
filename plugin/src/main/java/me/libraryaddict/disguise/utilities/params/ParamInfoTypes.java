@@ -6,8 +6,8 @@ import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.util.Vector3i;
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.GolemCrack;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.params.types.base.ParamInfoBoolean;
 import me.libraryaddict.disguise.utilities.params.types.base.ParamInfoByte;
@@ -182,7 +182,7 @@ public class ParamInfoTypes {
                 paramInfos.add(
                     new ParamInfoEnum(TextDisplay.TextAlignment.class, "Text Display Alignment", "How the text is aligned in the display"));
             } catch (Throwable ex) {
-                DisguiseUtilities.getLogger().severe(
+                LibsDisguises.getInstance().getLogger().severe(
                     "You are using 1.19.4, but you're using an outdated build of 1.19.4, you need to update the spigot (or paper) jar");
                 ex.printStackTrace();
             }

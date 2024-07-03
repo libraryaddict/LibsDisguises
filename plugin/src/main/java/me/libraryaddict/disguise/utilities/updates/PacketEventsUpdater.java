@@ -7,6 +7,7 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
@@ -309,5 +310,25 @@ public class PacketEventsUpdater {
         }
 
         return v;
+    }
+
+    public static boolean isPacketEventsOutdated() {
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("packetevents");
+
+        if (plugin == null) {
+            LibsDisguises.getInstance().getLogger().severe("PacketEvents not installed on server (as a plugin), must be missing!");
+            return true;
+        }
+
+        String packetEventsVersion;
+
+        try {
+            packetEventsVersion = plugin.getDescription().getVersion();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            return true;
+        }
+
+        return isOlderThan(PacketEventsUpdater.getMinimumPacketEventsVersion(), packetEventsVersion);
     }
 }

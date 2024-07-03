@@ -74,7 +74,7 @@ public class DisguiseAPI {
 
             configuration.save(disguisesFile);
 
-            DisguiseUtilities.getLogger().info("Added new Custom Disguise " + disguiseName);
+            LibsDisguises.getInstance().getLogger().info("Added new Custom Disguise " + disguiseName);
         } catch (IOException e) {
             e.printStackTrace();
         }

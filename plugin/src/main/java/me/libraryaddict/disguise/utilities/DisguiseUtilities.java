@@ -131,7 +131,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
@@ -175,7 +174,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -628,7 +626,7 @@ public class DisguiseUtilities {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            getLogger().warning("preferences.json has been deleted as its corrupt");
+            LibsDisguises.getInstance().getLogger().warning("preferences.json has been deleted as its corrupt");
             viewPreferences.delete();
         }
     }
@@ -649,26 +647,6 @@ public class DisguiseUtilities {
 
     public static void clearPlayerVelocity(Player player) {
         velocityTimes.invalidate(player.getEntityId());
-    }
-
-    public static boolean isPacketEventsOutdated() {
-        Plugin plugin = Bukkit.getPluginManager().getPlugin("packetevents");
-
-        if (plugin == null) {
-            DisguiseUtilities.getLogger().severe("PacketEvents not installed on server (as a plugin), must be missing!");
-            return true;
-        }
-
-        String packetEventsVersion;
-
-        try {
-            packetEventsVersion = plugin.getDescription().getVersion();
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            return true;
-        }
-
-        return isOlderThan(PacketEventsUpdater.getMinimumPacketEventsVersion(), packetEventsVersion);
     }
 
     /**
@@ -747,7 +725,7 @@ public class DisguiseUtilities {
             return;
         }
 
-        getLogger().info("Now saving disguises..");
+        LibsDisguises.getInstance().getLogger().info("Now saving disguises..");
         int disguisesSaved = 0;
 
         for (Set<TargetedDisguise> list : getDisguises().values()) {
@@ -769,7 +747,7 @@ public class DisguiseUtilities {
             }
         }
 
-        getLogger().info("Saved " + disguisesSaved + " disguises.");
+        LibsDisguises.getInstance().getLogger().info("Saved " + disguisesSaved + " disguises.");
     }
 
     public static boolean hasUserProfile(String playername) {
@@ -923,7 +901,8 @@ public class DisguiseUtilities {
         } catch (Throwable e) {
             container.remove(savedDisguisesKey);
 
-            getLogger().severe("Malformed disguise for " + entity.getUniqueId() + "(" + data + "). Data has been removed.");
+            LibsDisguises.getInstance().getLogger()
+                .severe("Malformed disguise for " + entity.getUniqueId() + "(" + data + "). Data has been removed.");
             e.printStackTrace();
         }
 
@@ -974,7 +953,7 @@ public class DisguiseUtilities {
 
             return disguises;
         } catch (Throwable e) {
-            getLogger().severe("Malformed disguise for " + entityUUID + "(" + cached + ")");
+            LibsDisguises.getInstance().getLogger().severe("Malformed disguise for " + entityUUID + "(" + cached + ")");
             e.printStackTrace();
         }
 
@@ -994,7 +973,8 @@ public class DisguiseUtilities {
         } else {
             if (!criedOverJava16) {
                 criedOverJava16 = true;
-                getLogger().warning("Failed to load a disguise using old format. This error will only print once.");
+                LibsDisguises.getInstance().getLogger()
+                    .warning("Failed to load a disguise using old format. This error will only print once.");
             }
 
             return new Disguise[0];
@@ -1398,7 +1378,7 @@ public class DisguiseUtilities {
             try {
                 return gson.fromJson(sanitySkinCacheMap.get(playerName), UserProfile.class);
             } catch (JsonSyntaxException ex) {
-                DisguiseUtilities.getLogger().warning("UserProfile for " + playerName + " had invalid gson and has been deleted");
+                LibsDisguises.getInstance().getLogger().warning("UserProfile for " + playerName + " had invalid gson and has been deleted");
                 sanitySkinCacheMap.remove(playerName);
                 saveSanitySkinCache();
             } catch (Exception e) {
@@ -1428,7 +1408,7 @@ public class DisguiseUtilities {
 
             return gson.fromJson(cached, UserProfile.class);
         } catch (JsonSyntaxException ex) {
-            DisguiseUtilities.getLogger().warning("UserProfile " + file.getName() + " had invalid gson and has been deleted");
+            LibsDisguises.getInstance().getLogger().warning("UserProfile " + file.getName() + " had invalid gson and has been deleted");
             cachedNames.remove(playerName);
             file.delete();
         } catch (Exception e) {
@@ -1585,7 +1565,8 @@ public class DisguiseUtilities {
                                 runnables.remove(playerName);
                             }
 
-                            getLogger().severe("Error when fetching " + playerName + "'s uuid from mojang: " + e.getMessage());
+                            LibsDisguises.getInstance().getLogger()
+                                .severe("Error when fetching " + playerName + "'s uuid from mojang: " + e.getMessage());
                         }
                     });
                 } else if (runnable != null && contactMojang) {
@@ -1684,7 +1665,8 @@ public class DisguiseUtilities {
                     try {
                         savedDisguiseList.add(UUID.fromString(key));
                     } catch (Exception ex) {
-                        getLogger().warning("The file '" + key + "' does not belong in " + savedDisguises.getAbsolutePath());
+                        LibsDisguises.getInstance().getLogger()
+                            .warning("The file '" + key + "' does not belong in " + savedDisguises.getAbsolutePath());
                     }
                 }
             }
@@ -2935,10 +2917,6 @@ public class DisguiseUtilities {
         return PacketEventsUpdater.isOlderThan(requiredVersion, theirVersion);
     }
 
-    public static Logger getLogger() {
-        return LibsDisguises.getInstance().getLogger();
-    }
-
     @SneakyThrows
     public static PacketWrapper unsafeClone(PacketPlaySendEvent eventForConstructor, PacketWrapper wrapper) {
         // I'm not sure why PacketEvents makes it hard to clone another packet without manually handling every wrapper
@@ -3416,7 +3394,7 @@ public class DisguiseUtilities {
 
                 if (!disguise.isPlayerDisguise() || ((PlayerDisguise) disguise).isNameVisible()) {
                     if (disguise.getMultiName().length > 1) {
-                        getLogger().info("Multiline names is a premium feature, sorry!");
+                        LibsDisguises.getInstance().getLogger().info("Multiline names is a premium feature, sorry!");
                     }
                 }
             }

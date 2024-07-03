@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import javax.net.ssl.HttpsURLConnection;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.LibsDisguises;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.ServicePriority;
@@ -99,7 +99,7 @@ public class Metrics {
                 "Check out https://bStats.org/ to learn more :)").copyDefaults(true);
             try {
                 config.save(configFile);
-                DisguiseUtilities.getLogger().info("Saved bStats config");
+                LibsDisguises.getInstance().getLogger().info("Saved bStats config");
             } catch (IOException ignored) {
             }
         }
@@ -125,7 +125,7 @@ public class Metrics {
                 startSubmitting();
             }
         } else {
-            DisguiseUtilities.getLogger().info("The author sees Metrics disabled, the author is sad");
+            LibsDisguises.getInstance().getLogger().info("The author sees Metrics disabled, the author is sad");
         }
     }
 

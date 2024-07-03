@@ -171,11 +171,11 @@ public class LibsPremium {
             try {
                 plugin = getInformation(file);
             } catch (ClassNotFoundException | NoClassDefFoundError ex) {
-                DisguiseUtilities.getLogger().warning("Found an unrecognized jar in the LibsDisguises folder (" + file.getName() +
+                LibsDisguises.getInstance().getLogger().warning("Found an unrecognized jar in the LibsDisguises folder (" + file.getName() +
                     ") - It may need replacing with a newer jar from SpigotMC");
                 continue;
             } catch (Exception ex) {
-                DisguiseUtilities.getLogger().warning("Error while trying to handle the file " + file.getName());
+                LibsDisguises.getInstance().getLogger().warning("Error while trying to handle the file " + file.getName());
                 ex.printStackTrace();
                 continue;
             }
@@ -188,17 +188,18 @@ public class LibsPremium {
             if (thisPluginIsPaidFor = plugin.isPremium()) {
                 if (!isValidVersion(version, plugin.getVersion()) || plugin.getUserID() == null || plugin.getDownloadID() == null ||
                     plugin.getUserID().equals("666666")) {
-                    DisguiseUtilities.getLogger().warning("You have an old Lib's Disguises jar (" + file.getName() + " " + fileInfo +
-                        ") in the LibsDisguises folder! For security purposes, please replace this with a" + " new " +
-                        "version from SpigotMC - https://www.spigotmc.org/resources/libs-disguises.32453/");
+                    LibsDisguises.getInstance().getLogger().warning(
+                        "You have an old Lib's Disguises jar (" + file.getName() + " " + fileInfo +
+                            ") in the LibsDisguises folder! For security purposes, please replace this with a" + " new " +
+                            "version from SpigotMC - https://www.spigotmc.org/resources/libs-disguises.32453/");
                     continue;
                 }
 
                 paidInformation = plugin;
 
                 /* Found a premium Lib's Disguises jar (v5.2.6, build #40, created 16/02/2019) */
-                DisguiseUtilities.getLogger().info("Found a premium Lib's Disguises jar (" + fileInfo + ")");
-                DisguiseUtilities.getLogger().info("Registered to: " + getSanitizedUser(plugin.getUserID()));
+                LibsDisguises.getInstance().getLogger().info("Found a premium Lib's Disguises jar (" + fileInfo + ")");
+                LibsDisguises.getInstance().getLogger().info("Registered to: " + getSanitizedUser(plugin.getUserID()));
 
                 if (plugin.getBuildNumber() == null || !plugin.getBuildNumber().matches("#\\d+") ||
                     Integer.parseInt(plugin.getBuildNumber().substring(1)) < 300) {
@@ -209,9 +210,9 @@ public class LibsPremium {
             } else {
                 /* You have a non-premium Lib's Disguises jar (LibsDisguises.jar v5.2.6, build #40, created
                  16/02/2019) in the LibsDisguises folder! */
-                DisguiseUtilities.getLogger().warning(
+                LibsDisguises.getInstance().getLogger().warning(
                     "You have a non-premium Lib's Disguises jar (" + file.getName() + " " + fileInfo + ") in the LibsDisguises folder!");
-                DisguiseUtilities.getLogger().warning(
+                LibsDisguises.getInstance().getLogger().warning(
                     "Please place the premium jar downloaded from https://www.spigotmc" + ".org/resources/libs-disguises.32453/ " +
                         "in here!");
             }
@@ -221,14 +222,15 @@ public class LibsPremium {
             bisectHosted = new BisectHosting().isBisectHosted("LibsDisguises");
 
             if (bisectHosted) {
-                DisguiseUtilities.getLogger().info("Hosted by BisectHosting! Premium enabled!");
+                LibsDisguises.getInstance().getLogger().info("Hosted by BisectHosting! Premium enabled!");
 
                 paidInformation = new PluginInformation(0, "13", "32453", "2", true, "0", "#1", "0");
 
                 thisPluginIsPaidFor = true;
             } else {
-                DisguiseUtilities.getLogger().info("If you own the plugin, place the premium jar downloaded from https://www.spigotmc" +
-                    ".org/resources/libs-disguises.32453/ in plugins/LibsDisguises/");
+                LibsDisguises.getInstance().getLogger().info(
+                    "If you own the plugin, place the premium jar downloaded from https://www.spigotmc" +
+                        ".org/resources/libs-disguises.32453/ in plugins/LibsDisguises/");
             }
         }
     }
@@ -289,7 +291,7 @@ public class LibsPremium {
         if (!isPremium() || !LibsDisguises.getInstance().isReleaseBuild()) {
             doSecondaryCheck(version);
         } else {
-            DisguiseUtilities.getLogger().info("Registered to: " + getSanitizedUser(getUserID()));
+            LibsDisguises.getInstance().getLogger().info("Registered to: " + getSanitizedUser(getUserID()));
 
             boolean foundBetter = false;
 
@@ -304,25 +306,26 @@ public class LibsPremium {
 
                     if (info.getBuildNumber() == null || !info.getBuildNumber().matches("#\\d+")) {
                         f.delete();
-                        DisguiseUtilities.getLogger().info("Unknown file detected and deleted: LibsDisguises/" + f.getName());
+                        LibsDisguises.getInstance().getLogger().info("Unknown file detected and deleted: LibsDisguises/" + f.getName());
                         continue;
                     } else if (Integer.parseInt(info.getBuildNumber().replace("#", "")) <
                         Integer.parseInt(LibsDisguises.getInstance().getBuildNo().replace("#", ""))) {
                         f.delete();
-                        DisguiseUtilities.getLogger().info("Outdated file deleted: LibsDisguises/" + f.getName());
+                        LibsDisguises.getInstance().getLogger().info("Outdated file deleted: LibsDisguises/" + f.getName());
                         continue;
                     }
 
                     if (!info.isLegit()) {
                         f.delete();
-                        DisguiseUtilities.getLogger().info("Potential virus was deleted: LibsDisguises/" + f.getName());
+                        LibsDisguises.getInstance().getLogger().info("Potential virus was deleted: LibsDisguises/" + f.getName());
                         continue;
                     }
 
                     foundBetter = true;
                     break;
                 } catch (ClassNotFoundException | NoClassDefFoundError e) {
-                    DisguiseUtilities.getLogger().info("Invalid Lib's Disguises jar has errored, deleting LibsDisguises/" + f.getName());
+                    LibsDisguises.getInstance().getLogger()
+                        .info("Invalid Lib's Disguises jar has errored, deleting LibsDisguises/" + f.getName());
                     f.delete();
                 } catch (Throwable e) {
                     e.printStackTrace();
@@ -334,7 +337,7 @@ public class LibsPremium {
 
                 FileUtil.copy(f, new File(LibsDisguises.getInstance().getDataFolder(), f.getName()));
 
-                DisguiseUtilities.getLogger()
+                LibsDisguises.getInstance().getLogger()
                     .info("Copied " + f.getName() + " to the plugin folder! You can use dev builds with premium enabled!");
             }
         }
@@ -342,7 +345,7 @@ public class LibsPremium {
         if (isPremium()) {
             boolean prem = getPaidInformation() == null ? getPluginInformation().isLegit() : getPaidInformation().isLegit();
 
-            DisguiseUtilities.getLogger().info("Premium enabled, thank you for supporting Lib's Disguises!" + (!prem ? "!" : ""));
+            LibsDisguises.getInstance().getLogger().info("Premium enabled, thank you for supporting Lib's Disguises!" + (!prem ? "!" : ""));
         }
     }
 }

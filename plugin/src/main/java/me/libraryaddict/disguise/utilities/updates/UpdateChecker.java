@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
@@ -100,7 +99,7 @@ public class UpdateChecker {
             player.sendMessage(updateMessage);
         } else {
             for (String s : updateMessage) {
-                DisguiseUtilities.getLogger().info(s);
+                LibsDisguises.getInstance().getLogger().info(s);
             }
         }
     }
@@ -133,7 +132,7 @@ public class UpdateChecker {
                 }
             });
         } catch (Exception ex) {
-            DisguiseUtilities.getLogger().warning(String.format("Failed to check for update: %s", ex.getMessage()));
+            LibsDisguises.getInstance().getLogger().warning(String.format("Failed to check for update: %s", ex.getMessage()));
         }
     }
 
@@ -206,7 +205,8 @@ public class UpdateChecker {
         File dest = new File(Bukkit.getUpdateFolderFile(), LibsDisguises.getInstance().getFile().getName());
 
         if (!isQuiet()) {
-            DisguiseUtilities.getLogger().info("Now downloading build of Lib's Disguises from " + urlString + " to " + dest.getName());
+            LibsDisguises.getInstance().getLogger()
+                .info("Now downloading build of Lib's Disguises from " + urlString + " to " + dest.getName());
         }
 
         if (dest.exists()) {
@@ -230,7 +230,7 @@ public class UpdateChecker {
             con.disconnect();
 
             if (!isQuiet()) {
-                DisguiseUtilities.getLogger().info("Download success!");
+                LibsDisguises.getInstance().getLogger().info("Download success!");
             }
 
             PluginInformation result = LibsPremium.getInformation(dest);
@@ -244,7 +244,7 @@ public class UpdateChecker {
         } catch (Exception ex) {
             // Failed, set the last download back to previous build
             dest.delete();
-            DisguiseUtilities.getLogger().warning("Failed to download snapshot build.");
+            LibsDisguises.getInstance().getLogger().warning("Failed to download snapshot build.");
             ex.printStackTrace();
         } finally {
             downloading.set(false);

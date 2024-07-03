@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.translations;
 
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -255,12 +256,11 @@ public enum LibsMsg {
     SKIN_API_USING_NAME("<gray>Determined to be player name, now attempting to validate and connect to mineskin.org"),
     SKIN_API_TOO_MANY_FAILURES(
         "<red>Too many failures when trying to resolve skin for <light_purple>%s</light_purple>, to prevent backend spam you will not be " +
-            "able to make" +
-            " any more requests until" + " a hour has passed from your last failed request. Try /grabskin if you need to test."),
+            "able to make" + " any more requests until" +
+            " a hour has passed from your last failed request. Try /grabskin if you need to test."),
     SKIN_API_TOO_MANY_FAILURES_NON_PLAYER(
         "<red>Too many failures when trying to resolve skin for <light_purple>%s</light_purple>, Lib's Disguises will not attempt to grab" +
-            " this skin. " +
-            "This timeout is only for that specific skin and will increase with every failure."),
+            " this skin. " + "This timeout is only for that specific skin and will increase with every failure."),
     SAVE_DISG_HELP_1("<green>The <DisguiseName> is what the disguise will be called in Lib's Disguises"),
     SAVE_DISG_HELP_2("<green>/savedisguise <DisguiseName> - If you don't provide arguments, it'll try make a disguise from your" +
         " current disguise. This will not work if you are not disguised!"),
@@ -394,7 +394,7 @@ public enum LibsMsg {
             throw new IllegalArgumentException(
                 "Error for " + name() + ", incorrect arg count supplied. Expected " + matches + " args, received " + args.length);
         } else {
-            DisguiseUtilities.getLogger().severe("Mismatch in messages, incorrect parameters supplied for " + name() +
+            LibsDisguises.getInstance().getLogger().severe("Mismatch in messages, incorrect parameters supplied for " + name() +
                 ". Please inform plugin author if not using translations.");
         }
     }
@@ -404,7 +404,7 @@ public enum LibsMsg {
         int matches = StringUtils.countMatches(getRaw(), "%s");
 
         if (matches != strings.length) {
-            DisguiseUtilities.getLogger().severe("Mismatch in messages, incorrect parameters supplied for " + name() +
+            LibsDisguises.getInstance().getLogger().severe("Mismatch in messages, incorrect parameters supplied for " + name() +
                 ". Please inform plugin author if not using translations.");
         }
 

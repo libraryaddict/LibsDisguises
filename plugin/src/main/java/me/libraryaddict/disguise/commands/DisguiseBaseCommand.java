@@ -84,7 +84,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         String requiredPacketEvents = PacketEventsUpdater.getMinimumPacketEventsVersion();
         String version = Bukkit.getPluginManager().getPlugin("packetevents").getDescription().getVersion();
 
-        if (!DisguiseConfig.isNeverUpdatePacketEvents() && DisguiseUtilities.isPacketEventsOutdated() &&
+        if (!DisguiseConfig.isNeverUpdatePacketEvents() && PacketEventsUpdater.isPacketEventsOutdated() &&
             sender.hasPermission("libsdisguises.update")) {
             DisguiseUtilities.sendPacketEventsUpdateMessage(sender, version, requiredPacketEvents);
         }

@@ -48,7 +48,7 @@ public class SoundManager {
             }
 
             if (SoundGroup.getGroups().keySet().stream().anyMatch(k -> k.equalsIgnoreCase(key))) {
-                DisguiseUtilities.getLogger().warning("The SoundGroup " + key + " has already been registered!");
+                LibsDisguises.getInstance().getLogger().warning("The SoundGroup " + key + " has already been registered!");
                 continue;
             }
 
@@ -71,7 +71,7 @@ public class SoundManager {
                         SoundGroup subGroup = SoundGroup.getGroup(sound);
 
                         if (subGroup == null) {
-                            DisguiseUtilities.getLogger()
+                            LibsDisguises.getInstance().getLogger()
                                 .warning("Invalid sound '" + sound + "'! Must be a minecraft:sound.name or SoundGroup name!");
                             continue;
                         }
@@ -79,7 +79,7 @@ public class SoundManager {
                         Object[] sounds = subGroup.getDisguiseSounds().get(type);
 
                         if (sounds == null) {
-                            DisguiseUtilities.getLogger().warning(
+                            LibsDisguises.getInstance().getLogger().warning(
                                 "Sound group '" + sound + "' does not contain a category for " + type + "! Can't use as default in " + key);
                             continue;
                         }
@@ -95,7 +95,7 @@ public class SoundManager {
                 }
             }
 
-            DisguiseUtilities.getLogger().info("Loaded sound group '" + key + "'");
+            LibsDisguises.getInstance().getLogger().info("Loaded sound group '" + key + "'");
         }
     }
 

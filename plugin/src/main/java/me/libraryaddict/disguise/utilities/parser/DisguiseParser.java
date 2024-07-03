@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities.parser;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
@@ -180,12 +181,12 @@ public class DisguiseParser {
                     }
 
                     if (getMethod == null) {
-                        DisguiseUtilities.getLogger().severe(
+                        LibsDisguises.getInstance().getLogger().severe(
                             String.format("No such method '%s' when looking for the companion of '%s' in '%s'", getName,
                                 setMethod.getMappedName(), setMethod.getWatcherClass().getSimpleName()));
                         continue;
                     } else if (getMethod.getReturnType() != setMethod.getParam()) {
-                        DisguiseUtilities.getLogger().severe(
+                        LibsDisguises.getInstance().getLogger().severe(
                             String.format("Invalid return type of '%s' when looking for the companion of '%s' in '%s'", getName,
                                 setMethod.getMappedName(), setMethod.getWatcherClass().getSimpleName()));
                         continue;
@@ -517,7 +518,7 @@ public class DisguiseParser {
 
                         serializedMeta.put(entry.getKey(), val.getClass().getName() + ":" + serialized);
                     } catch (Throwable throwable) {
-                        DisguiseUtilities.getLogger().warning(
+                        LibsDisguises.getInstance().getLogger().warning(
                             "Unable to properly serialize the metadata on a disguise, the metadata was saved under name '" +
                                 entry.getKey() + "'");
 

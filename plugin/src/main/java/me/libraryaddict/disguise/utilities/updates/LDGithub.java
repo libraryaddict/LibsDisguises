@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -67,7 +66,7 @@ public class LDGithub {
             String ourVersion = LibsDisguises.getInstance().getDescription().getVersion();
 
             if (!getChecker().isQuiet()) {
-                DisguiseUtilities.getLogger().info("Now looking for update on Github..");
+                LibsDisguises.getInstance().getLogger().info("Now looking for update on Github..");
             }
 
             // We're connecting to githubs REST api
@@ -104,16 +103,16 @@ public class LDGithub {
                         String line = new BufferedReader(new InputStreamReader(error, StandardCharsets.UTF_8)).lines()
                             .collect(Collectors.joining("\n"));
 
-                        DisguiseUtilities.getLogger().severe("Error with Github! " + line);
+                        LibsDisguises.getInstance().getLogger().severe("Error with Github! " + line);
 
                         if (line.contains("rate limit") && !DisguiseConfig.isHittingRateLimit()) {
                             DisguiseConfig.setHittingRateLimit(true);
-                            DisguiseUtilities.getLogger()
+                            LibsDisguises.getInstance().getLogger()
                                 .severe("Changed update checker to be every 36 hours due to rate limiting from this IP");
                             return null;
                         }
                     } catch (Exception ex1) {
-                        DisguiseUtilities.getLogger().severe("Error when trying to read error stream! Inception!");
+                        LibsDisguises.getInstance().getLogger().severe("Error when trying to read error stream! Inception!");
                         ex1.printStackTrace();
                     }
 
@@ -150,7 +149,7 @@ public class LDGithub {
             }
 
         } catch (Exception ex) {
-            DisguiseUtilities.getLogger().warning("Failed to check for a release on Github");
+            LibsDisguises.getInstance().getLogger().warning("Failed to check for a release on Github");
             ex.printStackTrace();
         }
 

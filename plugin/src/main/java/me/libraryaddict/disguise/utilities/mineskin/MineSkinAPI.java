@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.Setter;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.SkinUtils;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 
@@ -243,7 +242,7 @@ public class MineSkinAPI {
                 } catch (IOException ignored) {
                 }
 
-                if (DisguiseUtilities.getLogger() != null) {
+                if (LibsDisguises.getInstance().getLogger() != null) {
                     // Get the input stream, what we receive
                     try (InputStream errorStream = connection.getErrorStream()) {
                         // Read it to string
@@ -254,17 +253,17 @@ public class MineSkinAPI {
                         // They change the page layout, text and don't identify themselves clearly as this is not meant to be bottable
                         if (response.toLowerCase(Locale.ENGLISH).contains("challenge") &&
                             response.toLowerCase(Locale.ENGLISH).contains("javascript")) {
-                            DisguiseUtilities.getLogger().warning(
+                            LibsDisguises.getInstance().getLogger().warning(
                                 "We may have encountered a Cloudflare challenge page while connecting to MineSkin, unfortunately this " +
                                     "could be of several reasons. Foremost is the site suffering a bot attack, your IP could be " +
                                     "blacklisted, there could be a Cloudflare misconfiguration.");
                         }
 
                         if (response.length() < 10_000 || lastErrorPage + TimeUnit.HOURS.toMillis(12) < System.currentTimeMillis()) {
-                            DisguiseUtilities.getLogger().warning("MineSkin error: " + response);
+                            LibsDisguises.getInstance().getLogger().warning("MineSkin error: " + response);
                             lastErrorPage = System.currentTimeMillis();
                         } else {
-                            DisguiseUtilities.getLogger()
+                            LibsDisguises.getInstance().getLogger()
                                 .warning("MineSkin error logging skipped as it has been printed in the last 12h and is spammy");
                         }
                     } catch (IOException ignored) {
@@ -272,8 +271,8 @@ public class MineSkinAPI {
                 }
             }
 
-            if (DisguiseUtilities.getLogger() != null) {
-                DisguiseUtilities.getLogger().warning("Failed to access MineSkin.org");
+            if (LibsDisguises.getInstance().getLogger() != null) {
+                LibsDisguises.getInstance().getLogger().warning("Failed to access MineSkin.org");
             }
 
             ex.printStackTrace();
@@ -337,8 +336,8 @@ public class MineSkinAPI {
                 throw new IllegalArgumentException();
             }
 
-            if (DisguiseUtilities.getLogger() != null) {
-                DisguiseUtilities.getLogger().warning("Failed to access MineSkin.org");
+            if (LibsDisguises.getInstance().getLogger() != null) {
+                LibsDisguises.getInstance().getLogger().warning("Failed to access MineSkin.org");
             }
             ex.printStackTrace();
         } finally {

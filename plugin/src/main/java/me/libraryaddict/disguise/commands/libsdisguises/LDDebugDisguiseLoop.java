@@ -4,7 +4,6 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -68,7 +67,7 @@ public class LDDebugDisguiseLoop implements LDCommand {
                 String command = iterator.next();
                 String message = ChatColor.AQUA + "Now disguising " + sender.getName() + " as " + command;
                 sender.sendMessage(message);
-                DisguiseUtilities.getLogger().info(message);
+                LibsDisguises.getInstance().getLogger().info(message);
 
                 Disguise disguise = DisguiseAPI.getDisguise((Player) sender);
 
@@ -76,7 +75,7 @@ public class LDDebugDisguiseLoop implements LDCommand {
                     ((Player) sender).performCommand("disguise " + command);
 
                     if (disguise == DisguiseAPI.getDisguise((Player) sender)) {
-                        DisguiseUtilities.getLogger().info("Looks like '" + command + "' failed.");
+                        LibsDisguises.getInstance().getLogger().info("Looks like '" + command + "' failed.");
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

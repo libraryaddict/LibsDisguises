@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.utilities.updates;
 
 import com.google.gson.Gson;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 
 import java.io.BufferedReader;
@@ -87,11 +86,11 @@ public class LDJenkins extends BaseJenkins {
                 }
             }
 
-            DisguiseUtilities.getLogger().info("Now looking for update on Jenkins..");
+            LibsDisguises.getInstance().getLogger().info("Now looking for update on Jenkins..");
 
             return super.fetchLastSnapshotBuild();
         } catch (Exception ex) {
-            DisguiseUtilities.getLogger().warning("Failed to check for a snapshot update on jenkins.");
+            LibsDisguises.getInstance().getLogger().warning("Failed to check for a snapshot update on jenkins.");
             ex.printStackTrace();
         }
 

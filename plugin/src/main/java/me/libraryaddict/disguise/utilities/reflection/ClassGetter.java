@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.LibsDisguises;
 import org.bukkit.entity.Entity;
 
 import java.io.File;
@@ -73,7 +73,8 @@ public class ClassGetter {
                         classes.add(pkgname + "/" + f.getName());
                     }
                 } else {
-                    DisguiseUtilities.getLogger().severe("File not found for: " + resource.getPath() + "/" + pkgname.replace(".", "/"));
+                    LibsDisguises.getInstance().getLogger()
+                        .severe("File not found for: " + resource.getPath() + "/" + pkgname.replace(".", "/"));
                 }
             }
         }

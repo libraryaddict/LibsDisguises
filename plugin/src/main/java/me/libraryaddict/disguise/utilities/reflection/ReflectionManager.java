@@ -19,7 +19,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.yggdrasil.ProfileResult;
-import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -97,7 +96,6 @@ import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.SimplePluginManager;
@@ -696,7 +694,7 @@ public class ReflectionManager {
 
             return entityObject;
         } catch (Exception e) {
-            DisguiseUtilities.getLogger().warning("Error while attempting to create entity instance for " + disguiseType.name());
+            LibsDisguises.getInstance().getLogger().warning("Error while attempting to create entity instance for " + disguiseType.name());
             e.printStackTrace();
         }
 
@@ -1572,7 +1570,7 @@ public class ReflectionManager {
 
             return (Material) getMaterial.invoke(null, item);
         } catch (Exception ex) {
-            DisguiseUtilities.getLogger().severe("Error when trying to convert '" + name + "' into a Material");
+            LibsDisguises.getInstance().getLogger().severe("Error when trying to convert '" + name + "' into a Material");
             ex.printStackTrace();
 
             if (ex.getCause() != null) {
@@ -2004,7 +2002,7 @@ public class ReflectionManager {
                 Class watcherClass = getFlagWatcher(disguiseType);
 
                 if (watcherClass == null) {
-                    DisguiseUtilities.getLogger().severe("Error loading " + disguiseType.name() + ", FlagWatcher not assigned");
+                    LibsDisguises.getInstance().getLogger().severe("Error loading " + disguiseType.name() + ", FlagWatcher not assigned");
                     continue;
                 }
 
@@ -2174,7 +2172,7 @@ public class ReflectionManager {
             }
 
             if (nmsEntityName == null) {
-                DisguiseUtilities.getLogger().warning("Entity name not found! (" + disguiseType.name() + ")");
+                LibsDisguises.getInstance().getLogger().warning("Entity name not found! (" + disguiseType.name() + ")");
                 return;
             }
 
@@ -2182,7 +2180,7 @@ public class ReflectionManager {
                 nmsReflection != null ? disguiseType.getEntityType().getKey().getKey() : nmsEntityName);
 
             if (nmsEntity == null) {
-                DisguiseUtilities.getLogger().warning("Entity not found! (" + nmsEntityName + ")");
+                LibsDisguises.getInstance().getLogger().warning("Entity not found! (" + nmsEntityName + ")");
                 return;
             }
 
@@ -2207,9 +2205,10 @@ public class ReflectionManager {
                         continue;
                     }
 
-                    DisguiseUtilities.getLogger().severe(StringUtils.repeat("-", 20));
-                    DisguiseUtilities.getLogger().severe("MetaIndex not found for " + disguiseType + "! Index: " + data.getIndex());
-                    DisguiseUtilities.getLogger().severe(
+                    LibsDisguises.getInstance().getLogger().severe(StringUtils.repeat("-", 20));
+                    LibsDisguises.getInstance().getLogger()
+                        .severe("MetaIndex not found for " + disguiseType + "! Index: " + data.getIndex());
+                    LibsDisguises.getInstance().getLogger().severe(
                         "Value: " + data.getValue() + " (" + data.getValue().getClass() + ") (" + nmsEntity.getClass() + ") & " +
                             disguiseType.getWatcherClass().getSimpleName());
 
@@ -2239,35 +2238,37 @@ public class ReflectionManager {
                 if (ourDefaultBukkit.getClass() != minecraftDefaultBukkit.getClass() || metaIndex.getDataType() != data.getType() ||
                     minecraftDefaultSerialized.getClass() != ourDefaultSerialized.getClass()) {
                     if (!loggedName) {
-                        DisguiseUtilities.getLogger().severe(StringUtils.repeat("=", 20));
-                        DisguiseUtilities.getLogger().severe("MetaIndex mismatch! Disguise " + disguiseType + ", Entity " + nmsEntityName);
+                        LibsDisguises.getInstance().getLogger().severe(StringUtils.repeat("=", 20));
+                        LibsDisguises.getInstance().getLogger()
+                            .severe("MetaIndex mismatch! Disguise " + disguiseType + ", Entity " + nmsEntityName);
                         loggedName = true;
                     }
 
-                    DisguiseUtilities.getLogger().severe(StringUtils.repeat("-", 20));
-                    DisguiseUtilities.getLogger().severe(
+                    LibsDisguises.getInstance().getLogger().severe(StringUtils.repeat("-", 20));
+                    LibsDisguises.getInstance().getLogger().severe(
                         "Index: " + data.getIndex() + " | " + metaIndex.getFlagWatcher().getSimpleName() + " | " +
                             MetaIndex.getName(metaIndex));
 
-                    DisguiseUtilities.getLogger()
+                    LibsDisguises.getInstance().getLogger()
                         .severe("LibsDisguises Bukkit: " + ourDefaultBukkit + " (" + ourDefaultBukkit.getClass() + ")");
-                    DisguiseUtilities.getLogger()
+                    LibsDisguises.getInstance().getLogger()
                         .severe("LibsDisguises Serialized: " + ourDefaultSerialized + " (" + ourDefaultSerialized.getClass() + ")");
-                    DisguiseUtilities.getLogger().severe("LibsDisguises Data Type: " + metaIndex.getDataType().getName());
-                    DisguiseUtilities.getLogger()
+                    LibsDisguises.getInstance().getLogger().severe("LibsDisguises Data Type: " + metaIndex.getDataType().getName());
+                    LibsDisguises.getInstance().getLogger()
                         .severe("Minecraft Bukkit: " + minecraftDefaultBukkit + " (" + minecraftDefaultBukkit.getClass() + ")");
-                    DisguiseUtilities.getLogger()
+                    LibsDisguises.getInstance().getLogger()
                         .severe("Minecraft Serialized: " + minecraftDefaultSerialized + " (" + minecraftDefaultSerialized.getClass() + ")");
-                    DisguiseUtilities.getLogger().severe("Minecraft Data Type: " + data.getType().getName());
-                    DisguiseUtilities.getLogger().severe("LibsDisguises Serializer Data Type: " + metaIndex.getDataType().getName());
-                    DisguiseUtilities.getLogger().severe("Minecraft Serializer Data Type: " + data.getType().getName());
-                    DisguiseUtilities.getLogger().severe(StringUtils.repeat("-", 20));
+                    LibsDisguises.getInstance().getLogger().severe("Minecraft Data Type: " + data.getType().getName());
+                    LibsDisguises.getInstance().getLogger()
+                        .severe("LibsDisguises Serializer Data Type: " + metaIndex.getDataType().getName());
+                    LibsDisguises.getInstance().getLogger().severe("Minecraft Serializer Data Type: " + data.getType().getName());
+                    LibsDisguises.getInstance().getLogger().severe(StringUtils.repeat("-", 20));
                 }
             }
 
             for (MetaIndex index : indexes) {
-                DisguiseUtilities.getLogger().severe(StringUtils.repeat("-", 20));
-                DisguiseUtilities.getLogger().severe(
+                LibsDisguises.getInstance().getLogger().severe(StringUtils.repeat("-", 20));
+                LibsDisguises.getInstance().getLogger().severe(
                     disguiseType + " has MetaIndex remaining! " + index.getFlagWatcher().getSimpleName() + " at index " + index.getIndex());
             }
 
@@ -2281,7 +2282,8 @@ public class ReflectionManager {
 
                     // This should only display on custom builds
                     if (disguiseType == DisguiseType.COW && soundStrength != 0.4F && !LibsDisguises.getInstance().isNumberedBuild()) {
-                        DisguiseUtilities.getLogger().severe("The hurt sound volume may be wrong on the COW disguise! Bad nms update?");
+                        LibsDisguises.getInstance().getLogger()
+                            .severe("The hurt sound volume may be wrong on the COW disguise! Bad nms update?");
                     }
                 }
             }
@@ -2303,10 +2305,11 @@ public class ReflectionManager {
                 disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
             }
         } catch (Exception ex) {
-            DisguiseUtilities.getLogger().severe("Uh oh! Trouble while making values for the disguise " + disguiseType.name() + "!");
-            DisguiseUtilities.getLogger().severe(
+            LibsDisguises.getInstance().getLogger()
+                .severe("Uh oh! Trouble while making values for the disguise " + disguiseType.name() + "!");
+            LibsDisguises.getInstance().getLogger().severe(
                 "Before reporting this error, " + "please make sure you are using the latest version of LibsDisguises and PacketEvents.");
-            DisguiseUtilities.getLogger().severe("Development builds are available at (PacketEvents) " +
+            LibsDisguises.getInstance().getLogger().severe("Development builds are available at (PacketEvents) " +
                 "https://ci.codemc.io/job/retrooper/job/packetevents/ and (LibsDisguises) https://ci.md-5" + ".net/job/LibsDisguises/");
 
             ex.printStackTrace();
@@ -2499,7 +2502,7 @@ public class ReflectionManager {
 
             if (found.size() > 1) {
                 for (EntityDataType type : found) {
-                    DisguiseUtilities.getLogger()
+                    LibsDisguises.getInstance().getLogger()
                         .severe("Found multiple entity data type for " + field.getName() + " of type " + type1 + ": " + type.getName());
                 }
             }

@@ -9,7 +9,6 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
@@ -138,7 +137,7 @@ public class DisguiseMethods {
 
                     if (!notedSkippedParamTypes.contains(name) && !LibsDisguises.getInstance().isNumberedBuild()) {
                         notedSkippedParamTypes.add(name);
-                        DisguiseUtilities.getLogger()
+                        LibsDisguises.getInstance().getLogger()
                             .info("DEBUG: Skipped method using " + name + ", don't need it in experimental builds");
                     }
 

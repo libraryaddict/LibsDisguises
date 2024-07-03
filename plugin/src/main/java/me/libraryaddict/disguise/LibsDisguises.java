@@ -108,7 +108,7 @@ public class LibsDisguises extends JavaPlugin {
             DisguiseConfig.loadPreConfig();
 
             // Skipping the isPacketEventsOutdated check cos DisguiseConfig wouldn't be loaded
-            if (plugin == null || DisguiseUtilities.isPacketEventsOutdated()) {
+            if (plugin == null || PacketEventsUpdater.isPacketEventsOutdated()) {
                 // I don't think anyone will ever see this plugin message, DisguiseConfig isn't loaded at this point
                 if (DisguiseConfig.isNeverUpdatePacketEvents()) {
                     getLogger().warning(
@@ -290,7 +290,7 @@ public class LibsDisguises extends JavaPlugin {
             return "PacketEvents not installed";
         } else if (!plugin.isEnabled()) {
             return "PacketEvents is not enabled";
-        } else if (DisguiseUtilities.isPacketEventsOutdated()) {
+        } else if (PacketEventsUpdater.isPacketEventsOutdated()) {
             return "PacketEvents is outdated";
         }
 
@@ -383,14 +383,14 @@ public class LibsDisguises extends JavaPlugin {
 
         // Add a message so people are more aware
         if (!DisguiseConfig.isTallSelfDisguises()) {
-            DisguiseUtilities.getLogger().info(
+            LibsDisguises.getInstance().getLogger().info(
                 "Config 'TallSelfDisguises' is set to 'false', LD will hide oversized disguises from self disguise. https://www" +
                     ".spigotmc.org/wiki/lib-s-disguises-faq/#tall-disguises-self-disguises");
         }
     }
 
     private void startOutdatedPacketevents() {
-        if (!DisguiseConfig.isNeverUpdatePacketEvents() && DisguiseUtilities.isPacketEventsOutdated()) {
+        if (!DisguiseConfig.isNeverUpdatePacketEvents() && PacketEventsUpdater.isPacketEventsOutdated()) {
             String requiredPacketEvents = PacketEventsUpdater.getMinimumPacketEventsVersion();
             String version = Bukkit.getPluginManager().getPlugin("packetevents").getDescription().getVersion();
 

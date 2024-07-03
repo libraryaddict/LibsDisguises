@@ -101,7 +101,7 @@ public class LDUpdate implements LDCommand {
 
                 if (sender instanceof Player) {
                     for (String msg : checker.getUpdateMessage()) {
-                        DisguiseUtilities.getLogger().info(msg);
+                        LibsDisguises.getInstance().getLogger().info(msg);
                     }
                 }
             }

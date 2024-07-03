@@ -55,7 +55,7 @@ public enum TranslateType {
         TranslateFiller.fillConfigs();
 
         if (!LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
-            DisguiseUtilities.getLogger().severe("You must purchase the plugin to use translations!");
+            LibsDisguises.getInstance().getLogger().severe("You must purchase the plugin to use translations!");
         }
     }
 
@@ -81,7 +81,7 @@ public enum TranslateType {
                 writer.close();
                 writer = null;
 
-                DisguiseUtilities.getLogger().info("Saved " + written + " translations that were not in " + getFile().getName());
+                LibsDisguises.getInstance().getLogger().info("Saved " + written + " translations that were not in " + getFile().getName());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -94,7 +94,7 @@ public enum TranslateType {
         translated.clear();
 
         if (!getFile().exists()) {
-            DisguiseUtilities.getLogger().info("Translations for " + name() + " missing! Saving..");
+            LibsDisguises.getInstance().getLogger().info("Translations for " + name() + " missing! Saving..");
             return;
         }
 
@@ -110,7 +110,8 @@ public enum TranslateType {
                 String value = config.getString(key);
 
                 if (value == null) {
-                    DisguiseUtilities.getLogger().severe("Translation for " + name() + " has a null value for the key '" + key + "'");
+                    LibsDisguises.getInstance().getLogger()
+                        .severe("Translation for " + name() + " has a null value for the key '" + key + "'");
                 } else {
                     addDedupe(key, true);
 
@@ -129,10 +130,10 @@ public enum TranslateType {
         }
 
         if (LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
-            DisguiseUtilities.getLogger()
+            LibsDisguises.getInstance().getLogger()
                 .info("Loaded " + translated.size() + " translations for " + name() + " with " + diff + " changed");
         } else if (diff > 0 && !DisguiseConfig.isUseTranslations()) {
-            DisguiseUtilities.getLogger().info(
+            LibsDisguises.getInstance().getLogger().info(
                 "Translations are disabled in libsdisguises.yml, but you modified " + diff + " messages in the translations for " + name() +
                     ". Is this intended?");
         }
@@ -263,7 +264,7 @@ public enum TranslateType {
             }
 
             if (dupes + outdated > 0) {
-                DisguiseUtilities.getLogger().info(
+                LibsDisguises.getInstance().getLogger().info(
                     "Removed " + dupes + " duplicate and " + outdated + " outdated translations from " + getFile().getName() +
                         ", this was likely caused by a previous issue in the plugin");
 

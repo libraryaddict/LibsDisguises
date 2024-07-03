@@ -122,7 +122,8 @@ public class DisguiseListener implements Listener {
         }
 
         if (DisguiseConfig.isAutoUpdate() && !isCheckReleases()) {
-            DisguiseUtilities.getLogger().info("Plugin will attempt to auto update when new builds are ready! Check config to disable.");
+            LibsDisguises.getInstance().getLogger()
+                .info("Plugin will attempt to auto update when new builds are ready! Check config to disable.");
         }
     }
 
@@ -338,7 +339,7 @@ public class DisguiseListener implements Listener {
         }
 
         if (disguisesSaved > 0) {
-            DisguiseUtilities.getLogger().info("World unloaded, saved " + disguisesSaved + " disguises");
+            LibsDisguises.getInstance().getLogger().info("World unloaded, saved " + disguisesSaved + " disguises");
         }
     }
 
@@ -395,7 +396,7 @@ public class DisguiseListener implements Listener {
         plugin.getUpdateChecker().notifyUpdate(p);
 
         if ("1592".equals(LibsPremium.getUserID()) ||
-            (!DisguiseConfig.isNeverUpdatePacketEvents() && DisguiseUtilities.isPacketEventsOutdated() &&
+            (!DisguiseConfig.isNeverUpdatePacketEvents() && PacketEventsUpdater.isPacketEventsOutdated() &&
                 p.hasPermission("libsdisguises.update"))) {
             String requiredPacketEvents = PacketEventsUpdater.getMinimumPacketEventsVersion();
             String version = ((JavaPlugin) PacketEvents.getAPI().getPlugin()).getDescription().getVersion() +
