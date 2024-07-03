@@ -606,6 +606,10 @@ public class DisguiseConfig {
         setVelocitySent(config.getBoolean("SendVelocity"));
         setNeverUpdatePacketEvents(config.getBoolean("NeverUpdatePacketEvents", config.getBoolean("NeverUpdateProtocolLib", false)));
 
+        if (Bukkit.getPluginManager().getPlugin("packetevents") == null) {
+            return config;
+        }
+
         setHideHeldItemFromSelf(config.getBoolean("RemoveHeldItem"));
         setHideArmorFromSelf(config.getBoolean("RemoveArmor"));
         setAutoUpdate(config.getBoolean("AutoUpdate"));
