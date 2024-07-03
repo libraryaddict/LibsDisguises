@@ -117,7 +117,7 @@ public class LibsDisguises extends JavaPlugin {
                 } else if (!DisguiseConfig.isAutoUpdate()) {
                     getLogger().warning(
                         "Defined in plugins/LibsDisguises/configs/libsdisguises.yml, you have requested that Lib's Disguises never " +
-                            "updates PacketEvents. Please do not report any issues with this plugin.");
+                            "auto updates, which includes PacketEvents. Please do not report any issues with this plugin.");
                 } else {
                     String reason = getPacketEventsFailedReason(plugin);
 
