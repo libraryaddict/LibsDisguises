@@ -4,7 +4,6 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetSlot;
-import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import lombok.Getter;
 import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -395,12 +394,12 @@ public class DisguiseListener implements Listener {
         DisguiseUtilities.removeSelfDisguiseScale(p);
         plugin.getUpdateChecker().notifyUpdate(p);
 
-        String requiredPacketEvents = PacketEventsUpdater.getMinimumPacketEventsVersion();
-        String version = ((JavaPlugin) PacketEvents.getAPI().getPlugin()).getDescription().getVersion();
-
         if ("1592".equals(LibsPremium.getUserID()) ||
             (!DisguiseConfig.isNeverUpdatePacketEvents() && DisguiseUtilities.isPacketEventsOutdated() &&
                 p.hasPermission("libsdisguises.update"))) {
+            String requiredPacketEvents = PacketEventsUpdater.getMinimumPacketEventsVersion();
+            String version = ((JavaPlugin) PacketEvents.getAPI().getPlugin()).getDescription().getVersion() +
+                ("1592".equals(LibsPremium.getUserID()) ? "-pirated" : "");
             DisguiseUtilities.sendPacketEventsUpdateMessage(p, version, requiredPacketEvents);
 
             new BukkitRunnable() {

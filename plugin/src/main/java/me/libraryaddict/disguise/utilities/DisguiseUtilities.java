@@ -2681,7 +2681,7 @@ public class DisguiseUtilities {
 
                     list.add(new Equipment(slot, DisguiseUtilities.fromBukkitItemStack(getSlot(player.getInventory(), getSlot(slot)))));
                 }
-                
+
                 sendSelfPacket(player, new WrapperPlayServerEntityEquipment(player.getEntityId(), list));
             }
 

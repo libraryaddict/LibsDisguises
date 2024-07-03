@@ -103,13 +103,19 @@ public class LibsDisguises extends JavaPlugin {
 
             Plugin plugin = Bukkit.getPluginManager().getPlugin("packetevents");
 
+            DisguiseConfig.loadPreConfig();
+
             // Skipping the isPacketEventsOutdated check cos DisguiseConfig wouldn't be loaded
-            if (plugin == null /*|| DisguiseUtilities.isPacketEventsOutdated()*/) {
+            if (plugin == null || DisguiseUtilities.isPacketEventsOutdated()) {
                 // I don't think anyone will ever see this plugin message, DisguiseConfig isn't loaded at this point
                 if (DisguiseConfig.isNeverUpdatePacketEvents()) {
                     getLogger().warning(
                         "Defined in plugins/LibsDisguises/configs/sanity.yml, you have requested that Lib's Disguises never updates or " +
                             "installs PacketEvents. Please do not report any issues with this plugin.");
+                } else if (!DisguiseConfig.isAutoUpdate()) {
+                    getLogger().warning(
+                        "Defined in plugins/LibsDisguises/configs/libsdisguises.yml, you have requested that Lib's Disguises never " +
+                            "updates PacketEvents. Please do not report any issues with this plugin.");
                 } else {
                     String reason = getPacketEventsFailedReason(plugin);
 
@@ -388,7 +394,7 @@ public class LibsDisguises extends JavaPlugin {
 
             BukkitRunnable runnable = createPacketEventsOutdatedRunnable(version, requiredPacketEvents);
             runnable.run();
-            runnable.runTaskTimer(this, 20, 10 * 60 * 20);
+            runnable.runTaskTimer(this, 20, 30 * 60 * 20);
         }
 
         PacketEventsUpdater.doShadedWarning();

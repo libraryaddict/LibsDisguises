@@ -342,6 +342,10 @@ public class DisguiseConfig {
     }
 
     private static void doUpdaterTask() {
+        if (LibsDisguises.getInstance() == null || !LibsDisguises.getInstance().isEnabled()) {
+            return;
+        }
+
         boolean startTask = isAutoUpdate() || isNotifyUpdate() || "1592".equals(
             (LibsPremium.getPaidInformation() == null ? LibsPremium.getPluginInformation() : LibsPremium.getPaidInformation()).getUserID());
 
@@ -600,9 +604,11 @@ public class DisguiseConfig {
         setSelfDisguisesSoundsReplaced(config.getBoolean("HearSelfDisguise"));
         setShowDisguisedPlayersInTab(config.getBoolean("ShowPlayerDisguisesInTab"));
         setVelocitySent(config.getBoolean("SendVelocity"));
+        setNeverUpdatePacketEvents(config.getBoolean("NeverUpdatePacketEvents", config.getBoolean("NeverUpdateProtocolLib", false)));
 
         setHideHeldItemFromSelf(config.getBoolean("RemoveHeldItem"));
         setHideArmorFromSelf(config.getBoolean("RemoveArmor"));
+        setAutoUpdate(config.getBoolean("AutoUpdate"));
 
         return config;
     }
@@ -678,7 +684,6 @@ public class DisguiseConfig {
         setWitherSkullPacketsEnabled(config.getBoolean("PacketsEnabled.WitherSkull"));
         setWolfDyeable(config.getBoolean("DyeableWolf"));
         setTablistRemoveDelay(config.getInt("TablistRemoveDelay"));
-        setAutoUpdate(config.getBoolean("AutoUpdate"));
         setOverrideCustomNames(config.getBoolean("OverrideCustomNames"));
         setSaveUserPreferences(config.getBoolean("SaveUserPreferences"));
         setPlayerDisguisesSkinExpiresMove(config.getInt("PlayerDisguisesTablistExpiresMove"));
@@ -751,8 +756,6 @@ public class DisguiseConfig {
 
         setDisabledMethods(
             config.getStringList("DisabledMethods").stream().map(s -> s.toLowerCase(Locale.ENGLISH)).collect(Collectors.toList()));
-
-        setNeverUpdatePacketEvents(config.getBoolean("NeverUpdatePacketEvents", config.getBoolean("NeverUpdateProtocolLib", false)));
 
         String seeCommands = config.getString("Permissions.SeeCommands");
         PermissionDefault commandVisibility = seeCommands == null ? null : PermissionDefault.getByName(seeCommands);
