@@ -6,11 +6,11 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.SkinUtils;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -20,6 +20,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -126,38 +129,8 @@ public class GrabSkinCommand implements CommandExecutor {
                 LibsMsg.GRABBED_SKIN.send(sender, nName);
 
                 String string = DisguiseUtilities.getGson().toJson(profile);
-                int start = 0;
-                int msg = 1;
 
-                //if (NmsVersion.v1_13.isSupported()) {
-                ComponentBuilder builder = new ComponentBuilder("").append(LibsMsg.CLICK_TO_COPY.getBase());
-
-                while (start < string.length()) {
-                    int end = Math.min(256, string.length() - start);
-
-                    String sub = string.substring(start, start + end);
-
-                    builder.append(" ");
-
-                    if (string.length() <= 256) {
-                        builder.append(LibsMsg.CLICK_TO_COPY_DATA.getBase());
-                    } else {
-                        builder.reset();
-                        builder.append(LibsMsg.CLICK_COPY.getBase(msg));
-                    }
-
-                    start += end;
-
-                    builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, sub));
-                    builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                        new ComponentBuilder("").append(LibsMsg.CLICK_TO_COPY_HOVER.getBase()).append(" " + msg).create()));
-                    msg += 1;
-                }
-
-                sender.spigot().sendMessage(builder.create());
-                /*} else {
-                    LibsMsg.SKIN_DATA.send(sender, string);
-                }*/
+                sendMessage(sender, LibsMsg.CLICK_TO_COPY, LibsMsg.CLICK_TO_COPY, string, false);
 
                 DisguiseUtilities.setGrabSkinCommandUsed();
             }
@@ -175,5 +148,85 @@ public class GrabSkinCommand implements CommandExecutor {
         LibsMsg.GRAB_DISG_HELP_4.send(sender);
         LibsMsg.GRAB_DISG_HELP_5.send(sender);
         LibsMsg.GRAB_DISG_HELP_6.send(sender);
+    }
+
+    private Component createComponent(String text, int section, int max) {
+        Component component = LibsMsg.CLICK_COPY.getAdv(section);
+
+        if (NmsVersion.v1_15.isSupported()) {
+            component = component.clickEvent(net.kyori.adventure.text.event.ClickEvent.copyToClipboard(text));
+        } else {
+            component = component.clickEvent(net.kyori.adventure.text.event.ClickEvent.suggestCommand(text));
+        }
+
+        LibsMsg hover = NmsVersion.v1_15.isSupported() ? LibsMsg.CLICK_TO_COPY_HOVER_CLIPBOARD : LibsMsg.CLICK_TO_COPY_HOVER;
+        Component hoverText = hover.getAdv(section, max, DisguiseUtilities.getMiniMessage().escapeTags(text));
+        component = component.hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(hoverText));
+
+        return component;
+    }
+
+    private void sendMessage(CommandSender sender, LibsMsg msg, LibsMsg oldVer, String string, boolean forceAbbrev) {
+        TextComponent.Builder builder = Component.text().append(msg.getAdv()).appendSpace();
+
+        if (string.length() > 256 || forceAbbrev) {
+            String[] split = DisguiseUtilities.split(string);
+
+            // Because the splitter removes the quotes..
+            for (int i = 0; i < split.length; i++) {
+                split[i] = DisguiseUtilities.quote(split[i]);
+            }
+
+            for (int i = 0; i < split.length; i++) {
+                if (split[i].length() <= 256) {
+                    continue;
+                }
+
+                split = Arrays.copyOf(split, split.length + 1);
+
+                for (int a = split.length - 1; a > i; a--) {
+                    split[a] = split[a - 1];
+                }
+
+                split[i + 1] = split[i].substring(256);
+                split[i] = split[i].substring(0, 256);
+            }
+
+            List<String> sections = new ArrayList<>();
+            StringBuilder current = new StringBuilder();
+
+            for (int i = 0; i < split.length; i++) {
+                if (current.length() > 0) {
+                    current.append(" ");
+                }
+
+                current.append(split[i]);
+
+                // If the next split would fit
+                if (split.length > i + 1 && split[i + 1].length() + current.length() + 1 <= 256) {
+                    continue;
+                }
+
+                // Have non-final end with a space
+                if (i + 1 < split.length) {
+                    current.append(" ");
+                }
+
+                sections.add(current.toString());
+                current = new StringBuilder();
+            }
+
+            for (int i = 0; i < sections.size(); i++) {
+                if (i > 0) {
+                    builder.appendSpace();
+                }
+
+                builder.append(createComponent(sections.get(i), i + 1, sections.size()));
+            }
+        } else {
+            builder.append(createComponent(string, 1, 1));
+        }
+
+        DisguiseUtilities.sendMessage(sender, builder.build());
     }
 }
