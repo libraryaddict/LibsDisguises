@@ -8,6 +8,7 @@ import me.libraryaddict.disguise.utilities.SkinUtils;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +50,25 @@ public class MineSkinAPI {
     @Setter
     private String apiKey;
     private static long lastErrorPage;
+    private final String userAgent;
+
+    public MineSkinAPI() {
+        this("third-party");
+    }
+
+    public MineSkinAPI(String extraInfo) {
+        if (extraInfo == null || extraInfo.trim().isEmpty()) {
+            extraInfo = "";
+        } else {
+            if (!extraInfo.contains("(")) {
+                extraInfo = " (" + extraInfo.trim() + ")";
+            } else {
+                extraInfo = " " + extraInfo.trim();
+            }
+        }
+
+        userAgent = "LibsDisguises/" + LibsDisguises.getInstance().getDescription().getVersion() + extraInfo;
+    }
 
     public boolean isInUse() {
         return lock.isLocked();
@@ -110,33 +130,22 @@ public class MineSkinAPI {
         HttpURLConnection connection = null;
         long nextRequestIn = TimeUnit.SECONDS.toMillis(10);
 
-        try {
+        String charset = "UTF-8";
+
+        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             if (getApiKey() != null) {
                 path += (path.contains("?") ? '&' : '?') + "key=" + getApiKey();
             }
 
-            URL url = new URL("https://api.mineskin.org" + path);
-            // Creating a connection
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(19000);
-            connection.setReadTimeout(19000);
-            connection.setDoOutput(true);
-
-            connection.setRequestProperty("User-Agent", "LibsDisguises");
-
-            String boundary = "LD@" + Long.toHexString(System.currentTimeMillis()); // Just generate some unique random value.
-            connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-
-            String charset = "UTF-8";
+            String boundary = "LD_" + Long.toHexString(System.currentTimeMillis()).toLowerCase(); // Just generate some unique random value.
             String CRLF = "\r\n"; // Line separator required by multipart/form-data.
 
-            try (OutputStream output = connection.getOutputStream();
-                 PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, charset), true)) {
+            try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, charset), true)) {
                 // Send normal param.
                 writer.append("--").append(boundary).append(CRLF);
                 writer.append("Content-Disposition: form-data; name=\"visibility\"").append(CRLF);
                 writer.append("Content-Type: text/plain; charset=").append(charset).append(CRLF);
-                writer.append(CRLF).append("1").append(CRLF).flush();
+                writer.append(CRLF).append("1").append(CRLF);
 
                 if (file != null) {
                     // Send binary file.
@@ -148,27 +157,62 @@ public class MineSkinAPI {
                     writer.append(CRLF).flush();
                     Files.copy(file.toPath(), output);
                     output.flush(); // Important before continuing with writer!
-                    writer.append(CRLF).flush(); // CRLF is important! It indicates end of boundary.
+                    writer.append(CRLF); // CRLF is important! It indicates end of boundary.
                 } else if (skinUrl != null) {
                     // Send normal param.
                     writer.append("--").append(boundary).append(CRLF);
                     writer.append("Content-Disposition: form-data; name=\"url\"").append(CRLF);
-                    writer.append(CRLF).append(skinUrl).append(CRLF).flush();
+                    writer.append("Content-Type: text/plain; charset=").append(charset).append(CRLF);
+                    writer.append(CRLF).append(skinUrl).append(CRLF);
                 }
 
                 if (modelType == SkinUtils.ModelType.SLIM) {
                     writer.append("--").append(boundary).append(CRLF);
                     writer.append("Content-Disposition: form-data; name=\"variant\"").append(CRLF);
-                    writer.append(CRLF).append("slim").append(CRLF).flush();
+                    writer.append(CRLF).append("slim").append(CRLF);
                 }
 
                 // End of multipart/form-data.
                 writer.append("--").append(boundary).append("--").append(CRLF).flush();
             }
 
-            printDebug("Received status code: " + connection.getResponseCode());
+            byte[] formContent = output.toByteArray();
 
-            if (connection.getResponseCode() == 500) {
+            URL url = new URL("https://api.mineskin.org" + path);
+            // Creating a connection
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(19000);
+            connection.setReadTimeout(19000);
+            connection.setDoOutput(true);
+
+            connection.setRequestProperty("User-Agent", this.userAgent);
+            connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+            connection.addRequestProperty("Content-Length", Integer.toString(formContent.length));
+
+            try (OutputStream stream = connection.getOutputStream()) {
+                stream.write(formContent);
+                stream.flush(); // Reportably not reliable for a stream to flush before closing
+            }
+
+            int responseCode = connection.getResponseCode();
+            printDebug("Received status code: " + responseCode);
+
+            if (responseCode >= 400 && responseCode < 600 && responseCode != 500) {
+                // Get the input stream, what we receive
+                try (InputStream errorStream = connection.getErrorStream()) {
+                    // Read it to string
+                    String response = new BufferedReader(new InputStreamReader(errorStream, StandardCharsets.UTF_8)).lines()
+                        .collect(Collectors.joining("\n"));
+
+                    if (LibsDisguises.getInstance() != null) {
+                        LibsDisguises.getInstance().getLogger().severe("MineSkin error: " + response);
+                    } else {
+                        System.out.println("MineSkin error: " + response);
+                    }
+                }
+            }
+
+            if (responseCode == 500) {
                 String errorMessage = new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8)).lines()
                     .collect(Collectors.joining("\n"));
 
@@ -189,7 +233,7 @@ public class MineSkinAPI {
                     callback.onError(LibsMsg.SKIN_API_FAIL_CODE, "" + error.code, LibsMsg.SKIN_API_IMAGE_HAS_ERROR.get(error.error));
                     return null;
                 }
-            } else if (connection.getResponseCode() == 400) {
+            } else if (responseCode == 400) {
                 if (skinUrl != null) {
                     callback.onError(LibsMsg.SKIN_API_BAD_URL);
                     return null;
@@ -197,7 +241,7 @@ public class MineSkinAPI {
                     callback.onError(LibsMsg.SKIN_API_BAD_FILE);
                     return null;
                 }
-            } else if (connection.getResponseCode() == 429) {
+            } else if (responseCode == 429) {
                 callback.onError(LibsMsg.SKIN_API_FAIL_TOO_FAST);
                 return null;
             }

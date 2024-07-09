@@ -285,7 +285,7 @@ public class DisguiseUtilities {
     @Getter
     private static boolean runningPaper;
     @Getter
-    private static final MineSkinAPI mineSkinAPI = new MineSkinAPI();
+    private static MineSkinAPI mineSkinAPI;
     @Getter
     private static boolean invalidFile;
     @Getter
@@ -1578,6 +1578,14 @@ public class DisguiseUtilities {
         }
 
         return ReflectionManager.getUserProfile(null, origName);
+    }
+
+    public static MineSkinAPI getMineSkinAPI() {
+        if (mineSkinAPI == null) {
+            mineSkinAPI = new MineSkinAPI(null);
+        }
+
+        return mineSkinAPI;
     }
 
     /**
