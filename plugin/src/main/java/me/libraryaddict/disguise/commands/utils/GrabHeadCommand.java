@@ -118,7 +118,7 @@ public class GrabHeadCommand implements CommandExecutor {
             }
         };
 
-        SkinUtils.grabSkin(skin, callback);
+        SkinUtils.grabSkin(sender, skin, callback);
 
         return true;
     }

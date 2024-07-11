@@ -6,11 +6,14 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.mineskin.MineSkinResponse;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
@@ -28,6 +31,30 @@ public class SkinUtils {
     public enum ModelType {
         SLIM,
         NORMAL
+    }
+
+    private static int skinsSinceLastPromotion = 0;
+    private static long timeSinceLastPromotion = 0;
+
+    public static void attemptPromoteMineskin(CommandSender sender) {
+        if (skinsSinceLastPromotion++ < 5 || timeSinceLastPromotion + TimeUnit.DAYS.toMillis(2) > System.currentTimeMillis() ||
+            DisguiseUtilities.getMineSkinAPI().getApiKey() != null) {
+            return;
+        }
+
+        skinsSinceLastPromotion = 0;
+        timeSinceLastPromotion = System.currentTimeMillis();
+
+        String message = ChatColor.AQUA +
+            "Enjoying the ability to create player skins via file & url? You're using MineSkin which is run by Haylee // inventivetalent!" +
+            " If you have the time, a small donation would be appreciated to help cover server costs https://support.inventivetalent.org/";
+
+        // No opt-out!
+        if (sender == null) {
+            LibsDisguises.getInstance().getLogger().info(message);
+        } else {
+            sender.sendMessage(message);
+        }
     }
 
     public static void handleFile(File file, ModelType modelType, SkinCallback callback) {
@@ -157,7 +184,12 @@ public class SkinUtils {
         return null;
     }
 
+    @Deprecated
     public static void grabSkin(String param, SkinCallback callback) {
+        grabSkin(null, param, callback);
+    }
+
+    public static void grabSkin(CommandSender sender, String param, SkinCallback callback) {
         ModelType modelType = param.toLowerCase(Locale.ENGLISH).endsWith(":slim") ? ModelType.SLIM : ModelType.NORMAL;
 
         if (modelType == ModelType.SLIM) {
@@ -169,6 +201,7 @@ public class SkinUtils {
             callback.onInfo(LibsMsg.SKIN_API_USING_URL);
 
             handleUrl(param, modelType, callback);
+            attemptPromoteMineskin(sender);
         } else {
             // Check if it contains legal file characters
             if (!param.matches("[a-zA-Z\\d -_]+(\\.png)?")) {
@@ -193,9 +226,10 @@ public class SkinUtils {
             }
 
             if (file != null) {
+                // We're using a file!
                 callback.onInfo(LibsMsg.SKIN_API_USING_FILE);
                 handleFile(file, modelType, callback);
-                // We're using a file!
+                attemptPromoteMineskin(sender);
             } else {
                 // We're using a player name or UUID!
                 if (param.contains("-")) {
@@ -204,6 +238,7 @@ public class SkinUtils {
 
                         callback.onInfo(LibsMsg.SKIN_API_USING_UUID);
                         handleUUID(uuid, modelType, callback);
+                        attemptPromoteMineskin(sender);
                         return;
                     } catch (Exception ignored) {
                     }
@@ -220,6 +255,7 @@ public class SkinUtils {
                 callback.onInfo(LibsMsg.SKIN_API_USING_NAME);
 
                 handleName(param, modelType, callback);
+                attemptPromoteMineskin(sender);
             }
         }
     }

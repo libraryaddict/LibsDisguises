@@ -322,7 +322,7 @@ public class DisguiseParser {
         fetchingSkins.put(skinFile, list = new ArrayList<>());
         list.add(consumer);
 
-        SkinUtils.grabSkin(skinFile, new SkinUtils.SkinCallback() {
+        SkinUtils.grabSkin(sender, skinFile, new SkinUtils.SkinCallback() {
             @Override
             public void onError(LibsMsg msg, Object... args) {
                 msg.send(sender, args);
