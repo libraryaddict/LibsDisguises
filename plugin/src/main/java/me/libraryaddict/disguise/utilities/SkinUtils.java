@@ -34,9 +34,12 @@ public class SkinUtils {
     }
 
     private static int skinsSinceLastPromotion = 0;
+    private static int totalSkinsUsedSince;
     private static long timeSinceLastPromotion = 0;
 
     public static void attemptPromoteMineskin(CommandSender sender) {
+        totalSkinsUsedSince++;
+
         if (skinsSinceLastPromotion++ < 5 || timeSinceLastPromotion + TimeUnit.DAYS.toMillis(2) > System.currentTimeMillis() ||
             DisguiseUtilities.getMineSkinAPI().getApiKey() != null) {
             return;
@@ -48,6 +51,9 @@ public class SkinUtils {
         String message = ChatColor.AQUA +
             "Enjoying the ability to create player skins via file & url? You're using MineSkin which is run by Haylee // inventivetalent!" +
             " If you have the time, a small donation would be appreciated to help cover server costs https://support.inventivetalent.org/";
+
+        LibsDisguises.getInstance().getLogger().info("Promoted the support for MineSkin, " + totalSkinsUsedSince +
+            " skins were requested since server startup. Opt out by setting a MineSkin api key inside LibsDisguises/configs/players.yml");
 
         // No opt-out!
         if (sender == null) {
