@@ -40,7 +40,7 @@ public class SkinUtils {
     public static void attemptPromoteMineskin(CommandSender sender) {
         totalSkinsUsedSince++;
 
-        if (skinsSinceLastPromotion++ < 5 || timeSinceLastPromotion + TimeUnit.DAYS.toMillis(2) > System.currentTimeMillis() ||
+        if (skinsSinceLastPromotion++ < 10 || timeSinceLastPromotion + TimeUnit.DAYS.toMillis(2) > System.currentTimeMillis() ||
             DisguiseUtilities.getMineSkinAPI().getApiKey() != null) {
             return;
         }
