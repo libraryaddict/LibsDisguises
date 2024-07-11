@@ -25,6 +25,7 @@
 
         <lombok.version>1.18.32</lombok.version>
         <packetevents.version>2.4.0-SNAPSHOT</packetevents.version>
+        <spigot-api.version>1.21-R0.1-20240630.063914-46</spigot-api.version>
         <spigot.version>1.21-R0.1-SNAPSHOT</spigot.version>
         <junit.version>4.13.2</junit.version>
         <junit-jupiter.version>5.9.3</junit-jupiter.version>
@@ -81,7 +82,7 @@
             <dependency>
                 <groupId>org.spigotmc</groupId>
                 <artifactId>spigot-api</artifactId>
-                <version>${spigot.version}</version>
+                <version>${spigot-api.version}</version>
                 <optional>true</optional>
             </dependency>
             <dependency>
@@ -100,24 +101,15 @@
         </repository>
 
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-
-        <repository>
             <id>papermc</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
 
         <!-- Lumine is a repo hosted by the creators of MythicCraft -->
         <repository>
-            <id>lumine</id>
+            <id>nexus</id>
+            <name>Lumine Releases</name>
             <url>https://mvn.lumine.io/repository/maven-public/</url>
-        </repository>
-
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
         </repository>
 
         <repository>
