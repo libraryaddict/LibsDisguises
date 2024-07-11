@@ -313,6 +313,12 @@ public class LibsDisguises extends JavaPlugin {
                 "Please update from MC 1.19.0! You should be using at least 1.19.3! 1.19.1 is the lowest supported 1.19 version!");
         }
 
+        if (NmsVersion.v1_21_R1.isSupported()) {
+            getLogger().info(
+                "Detected you are running 1.21, you may need to enable `enum-compatibility-mode` in your server's bukkit.yml if you are " +
+                    "experiencing errors on Lib's Disguises load");
+        }
+
         try {
             Class cl = Class.forName("org.bukkit.Server$Spigot");
         } catch (ClassNotFoundException e) {
