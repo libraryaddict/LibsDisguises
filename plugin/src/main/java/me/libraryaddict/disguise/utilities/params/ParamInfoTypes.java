@@ -192,6 +192,10 @@ public class ParamInfoTypes {
             paramInfos.add(new ParamInfoEnum(Sniffer.State.class, "Sniffer State", "The current mindset of a Sniffer"));
         }
 
+        if (NmsVersion.v1_20_R4.isSupported()) {
+            paramInfos.add(new ParamInfoEnum(Sniffer.State.class, "Wolf Variant", "The variant of a wolf"));
+        }
+
         if (NmsVersion.v1_21_R1.isSupported()) {
             paramInfos.add(new ParamInfoEnum(ArmadilloState.class, "Armadillo State", "The current state of an Armadillo"));
         }

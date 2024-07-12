@@ -7,6 +7,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import org.bukkit.DyeColor;
+import org.bukkit.entity.Wolf;
 
 public class WolfWatcher extends TameableWatcher {
 
@@ -92,5 +93,16 @@ public class WolfWatcher extends TameableWatcher {
     public void setDamageTaken(float damage) {
         setData(MetaIndex.WOLF_DAMAGE, damage);
         sendData(MetaIndex.WOLF_DAMAGE);
+    }
+
+    @NmsAddedIn(NmsVersion.v1_20_R4)
+    public void setVariant(Wolf.Variant variant) {
+        setData(MetaIndex.WOLF_VARIANT, variant);
+        sendData(MetaIndex.WOLF_VARIANT);
+    }
+
+    @NmsAddedIn(NmsVersion.v1_20_R4)
+    public Wolf.Variant getVariant() {
+        return getData(MetaIndex.WOLF_VARIANT);
     }
 }
