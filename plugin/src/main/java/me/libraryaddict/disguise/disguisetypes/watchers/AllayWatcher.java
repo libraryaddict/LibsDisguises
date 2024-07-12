@@ -5,7 +5,6 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodHiddenFor;
-import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsedBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 
 public class AllayWatcher extends InsentientWatcher {

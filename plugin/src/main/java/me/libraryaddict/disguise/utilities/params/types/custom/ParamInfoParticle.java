@@ -16,7 +16,6 @@ import com.github.retrooper.packetevents.protocol.world.positionsource.builtin.B
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.util.Vector3i;
-import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

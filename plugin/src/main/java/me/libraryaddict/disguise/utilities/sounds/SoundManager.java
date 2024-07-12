@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.utilities.sounds;
 
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;

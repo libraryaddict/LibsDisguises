@@ -7,7 +7,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import io.github.retrooper.packetevents.adventure.serializer.gson.GsonComponentSerializer;
-import io.github.retrooper.packetevents.adventure.serializer.json.JSONComponentSerializer;
 import net.kyori.adventure.text.Component;
 
 import java.lang.reflect.Type;

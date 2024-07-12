@@ -9,7 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
-import java.util.OptionalInt;
 
 public class FireworkWatcher extends FlagWatcher {
     public FireworkWatcher(Disguise disguise) {

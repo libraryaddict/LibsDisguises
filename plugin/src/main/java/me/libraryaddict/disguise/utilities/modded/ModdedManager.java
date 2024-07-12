@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.utilities.modded;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -9,7 +8,6 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.listeners.ModdedListener;
-import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerModdedClient;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;

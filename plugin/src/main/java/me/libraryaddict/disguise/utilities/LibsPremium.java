@@ -17,9 +17,6 @@ import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
-/**
- * Created by libraryaddict on 2/06/2017.
- */
 public class LibsPremium {
     private static Boolean thisPluginIsPaidFor;
     /**
