@@ -11,6 +11,7 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
@@ -100,7 +101,7 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
         if (NmsVersion.v1_13.isSupported()) {
             return (Particle) SpigotConversionUtil.toBukkitParticle(getData(MetaIndex.AREA_EFFECT_PARTICLE).getType());
         } else {
-            return Particle.values()[getData(MetaIndex.AREA_EFFECT_PARTICLE_OLD)];
+            return ReflectionManager.fromEnum(Particle.class, getData(MetaIndex.AREA_EFFECT_PARTICLE_OLD));
         }
     }
 
@@ -111,7 +112,7 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
             setParticle(
                 new com.github.retrooper.packetevents.protocol.particle.Particle(SpigotConversionUtil.fromBukkitParticle(particle)));
         } else {
-            setData(MetaIndex.AREA_EFFECT_PARTICLE_OLD, particle.ordinal());
+            setData(MetaIndex.AREA_EFFECT_PARTICLE_OLD, ReflectionManager.enumOrdinal(particle));
             sendData(MetaIndex.AREA_EFFECT_PARTICLE_OLD);
         }
     }

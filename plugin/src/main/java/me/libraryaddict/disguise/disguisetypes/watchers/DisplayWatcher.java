@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Color;
 import org.bukkit.entity.Display;
 import org.bukkit.util.Transformation;
@@ -146,13 +147,13 @@ public abstract class DisplayWatcher extends FlagWatcher {
     }
 
     public Display.Billboard getBillboard() {
-        return Display.Billboard.values()[getData(MetaIndex.DISPLAY_BILLBOARD_RENDER_CONSTRAINTS)];
+        return ReflectionManager.fromEnum(Display.Billboard.class, getData(MetaIndex.DISPLAY_BILLBOARD_RENDER_CONSTRAINTS));
     }
 
     // Because TextDisplayWatcher modifies this on startup..
     @RandomDefaultValue
     public void setBillboard(Display.Billboard billboard) {
-        setData(MetaIndex.DISPLAY_BILLBOARD_RENDER_CONSTRAINTS, (byte) billboard.ordinal());
+        setData(MetaIndex.DISPLAY_BILLBOARD_RENDER_CONSTRAINTS, (byte) ReflectionManager.enumOrdinal(billboard));
         sendData(MetaIndex.DISPLAY_BILLBOARD_RENDER_CONSTRAINTS);
     }
 

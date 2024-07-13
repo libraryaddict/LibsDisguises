@@ -60,6 +60,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -1413,13 +1414,13 @@ public class ReflectionManager {
                 return (T) nmsReflection.getCatTypeFromInt((int) value);
             }
 
-            return (T) Cat.Type.values()[(int) value];
+            return (T) fromEnum(Cat.Type.class, (int) value);
         } else if (index == MetaIndex.FROG_VARIANT) {
             if (nmsReflection != null) {
                 return (T) nmsReflection.getFrogVariantFromInt((int) value);
             }
 
-            return (T) Frog.Variant.values()[(int) value];
+            return (T) fromEnum(Frog.Variant.class, (int) value);
         } else if (index == MetaIndex.PAINTING) {
             return (T) nmsReflection.getPaintingFromInt((int) value);
         } else if (index == MetaIndex.WOLF_VARIANT) {
@@ -1450,23 +1451,23 @@ public class ReflectionManager {
         }*/ else if (index == MetaIndex.AREA_EFFECT_CLOUD_COLOR) {
             return (T) Color.fromRGB((int) value);
         } else if (index == MetaIndex.PARROT_VARIANT) {
-            return (T) Parrot.Variant.values()[(int) value];
+            return (T) fromEnum(Parrot.Variant.class, (int) value);
         } else if (index == MetaIndex.AXOLOTL_VARIANT) {
-            return (T) Axolotl.Variant.values()[(int) value];
+            return (T) fromEnum(Axolotl.Variant.class, (int) value);
         } else if (index == MetaIndex.OCELOT_TYPE) {
-            return (T) Ocelot.Type.values()[(int) value];
+            return (T) fromEnum(Ocelot.Type.class, (int) value);
         } else if (index == MetaIndex.FOX_TYPE) {
-            return (T) Fox.Type.values()[(int) value];
+            return (T) fromEnum(Fox.Type.class, (int) value);
         } else if (index == MetaIndex.RABBIT_TYPE) {
             return (T) RabbitType.getType((int) value);
         } else if (index == MetaIndex.LLAMA_COLOR) {
-            return (T) Llama.Color.values()[(int) value];
+            return (T) fromEnum(Llama.Color.class, (int) value);
         } else if (index == MetaIndex.PANDA_MAIN_GENE || index == MetaIndex.PANDA_HIDDEN_GENE) {
-            return (T) Panda.Gene.values()[(byte) value];
+            return (T) fromEnum(Panda.Gene.class, (byte) value);
         } else if (index == MetaIndex.ITEM_DISPLAY_TRANSFORM) {
-            return (T) ItemDisplay.ItemDisplayTransform.values()[(byte) value];
+            return (T) fromEnum(ItemDisplay.ItemDisplayTransform.class, (byte) value);
         } else if (index == MetaIndex.BOAT_TYPE_NEW) {
-            return (T) Boat.Type.values()[(int) value];
+            return (T) fromEnum(Boat.Type.class, (int) value);
         }
 
         return (T) value;
@@ -1499,7 +1500,7 @@ public class ReflectionManager {
                     return nmsReflection.getCatVariantAsInt((Cat.Type) value);
                 }
 
-                return ((Cat.Type) value).ordinal();
+                return enumOrdinal(value);
             }
 
             if (NmsVersion.v1_19_R1.isSupported()) {
@@ -1508,7 +1509,7 @@ public class ReflectionManager {
                 } else if (value instanceof Art) {
                     return nmsReflection.getPaintingAsInt((Art) value);
                 } else if (value instanceof Boat.Type) {
-                    return ((Boat.Type) value).ordinal();
+                    return enumOrdinal(value);
                 }
 
                 if (NmsVersion.v1_20_R4.isSupported()) {
@@ -1529,7 +1530,7 @@ public class ReflectionManager {
             return RabbitType.getTypeId((Rabbit.Type) value);
         } else if (value instanceof Enum && !(value instanceof SnifferState || value instanceof EntityPose || value instanceof BlockFace ||
             value instanceof ArmadilloState)) {
-            int v = ((Enum) value).ordinal();
+            int v = enumOrdinal(value);
 
             if (index.isByteValues()) {
                 return (byte) v;
@@ -1807,7 +1808,7 @@ public class ReflectionManager {
 
         try {
             if (!NmsVersion.v1_13.isSupported()) {
-                return itemStack.getType().ordinal() + (itemStack.getDurability() << 12);
+                return enumOrdinal(itemStack.getType()) + (itemStack.getDurability() << 12);
             }
 
             Object nmsBlock = magicGetBlock.invoke(null, itemStack.getType());
@@ -2513,5 +2514,63 @@ public class ReflectionManager {
         }
 
         return null;
+    }
+
+    public static int enumOrdinal(Object obj) {
+        return ((Enum) obj).ordinal();
+    }
+
+    public static String enumName(Object obj) {
+        if (obj instanceof Enum) {
+            return ((Enum) obj).name();
+        }
+
+        return ((Keyed) obj).getKey().getKey();
+    }
+
+    public static String keyedName(Object obj) {
+        return ((Keyed) obj).getKey().toString();
+    }
+
+    public static <T> T randomEnum(Class<T> clss) {
+        if (clss.isEnum()) {
+            T[] enums = clss.getEnumConstants();
+
+            return enums[DisguiseUtilities.getRandom().nextInt(enums.length)];
+        }
+
+        List<Keyed> enums = Bukkit.getRegistry((Class<Keyed>) clss).stream().collect(Collectors.toList());
+
+        return (T) enums.get(DisguiseUtilities.getRandom().nextInt(enums.size()));
+    }
+
+    public static <T> T fromEnum(Class<T> clss, int ordinal) {
+        if (!clss.isEnum()) {
+            throw new IllegalStateException("Attempted to convert " + clss +
+                " to an enum and use the ordinal, but that shouldn't be used in newer versions of Minecraft. This is a bug in Lib's " +
+                "Disguises, please report to libraryaddict");
+        }
+
+        return clss.getEnumConstants()[Math.max(0, ordinal) % clss.getEnumConstants().length];
+    }
+
+    public static <T> T fromEnum(Class<T> clss, String name) {
+        String[] split = name.split(":");
+
+        if (split.length != 2) {
+            split = new String[]{"minecraft", name};
+        }
+
+        if (clss.isEnum()) {
+            for (T e : clss.getEnumConstants()) {
+                if (!((Enum) e).name().equalsIgnoreCase(split[1])) {
+                    continue;
+                }
+
+                return e;
+            }
+        }
+
+        return (T) Bukkit.getRegistry((Class<Keyed>) clss).get(new NamespacedKey(split[0], split[1]));
     }
 }

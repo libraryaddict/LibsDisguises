@@ -7,6 +7,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Art;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -92,7 +93,9 @@ public class MiscDisguise extends TargetedDisguise {
         switch (getType()) {
             // The only disguises which should use a custom data.
             case PAINTING:
-                ((PaintingWatcher) getWatcher()).setArt(Art.values()[Math.max(0, id) % Art.values().length]);
+                if (!NmsVersion.v1_21_R1.isSupported()) {
+                    ((PaintingWatcher) getWatcher()).setArt(ReflectionManager.fromEnum(Art.class, id));
+                }
                 break;
             case FALLING_BLOCK:
                 ((FallingBlockWatcher) getWatcher()).setBlock(itemStack);

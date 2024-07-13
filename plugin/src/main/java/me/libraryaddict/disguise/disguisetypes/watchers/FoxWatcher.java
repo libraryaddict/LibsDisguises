@@ -5,10 +5,9 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import org.bukkit.entity.Fox;
-
-import java.util.Random;
 
 /**
  * Created by libraryaddict on 6/05/2019.
@@ -19,7 +18,7 @@ public class FoxWatcher extends AgeableWatcher {
         super(disguise);
 
         if (DisguiseConfig.isRandomDisguises()) {
-            setType(Fox.Type.values()[new Random().nextInt(Fox.Type.values().length)]);
+            setType(ReflectionManager.randomEnum(Fox.Type.class));
         }
     }
 

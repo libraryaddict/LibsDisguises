@@ -1,9 +1,11 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import org.bukkit.DyeColor;
@@ -13,6 +15,12 @@ public class WolfWatcher extends TameableWatcher {
 
     public WolfWatcher(Disguise disguise) {
         super(disguise);
+
+        if (DisguiseConfig.isRandomDisguises()) {
+            if (NmsVersion.v1_20_R4.isSupported()) {
+                setVariant(ReflectionManager.randomEnum(Wolf.Variant.class));
+            }
+        }
     }
 
     public DyeColor getCollarColor() {

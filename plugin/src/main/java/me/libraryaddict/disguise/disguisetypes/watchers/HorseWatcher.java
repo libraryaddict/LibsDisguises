@@ -3,9 +3,9 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
@@ -17,13 +17,13 @@ public class HorseWatcher extends AbstractHorseWatcher {
         super(disguise);
 
         if (DisguiseConfig.isRandomDisguises()) {
-            setStyle(Style.values()[DisguiseUtilities.random.nextInt(Style.values().length)]);
-            setColor(Color.values()[DisguiseUtilities.random.nextInt(Color.values().length)]);
+            setStyle(ReflectionManager.randomEnum(Style.class));
+            setColor(ReflectionManager.randomEnum(Color.class));
         }
     }
 
     public Color getColor() {
-        return Color.values()[(getData(MetaIndex.HORSE_COLOR_STYLE) & 0xFF)];
+        return ReflectionManager.fromEnum(Color.class, getData(MetaIndex.HORSE_COLOR_STYLE) & 0xFF);
     }
 
     @RandomDefaultValue
@@ -33,7 +33,7 @@ public class HorseWatcher extends AbstractHorseWatcher {
     }
 
     public Style getStyle() {
-        return Style.values()[(getData(MetaIndex.HORSE_COLOR_STYLE) >>> 8)];
+        return ReflectionManager.fromEnum(Style.class, (getData(MetaIndex.HORSE_COLOR_STYLE) >>> 8));
     }
 
     @RandomDefaultValue

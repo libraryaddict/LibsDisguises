@@ -3,8 +3,8 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.entity.Rabbit;
 
 public class RabbitWatcher extends AgeableWatcher {
@@ -13,7 +13,7 @@ public class RabbitWatcher extends AgeableWatcher {
         super(disguise);
 
         if (DisguiseConfig.isRandomDisguises()) {
-            setType(Rabbit.Type.values()[DisguiseUtilities.random.nextInt(Rabbit.Type.values().length)]);
+            setType(ReflectionManager.randomEnum(Rabbit.Type.class));
         }
     }
 

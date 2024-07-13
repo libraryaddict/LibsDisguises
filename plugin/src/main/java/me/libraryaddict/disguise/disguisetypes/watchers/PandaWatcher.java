@@ -5,11 +5,10 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsedBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import org.bukkit.entity.Panda;
-
-import java.util.Random;
 
 /**
  * Created by libraryaddict on 6/05/2019.
@@ -21,8 +20,8 @@ public class PandaWatcher extends AgeableWatcher {
 
         if (DisguiseConfig.isRandomDisguises()) {
             // We don't do 'setGene' here so it's just as random as it would be as if it was natural.
-            setMainGene(Panda.Gene.values()[new Random().nextInt(Panda.Gene.values().length)]);
-            setHiddenGene(Panda.Gene.values()[new Random().nextInt(Panda.Gene.values().length)]);
+            setMainGene(ReflectionManager.randomEnum(Panda.Gene.class));
+            setHiddenGene(ReflectionManager.randomEnum(Panda.Gene.class));
         }
     }
 

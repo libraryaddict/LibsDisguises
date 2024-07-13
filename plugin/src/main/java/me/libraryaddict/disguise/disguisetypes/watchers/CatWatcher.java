@@ -4,9 +4,9 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import org.bukkit.DyeColor;
@@ -21,9 +21,7 @@ public class CatWatcher extends TameableWatcher {
         super(disguise);
 
         if (DisguiseConfig.isRandomDisguises()) {
-            Cat.Type[] values = Cat.Type.values();
-
-            setType(values[DisguiseUtilities.getRandom().nextInt(values.length)]);
+            setType(ReflectionManager.randomEnum(Cat.Type.class));
         }
     }
 

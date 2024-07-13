@@ -4,7 +4,7 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
-import org.apache.commons.lang.math.RandomUtils;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.TropicalFish;
 
@@ -60,9 +60,9 @@ public class TropicalFishWatcher extends FishWatcher {
         super(disguise);
 
         if (DisguiseConfig.isRandomDisguises()) {
-            this.setPattern(TropicalFish.Pattern.values()[RandomUtils.nextInt(TropicalFish.Pattern.values().length)]);
-            this.setBodyColor(DyeColor.values()[RandomUtils.nextInt(DyeColor.values().length)]);
-            this.setPatternColor(DyeColor.values()[RandomUtils.nextInt(DyeColor.values().length)]);
+            setPattern(ReflectionManager.randomEnum(TropicalFish.Pattern.class));
+            setBodyColor(ReflectionManager.randomEnum(DyeColor.class));
+            setPatternColor(ReflectionManager.randomEnum(DyeColor.class));
         }
     }
 
