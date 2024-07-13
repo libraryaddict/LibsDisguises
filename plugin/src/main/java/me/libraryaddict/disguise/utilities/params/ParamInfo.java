@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities.params;
 
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
+import org.bukkit.Keyed;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -44,8 +45,14 @@ public abstract class ParamInfo<T> {
 
         this.possibleValues = new LinkedHashMap<>();
 
-        for (T anEnum : possibleValues) {
-            this.getValues().put(((Enum) anEnum).name(), anEnum);
+        if (paramClass.isEnum()) {
+            for (T anEnum : possibleValues) {
+                this.getValues().put(((Enum) anEnum).name(), anEnum);
+            }
+        } else {
+            for (T anEnum : possibleValues) {
+                this.getValues().put(((Keyed) anEnum).getKey().getKey(), anEnum);
+            }
         }
     }
 

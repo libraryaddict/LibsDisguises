@@ -194,7 +194,7 @@ public class ParamInfoTypes {
         }
 
         if (NmsVersion.v1_20_R4.isSupported()) {
-           // paramInfos.add(new ParamInfoEnum(Wolf.Variant.class, "Wolf Variant", "The variant of a wolf"));
+            paramInfos.add(new ParamInfoEnum(Wolf.Variant.class, "Wolf Variant", "The variant of a wolf"));
         }
 
         if (NmsVersion.v1_21_R1.isSupported()) {
