@@ -50,7 +50,7 @@ public abstract class ParamInfo<T> {
             return;
         }
 
-        if (possibleValues[0].getClass().isEnum()) {
+        if (possibleValues[0] instanceof Enum) {
             for (T anEnum : possibleValues) {
                 this.getValues().put(((Enum) anEnum).name(), anEnum);
             }
