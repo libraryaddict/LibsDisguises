@@ -93,6 +93,7 @@ public class MiscDisguise extends TargetedDisguise {
         switch (getType()) {
             // The only disguises which should use a custom data.
             case PAINTING:
+                // Should've been removed ages ago, but finally breaks in 1.21 where the enum change means this is not an enum anymore
                 if (!NmsVersion.v1_21_R1.isSupported()) {
                     ((PaintingWatcher) getWatcher()).setArt(ReflectionManager.fromEnum(Art.class, id));
                 }
