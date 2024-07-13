@@ -428,14 +428,14 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     public Art getPaintingFromInt(int paintingId) {
         Registry<PaintingVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.PAINTING_VARIANT);
 
-        return CraftArt.minecraftHolderToBukkit(registry.getHolder(paintingId).get());
+        return CraftArt.minecraftHolderToBukkit(registry.getHolder(paintingId - 1).get());
     }
 
     @Override
     public int getPaintingAsInt(Art type) {
         Registry<PaintingVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.PAINTING_VARIANT);
 
-        return registry.getIdOrThrow(CraftArt.bukkitToMinecraft(type));
+        return registry.getIdOrThrow(CraftArt.bukkitToMinecraft(type)) + 1;
     }
 
     @Override
