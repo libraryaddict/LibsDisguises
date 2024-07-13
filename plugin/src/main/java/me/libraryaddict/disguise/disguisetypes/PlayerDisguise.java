@@ -603,7 +603,20 @@ public class PlayerDisguise extends TargetedDisguise {
 
     @Override
     public PlayerDisguise setEntity(Entity entity) {
-        return (PlayerDisguise) super.setEntity(entity);
+        super.setEntity(entity);
+
+        // Here we're making sure that the userprofile is constructed with the correct UUID, but only if the disguise isn't active yet
+
+        // If disguise is already active, or if entity is null, or userprofile wasn't constructed yet, or the user profile is already set
+        // to the correct uuid
+        if (isDisguiseInUse() || entity == null || userProfile == null || getUUID().equals(userProfile.getUUID())) {
+            return this;
+        }
+
+        // Otherwise, recreate the user profile!
+        userProfile = ReflectionManager.getUserProfileWithThisSkin(getUUID(), userProfile.getName(), userProfile);
+
+        return this;
     }
 
     @Override

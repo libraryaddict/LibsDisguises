@@ -297,6 +297,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static double scaleSelfDisguisesMax;
+    @Getter
+    @Setter
+    private static boolean uniquePlayerDisguiseUUIDs;
 
     public static boolean isArmorstandsName() {
         return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
@@ -700,6 +703,7 @@ public class DisguiseConfig {
         setRemoveDisguiseBlockPlace(config.getBoolean("UndisguiseOnBlockPlace"));
         String apiKey = config.getString("MineSkinAPIKey");
         setSoundsEnabled(config.getBoolean("DisguiseSounds"));
+        setUniquePlayerDisguiseUUIDs(config.getBoolean("UniquePlayerUUID"));
 
         if (apiKey != null && apiKey.matches("[a-zA-Z\\d]{8,}")) {
             DisguiseUtilities.getMineSkinAPI().setApiKey(apiKey);

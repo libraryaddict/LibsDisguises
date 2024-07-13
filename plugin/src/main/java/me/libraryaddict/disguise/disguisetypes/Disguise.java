@@ -63,6 +63,13 @@ public abstract class Disguise {
     private transient boolean disguiseInUse;
     private final DisguiseType disguiseType;
     private transient BukkitRunnable runnable;
+    /**
+     * -- GETTER --
+     * Get the disguised entity
+     *
+     * @return entity
+     */
+    @Getter
     private transient Entity entity;
     private boolean hearSelfDisguise = DisguiseConfig.isSelfDisguisesSoundsReplaced();
     private boolean hideArmorFromSelf = DisguiseConfig.isHidingArmorFromSelf();
@@ -136,8 +143,11 @@ public abstract class Disguise {
     }
 
     public UUID getUUID() {
-        if (!isPlayerDisguise() && !DisguiseConfig.isRandomUUIDS() && getEntity() != null) {
-            return getEntity().getUniqueId();
+        // If this is not a player disguise, or it is but we're not trying to make sure its unique
+        if (!isPlayerDisguise() || !DisguiseConfig.isUniquePlayerDisguiseUUIDs()) {
+            if (!DisguiseConfig.isRandomUUIDS() && getEntity() != null) {
+                return getEntity().getUniqueId();
+            }
         }
 
         // Partial fix for disguises serialized in older versions
@@ -479,15 +489,6 @@ public abstract class Disguise {
         runnable = new DisguiseRunnable(this);
 
         runnable.runTaskTimer(LibsDisguises.getInstance(), 1, 1);
-    }
-
-    /**
-     * Get the disguised entity
-     *
-     * @return entity
-     */
-    public Entity getEntity() {
-        return entity;
     }
 
     /**

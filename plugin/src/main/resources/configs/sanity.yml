@@ -45,6 +45,9 @@ SaddleableHorse: false
 # If you are getting issues using this, please do not report them. You disable this at your own risk.
 RandomUUIDs: true
 
+# Player disguises by default generate a unique UUID per disguise, this will disable it if 'false' and may create issues
+UniquePlayerUUID: true
+
 # When you for some strange reason don't want PacketEvents to update, enable this!
 # Disclaimer: If you enable this, you are responsible for ensuring PacketEvents is up to date.
 NeverUpdatePacketEvents: false
