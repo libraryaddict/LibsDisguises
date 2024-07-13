@@ -1281,4 +1281,8 @@ public class MetaIndex<Y> {
         return this == ARMORSTAND_BODY || this == ARMORSTAND_HEAD || this == ARMORSTAND_LEFT_ARM || this == ARMORSTAND_RIGHT_ARM ||
             this == ARMORSTAND_LEFT_LEG || this == ARMORSTAND_RIGHT_LEG;
     }
+
+    public boolean isUsed() {
+        return getIndex() >= 0;
+    }
 }

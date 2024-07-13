@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import lombok.Getter;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -102,6 +103,7 @@ public enum AnimalColor {
         return null;
     }
 
+    @Getter
     private final DyeColor dyeColor;
     private final Material material;
 
@@ -114,7 +116,4 @@ public enum AnimalColor {
         return material;
     }
 
-    public DyeColor getDyeColor() {
-        return dyeColor;
-    }
 }

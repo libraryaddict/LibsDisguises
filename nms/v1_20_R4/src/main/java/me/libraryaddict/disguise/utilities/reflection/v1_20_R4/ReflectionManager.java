@@ -10,7 +10,6 @@ import io.netty.buffer.PooledByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.SneakyThrows;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -323,7 +322,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     public int getEntityTypeId(Object entityTypes) {
         net.minecraft.world.entity.EntityType entityType = (net.minecraft.world.entity.EntityType) entityTypes;
 
-        return BuiltInRegistries.ENTITY_TYPE.getId(entityType);
+        return BuiltInRegistries.ENTITY_TYPE.getIdOrThrow(entityType);
     }
 
     @Override
@@ -401,8 +400,6 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     public Cat.Type getCatTypeFromInt(int catType) {
         Registry<CatVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.CAT_VARIANT);
 
-        Holder.Reference<CatVariant> ref = registry.getHolder(catType).get();
-
         return CraftCat.CraftType.minecraftHolderToBukkit(registry.getHolder(catType).get());
     }
 
@@ -410,14 +407,12 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     public int getCatVariantAsInt(Cat.Type type) {
         Registry<CatVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.CAT_VARIANT);
 
-        return registry.getId(CraftCat.CraftType.bukkitToMinecraft(type));
+        return registry.getIdOrThrow(CraftCat.CraftType.bukkitToMinecraft(type));
     }
 
     @Override
     public Frog.Variant getFrogVariantFromInt(int frogType) {
         Registry<FrogVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.FROG_VARIANT);
-
-        Holder.Reference<FrogVariant> ref = registry.getHolder(frogType).get();
 
         return CraftFrog.CraftVariant.minecraftHolderToBukkit(registry.getHolder(frogType).get());
     }
@@ -426,14 +421,12 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     public int getFrogVariantAsInt(Frog.Variant type) {
         Registry<FrogVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.FROG_VARIANT);
 
-        return registry.getId(CraftFrog.CraftVariant.bukkitToMinecraft(type));
+        return registry.getIdOrThrow(CraftFrog.CraftVariant.bukkitToMinecraft(type));
     }
 
     @Override
     public Art getPaintingFromInt(int paintingId) {
         Registry<PaintingVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.PAINTING_VARIANT);
-
-        Holder.Reference<PaintingVariant> ref = registry.getHolder(paintingId).get();
 
         return CraftArt.minecraftHolderToBukkit(registry.getHolder(paintingId).get());
     }
@@ -442,23 +435,21 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     public int getPaintingAsInt(Art type) {
         Registry<PaintingVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.PAINTING_VARIANT);
 
-        return registry.getId(CraftArt.bukkitToMinecraft(type));
+        return registry.getIdOrThrow(CraftArt.bukkitToMinecraft(type));
     }
 
     @Override
     public Wolf.Variant getWolfVariantFromInt(int wolfVariant) {
         Registry<WolfVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.WOLF_VARIANT);
 
-        Holder.Reference<WolfVariant> ref = registry.getHolder(wolfVariant).get();
-
-        return CraftWolf.CraftVariant.minecraftHolderToBukkit(registry.getHolder(wolfVariant).get());
+        return CraftWolf.CraftVariant.minecraftHolderToBukkit(registry.getHolder(wolfVariant - 1).get());
     }
 
     @Override
     public int getWolfVariantAsInt(Wolf.Variant type) {
         Registry<WolfVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.WOLF_VARIANT);
 
-        return registry.getId(CraftWolf.CraftVariant.bukkitToMinecraft(type));
+        return registry.getIdOrThrow(CraftWolf.CraftVariant.bukkitToMinecraft(type)) + 1;
     }
 
     @Override
