@@ -109,11 +109,19 @@ public interface ReflectionManagerAbstract {
     }
 
     default Cat.Type getCatTypeFromInt(int catType) {
-        return Cat.Type.values()[catType];
+        if (Cat.Type.class.isEnum()) {
+            return Cat.Type.class.getEnumConstants()[catType];
+        }
+
+        throw new IllegalStateException("This method should have been overwritten by an extending class");
     }
 
     default int getCatVariantAsInt(Cat.Type type) {
-        return type.ordinal();
+        if (type instanceof Enum) {
+            return ((Enum) type).ordinal();
+        }
+
+        throw new IllegalStateException("This method should have been overwritten by an extending class");
     }
 
     Art getPaintingFromInt(int paintingId);
@@ -121,11 +129,19 @@ public interface ReflectionManagerAbstract {
     int getPaintingAsInt(Art type);
 
     default Frog.Variant getFrogVariantFromInt(int frogType) {
-        return Frog.Variant.values()[frogType];
+        if (Frog.Variant.class.isEnum()) {
+            return Frog.Variant.class.getEnumConstants()[frogType];
+        }
+
+        throw new IllegalStateException("This method should have been overwritten by an extending class");
     }
 
     default int getFrogVariantAsInt(Frog.Variant type) {
-        return type.ordinal();
+        if (type instanceof Enum) {
+            return ((Enum) type).ordinal();
+        }
+
+        throw new IllegalStateException("This method should have been overwritten by an extending class");
     }
 
     default Wolf.Variant getWolfVariantFromInt(int wolfVariant) {
