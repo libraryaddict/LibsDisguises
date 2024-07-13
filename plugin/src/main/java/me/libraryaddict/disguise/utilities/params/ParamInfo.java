@@ -45,14 +45,21 @@ public abstract class ParamInfo<T> {
 
         this.possibleValues = new LinkedHashMap<>();
 
+        // Pointless to trigger an error if it doesn't matter
+        if (possibleValues.length == 0) {
+            return;
+        }
+
         if (paramClass.isEnum()) {
             for (T anEnum : possibleValues) {
                 this.getValues().put(((Enum) anEnum).name(), anEnum);
             }
-        } else {
+        } else if (Keyed.class.isAssignableFrom(paramClass)) {
             for (T anEnum : possibleValues) {
                 this.getValues().put(((Keyed) anEnum).getKey().getKey(), anEnum);
             }
+        } else {
+            throw new IllegalArgumentException("The param class " + paramClass + " is not an enum and is not an instanceof Keyed");
         }
     }
 

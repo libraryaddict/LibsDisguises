@@ -5,6 +5,7 @@ import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 
+import java.lang.reflect.Array;
 import java.util.Map;
 
 /**
@@ -12,8 +13,9 @@ import java.util.Map;
  */
 public class ParamInfoEnum<T> extends ParamInfo<T> {
     public ParamInfoEnum(Class<T> paramClass, String name, String description) {
-        super(paramClass, name, name, description,
-            paramClass.isEnum() ? paramClass.getEnumConstants() : (T[]) Bukkit.getRegistry((Class<Keyed>) paramClass).stream().toArray());
+        super(paramClass, name, name, description, paramClass.isEnum() ? paramClass.getEnumConstants() :
+            (T[]) (Bukkit.getServer() == null ? Array.newInstance(paramClass, 0) :
+                Bukkit.getRegistry((Class<Keyed>) paramClass).stream().toArray()));
     }
 
     public ParamInfoEnum(Class paramClass, String name, String valueType, String description, T[] possibleValues) {
