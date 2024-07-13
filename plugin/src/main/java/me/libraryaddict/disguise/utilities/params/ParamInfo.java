@@ -50,16 +50,18 @@ public abstract class ParamInfo<T> {
             return;
         }
 
-        if (paramClass.isEnum()) {
+        if (possibleValues[0].getClass().isEnum()) {
             for (T anEnum : possibleValues) {
                 this.getValues().put(((Enum) anEnum).name(), anEnum);
             }
-        } else if (Keyed.class.isAssignableFrom(paramClass)) {
+        } else if (possibleValues[0] instanceof Keyed) {
             for (T anEnum : possibleValues) {
                 this.getValues().put(((Keyed) anEnum).getKey().getKey(), anEnum);
             }
         } else {
-            throw new IllegalArgumentException("The param class " + paramClass + " is not an enum and is not an instanceof Keyed");
+            throw new IllegalArgumentException(
+                "The param of class " + paramClass + " and provided possible values of class " + possibleValues[0].getClass() +
+                    " is not an enum and is not an instanceof Keyed");
         }
     }
 
