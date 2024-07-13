@@ -1528,6 +1528,8 @@ public class ReflectionManager {
             return DisguiseUtilities.fromBukkitItemStack((ItemStack) value);
         } else if (value instanceof Rabbit.Type) {
             return RabbitType.getTypeId((Rabbit.Type) value);
+        } else if (index == MetaIndex.CAT_COLLAR || index == MetaIndex.WOLF_COLLAR) {
+            return (int) ((AnimalColor) value).getDyeColor().getDyeData();
         } else if (value instanceof Enum && !(value instanceof SnifferState || value instanceof EntityPose || value instanceof BlockFace ||
             value instanceof ArmadilloState)) {
             int v = enumOrdinal(value);
@@ -2224,11 +2226,11 @@ public class ReflectionManager {
                 Object minecraftDefaultSerialized = data.getValue();
 
                 if (minecraftDefaultBukkit == null) {
-                    minecraftDefaultBukkit = "nullsy";
+                    minecraftDefaultBukkit = "ld-minecraft-null";
                 }
 
                 if (ourDefaultBukkit == null) {
-                    ourDefaultBukkit = "nullsa";
+                    ourDefaultBukkit = "ld-bukkit-null";
                 }
 
                 if (minecraftDefaultBukkit.getClass().getSimpleName().equals("CraftItemStack") &&
