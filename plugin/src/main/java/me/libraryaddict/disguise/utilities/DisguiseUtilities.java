@@ -2842,11 +2842,13 @@ public class DisguiseUtilities {
         ItemEnchantments enchantsComp = itemStack.getComponentOr(ComponentTypes.ENCHANTMENTS, ItemEnchantments.EMPTY);
         ItemEnchantments storedEnchantsComp = itemStack.getComponentOr(ComponentTypes.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
 
-        if (!enchantsComp.isEmpty()) {
+        if (!enchantsComp.isEmpty() && enchantsComp.getEnchantments().containsKey(null)) {
+            enchantsComp.setEnchantments(new LinkedHashMap<>(enchantsComp.getEnchantments()));
             enchantsComp.setEnchantmentLevel(null, 0);
         }
 
-        if (!storedEnchantsComp.isEmpty()) {
+        if (!storedEnchantsComp.isEmpty() && storedEnchantsComp.getEnchantments().containsKey(null)) {
+            enchantsComp.setEnchantments(new LinkedHashMap<>(enchantsComp.getEnchantments()));
             storedEnchantsComp.setEnchantmentLevel(null, 0);
         }
 
