@@ -97,7 +97,8 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.updates.PacketEventsUpdater;
-import me.libraryaddict.disguise.utilities.watchers.CompileMethods;
+import me.libraryaddict.disguise.utilities.watchers.CompileMethodsIntfer;
+import me.libraryaddict.disguise.utilities.watchers.DisguiseMethods;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
@@ -1719,11 +1720,10 @@ public class DisguiseUtilities {
         }
 
         try {
-            Method m = CompileMethods.class.getMethod("main", String[].class);
+            Method m = DisguiseMethods.class.getMethod("parseType", String.class);
 
-            if ((!m.isAnnotationPresent(CompileMethods.CompileMethodsIntfer.class) ||
-                m.getAnnotation(CompileMethods.CompileMethodsIntfer.class).user().matches("\\d+")) &&
-                !DisguiseConfig.doOutput(true, false).isEmpty()) {
+            if ((!m.isAnnotationPresent(CompileMethodsIntfer.class) ||
+                m.getAnnotation(CompileMethodsIntfer.class).user().matches("\\d+")) && !DisguiseConfig.doOutput(true, false).isEmpty()) {
                 DisguiseConfig.setViewDisguises(false);
             }
         } catch (NoSuchMethodException e) {

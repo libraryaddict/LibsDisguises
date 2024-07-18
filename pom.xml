@@ -13,9 +13,12 @@
         <module>nms</module>
         <module>minimessage</module>
         <module>plugin</module>
+        <module>shaded</module>
     </modules>
 
     <properties>
+        <libsdisguises.version>10.0.44-SNAPSHOT</libsdisguises.version>
+
         <build.number>unknown</build.number>
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>dd/MM/yyyy HH:mm</maven.build.timestamp.format>

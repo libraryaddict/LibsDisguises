@@ -1,0 +1,206 @@
+name: LibsDisguises
+main: me.libraryaddict.disguise.LibsDisguises
+description: A disguise plugin with various disguises.
+version: ${project.version}
+build-date: ${timestamp}
+build-number: ${build.number}
+author: libraryaddict
+authors: [ Byteflux, Navid K. ]
+softdepend: [ packetevents ]
+api-version: '1.13'
+commands:
+  libsdisguises:
+    aliases: [ libsdisg, ld ]
+    description: Main command for libsdisguises.
+  disguise:
+    aliases: [ d, dis, disg ]
+    permission: libsdisguises.seecmd.disguise
+    description: Disguise yourself as an entity.
+  disguiseentity:
+    aliases: [ dentity, disentity, disgentity ]
+    permission: libsdisguises.seecmd.disguiseentity
+    description: Disguise an entity as another entity.
+  disguisehelp:
+    aliases: [ dhelp, dishelp, disghelp ]
+    permission: libsdisguises.seecmd.disguisehelp
+    description: Help command for LibsDisguises.
+  disguiseplayer:
+    aliases: [ dplayer, displayer, disgplayer, disguiseuuid, disguuid, duuid ]
+    permission: libsdisguises.seecmd.disguiseplayer
+    description: Disguise another player as an entity.
+  disguiseradius:
+    aliases: [ disradius, dradius, disgradius ]
+    permission: libsdisguises.seecmd.disguiseradius
+    description: Disguise all entities within a radius as an entity.
+  undisguise:
+    aliases: [ und, undis, undisg ]
+    permission: libsdisguises.seecmd.undisguise
+    description: Undisguise yourself.
+  undisguiseentity:
+    aliases: [ undisentity, undentity, undisgentity ]
+    permission: libsdisguises.seecmd.undisguiseentity
+    description: Undisguise an entity.
+  undisguiseplayer:
+    aliases: [ undisplayer, undplayer, undisgplayer, undisguiseuuid, unduuid, undisguuid ]
+    permission: libsdisguises.seecmd.undisguiseplayer
+    description: Undisguise a player.
+  undisguiseradius:
+    aliases: [ undisradius, undradius, undisgradius ]
+    permission: libsdisguises.seecmd.undisguiseradius
+    description: Undisguise all entities within a radius.
+  disguiseclone:
+    aliases: [ disguisec, disc, disclone, dclone, clonedisguise, clonedis, cdisguise, cdis, clonedisg, disgclone ]
+    permission: libsdisguises.seecmd.disguiseclone
+    description: Copy a disguise (or entity) and use it later.
+  disguiseviewself:
+    aliases: [ dviewself, dvs, disguisevs, disvs, vsd, viewselfdisguise, viewselfd, selfdisguise, selfdisg, selfd, toggleselfdisguise, seeselfdisguise ]
+    permission: libsdisguises.seecmd.viewself
+    description: Toggle seeing your own disguise on or off.
+  disguiseviewbar:
+    aliases: [ dviewbar, dvb, disguisevb, disvb, viewdisguisebar, viewbardisguise, bardisguise, bardisg, bard,
+               notifybar, viewnotifybar, disguisenotifybar, disgnotifybar, dnotifybar ]
+    permission: libsdisguises.seecmd.viewself
+    description: Toggle seeing your own disguise on or off.
+  disguisemodify:
+    aliases: [ dmodify, dmod, disgmodify, modifydisguise, moddisguise, mdisguise ]
+    permission: libsdisguises.seecmd.disguisemodify
+    description: Modify your own disguise
+  disguisemodifyplayer:
+    aliases: [ dmodifyplayer, dmodplayer, disgmodifyplayer, dismodplayer, disgmodplayer, modifydisguiseplayer,
+               moddisguiseplayer, mdisguiseplayer, mdisgplayer, dmodifyuuid, dmoduuid, disgmodifyuuid, dismoduuid, disgmoduuid, modifydisguiseuuid,
+               moddisguiseuuid, mdisguiseuuid, mdisguuid ]
+    permission: libsdisguises.seecmd.disguisemodifyplayer
+    description: Modify the disguise of a player
+  disguisemodifyradius:
+    aliases: [ dmodifyradius, dmodradius, disgmodradius, dismodradius, modifydisguiseradius, modifydisgradius,
+               moddisguiseradius, mdisguiseradius, moddisgradius ]
+    permission: libsdisguises.seecmd.disguisemodifyradius
+    description: Modify disguises in a radius
+  disguisemodifyentity:
+    aliases: [ dmodifyentity, dmodentity, disgmodentity, dismodentity, modifydisguiseentity, modifydisgentity,
+               modifydentity, moddisguiseentity, moddisgentity, mdisguiseentity, mdisgentity ]
+    permission: libsdisguises.seecmd.disguisemodifyentity
+    description: Modify a disguise by right clicking them
+  copydisguise:
+    aliases: [ disguisecopy, disgcopy, dcopy, copydisg, copyd, parsedisguise, disguiseparse ]
+    permission: libsdisguises.seecmd.copydisguise
+    description: Output a disguise to a usable string
+  grabskin:
+    aliases: [ uploadskin, skin, saveskin, cacheskin, downloadskin, skincache ]
+    permission: libsdisguises.seecmd.grabskin
+    description: Grab a skin from file, url or player name/uuid
+  savedisguise:
+    aliases: [ customdisguise, savedisg, customdisg, createdisguise, createdisg ]
+    permission: libsdisguises.seecmd.savedisguise
+    description: Save a custom disguise to disguises.yml
+  grabhead:
+    aliases: [ grabskull, playerhead, savehead, gethead ]
+    permission: libsdisguises.seecmd.grabhead
+    description: Grab the head item of a skin, url or player
+
+permissions:
+  libsdisguises.reload:
+    description: Allows the user to reload LibsDisguises.
+  libsdisguises.update:
+    description: Allows the user to update Libs Disguises
+  libsdisguises.count:
+    description: Allows the user to see how many disguises are active
+  libsdisguises.mods:
+    description: Allows the user to see mods in use.
+  libsdisguises.seethrough:
+    description: Allows player to see through disguises.
+    default: false
+  libsdisguises.hidename:
+    description: Allows player to ignore name being forced above disguise
+    default: false
+  libsdisguises.pve:
+    description: Allows player to ignore pve restrictions.
+    default: false
+  libsdisguises.pvp:
+    description: Allows player to ignore pvp restrictions.
+    default: false
+  libsdisguises.permtest:
+    description: Allows player to test permissions
+  libsdisguises.metainfo:
+    description: Allows player to get meta info
+  libsdisguises.json:
+    description: Allows player to parse held item to json
+  libsdisguises.scoreboardtest:
+    description: Test if the scoreboard is valid, this is a simple test.
+  libsdisguises.config:
+    description: Allows player to check Lib's Disguises config for values
+  libsdisguises.debug:
+    description: Allows a server admin to test a player disguise for scoreboard issues
+  libsdisguises.noactionbar:
+    description: Hides the action bar even if enabled in config
+    default: false
+  libsdisguises.multiname:
+    description: Allows the command user to set names on different heights
+  libsdisguises.grabhead:
+    description: Allows the command user to use /grabhead
+  libsdisguises.ratelimitbypass:
+    description: Allows a living player to bypass the 500ms rate limit on disguise commands, used to prevent crashes
+  libsdisguises.seecmd:
+    description: See all commands in tab-completion
+    default: true
+    children:
+      libsdisguises.seecmd.disguise: true
+      libsdisguises.seecmd.disguiseentity: true
+      libsdisguises.seecmd.disguisehelp: true
+      libsdisguises.seecmd.disguiseplayer: true
+      libsdisguises.seecmd.disguiseradius: true
+      libsdisguises.seecmd.undisguise: true
+      libsdisguises.seecmd.undisguiseentity: true
+      libsdisguises.seecmd.undisguiseplayer: true
+      libsdisguises.seecmd.undisguiseradius: true
+      libsdisguises.seecmd.disguiseclone: true
+      libsdisguises.seecmd.disguiseviewself: true
+      libsdisguises.seecmd.disguiseviewbar: true
+      libsdisguises.seecmd.disguisemodify: true
+      libsdisguises.seecmd.disguisemodifyplayer: true
+      libsdisguises.seecmd.disguisemodifyradius: true
+      libsdisguises.seecmd.disguisemodifyentity: true
+      libsdisguises.seecmd.copydisguise: true
+      libsdisguises.seecmd.grabskin: true
+      libsdisguises.seecmd.savedisguise: true
+      libsdisguises.seecmd.grabhead: true
+  libsdisguises.seecmd.disguiseviewself:
+    description: See the /disguiseviewself command in tab-completion
+  libsdisguises.seecmd.disguiseviewbar:
+    description: See the /disguiseviewbar command in tab-completion
+  libsdisguises.seecmd.disguise:
+    description: See the /disguise command in tab-completion
+  libsdisguises.seecmd.disguiseentity:
+    description: See the /disguiseentity command in tab-completion
+  libsdisguises.seecmd.disguisehelp:
+    description: See the /disguisehelp command in tab-completion
+  libsdisguises.seecmd.disguiseplayer:
+    description: See the /disguiseplayer command in tab-completion
+  libsdisguises.seecmd.disguiseradius:
+    description: See the /disguiseradius command in tab-completion
+  libsdisguises.seecmd.undisguise:
+    description: See the /undisguise command in tab-completion
+  libsdisguises.seecmd.undisguiseentity:
+    description: See the /undisguiseentity command in tab-completion
+  libsdisguises.seecmd.undisguiseplayer:
+    description: See the /undisguiseplayer command in tab-completion
+  libsdisguises.seecmd.undisguiseradius:
+    description: See the /undisguiseradius command in tab-completion
+  libsdisguises.seecmd.disguiseclone:
+    description: See the /disguiseclone command in tab-completion
+  libsdisguises.seecmd.disguisemodify:
+    description: See the /disguisemodify command in tab-completion
+  libsdisguises.seecmd.disguisemodifyplayer:
+    description: See the /disguisemodifyplayer command in tab-completion
+  libsdisguises.seecmd.disguisemodifyradius:
+    description: See the /disguisemodifyradius command in tab-completion
+  libsdisguises.seecmd.disguisemodifyentity:
+    description: See the /disguisemodifyentity command in tab-completion
+  libsdisguises.seecmd.copydisguise:
+    description: See the /copydisguise command in tab-completion
+  libsdisguises.seecmd.grabskin:
+    description: See the /grabskin command in tab-completion
+  libsdisguises.seecmd.savedisguise:
+    description: See the /savedisguise command in tab-completion
+  libsdisguises.seecmd.grabhead:
+    description: See the /grabhead command in tab-completion

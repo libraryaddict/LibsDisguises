@@ -359,8 +359,16 @@ public enum DisguiseType {
 
         NmsRemovedIn removed = DisguiseType.class.getField(name()).getAnnotation(NmsRemovedIn.class);
 
-        if (LibsDisguises.getInstance() != null && removed != null && removed.value().isSupported()) {
-            return;
+        if (removed != null) {
+            NmsVersion version = removed.value();
+
+            // If not supported in this MC version
+            if (LibsDisguises.getInstance() != null && version.isSupported()) {
+                return;
+                // Otherwise, if it is 'removed' then we should be running latest MC, so it'll be removed in this version.
+            } else if (LibsDisguises.getInstance() == null) {
+                return;
+            }
         }
 
         // We have different resolution strategies here
@@ -378,7 +386,8 @@ public enum DisguiseType {
         // Finally, try via enum name
         if (getEntityType() == null) {
             try {
-                setEntityType(ReflectionManager.fromEnum(EntityType.class, name()));
+                setEntityType(
+                    EntityType.class.isEnum() ? EntityType.valueOf(name()) : ReflectionManager.fromEnum(EntityType.class, name()));
             } catch (Throwable ex) {
                 if (LibsDisguises.getInstance() == null) {
                     return;

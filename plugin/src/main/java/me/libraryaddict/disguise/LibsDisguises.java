@@ -42,7 +42,6 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.sounds.SoundManager;
 import me.libraryaddict.disguise.utilities.updates.PacketEventsUpdater;
 import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
-import me.libraryaddict.disguise.utilities.watchers.CompileMethods;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -350,7 +349,7 @@ public class LibsDisguises extends JavaPlugin {
         buildNumber = StringUtils.stripToNull(pluginYml.getString("build-number"));
         buildDate = StringUtils.stripToNull(pluginYml.getString("build-date"));
 
-        int fileCount = ReflectionManager.getJarFileCount(getFile(), CompileMethods.ignoredDirectories());
+        int fileCount = ReflectionManager.getJarFileCount(getFile(), LibsPremium.ignoredDirectories());
         int expected = pluginYml.getInt("file-count", fileCount);
 
         if (fileCount != expected) {

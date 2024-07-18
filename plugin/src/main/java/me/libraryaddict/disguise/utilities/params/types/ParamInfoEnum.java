@@ -12,7 +12,7 @@ public class ParamInfoEnum<T> extends ParamInfo<T> {
     public ParamInfoEnum(Class<T> paramClass, String name, String description) {
         super(paramClass, name, name, description, paramClass.isEnum() ? paramClass.getEnumConstants() :
             (T[]) (Bukkit.getServer() == null ? Array.newInstance(paramClass, 0) :
-                Bukkit.getRegistry((Class<Keyed>) paramClass).stream().toArray()));
+                Bukkit.getRegistry((Class<Keyed>) paramClass).stream().toArray((i) -> (T[]) Array.newInstance(paramClass, i))));
     }
 
     public ParamInfoEnum(Class paramClass, String name, String valueType, String description, T[] possibleValues) {

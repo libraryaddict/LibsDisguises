@@ -21,8 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
@@ -35,31 +33,22 @@ import java.util.Map;
 import java.util.Random;
 
 public class CompileMethods {
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface CompileMethodsIntfer {
-        String user() default "%%__USER__%%";
-    }
-
-    @CompileMethodsIntfer(user = "%%__USER__%%")
     public static void main(String[] args) {
         doMethods();
         doSounds();
         doFileCount();
     }
 
-    public static String[] ignoredDirectories() {
-        return new String[]{"META-INF/", "libsdisg/", "me/libraryaddict/disguise/utilities/reflection/v",
-            "me/libraryaddict/disguise/utilities/reflection/ReflectionManagerAbstract.class", "fernflower_", "net/kyori/adventure/"};
-    }
-
     private static void doFileCount() {
-        File classesFolder = new File("plugin/target/classes");
+        int totalCount = 0;
 
-        int count = getFileCount(classesFolder);
+        for (String folder : new String[]{"plugin/target/classes", "shaded/target/classes"}) {
+            totalCount += getFileCount(new File(folder));
+        }
 
         try {
-            Files.write(new File(classesFolder, "plugin.yml").toPath(), ("\nfile-count: " + count).getBytes(StandardCharsets.UTF_8),
-                StandardOpenOption.APPEND);
+            Files.write(new File(new File("shaded/target/classes"), "plugin.yml").toPath(),
+                ("\nfile-count: " + totalCount).getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -88,7 +77,7 @@ public class CompileMethods {
             list.add(sound.toString());
         }
 
-        File soundsFile = new File("plugin/target/classes/SOUND_MAPPINGS.txt");
+        File soundsFile = new File("shaded/target/classes/SOUND_MAPPINGS.txt");
 
         try (FileOutputStream fos = new FileOutputStream(soundsFile)) {
             fos.write(String.join("\n", list).getBytes(StandardCharsets.UTF_8));
@@ -144,6 +133,10 @@ public class CompileMethods {
         ArrayList<Class> sorted = new ArrayList<>();
 
         for (Class c : classes) {
+            if (c.getName().contains("$")) {
+                continue;
+            }
+
             addClass(sorted, c);
         }
 
@@ -267,7 +260,7 @@ public class CompileMethods {
 
         String gson = new Gson().toJson(methods);
 
-        File methodsFile = new File("plugin/target/classes/METHOD_MAPPINGS.txt");
+        File methodsFile = new File("shaded/target/classes/METHOD_MAPPINGS.txt");
 
         try (FileOutputStream fos = new FileOutputStream(methodsFile)) {
             fos.write(gson.getBytes(StandardCharsets.UTF_8));

@@ -113,6 +113,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -2539,7 +2540,7 @@ public class ReflectionManager {
             return clss.getEnumConstants();
         }
 
-        return (T[]) Bukkit.getRegistry((Class<Keyed>) clss).stream().toArray();
+        return (T[]) Bukkit.getRegistry((Class<Keyed>) clss).stream().toArray((i) -> (T[]) Array.newInstance(clss, i));
     }
 
     public static <T> T randomEnum(Class<T> clss) {

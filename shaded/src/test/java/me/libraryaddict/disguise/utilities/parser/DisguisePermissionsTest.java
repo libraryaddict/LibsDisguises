@@ -260,7 +260,7 @@ public class DisguisePermissionsTest {
         DisguiseConfig.getCustomDisguises().put(new DisguisePerm(DisguiseType.BEE, "babybee"), "bee setbaby");
 
         DisguisePermissions permissions =
-            createPermissions("disguise", false, "libsdisguises.disguise.bee.-*", "libsdisguises.disguise.babybee.nooptions");
+            createPermissions("me/libraryaddict/disguise/utilities/watchers", false, "libsdisguises.disguise.bee.-*", "libsdisguises.disguise.babybee.nooptions");
 
         Assert.assertNotNull("The custom disguise babybee should exist", DisguiseParser.getDisguisePerm("babybee"));
 
