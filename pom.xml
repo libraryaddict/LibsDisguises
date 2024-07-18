@@ -62,7 +62,7 @@
                         <execution>
                             <id>default-deploy</id>
                             <configuration>
-                                <skip>false</skip>
+                                <skip>true</skip>
                             </configuration>
                         </execution>
                     </executions>
