@@ -11,9 +11,6 @@ import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-/**
- * Created by libraryaddict on 3/01/2019.
- */
 public class PacketHandlerVelocity implements IPacketHandler {
     @Override
     public PacketTypeCommon[] getHandledPackets() {

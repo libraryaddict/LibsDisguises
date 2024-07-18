@@ -11,9 +11,6 @@ import org.junit.Assert;
 import java.lang.invoke.MethodHandle;
 import java.util.Map;
 
-/**
- * Created by libraryaddict on 19/01/2020.
- */
 public class DisguiseCloneTest {
 
     /**

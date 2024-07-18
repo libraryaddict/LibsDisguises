@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.utilities.translations;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -24,15 +26,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Created by libraryaddict on 10/06/2017.
- */
 public enum TranslateType {
     DISGUISES("disguises"),
     MESSAGES("messages"),
     DISGUISE_OPTIONS("disguise_options"),
     DISGUISE_OPTIONS_PARAMETERS("disguise_option_parameters");
 
+    @Getter(AccessLevel.PRIVATE)
     private File file;
     private final LinkedHashMap<String, String> translated = new LinkedHashMap<>();
     private final HashMap<String, Boolean[]> toDeDupe = new HashMap<>();
@@ -112,17 +112,18 @@ public enum TranslateType {
                 if (value == null) {
                     LibsDisguises.getInstance().getLogger()
                         .severe("Translation for " + name() + " has a null value for the key '" + key + "'");
-                } else {
-                    addDedupe(key, true);
+                    continue;
+                }
 
-                    String newKey = DisguiseUtilities.translateAlternateColorCodes(key);
-                    translated.put(newKey, DisguiseUtilities.translateAlternateColorCodes(value));
+                addDedupe(key, true);
 
-                    if (!newKey.equals(translated.get(newKey))) {
-                        diff++;
-                        translated.put(newKey, translated.get(newKey) +
-                            (diff % 3 == 0 || LibsMsg.OWNED_BY.getRaw().contains("Plugin registered to '") ? "" : " "));
-                    }
+                String newKey = DisguiseUtilities.translateAlternateColorCodes(key);
+                translated.put(newKey, DisguiseUtilities.translateAlternateColorCodes(value));
+
+                if (!newKey.equals(translated.get(newKey))) {
+                    diff++;
+                    translated.put(newKey, translated.get(newKey) +
+                        (diff % 3 == 0 || LibsMsg.OWNED_BY.getRaw().contains("Plugin registered to '") ? "" : " "));
                 }
             }
         } catch (Exception e) {
@@ -139,10 +140,6 @@ public enum TranslateType {
         }
     }
 
-    private File getFile() {
-        return file;
-    }
-
     public void save(String msg) {
         if (this != TranslateType.MESSAGES) {
             throw new IllegalArgumentException("Can't set no comment for '" + msg + "'");
@@ -156,6 +153,12 @@ public enum TranslateType {
     }
 
     public void save(LibsMsg orig, String rawMessage, String comment) {
+        if (rawMessage.trim().isEmpty() && LibsDisguises.getInstance().isJenkins()) {
+            LibsDisguises.getInstance().getLogger()
+                .info("Skipping a translate type as it's empty, for " + name() + " with comment " + comment);
+            return;
+        }
+
         addDedupe(StringEscapeUtils.escapeJava(rawMessage.replace("§", "&")), false);
 
         if (translated.containsKey(rawMessage)) {

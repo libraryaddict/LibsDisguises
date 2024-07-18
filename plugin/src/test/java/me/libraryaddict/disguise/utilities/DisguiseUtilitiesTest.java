@@ -7,9 +7,6 @@ import org.junit.jupiter.api.Assertions;
 
 import java.util.Arrays;
 
-/**
- * Created by libraryaddict on 25/10/2018.
- */
 public class DisguiseUtilitiesTest {
     @Test
     public void testNewlineSplitter() {

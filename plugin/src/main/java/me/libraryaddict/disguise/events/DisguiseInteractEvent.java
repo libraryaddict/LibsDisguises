@@ -7,8 +7,6 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 /**
- * Created by libraryaddict on 13/11/2018.
- * <p>
  * Invoked when a player interacts with their own self disguise
  */
 public class DisguiseInteractEvent extends PlayerEvent {

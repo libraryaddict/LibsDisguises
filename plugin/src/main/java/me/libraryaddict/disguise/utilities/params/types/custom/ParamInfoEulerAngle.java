@@ -3,9 +3,6 @@ package me.libraryaddict.disguise.utilities.params.types.custom;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import org.bukkit.util.EulerAngle;
 
-/**
- * Created by libraryaddict on 7/09/2018.
- */
 public class ParamInfoEulerAngle extends ParamInfo {
     public ParamInfoEulerAngle(Class paramClass, String name, String valueType, String description) {
         super(paramClass, name, valueType, description);

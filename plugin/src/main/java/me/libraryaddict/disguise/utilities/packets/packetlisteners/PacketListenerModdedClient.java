@@ -18,9 +18,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by libraryaddict on 11/06/2020.
- */
 public class PacketListenerModdedClient extends SimplePacketListenerAbstract {
     private final Cache<String, WrapperLoginClientLoginStart> loginAttempts =
         CacheBuilder.newBuilder().expireAfterWrite(15, TimeUnit.SECONDS).build();

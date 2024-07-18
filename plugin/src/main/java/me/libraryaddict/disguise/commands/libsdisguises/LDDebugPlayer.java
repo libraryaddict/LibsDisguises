@@ -19,9 +19,6 @@ import org.bukkit.scoreboard.Team;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by libraryaddict on 24/04/2020.
- */
 public class LDDebugPlayer implements LDCommand {
     public class DebugInteraction implements LibsEntityInteract {
         @Override

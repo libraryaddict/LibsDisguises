@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.commands.libsdisguises;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
+import me.libraryaddict.disguise.utilities.plugin.LibsDisgInfo;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
 import org.bukkit.command.CommandSender;
@@ -13,9 +13,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by libraryaddict on 20/04/2020.
- */
 public class LDUpdate implements LDCommand {
     @Override
     public List<String> getTabComplete() {
@@ -88,7 +85,7 @@ public class LDUpdate implements LDCommand {
                     return;
                 }*/
 
-                PluginInformation result = checker.doUpdate();
+                LibsDisgInfo result = checker.doUpdate();
 
                 if (result == null) {
                     LibsMsg.UPDATE_FAILED.send(sender);

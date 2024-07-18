@@ -14,9 +14,6 @@ import org.bukkit.permissions.Permissible;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by libraryaddict on 20/04/2020.
- */
 public class LDPermTest implements LDCommand {
     @Override
     public List<String> getTabComplete() {

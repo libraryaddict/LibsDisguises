@@ -8,9 +8,6 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.UUID;
 
-/**
- * Created by libraryaddict on 29/12/2019.
- */
 @Getter
 public class MineSkinResponse {
     @Getter

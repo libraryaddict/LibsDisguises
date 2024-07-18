@@ -18,7 +18,6 @@ public class BatWatcher extends InsentientWatcher {
 
     @MethodDescription("Is this bat hanging upside down? Otherwise it's flying.")
     public void setHanging(boolean hanging) {
-        setData(MetaIndex.BAT_HANGING, hanging ? (byte) 1 : (byte) 0);
-        sendData(MetaIndex.BAT_HANGING);
+        sendData(MetaIndex.BAT_HANGING, hanging ? (byte) 1 : (byte) 0);
     }
 }

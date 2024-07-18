@@ -13,7 +13,6 @@ public class PolarBearWatcher extends AgeableWatcher {
     }
 
     public void setStanding(boolean standing) {
-        setData(MetaIndex.POLAR_BEAR_STANDING, standing);
-        sendData(MetaIndex.POLAR_BEAR_STANDING);
+        sendData(MetaIndex.POLAR_BEAR_STANDING, standing);
     }
 }

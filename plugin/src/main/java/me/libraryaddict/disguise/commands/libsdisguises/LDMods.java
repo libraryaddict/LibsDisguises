@@ -10,9 +10,6 @@ import org.bukkit.entity.Player;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by libraryaddict on 20/04/2020.
- */
 public class LDMods implements LDCommand {
     @Override
     public List<String> getTabComplete() {

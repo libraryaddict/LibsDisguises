@@ -15,7 +15,6 @@ public class WitherSkullWatcher extends FlagWatcher {
     }
 
     public void setBlue(boolean blue) {
-        setData(MetaIndex.WITHER_SKULL_BLUE, blue);
-        sendData(MetaIndex.WITHER_SKULL_BLUE);
+        sendData(MetaIndex.WITHER_SKULL_BLUE, blue);
     }
 }

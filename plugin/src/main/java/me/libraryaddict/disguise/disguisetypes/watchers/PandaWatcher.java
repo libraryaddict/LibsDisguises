@@ -10,18 +10,14 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsed
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import org.bukkit.entity.Panda;
 
-/**
- * Created by libraryaddict on 6/05/2019.
- */
 @NmsAddedIn(NmsVersion.v1_14)
 public class PandaWatcher extends AgeableWatcher {
     public PandaWatcher(Disguise disguise) {
         super(disguise);
 
         if (DisguiseConfig.isRandomDisguises()) {
-            // We don't do 'setGene' here so it's just as random as it would be as if it was natural.
-            setMainGene(ReflectionManager.randomEnum(Panda.Gene.class));
-            setHiddenGene(ReflectionManager.randomEnum(Panda.Gene.class));
+            // We don't do 'setGene' to only change the visible gene, so it's just as random as it would be as if it was natural.
+            setGenes(ReflectionManager.randomEnum(Panda.Gene.class), ReflectionManager.randomEnum(Panda.Gene.class));
         }
     }
 
@@ -35,14 +31,20 @@ public class PandaWatcher extends AgeableWatcher {
         setHiddenGene(gene);
     }
 
+    public void setGenes(Panda.Gene mainGene, Panda.Gene hiddenGene) {
+        setData(MetaIndex.PANDA_MAIN_GENE, mainGene);
+        setData(MetaIndex.PANDA_HIDDEN_GENE, hiddenGene);
+
+        sendData(MetaIndex.PANDA_MAIN_GENE, MetaIndex.PANDA_HIDDEN_GENE);
+    }
+
     public Panda.Gene getMainGene() {
         return getData(MetaIndex.PANDA_MAIN_GENE);
     }
 
     @MethodOnlyUsedBy(value = {}) // Hide from command
     public void setMainGene(Panda.Gene gene) {
-        setData(MetaIndex.PANDA_MAIN_GENE, gene);
-        sendData(MetaIndex.PANDA_MAIN_GENE);
+        sendData(MetaIndex.PANDA_MAIN_GENE, gene);
     }
 
     public Panda.Gene getHiddenGene() {
@@ -51,8 +53,7 @@ public class PandaWatcher extends AgeableWatcher {
 
     @MethodOnlyUsedBy(value = {}) // Hide from command
     public void setHiddenGene(Panda.Gene gene) {
-        setData(MetaIndex.PANDA_HIDDEN_GENE, gene);
-        sendData(MetaIndex.PANDA_HIDDEN_GENE);
+        sendData(MetaIndex.PANDA_HIDDEN_GENE, gene);
     }
 
     public boolean isSneeze() {
@@ -92,8 +93,7 @@ public class PandaWatcher extends AgeableWatcher {
     }
 
     public void setHeadShaking(int timeInTicks) {
-        setData(MetaIndex.PANDA_HEAD_SHAKING, timeInTicks);
-        sendData(MetaIndex.PANDA_HEAD_SHAKING);
+        sendData(MetaIndex.PANDA_HEAD_SHAKING, timeInTicks);
     }
 
     @Deprecated
@@ -114,7 +114,6 @@ public class PandaWatcher extends AgeableWatcher {
             b1 = (byte) (b1 & ~no);
         }
 
-        setData(MetaIndex.PANDA_META, b1);
-        sendData(MetaIndex.PANDA_META);
+        sendData(MetaIndex.PANDA_META, b1);
     }
 }

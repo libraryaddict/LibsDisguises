@@ -28,8 +28,7 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
     }
 
     public void setShaking(boolean shaking) {
-        setData(MetaIndex.ZOMBIE_VILLAGER_SHAKING, shaking);
-        sendData(MetaIndex.ZOMBIE_VILLAGER_SHAKING);
+        sendData(MetaIndex.ZOMBIE_VILLAGER_SHAKING, shaking);
     }
 
     /**
@@ -52,8 +51,7 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
 
     @NmsAddedIn(NmsVersion.v1_14)
     public void setVillagerData(VillagerData villagerData) {
-        setData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION, villagerData);
-        sendData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION);
+        sendData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION, villagerData);
     }
 
     public Profession getProfession() {
@@ -70,8 +68,7 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
             setVillagerData(new VillagerData(VillagerTypes.getByName(ReflectionManager.keyedName(getType())),
                 VillagerProfessions.getByName(ReflectionManager.keyedName(profession)), getLevel()));
         } else {
-            setData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION_OLD, ReflectionManager.enumOrdinal(profession) - 1);
-            sendData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION_OLD);
+            sendData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION_OLD, ReflectionManager.enumOrdinal(profession) - 1);
         }
     }
 

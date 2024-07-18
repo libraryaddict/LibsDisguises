@@ -13,7 +13,6 @@ public class BlazeWatcher extends InsentientWatcher {
     }
 
     public void setBlazing(boolean isBlazing) {
-        setData(MetaIndex.BLAZE_BLAZING, (byte) (isBlazing ? 1 : 0));
-        sendData(MetaIndex.BLAZE_BLAZING);
+        sendData(MetaIndex.BLAZE_BLAZING, (byte) (isBlazing ? 1 : 0));
     }
 }

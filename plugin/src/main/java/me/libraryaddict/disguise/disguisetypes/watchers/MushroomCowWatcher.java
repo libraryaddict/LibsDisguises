@@ -9,9 +9,6 @@ import org.bukkit.entity.MushroomCow;
 
 import java.util.Locale;
 
-/**
- * Created by libraryaddict on 6/05/2019.
- */
 public class MushroomCowWatcher extends AgeableWatcher {
     public MushroomCowWatcher(Disguise disguise) {
         super(disguise);
@@ -24,7 +21,6 @@ public class MushroomCowWatcher extends AgeableWatcher {
 
     @NmsAddedIn(NmsVersion.v1_14)
     public void setVariant(MushroomCow.Variant variant) {
-        setData(MetaIndex.MUSHROOM_COW_TYPE, ReflectionManager.enumName(variant).toLowerCase(Locale.ENGLISH));
-        sendData(MetaIndex.MUSHROOM_COW_TYPE);
+        sendData(MetaIndex.MUSHROOM_COW_TYPE, ReflectionManager.enumName(variant).toLowerCase(Locale.ENGLISH));
     }
 }

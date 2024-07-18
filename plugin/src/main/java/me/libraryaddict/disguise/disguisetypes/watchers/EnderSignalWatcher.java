@@ -8,9 +8,6 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-/**
- * Created by libraryaddict on 6/05/2019.
- */
 public class EnderSignalWatcher extends FlagWatcher {
     public EnderSignalWatcher(Disguise disguise) {
         super(disguise);
@@ -27,7 +24,6 @@ public class EnderSignalWatcher extends FlagWatcher {
 
     @NmsAddedIn(NmsVersion.v1_14)
     public void setItemStack(ItemStack item) {
-        setData(MetaIndex.ENDER_SIGNAL_ITEM, item);
-        sendData(MetaIndex.ENDER_SIGNAL_ITEM);
+        sendData(MetaIndex.ENDER_SIGNAL_ITEM, item);
     }
 }

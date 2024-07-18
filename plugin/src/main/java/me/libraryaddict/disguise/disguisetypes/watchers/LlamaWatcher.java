@@ -17,8 +17,7 @@ public class LlamaWatcher extends ChestedHorseWatcher {
     }
 
     public void setColor(Llama.Color color) {
-        setData(MetaIndex.LLAMA_COLOR, color);
-        sendData(MetaIndex.LLAMA_COLOR);
+        sendData(MetaIndex.LLAMA_COLOR, color);
     }
 
     public DyeColor getCarpet() {
@@ -30,8 +29,7 @@ public class LlamaWatcher extends ChestedHorseWatcher {
     }
 
     public void setCarpet(DyeColor dyeColor) {
-        setData(MetaIndex.LLAMA_CARPET, dyeColor == null ? -1 : (int) dyeColor.getWoolData());
-        sendData(MetaIndex.LLAMA_CARPET);
+        sendData(MetaIndex.LLAMA_CARPET, dyeColor == null ? -1 : (int) dyeColor.getWoolData());
     }
 
     @Deprecated
@@ -44,7 +42,6 @@ public class LlamaWatcher extends ChestedHorseWatcher {
     }
 
     public void setStrength(int strength) {
-        setData(MetaIndex.LLAMA_STRENGTH, strength);
-        sendData(MetaIndex.LLAMA_STRENGTH);
+        sendData(MetaIndex.LLAMA_STRENGTH, strength);
     }
 }

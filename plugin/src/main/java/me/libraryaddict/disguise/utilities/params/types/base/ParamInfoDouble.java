@@ -2,9 +2,6 @@ package me.libraryaddict.disguise.utilities.params.types.base;
 
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 
-/**
- * Created by libraryaddict on 7/09/2018.
- */
 public class ParamInfoDouble extends ParamInfo {
     public ParamInfoDouble(String name, String description) {
         super(null, name, description);

@@ -15,7 +15,6 @@ public class CamelWatcher extends AbstractHorseWatcher {
 
     @MethodDescription("Is this Camel dashing?")
     public void setDashing(boolean dashing) {
-        setData(MetaIndex.CAMEL_DASHING, dashing);
-        sendData(MetaIndex.CAMEL_DASHING);
+        sendData(MetaIndex.CAMEL_DASHING, dashing);
     }
 }

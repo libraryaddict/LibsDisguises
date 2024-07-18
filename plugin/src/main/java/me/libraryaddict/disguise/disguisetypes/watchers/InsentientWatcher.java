@@ -31,12 +31,12 @@ public class InsentientWatcher extends LivingWatcher {
         byte b0 = getData(MetaIndex.INSENTIENT_META);
 
         if (flag) {
-            setData(MetaIndex.INSENTIENT_META, (byte) (b0 | i));
+            b0 = (byte) (b0 | i);
         } else {
-            setData(MetaIndex.INSENTIENT_META, (byte) (b0 & -(i + 1)));
+            b0 = (byte) (b0 & -(i + 1));
         }
 
-        sendData(MetaIndex.INSENTIENT_META);
+        sendData(MetaIndex.INSENTIENT_META, b0);
     }
 
     private boolean getInsentientFlag(int i) {

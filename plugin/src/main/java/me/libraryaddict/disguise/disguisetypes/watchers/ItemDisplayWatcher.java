@@ -23,8 +23,7 @@ public class ItemDisplayWatcher extends DisplayWatcher {
             item = new ItemStack(Material.AIR);
         }
 
-        setData(MetaIndex.ITEM_DISPLAY_ITEMSTACK, item);
-        sendData(MetaIndex.ITEM_DISPLAY_ITEMSTACK);
+        sendData(MetaIndex.ITEM_DISPLAY_ITEMSTACK, item);
     }
 
     public ItemDisplay.ItemDisplayTransform getItemDisplayTransform() {
@@ -32,7 +31,6 @@ public class ItemDisplayWatcher extends DisplayWatcher {
     }
 
     public void setItemDisplayTransform(ItemDisplay.ItemDisplayTransform display) {
-        setData(MetaIndex.ITEM_DISPLAY_TRANSFORM, display);
-        sendData(MetaIndex.ITEM_DISPLAY_TRANSFORM);
+        sendData(MetaIndex.ITEM_DISPLAY_TRANSFORM, display);
     }
 }

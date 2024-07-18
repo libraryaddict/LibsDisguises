@@ -23,8 +23,7 @@ public class ShulkerWatcher extends InsentientWatcher {
     }
 
     public void setFacingDirection(BlockFace face) {
-        setData(MetaIndex.SHULKER_FACING, com.github.retrooper.packetevents.protocol.world.BlockFace.valueOf(face.name()));
-        sendData(MetaIndex.SHULKER_FACING);
+        sendData(MetaIndex.SHULKER_FACING, com.github.retrooper.packetevents.protocol.world.BlockFace.valueOf(face.name()));
     }
 
     public Vector3i getAttachmentPosition() {
@@ -32,8 +31,7 @@ public class ShulkerWatcher extends InsentientWatcher {
     }
 
     public void setAttachmentPosition(Vector3i pos) {
-        setData(MetaIndex.SHULKER_ATTACHED, Optional.ofNullable(pos));
-        sendData(MetaIndex.SHULKER_ATTACHED);
+        sendData(MetaIndex.SHULKER_ATTACHED, Optional.ofNullable(pos));
     }
 
     public int getShieldHeight() {
@@ -49,8 +47,7 @@ public class ShulkerWatcher extends InsentientWatcher {
             newHeight = 127;
         }
 
-        setData(MetaIndex.SHULKER_PEEKING, (byte) newHeight);
-        sendData(MetaIndex.SHULKER_PEEKING);
+        sendData(MetaIndex.SHULKER_PEEKING, (byte) newHeight);
     }
 
     public DyeColor getColor() {
@@ -71,7 +68,6 @@ public class ShulkerWatcher extends InsentientWatcher {
             return;
         }
 
-        setData(MetaIndex.SHULKER_COLOR, newColor == null ? (byte) 16 : newColor.getWoolData());
-        sendData(MetaIndex.SHULKER_COLOR);
+        sendData(MetaIndex.SHULKER_COLOR, newColor == null ? (byte) 16 : newColor.getWoolData());
     }
 }

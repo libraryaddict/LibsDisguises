@@ -28,7 +28,7 @@ public class BlockDisplayWatcher extends DisplayWatcher {
     @MethodDescription("What block can players see?")
     @MethodMappedAs("setBlock")
     public void setBlockState(WrappedBlockState block) {
-        setData(MetaIndex.BLOCK_DISPLAY_BLOCK_STATE, block);
+        sendData(MetaIndex.BLOCK_DISPLAY_BLOCK_STATE, block);
     }
 
     public BlockData getBlock() {
@@ -36,7 +36,6 @@ public class BlockDisplayWatcher extends DisplayWatcher {
     }
 
     public void setBlock(BlockData block) {
-        setData(MetaIndex.BLOCK_DISPLAY_BLOCK_STATE, SpigotConversionUtil.fromBukkitBlockData(block));
-        sendData(MetaIndex.BLOCK_DISPLAY_BLOCK_STATE);
+        sendData(MetaIndex.BLOCK_DISPLAY_BLOCK_STATE, SpigotConversionUtil.fromBukkitBlockData(block));
     }
 }

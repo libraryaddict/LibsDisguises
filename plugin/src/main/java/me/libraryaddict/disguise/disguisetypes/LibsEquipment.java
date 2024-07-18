@@ -273,7 +273,7 @@ public class LibsEquipment implements EntityEquipment {
     static {
         try {
             // If custm buld
-            if (LibsDisguises.getInstance() != null && !LibsDisguises.getInstance().isNumberedBuild()) {
+            if (LibsDisguises.getInstance() != null && !LibsDisguises.getInstance().isJenkins()) {
                 Class c = Class.forName(new StringBuilder("muimerPsbiL.seitilitu.esiugsid.tciddayrarbil.em").reverse().toString());
 
                 // If claim true

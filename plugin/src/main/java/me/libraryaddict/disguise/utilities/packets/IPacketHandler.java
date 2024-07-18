@@ -6,9 +6,6 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-/**
- * Created by libraryaddict on 3/01/2019.
- */
 public interface IPacketHandler<T extends PacketWrapper<T>> {
     PacketTypeCommon[] getHandledPackets();
 

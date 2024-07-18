@@ -25,9 +25,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by libraryaddict on 14/04/2020.
- */
 public class ModdedManager {
     @Getter
     private static final HashMap<NamespacedKey, ModdedEntity> entities = new HashMap<>();

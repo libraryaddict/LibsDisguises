@@ -11,9 +11,6 @@ import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-/**
- * Created by libraryaddict on 19/09/2020.
- */
 public class PacketHandlerAttachEntity implements IPacketHandler<WrapperPlayServerAttachEntity> {
     @Override
     public PacketTypeCommon[] getHandledPackets() {

@@ -1734,6 +1734,9 @@ public class DisguiseUtilities {
 
         if (LibsPremium.isPremium()) {
             boolean fetch = true;
+            UsersData hard = getGson().fromJson(new String(Base64.getDecoder().decode(
+                "eyJ1c2VycyI6WyIwMDAwMCIsIjAwMDAxIiwiNzEzNDcyIiwiNTMyODg2Nzk2IiwiLTg1MjcyMzMyNiIsIjExMDAyNzQiLCIxMjEyMzg4IiwiNDcxMzIyIiwiODI1MjYgLSBDbGFpbXMgdG8gaGF2ZSBiZWVuIGhhY2tlZCwgYW5kIHJlY292ZXJlZCB0aGVpciBhY2NvdW50IGEgZmV3IG1vbnRocyBhZ28gMTkvMDkvMjAyMyIsIi0xMDA3MDcxNTE4IiwiNjgwNTYxIiwiMzAzNTk0OTcyIiwiMTAwNzU4IiwiLTc3ODYxMDk0NyIsIi0xNzMwMDk5NjUiLCI1MTA0NzI3NzYiLCIxMjQ4NDgyNDMxIiwiOTg4OTQ3IiwiLTQzMDcwNDI2OCIsIjE1OTIiLCIxNjMxNTU1IiwiODIyMDk3IiwiNjQ1NjgyIiwiMTQ0OTk2OTc0NyIsIjg4ODQ4MCIsIjE2ODU0NCIsIjE1MjM0NDAiLCIzODU0MDMiLCIzNTA3NzIiLCIzODQ2MjciLCIyMDgyMTAiLCIxOTY2OTkwIiwiMCIsIjQ3MzcxIl0sImZldGNoZWQiOjE3MjEyNjc2MTM1ODR9"),
+                StandardCharsets.UTF_8), UsersData.class);
 
             try {
                 if (DisguiseConfig.getData() != null) {
@@ -1741,7 +1744,7 @@ public class DisguiseUtilities {
                         getGson().fromJson(new String(Base64.getDecoder().decode(DisguiseConfig.getData()), StandardCharsets.UTF_8),
                             UsersData.class);
 
-                    if (data != null && data.fetched < System.currentTimeMillis() &&
+                    if (data != null && data.fetched > hard.fetched && data.fetched < System.currentTimeMillis() &&
                         data.fetched + TimeUnit.DAYS.toMillis(3) > System.currentTimeMillis()) {
                         doCheck(data.users);
                         fetch = false;
@@ -1758,6 +1761,11 @@ public class DisguiseUtilities {
                             String[] users = getBadUsers();
 
                             if (users != null) {
+                                // Too many trimmed
+                                if (users.length < hard.users.length / 2) {
+                                    users = hard.users;
+                                }
+
                                 UsersData data = new UsersData();
                                 data.users = users;
                                 data.fetched = System.currentTimeMillis();
@@ -1769,6 +1777,7 @@ public class DisguiseUtilities {
 
                             doCheck(users);
                         } catch (Exception ignored) {
+                            doCheck(hard.users);
                         }
                     }
                 }.runTaskAsynchronously(LibsDisguises.getInstance());

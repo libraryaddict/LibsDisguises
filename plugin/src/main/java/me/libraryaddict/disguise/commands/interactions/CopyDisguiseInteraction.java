@@ -12,9 +12,6 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-/**
- * Created by libraryaddict on 4/04/2020.
- */
 @Getter
 @AllArgsConstructor
 public class CopyDisguiseInteraction implements LibsEntityInteract {

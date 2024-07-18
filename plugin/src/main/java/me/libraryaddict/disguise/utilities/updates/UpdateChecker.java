@@ -5,7 +5,7 @@ import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.LibsPremium;
-import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
+import me.libraryaddict.disguise.utilities.plugin.LibsDisgInfo;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class UpdateChecker {
     private final long started = System.currentTimeMillis();
     @Getter
-    private PluginInformation lastDownload;
+    private LibsDisgInfo lastDownload;
     private final AtomicBoolean downloading = new AtomicBoolean(false);
     @Getter
     private DisguiseUpdate update;
@@ -136,7 +136,7 @@ public class UpdateChecker {
         }
     }
 
-    public PluginInformation doUpdate() {
+    public LibsDisgInfo doUpdate() {
         // If no update on file, or more than 6 hours hold. Check for update
         if (getUpdate() == null || getUpdate().getFetched().before(new Date(System.currentTimeMillis() - TimeUnit.HOURS.toMillis(6)))) {
             doUpdateCheck();
@@ -199,7 +199,7 @@ public class UpdateChecker {
         return null;
     }
 
-    private PluginInformation grabJarDownload(String urlString) {
+    private LibsDisgInfo grabJarDownload(String urlString) {
         downloading.set(true);
 
         File dest = new File(Bukkit.getUpdateFolderFile(), LibsDisguises.getInstance().getFile().getName());
@@ -233,7 +233,7 @@ public class UpdateChecker {
                 LibsDisguises.getInstance().getLogger().info("Download success!");
             }
 
-            PluginInformation result = LibsPremium.getInformation(dest);
+            LibsDisgInfo result = LibsPremium.getInformation(dest);
             lastDownload = result;
 
             updateMessage = new String[]{LibsMsg.UPDATE_SUCCESS.get(),

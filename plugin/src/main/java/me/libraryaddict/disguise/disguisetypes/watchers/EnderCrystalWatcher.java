@@ -21,8 +21,7 @@ public class EnderCrystalWatcher extends FlagWatcher {
     }
 
     public void setBeamTarget(Vector3i position) {
-        setData(MetaIndex.ENDER_CRYSTAL_BEAM, position == null ? Optional.empty() : Optional.of(position));
-        sendData(MetaIndex.ENDER_CRYSTAL_BEAM);
+        sendData(MetaIndex.ENDER_CRYSTAL_BEAM, position == null ? Optional.empty() : Optional.of(position));
     }
 
     public boolean isShowBottom() {
@@ -31,7 +30,6 @@ public class EnderCrystalWatcher extends FlagWatcher {
 
     @MethodDescription("Can you see the Ender Crystal's base plate?")
     public void setShowBottom(boolean bool) {
-        setData(MetaIndex.ENDER_CRYSTAL_PLATE, bool);
-        sendData(MetaIndex.ENDER_CRYSTAL_PLATE);
+        sendData(MetaIndex.ENDER_CRYSTAL_PLATE, bool);
     }
 }

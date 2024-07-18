@@ -8,9 +8,6 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import org.bukkit.inventory.ItemStack;
 
-/**
- * Created by libraryaddict on 6/05/2019.
- */
 public abstract class ThrowableWatcher extends FlagWatcher {
     public ThrowableWatcher(Disguise disguise) {
         super(disguise);
@@ -30,7 +27,6 @@ public abstract class ThrowableWatcher extends FlagWatcher {
     @RandomDefaultValue
     @NmsAddedIn(NmsVersion.v1_14)
     public void setItemStack(ItemStack item) {
-        setData(MetaIndex.THROWABLE_ITEM, item);
-        sendData(MetaIndex.THROWABLE_ITEM);
+        sendData(MetaIndex.THROWABLE_ITEM, item);
     }
 }

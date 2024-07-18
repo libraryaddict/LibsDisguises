@@ -9,9 +9,6 @@ import org.bukkit.entity.Player;
 
 import java.security.InvalidParameterException;
 
-/**
- * Created by libraryaddict on 15/04/2020.
- */
 public class ModdedDisguise extends TargetedDisguise {
     @Getter
     private ModdedEntity moddedEntity;

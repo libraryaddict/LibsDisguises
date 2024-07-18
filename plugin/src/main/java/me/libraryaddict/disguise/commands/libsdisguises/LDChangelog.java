@@ -9,9 +9,6 @@ import org.bukkit.command.CommandSender;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by libraryaddict on 27/04/2020.
- */
 public class LDChangelog implements LDCommand {
     @Override
     public List<String> getTabComplete() {
@@ -43,7 +40,7 @@ public class LDChangelog implements LDCommand {
         }
 
         if (!checker.getUpdate().isReleaseBuild()) {
-            sender.sendMessage(ChatColor.GOLD + "You are on build " + (LibsDisguises.getInstance().isNumberedBuild() ? "#" : "") +
+            sender.sendMessage(ChatColor.GOLD + "You are on build " + (LibsDisguises.getInstance().isJenkins() ? "#" : "") +
                 LibsDisguises.getInstance().getBuildNo());
         }
 

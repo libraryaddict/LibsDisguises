@@ -8,9 +8,6 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import java.lang.invoke.MethodHandle;
 import java.util.Arrays;
 
-/**
- * Created by libraryaddict on 21/05/2021.
- */
 @RequiredArgsConstructor
 @Getter
 public class WatcherMethod {

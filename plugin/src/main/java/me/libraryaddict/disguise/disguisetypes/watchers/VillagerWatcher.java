@@ -36,8 +36,7 @@ public class VillagerWatcher extends AbstractVillagerWatcher {
 
     @NmsAddedIn(NmsVersion.v1_14)
     public void setVillagerData(VillagerData villagerData) {
-        setData(MetaIndex.VILLAGER_DATA, villagerData);
-        sendData(MetaIndex.VILLAGER_DATA);
+        sendData(MetaIndex.VILLAGER_DATA, villagerData);
     }
 
     public Profession getProfession() {
@@ -54,8 +53,7 @@ public class VillagerWatcher extends AbstractVillagerWatcher {
             setVillagerData(new VillagerData(VillagerTypes.getByName(ReflectionManager.keyedName(getType())),
                 VillagerProfessions.getByName(ReflectionManager.keyedName(profession)), getLevel()));
         } else {
-            setData(MetaIndex.VILLAGER_PROFESSION, ReflectionManager.enumOrdinal(profession) - 1);
-            sendData(MetaIndex.VILLAGER_PROFESSION);
+            sendData(MetaIndex.VILLAGER_PROFESSION, ReflectionManager.enumOrdinal(profession) - 1);
         }
     }
 

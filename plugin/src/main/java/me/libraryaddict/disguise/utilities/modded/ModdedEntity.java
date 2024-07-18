@@ -5,9 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * Created by libraryaddict on 14/04/2020.
- */
 @AllArgsConstructor
 @Getter
 public class ModdedEntity {

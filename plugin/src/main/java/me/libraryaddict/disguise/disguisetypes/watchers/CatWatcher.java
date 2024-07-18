@@ -12,9 +12,6 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Cat;
 
-/**
- * Created by libraryaddict on 6/05/2019.
- */
 @NmsAddedIn(NmsVersion.v1_14)
 public class CatWatcher extends TameableWatcher {
     public CatWatcher(Disguise disguise) {
@@ -32,8 +29,7 @@ public class CatWatcher extends TameableWatcher {
     @RandomDefaultValue
     @MethodDescription("What variant of Cat is this?")
     public void setType(Cat.Type type) {
-        setData(MetaIndex.CAT_TYPE, type);
-        sendData(MetaIndex.CAT_TYPE);
+        sendData(MetaIndex.CAT_TYPE, type);
     }
 
     public DyeColor getCollarColor() {
@@ -55,8 +51,7 @@ public class CatWatcher extends TameableWatcher {
             return;
         }
 
-        setData(MetaIndex.CAT_COLLAR, AnimalColor.getColorByWool(newColor.getWoolData()));
-        sendData(MetaIndex.CAT_COLLAR);
+        sendData(MetaIndex.CAT_COLLAR, AnimalColor.getColorByWool(newColor.getWoolData()));
     }
 
     public boolean isLyingDown() {
@@ -65,8 +60,7 @@ public class CatWatcher extends TameableWatcher {
 
     @MethodDescription("Is the Cat lying down?")
     public void setLyingDown(boolean value) {
-        setData(MetaIndex.CAT_LYING_DOWN, value);
-        sendData(MetaIndex.CAT_LYING_DOWN);
+        sendData(MetaIndex.CAT_LYING_DOWN, value);
     }
 
     public boolean isLookingUp() {
@@ -75,7 +69,6 @@ public class CatWatcher extends TameableWatcher {
 
     @MethodDescription("Is the Cat looking upwards?")
     public void setLookingUp(boolean value) {
-        setData(MetaIndex.CAT_LOOKING_UP, value);
-        sendData(MetaIndex.CAT_LOOKING_UP);
+        sendData(MetaIndex.CAT_LOOKING_UP, value);
     }
 }

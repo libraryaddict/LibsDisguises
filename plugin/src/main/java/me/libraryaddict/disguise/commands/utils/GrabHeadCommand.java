@@ -23,9 +23,6 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.lang.reflect.Field;
 
-/**
- * Created by libraryaddict on 20/06/2020.
- */
 public class GrabHeadCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {

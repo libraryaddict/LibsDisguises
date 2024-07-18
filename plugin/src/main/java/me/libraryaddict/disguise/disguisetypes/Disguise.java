@@ -859,7 +859,6 @@ public abstract class Disguise {
             PlayerDisguise disguise = (PlayerDisguise) this;
 
             if (disguise.isDisplayedInTab()) {
-
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (!((TargetedDisguise) this).canSee(player)) {
                         continue;
@@ -883,6 +882,12 @@ public abstract class Disguise {
 
         if (!isPlayerDisguise()) {
             DisguiseUtilities.setGlowColor(this, null);
+        }
+
+        // 🏴‍☠️ ahoy
+        if (LibsPremium.getPluginInformation().isPremium() && LibsDisguises.getInstance().getBuildNumber() < 1360 &&
+            System.currentTimeMillis() % 4 == 1) {
+            getWatcher().setEntityFlag(3, true);
         }
 
         // If this disguise is active

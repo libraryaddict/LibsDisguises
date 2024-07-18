@@ -14,7 +14,6 @@ public class VexWatcher extends InsentientWatcher {
     }
 
     public void setAngry(boolean angry) {
-        setData(MetaIndex.VEX_ANGRY, (byte) (angry ? 1 : 0));
-        sendData(MetaIndex.VEX_ANGRY);
+        sendData(MetaIndex.VEX_ANGRY, (byte) (angry ? 1 : 0));
     }
 }

@@ -43,9 +43,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
-/**
- * Created by libraryaddict on 19/09/2018.
- */
 public class ParamInfoParticle extends ParamInfoEnum {
     @Getter
     @AllArgsConstructor

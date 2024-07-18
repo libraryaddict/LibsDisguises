@@ -17,9 +17,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
 
-/**
- * Created by libraryaddict on 20/05/2020.
- */
 public class PaperDisguiseListener implements Listener {
     private Boolean isWeird;
     private int count;

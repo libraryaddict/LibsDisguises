@@ -14,9 +14,6 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by libraryaddict on 1/06/2017.
- */
 public class SerializerItemStack implements JsonSerializer<ItemStack>, JsonDeserializer<ItemStack> {
 
     @Override

@@ -113,7 +113,7 @@ public class DisguiseListener implements Listener {
         }
 
         // If build number is null, or not a number. Then we can't check snapshots regardless
-        return !plugin.isNumberedBuild();
+        return !plugin.isJenkins();
     }
 
     private void runUpdateScheduler() {

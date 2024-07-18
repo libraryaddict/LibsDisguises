@@ -73,8 +73,7 @@ public class PlayerWatcher extends LivingWatcher {
     }
 
     public void setMainHand(MainHand mainHand) {
-        setData(MetaIndex.PLAYER_HAND, (byte) mainHand.ordinal());
-        sendData(MetaIndex.PLAYER_HAND);
+        sendData(MetaIndex.PLAYER_HAND, (byte) mainHand.ordinal());
     }
 
     // Bit 0 (0x01): Cape enabled
@@ -239,6 +238,7 @@ public class PlayerWatcher extends LivingWatcher {
             return Parrot.Variant.RED;
         }
 
+        // We don't convert this to enum compatibility because nms uses enum ordinal and we'd break anyways
         return Parrot.Variant.values()[number.getAsInt()];
     }
 
@@ -250,7 +250,6 @@ public class PlayerWatcher extends LivingWatcher {
             nbt.setTag("Variant", new NBTInt(variant.ordinal()));
         }
 
-        setData(meta, nbt);
-        sendData(meta);
+        sendData(meta, nbt);
     }
 }

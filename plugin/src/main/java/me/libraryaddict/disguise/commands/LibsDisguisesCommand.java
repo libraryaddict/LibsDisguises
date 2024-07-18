@@ -102,7 +102,7 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
             if (!disguises.isReleaseBuild()) {
                 version += "-";
 
-                if (disguises.isNumberedBuild()) {
+                if (disguises.isJenkins()) {
                     version += "b";
                 }
 

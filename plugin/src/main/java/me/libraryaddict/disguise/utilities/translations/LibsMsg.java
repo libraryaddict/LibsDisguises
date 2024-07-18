@@ -11,9 +11,6 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Locale;
 
-/**
- * Created by libraryaddict on 15/06/2017.
- */
 public enum LibsMsg {
     NO_DISGUISES_IN_USE("<red>There are no disguises in use!"),
     ACTIVE_DISGUISES_COUNT("<dark_green>There are %s disguises active"),

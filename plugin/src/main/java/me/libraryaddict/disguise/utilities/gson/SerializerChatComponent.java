@@ -11,9 +11,6 @@ import net.kyori.adventure.text.Component;
 
 import java.lang.reflect.Type;
 
-/**
- * Created by libraryaddict on 27/11/2018.
- */
 public class SerializerChatComponent implements JsonDeserializer<Component>, JsonSerializer<Component> {
 
     @Override

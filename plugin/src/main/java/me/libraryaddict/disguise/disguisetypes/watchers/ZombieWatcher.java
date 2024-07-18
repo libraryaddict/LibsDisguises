@@ -21,8 +21,7 @@ public class ZombieWatcher extends InsentientWatcher {
     }
 
     public void setBaby(boolean baby) {
-        setData(MetaIndex.ZOMBIE_BABY, baby);
-        sendData(MetaIndex.ZOMBIE_BABY);
+        sendData(MetaIndex.ZOMBIE_BABY, baby);
     }
 
     public void setAdult() {
@@ -40,8 +39,7 @@ public class ZombieWatcher extends InsentientWatcher {
 
     @NmsAddedIn(NmsVersion.v1_13)
     public void setConverting(boolean converting) {
-        setData(MetaIndex.ZOMBIE_CONVERTING_DROWNED, converting);
-        sendData(MetaIndex.ZOMBIE_CONVERTING_DROWNED);
+        sendData(MetaIndex.ZOMBIE_CONVERTING_DROWNED, converting);
     }
 
     @Deprecated
@@ -53,7 +51,6 @@ public class ZombieWatcher extends InsentientWatcher {
     @Deprecated
     @NmsRemovedIn(NmsVersion.v1_14)
     public void setAggressive(boolean handsup) {
-        setData(MetaIndex.ZOMBIE_AGGRESSIVE, handsup);
-        sendData(MetaIndex.ZOMBIE_AGGRESSIVE);
+        sendData(MetaIndex.ZOMBIE_AGGRESSIVE, handsup);
     }
 }

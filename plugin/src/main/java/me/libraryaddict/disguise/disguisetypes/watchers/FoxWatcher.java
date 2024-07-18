@@ -9,9 +9,6 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import org.bukkit.entity.Fox;
 
-/**
- * Created by libraryaddict on 6/05/2019.
- */
 @NmsAddedIn(NmsVersion.v1_14)
 public class FoxWatcher extends AgeableWatcher {
     public FoxWatcher(Disguise disguise) {
@@ -52,8 +49,7 @@ public class FoxWatcher extends AgeableWatcher {
 
     @RandomDefaultValue
     public void setType(Fox.Type type) {
-        setData(MetaIndex.FOX_TYPE, type);
-        sendData(MetaIndex.FOX_TYPE);
+        sendData(MetaIndex.FOX_TYPE, type);
     }
 
     public boolean isHeadTilted() {
@@ -101,7 +97,6 @@ public class FoxWatcher extends AgeableWatcher {
             b1 = (byte) (b1 & ~no);
         }
 
-        setData(MetaIndex.FOX_META, b1);
-        sendData(MetaIndex.FOX_META);
+        sendData(MetaIndex.FOX_META, b1);
     }
 }

@@ -29,8 +29,7 @@ public class BoatWatcher extends FlagWatcher {
 
     @MethodDescription("No visible difference")
     public void setDamage(float dmg) {
-        setData(MetaIndex.BOAT_DAMAGE, dmg);
-        sendData(MetaIndex.BOAT_DAMAGE);
+        sendData(MetaIndex.BOAT_DAMAGE, dmg);
     }
 
     public boolean isRightPaddling() {
@@ -39,8 +38,7 @@ public class BoatWatcher extends FlagWatcher {
 
     @MethodDescription("Is the boat's right paddle moving?")
     public void setRightPaddling(boolean rightPaddling) {
-        setData(MetaIndex.BOAT_RIGHT_PADDLING, rightPaddling);
-        sendData(MetaIndex.BOAT_RIGHT_PADDLING);
+        sendData(MetaIndex.BOAT_RIGHT_PADDLING, rightPaddling);
     }
 
     public boolean isLeftPaddling() {
@@ -49,8 +47,7 @@ public class BoatWatcher extends FlagWatcher {
 
     @MethodDescription("Is the boat's left paddle moving?")
     public void setLeftPaddling(boolean leftPaddling) {
-        setData(MetaIndex.BOAT_LEFT_PADDLING, leftPaddling);
-        sendData(MetaIndex.BOAT_LEFT_PADDLING);
+        sendData(MetaIndex.BOAT_LEFT_PADDLING, leftPaddling);
     }
 
     @NmsAddedIn(NmsVersion.v1_13)
@@ -61,8 +58,7 @@ public class BoatWatcher extends FlagWatcher {
     @NmsAddedIn(NmsVersion.v1_13)
     @MethodDescription("How violently does this boat shake when damaged?")
     public void setBoatShake(int number) {
-        setData(MetaIndex.BOAT_SHAKE, number);
-        sendData(MetaIndex.BOAT_SHAKE);
+        sendData(MetaIndex.BOAT_SHAKE, number);
     }
 
     @NmsAddedIn(NmsVersion.v1_19_R1)
@@ -75,8 +71,7 @@ public class BoatWatcher extends FlagWatcher {
     @MethodMappedAs("setBoatType")
     @MethodDescription("What type of wood is this boat made of?")
     public void setType(Boat.Type type) {
-        setData(MetaIndex.BOAT_TYPE_NEW, type);
-        sendData(MetaIndex.BOAT_TYPE_NEW);
+        sendData(MetaIndex.BOAT_TYPE_NEW, type);
     }
 
     @NmsRemovedIn(NmsVersion.v1_19_R1)
@@ -96,7 +91,6 @@ public class BoatWatcher extends FlagWatcher {
             return;
         }
 
-        setData(MetaIndex.BOAT_TYPE_OLD, boatType);
-        sendData(MetaIndex.BOAT_TYPE_OLD);
+        sendData(MetaIndex.BOAT_TYPE_OLD, boatType);
     }
 }

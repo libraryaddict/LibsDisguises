@@ -44,8 +44,7 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
             radius = 0.1f;
         }
 
-        setData(MetaIndex.AREA_EFFECT_RADIUS, radius);
-        sendData(MetaIndex.AREA_EFFECT_RADIUS);
+        sendData(MetaIndex.AREA_EFFECT_RADIUS, radius);
     }
 
     @NmsRemovedIn(NmsVersion.v1_20_R4)
@@ -57,8 +56,7 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
     @MethodDescription("What's the color of this Area Effect Cloud?")
     @NmsRemovedIn(NmsVersion.v1_20_R4)
     public void setColor(Color color) {
-        setData(MetaIndex.AREA_EFFECT_CLOUD_COLOR, color);
-        sendData(MetaIndex.AREA_EFFECT_CLOUD_COLOR);
+        sendData(MetaIndex.AREA_EFFECT_CLOUD_COLOR, color);
     }
 
     public boolean isIgnoreRadius() {
@@ -67,8 +65,7 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
 
     @MethodDescription
     public void setIgnoreRadius(boolean ignore) {
-        setData(MetaIndex.AREA_EFFECT_IGNORE_RADIUS, ignore);
-        sendData(MetaIndex.AREA_EFFECT_IGNORE_RADIUS);
+        sendData(MetaIndex.AREA_EFFECT_IGNORE_RADIUS, ignore);
     }
 
     @NmsAddedIn(NmsVersion.v1_13)
@@ -89,8 +86,7 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
     @MethodDescription("What particle is this Area Effect Cloud using?")
     public void setParticle(com.github.retrooper.packetevents.protocol.particle.Particle particle) {
         if (NmsVersion.v1_13.isSupported()) {
-            setData(MetaIndex.AREA_EFFECT_PARTICLE, particle);
-            sendData(MetaIndex.AREA_EFFECT_PARTICLE);
+            sendData(MetaIndex.AREA_EFFECT_PARTICLE, particle);
         } else {
             setParticleType((Particle) SpigotConversionUtil.toBukkitParticle(particle.getType()));
         }
@@ -112,8 +108,7 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
             setParticle(
                 new com.github.retrooper.packetevents.protocol.particle.Particle(SpigotConversionUtil.fromBukkitParticle(particle)));
         } else {
-            setData(MetaIndex.AREA_EFFECT_PARTICLE_OLD, ReflectionManager.enumOrdinal(particle));
-            sendData(MetaIndex.AREA_EFFECT_PARTICLE_OLD);
+            sendData(MetaIndex.AREA_EFFECT_PARTICLE_OLD, ReflectionManager.enumOrdinal(particle));
         }
     }
 }

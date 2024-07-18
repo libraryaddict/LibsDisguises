@@ -14,7 +14,6 @@ public class GhastWatcher extends InsentientWatcher {
     }
 
     public void setAggressive(boolean isAggressive) {
-        setData(MetaIndex.GHAST_AGRESSIVE, isAggressive);
-        sendData(MetaIndex.GHAST_AGRESSIVE);
+        sendData(MetaIndex.GHAST_AGRESSIVE, isAggressive);
     }
 }

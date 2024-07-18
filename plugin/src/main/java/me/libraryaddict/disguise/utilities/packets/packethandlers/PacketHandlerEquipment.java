@@ -25,9 +25,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by libraryaddict on 3/01/2019.
- */
 public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerEntityEquipment> {
     @Override
     public PacketTypeCommon[] getHandledPackets() {

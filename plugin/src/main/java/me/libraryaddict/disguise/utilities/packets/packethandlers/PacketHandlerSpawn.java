@@ -58,9 +58,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by libraryaddict on 3/01/2019.
- */
 public class PacketHandlerSpawn implements IPacketHandler {
     @Override
     public PacketTypeCommon[] getHandledPackets() {
@@ -307,8 +304,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
         }
 
         if (disguise.getType() == DisguiseType.EVOKER_FANGS) {
-            WrapperPlayServerEntityStatus newPacket = new WrapperPlayServerEntityStatus(disguisedEntity.getEntityId(), 4);
-            packets.addPacket(newPacket);
+            packets.addPacket(new WrapperPlayServerEntityStatus(disguisedEntity.getEntityId(), 4));
         }
 
         if (disguise.getWatcher() instanceof LivingWatcher) {

@@ -16,10 +16,6 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * Created by libraryaddict on 4/04/2020.
- */
-
 @AllArgsConstructor
 public class DisguiseModifyInteraction implements LibsEntityInteract {
     private String[] options;

@@ -5,9 +5,6 @@ import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 
-/**
- * Created by libraryaddict on 6/03/2019.
- */
 public class ParamInfoTime extends ParamInfo {
     public ParamInfoTime(Class paramClass, String name, String description) {
         super(paramClass, name, description);

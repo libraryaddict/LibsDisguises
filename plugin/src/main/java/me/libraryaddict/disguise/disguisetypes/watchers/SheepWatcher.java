@@ -28,8 +28,7 @@ public class SheepWatcher extends AgeableWatcher {
     public void setColor(DyeColor color) {
         byte b0 = getData(MetaIndex.SHEEP_WOOL);
 
-        setData(MetaIndex.SHEEP_WOOL, (byte) (b0 & 240 | color.getWoolData() & 15));
-        sendData(MetaIndex.SHEEP_WOOL);
+        sendData(MetaIndex.SHEEP_WOOL, (byte) (b0 & 240 | color.getWoolData() & 15));
     }
 
     public boolean isRainbowWool() {
@@ -66,11 +65,11 @@ public class SheepWatcher extends AgeableWatcher {
         byte b0 = getData(MetaIndex.SHEEP_WOOL);
 
         if (flag) {
-            setData(MetaIndex.SHEEP_WOOL, (byte) (b0 | 16));
+            b0 = (byte) (b0 | 16);
         } else {
-            setData(MetaIndex.SHEEP_WOOL, (byte) (b0 & -17));
+            b0 = (byte) (b0 & -17);
         }
 
-        sendData(MetaIndex.SHEEP_WOOL);
+        sendData(MetaIndex.SHEEP_WOOL, b0);
     }
 }

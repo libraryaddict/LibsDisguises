@@ -14,7 +14,6 @@ public class PigWatcher extends AgeableWatcher {
     }
 
     public void setSaddled(boolean isSaddled) {
-        setData(MetaIndex.PIG_SADDLED, isSaddled);
-        sendData(MetaIndex.PIG_SADDLED);
+        sendData(MetaIndex.PIG_SADDLED, isSaddled);
     }
 }

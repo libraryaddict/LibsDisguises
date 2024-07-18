@@ -1,8 +1,5 @@
 package me.libraryaddict.disguise.utilities.params.types.base;
 
-/**
- * Created by libraryaddict on 7/09/2018.
- */
 public class ParamInfoFloatNullable extends ParamInfoFloat {
     public ParamInfoFloatNullable(String name, String description) {
         super(Float.class, name, description);

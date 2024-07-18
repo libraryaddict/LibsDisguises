@@ -8,9 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Created by libraryaddict on 17/02/2020.
- */
 @Getter
 @Setter
 public class WatcherInfo {

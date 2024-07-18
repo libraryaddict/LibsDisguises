@@ -8,9 +8,6 @@ import org.bukkit.entity.EntityType;
 import java.util.Locale;
 import java.util.Objects;
 
-/**
- * Created by libraryaddict on 5/10/2018.
- */
 public class DisguisePerm {
     private final DisguiseType disguiseType;
     private String permName;

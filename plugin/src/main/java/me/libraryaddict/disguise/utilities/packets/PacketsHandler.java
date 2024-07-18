@@ -27,9 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by libraryaddict on 3/01/2019.
- */
 public class PacketsHandler {
     private final IPacketHandler[] packetHandlers = new IPacketHandler[PacketType.Play.Server.values().length];
 

@@ -17,7 +17,6 @@ public class WitchWatcher extends RaiderWatcher {
     }
 
     public void setAggressive(boolean aggressive) {
-        setData(MetaIndex.WITCH_AGGRESSIVE, aggressive);
-        sendData(MetaIndex.WITCH_AGGRESSIVE);
+        sendData(MetaIndex.WITCH_AGGRESSIVE, aggressive);
     }
 }

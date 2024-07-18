@@ -15,9 +15,6 @@ import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
-/**
- * Created by libraryaddict on 1/06/2017.
- */
 public class SerializerWrappedBlockData implements JsonSerializer<WrappedBlockState>, JsonDeserializer<WrappedBlockState> {
 
     @Override

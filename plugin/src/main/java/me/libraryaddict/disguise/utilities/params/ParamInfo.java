@@ -11,9 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by libraryaddict on 7/09/2018.
- */
 public abstract class ParamInfo<T> {
     private final Class paramClass;
     private final String descriptiveName;

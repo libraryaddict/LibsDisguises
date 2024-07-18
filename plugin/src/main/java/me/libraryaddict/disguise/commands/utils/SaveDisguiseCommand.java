@@ -21,9 +21,6 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Arrays;
 
-/**
- * Created by libraryaddict on 28/12/2019.
- */
 public class SaveDisguiseCommand implements CommandExecutor {
 
     @Override

@@ -13,9 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Created by libraryaddict on 23/05/2020.
- */
 public class SoundManager {
     public void load() {
         SoundGroup.getGroups().clear();

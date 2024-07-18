@@ -24,8 +24,7 @@ public class WitherWatcher extends InsentientWatcher {
      * Sets the amount of time this Wither is invulnerable for
      */
     public void setInvulnerability(int invulnerability) {
-        setData(MetaIndex.WITHER_INVUL, invulnerability);
-        sendData(MetaIndex.WITHER_INVUL);
+        sendData(MetaIndex.WITHER_INVUL, invulnerability);
     }
 
     public int[] getTargets() {

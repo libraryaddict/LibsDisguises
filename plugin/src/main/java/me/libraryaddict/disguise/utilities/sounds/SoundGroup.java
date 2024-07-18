@@ -10,9 +10,6 @@ import org.bukkit.Sound;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 
-/**
- * Created by libraryaddict on 23/05/2020.
- */
 public class SoundGroup {
     public enum SoundType {
         CANCEL,

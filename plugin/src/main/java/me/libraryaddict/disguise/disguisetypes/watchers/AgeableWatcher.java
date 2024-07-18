@@ -19,8 +19,7 @@ public class AgeableWatcher extends InsentientWatcher {
 
     @MethodDescription("Is this a baby?")
     public void setBaby(boolean isBaby) {
-        setData(MetaIndex.AGEABLE_BABY, isBaby);
-        sendData(MetaIndex.AGEABLE_BABY);
+        sendData(MetaIndex.AGEABLE_BABY, isBaby);
     }
 
     public void setAdult() {

@@ -42,9 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by libraryaddict on 15/09/2020.
- */
 public class PlayerSkinHandler implements Listener {
     @RequiredArgsConstructor
     @Getter

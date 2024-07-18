@@ -21,9 +21,6 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-/**
- * Created by libraryaddict on 14/10/2018.
- */
 public class DisguisePermissions {
     private static class PermissionStorage {
         private final DisguisePerm disguisePerm;

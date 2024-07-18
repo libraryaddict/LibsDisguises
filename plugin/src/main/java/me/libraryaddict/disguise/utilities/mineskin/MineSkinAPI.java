@@ -28,8 +28,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
- * Created by libraryaddict on 28/12/2019.
- * <p>
  * This isn't a stanealone class
  */
 public class MineSkinAPI {

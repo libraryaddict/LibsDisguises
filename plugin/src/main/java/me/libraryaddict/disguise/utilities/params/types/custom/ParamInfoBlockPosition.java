@@ -3,9 +3,6 @@ package me.libraryaddict.disguise.utilities.params.types.custom;
 import com.github.retrooper.packetevents.util.Vector3i;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 
-/**
- * Created by libraryaddict on 7/09/2018.
- */
 public class ParamInfoBlockPosition extends ParamInfo {
     public ParamInfoBlockPosition(Class paramClass, String name, String valueType, String description) {
         super(paramClass, name, valueType, description);

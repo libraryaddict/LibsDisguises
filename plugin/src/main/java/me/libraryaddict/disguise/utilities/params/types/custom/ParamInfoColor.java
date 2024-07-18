@@ -8,9 +8,6 @@ import org.bukkit.Color;
 
 import java.util.Map;
 
-/**
- * Created by libraryaddict on 19/09/2018.
- */
 public class ParamInfoColor extends ParamInfoEnum {
     @Getter
     private static Map<String, Color> staticColors;

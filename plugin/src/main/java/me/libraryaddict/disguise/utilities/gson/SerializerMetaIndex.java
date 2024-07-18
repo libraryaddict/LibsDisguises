@@ -11,9 +11,6 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 import java.lang.reflect.Type;
 
-/**
- * Created by libraryaddict on 1/06/2017.
- */
 public class SerializerMetaIndex implements JsonSerializer<MetaIndex>, JsonDeserializer<MetaIndex> {
 
     @Override

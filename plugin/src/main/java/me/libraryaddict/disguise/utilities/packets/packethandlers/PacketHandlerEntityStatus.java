@@ -9,9 +9,6 @@ import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-/**
- * Created by libraryaddict on 3/01/2019.
- */
 public class PacketHandlerEntityStatus implements IPacketHandler<WrapperPlayServerEntityStatus> {
     @Override
     public PacketTypeCommon[] getHandledPackets() {

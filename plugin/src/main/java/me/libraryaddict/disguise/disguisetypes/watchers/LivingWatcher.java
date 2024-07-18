@@ -126,8 +126,7 @@ public class LivingWatcher extends FlagWatcher {
             optional = Optional.empty();
         }
 
-        setData(MetaIndex.LIVING_BED_POSITION, optional);
-        sendData(MetaIndex.LIVING_BED_POSITION);
+        sendData(MetaIndex.LIVING_BED_POSITION, optional);
     }
 
     public float getHealth() {
@@ -135,8 +134,7 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public void setHealth(float health) {
-        setData(MetaIndex.LIVING_HEALTH, health);
-        sendData(MetaIndex.LIVING_HEALTH);
+        sendData(MetaIndex.LIVING_HEALTH, health);
     }
 
     /*@NmsAddedIn(val = NmsVersion.v1_13)
@@ -158,12 +156,12 @@ public class LivingWatcher extends FlagWatcher {
         modifiedLivingAnimations[byteValue] = true;
 
         if (flag) {
-            setData(MetaIndex.LIVING_META, (byte) (b0 | 1 << byteValue));
+            b0 = (byte) (b0 | 1 << byteValue);
         } else {
-            setData(MetaIndex.LIVING_META, (byte) (b0 & ~(1 << byteValue)));
+            b0 = (byte) (b0 & ~(1 << byteValue));
         }
 
-        sendData(MetaIndex.LIVING_META);
+        sendData(MetaIndex.LIVING_META, b0);
     }
 
     private boolean isMainHandUsed() {
@@ -244,8 +242,7 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public void setPotionParticlesAmbient(boolean particles) {
-        setData(MetaIndex.LIVING_POTION_AMBIENT, particles);
-        sendData(MetaIndex.LIVING_POTION_AMBIENT);
+        sendData(MetaIndex.LIVING_POTION_AMBIENT, particles);
     }
 
     public Color getParticlesColor() {
@@ -256,8 +253,7 @@ public class LivingWatcher extends FlagWatcher {
     public void setParticlesColor(Color color) {
         potionEffects.clear();
 
-        setData(MetaIndex.LIVING_POTIONS, color.asRGB());
-        sendData(MetaIndex.LIVING_POTIONS);
+        sendData(MetaIndex.LIVING_POTIONS, color.asRGB());
     }
 
     private int getPotions() {
@@ -329,8 +325,7 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     private void sendPotionEffects() {
-        setData(MetaIndex.LIVING_POTIONS, getPotions());
-        sendData(MetaIndex.LIVING_POTIONS);
+        sendData(MetaIndex.LIVING_POTIONS, getPotions());
     }
 
     public int getArrowsSticking() {
@@ -339,8 +334,7 @@ public class LivingWatcher extends FlagWatcher {
 
     @MethodOnlyUsedBy(value = {DisguiseType.PLAYER})
     public void setArrowsSticking(int arrowsNo) {
-        setData(MetaIndex.LIVING_ARROWS, Math.max(0, Math.min(127, arrowsNo)));
-        sendData(MetaIndex.LIVING_ARROWS);
+        sendData(MetaIndex.LIVING_ARROWS, Math.max(0, Math.min(127, arrowsNo)));
     }
 
     @Override

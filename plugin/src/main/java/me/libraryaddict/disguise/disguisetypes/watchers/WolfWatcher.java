@@ -41,8 +41,7 @@ public class WolfWatcher extends TameableWatcher {
             return;
         }
 
-        setData(MetaIndex.WOLF_COLLAR, AnimalColor.getColorByWool(newColor.getWoolData()));
-        sendData(MetaIndex.WOLF_COLLAR);
+        sendData(MetaIndex.WOLF_COLLAR, AnimalColor.getColorByWool(newColor.getWoolData()));
     }
 
     public boolean isBegging() {
@@ -50,8 +49,7 @@ public class WolfWatcher extends TameableWatcher {
     }
 
     public void setBegging(boolean begging) {
-        setData(MetaIndex.WOLF_BEGGING, begging);
-        sendData(MetaIndex.WOLF_BEGGING);
+        sendData(MetaIndex.WOLF_BEGGING, begging);
     }
 
     public boolean isAngry() {
@@ -76,8 +74,7 @@ public class WolfWatcher extends TameableWatcher {
 
     @NmsAddedIn(NmsVersion.v1_16)
     public void setAnger(int anger) {
-        setData(MetaIndex.WOLF_ANGER, anger);
-        sendData(MetaIndex.WOLF_ANGER);
+        sendData(MetaIndex.WOLF_ANGER, anger);
     }
 
     /**
@@ -99,14 +96,12 @@ public class WolfWatcher extends TameableWatcher {
     @Deprecated
     @NmsRemovedIn(NmsVersion.v1_15)
     public void setDamageTaken(float damage) {
-        setData(MetaIndex.WOLF_DAMAGE, damage);
-        sendData(MetaIndex.WOLF_DAMAGE);
+        sendData(MetaIndex.WOLF_DAMAGE, damage);
     }
 
     @NmsAddedIn(NmsVersion.v1_20_R4)
     public void setVariant(Wolf.Variant variant) {
-        setData(MetaIndex.WOLF_VARIANT, variant);
-        sendData(MetaIndex.WOLF_VARIANT);
+        sendData(MetaIndex.WOLF_VARIANT, variant);
     }
 
     @NmsAddedIn(NmsVersion.v1_20_R4)

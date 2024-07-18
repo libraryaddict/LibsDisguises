@@ -23,8 +23,7 @@ public class OcelotWatcher extends AgeableWatcher {
 
     @NmsAddedIn(NmsVersion.v1_14)
     public void setTrusting(boolean trusting) {
-        setData(MetaIndex.OCELOT_TRUST, trusting);
-        sendData(MetaIndex.OCELOT_TRUST);
+        sendData(MetaIndex.OCELOT_TRUST, trusting);
     }
 
     @NmsRemovedIn(NmsVersion.v1_14)
@@ -36,8 +35,7 @@ public class OcelotWatcher extends AgeableWatcher {
     @NmsRemovedIn(NmsVersion.v1_14)
     @Deprecated
     public void setType(Ocelot.Type newType) {
-        setData(MetaIndex.OCELOT_TYPE, newType);
-        sendData(MetaIndex.OCELOT_TYPE);
+        sendData(MetaIndex.OCELOT_TYPE, newType);
     }
 
     @NmsRemovedIn(NmsVersion.v1_14)
@@ -47,8 +45,7 @@ public class OcelotWatcher extends AgeableWatcher {
 
     @NmsRemovedIn(NmsVersion.v1_14)
     public void setOwner(UUID owner) {
-        setData(MetaIndex.TAMEABLE_OWNER, Optional.of(owner));
-        sendData(MetaIndex.TAMEABLE_OWNER);
+        sendData(MetaIndex.TAMEABLE_OWNER, Optional.of(owner));
     }
 
     @NmsRemovedIn(NmsVersion.v1_14)
@@ -81,11 +78,11 @@ public class OcelotWatcher extends AgeableWatcher {
         byte value = getData(MetaIndex.TAMEABLE_META);
 
         if (flag) {
-            setData(MetaIndex.TAMEABLE_META, (byte) (value | no));
+            value = (byte) (value | no);
         } else {
-            setData(MetaIndex.TAMEABLE_META, (byte) (value & -(no + 1)));
+            value = (byte) (value & -(no + 1));
         }
 
-        sendData(MetaIndex.TAMEABLE_META);
+        sendData(MetaIndex.TAMEABLE_META, value);
     }
 }

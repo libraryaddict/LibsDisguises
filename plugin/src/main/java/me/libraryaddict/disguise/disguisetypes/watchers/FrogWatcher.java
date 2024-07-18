@@ -22,7 +22,6 @@ public class FrogWatcher extends AgeableWatcher {
 
     @RandomDefaultValue
     public void setVariant(Frog.Variant variant) {
-        setData(MetaIndex.FROG_VARIANT, variant);
-        sendData(MetaIndex.FROG_VARIANT);
+        sendData(MetaIndex.FROG_VARIANT, variant);
     }
 }

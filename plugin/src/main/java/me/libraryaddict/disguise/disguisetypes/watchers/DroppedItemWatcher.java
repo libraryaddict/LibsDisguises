@@ -21,8 +21,7 @@ public class DroppedItemWatcher extends FlagWatcher {
 
     @MethodDescription("What Item was dropped?")
     public void setItemStack(ItemStack item) {
-        setData(MetaIndex.DROPPED_ITEM, item);
-        sendData(MetaIndex.DROPPED_ITEM);
+        sendData(MetaIndex.DROPPED_ITEM, item);
 
         if (!getDisguise().isCustomDisguiseName()) {
             getDisguise().setDisguiseName(TranslateType.DISGUISES.get(DisguiseType.DROPPED_ITEM.toReadable()) + " " +

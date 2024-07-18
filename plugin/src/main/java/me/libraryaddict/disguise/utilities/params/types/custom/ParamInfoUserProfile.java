@@ -4,9 +4,6 @@ import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 
-/**
- * Created by libraryaddict on 7/09/2018.
- */
 public class ParamInfoUserProfile extends ParamInfo<UserProfile> {
     public ParamInfoUserProfile(Class paramClass, String name, String description) {
         super(paramClass, name, description);

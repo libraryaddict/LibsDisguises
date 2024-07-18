@@ -30,9 +30,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-/**
- * Created by libraryaddict on 18/06/2020.
- */
 public class LDUploadLogs implements LDCommand {
     class MCLogs {
         boolean success;

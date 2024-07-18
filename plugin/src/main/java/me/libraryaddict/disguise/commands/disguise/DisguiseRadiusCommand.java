@@ -9,6 +9,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.apache.commons.lang.StringUtils;
@@ -25,13 +26,12 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCompleter {
     private final ArrayList<Class<? extends Entity>> validClasses = new ArrayList<>();
 
     public DisguiseRadiusCommand() {
-        for (EntityType type : EntityType.values()) {
+        for (EntityType type : ReflectionManager.enumValues(EntityType.class)) {
             Class c = type.getEntityClass();
 
             while (c != null && Entity.class.isAssignableFrom(c) && !validClasses.contains(c)) {
@@ -98,7 +98,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
             if (starting == 0) {
                 try {
-                    type = EntityType.valueOf(args[0].toUpperCase(Locale.ENGLISH));
+                    type = ReflectionManager.fromEnum(EntityType.class, args[0]);
                 } catch (Exception ignored) {
                 }
 

@@ -16,7 +16,6 @@ public class ChestedHorseWatcher extends AbstractHorseWatcher {
 
     @MethodDescription("Is this Horse wearing a chest?")
     public void setCarryingChest(boolean carryingChest) {
-        setData(MetaIndex.HORSE_CHESTED_CARRYING_CHEST, carryingChest);
-        sendData(MetaIndex.HORSE_CHESTED_CARRYING_CHEST);
+        sendData(MetaIndex.HORSE_CHESTED_CARRYING_CHEST, carryingChest);
     }
 }

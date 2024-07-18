@@ -2,9 +2,6 @@ package me.libraryaddict.disguise.utilities.reflection;
 
 import lombok.Getter;
 
-/**
- * Created by libraryaddict on 6/02/2020.
- */
 public enum NmsVersion {
     v1_12("1.12", "1.12.1", "1.12.2"),
     v1_13("1.13", "1.13.1", "1.13.2"),

@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
@@ -377,7 +378,7 @@ public enum DisguiseType {
         // Finally, try via enum name
         if (getEntityType() == null) {
             try {
-                setEntityType(EntityType.valueOf(name()));
+                setEntityType(ReflectionManager.fromEnum(EntityType.class, name()));
             } catch (Exception ex) {
                 if (LibsDisguises.getInstance() == null) {
                     return;

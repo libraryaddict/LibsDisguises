@@ -30,9 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by libraryaddict on 13/02/2020.
- */
 public class DisguiseMethods {
     private final HashMap<Class<? extends FlagWatcher>, List<WatcherMethod>> watcherMethods = new HashMap<>();
     private final HashMap<Class<? extends Disguise>, List<WatcherMethod>> disguiseMethods = new HashMap<>();
@@ -135,7 +132,7 @@ public class DisguiseMethods {
                 if (paramType == null) {
                     String name = methodType.isArray() ? methodType.getComponentType().getName() + "[]" : methodType.getName();
 
-                    if (!notedSkippedParamTypes.contains(name) && !LibsDisguises.getInstance().isNumberedBuild()) {
+                    if (!notedSkippedParamTypes.contains(name) && !LibsDisguises.getInstance().isJenkins()) {
                         notedSkippedParamTypes.add(name);
                         LibsDisguises.getInstance().getLogger()
                             .info("DEBUG: Skipped method using " + name + ", don't need it in experimental builds");

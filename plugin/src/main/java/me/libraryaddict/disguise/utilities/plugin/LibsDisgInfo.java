@@ -5,11 +5,8 @@ import lombok.Getter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by libraryaddict on 20/06/2019.
- */
-public class PluginInformation {
-    @Getter
+@Getter
+public class LibsDisgInfo {
     private final long size;
     private final String userID;
     private final String resourceID;
@@ -19,8 +16,8 @@ public class PluginInformation {
     private final String buildNumber;
     private final String buildDate;
 
-    public PluginInformation(long size, String userID, String resourceID, String downloadID, boolean premium, String version,
-                             String buildNumber, String buildDate) {
+    public LibsDisgInfo(long size, String userID, String resourceID, String downloadID, boolean premium, String version, String buildNumber,
+                        String buildDate) {
         this.size = size;
         this.userID = userID;
         this.resourceID = resourceID;
@@ -29,34 +26,6 @@ public class PluginInformation {
         this.version = version;
         this.buildNumber = buildNumber;
         this.buildDate = buildDate;
-    }
-
-    public String getUserID() {
-        return userID;
-    }
-
-    public String getResourceID() {
-        return resourceID;
-    }
-
-    public String getDownloadID() {
-        return downloadID;
-    }
-
-    public boolean isPremium() {
-        return premium;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public String getBuildNumber() {
-        return buildNumber;
-    }
-
-    public String getBuildDate() {
-        return buildDate;
     }
 
     public Date getParsedBuildDate() {
@@ -68,8 +37,8 @@ public class PluginInformation {
         return null;
     }
 
-    public boolean isLegit() {
-        return getUserID().matches("\\d+") && !getUserID().equals("12345") && getResourceID().equals("32453") &&
+    public boolean isPaid() {
+        return !"12345".equals(getUserID()) && getResourceID().equals("32453") && getUserID().matches("\\d+") &&
             getDownloadID().matches("-?\\d+");
     }
 }

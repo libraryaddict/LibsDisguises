@@ -22,7 +22,6 @@ public abstract class AbstractSkeletonWatcher extends InsentientWatcher {
     @Deprecated
     @NmsRemovedIn(NmsVersion.v1_14)
     public void setSwingArms(boolean swingingArms) {
-        setData(MetaIndex.SKELETON_SWING_ARMS, swingingArms);
-        sendData(MetaIndex.SKELETON_SWING_ARMS);
+        sendData(MetaIndex.SKELETON_SWING_ARMS, swingingArms);
     }
 }

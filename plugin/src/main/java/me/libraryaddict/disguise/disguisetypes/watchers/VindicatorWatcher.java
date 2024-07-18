@@ -20,7 +20,6 @@ public class VindicatorWatcher extends IllagerWatcher {
     @Deprecated
     @NmsRemovedIn(NmsVersion.v1_14)
     public void setJohnny(boolean isJohnny) {
-        setData(MetaIndex.ILLAGER_META, (byte) (isJohnny ? 1 : 0));
-        sendData(MetaIndex.ILLAGER_META);
+        sendData(MetaIndex.ILLAGER_META, (byte) (isJohnny ? 1 : 0));
     }
 }

@@ -353,7 +353,7 @@ public class DisguiseConfig {
             (LibsPremium.getPaidInformation() == null ? LibsPremium.getPluginInformation() : LibsPremium.getPaidInformation()).getUserID());
 
         // Don't ever run the auto updater on a custom build..
-        if (!LibsDisguises.getInstance().isNumberedBuild()) {
+        if (!LibsDisguises.getInstance().isJenkins()) {
             return;
         }
 

@@ -5,9 +5,6 @@ import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 
 import java.util.HashMap;
 
-/**
- * Created by libraryaddict on 19/02/2020.
- */
 public class DisguiseValues {
     private static final HashMap<DisguiseType, DisguiseValues> values = new HashMap<>();
 

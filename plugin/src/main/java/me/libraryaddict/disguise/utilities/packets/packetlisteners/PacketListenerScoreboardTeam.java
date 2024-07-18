@@ -6,9 +6,6 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
-/**
- * Created by libraryaddict on 4/07/2020.
- */
 public class PacketListenerScoreboardTeam extends SimplePacketListenerAbstract {
     @Override
     public void onPacketPlaySend(PacketPlaySendEvent event) {

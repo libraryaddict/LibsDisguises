@@ -2,9 +2,6 @@ package me.libraryaddict.disguise.utilities.params.types.base;
 
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 
-/**
- * Created by libraryaddict on 7/09/2018.
- */
 public class ParamInfoFloat extends ParamInfo {
     public ParamInfoFloat(String name, String description) {
         this(float.class, name, description);

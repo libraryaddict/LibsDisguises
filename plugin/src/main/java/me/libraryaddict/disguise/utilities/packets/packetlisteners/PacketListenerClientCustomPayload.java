@@ -14,9 +14,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 
-/**
- * Created by libraryaddict on 21/05/2020.
- */
 public class PacketListenerClientCustomPayload extends SimplePacketListenerAbstract {
     private final String mcChannel = NmsVersion.v1_13.isSupported() ? "minecraft:brand" : "MC|Brand";
 

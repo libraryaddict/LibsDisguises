@@ -5,9 +5,6 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 
-/**
- * Created by libraryaddict on 14/12/2019.
- */
 @NmsAddedIn(NmsVersion.v1_15)
 public class BeeWatcher extends AgeableWatcher {
     public BeeWatcher(Disguise disguise) {
@@ -19,8 +16,7 @@ public class BeeWatcher extends AgeableWatcher {
     }
 
     public void setBeeAnger(int beeAnger) {
-        setData(MetaIndex.BEE_ANGER, beeAnger);
-        sendData(MetaIndex.BEE_ANGER);
+        sendData(MetaIndex.BEE_ANGER, beeAnger);
     }
 
     public void setHasNectar(boolean hasNectar) {
@@ -60,7 +56,6 @@ public class BeeWatcher extends AgeableWatcher {
             b1 = (byte) (b1 & ~no);
         }
 
-        setData(MetaIndex.BEE_META, b1);
-        sendData(MetaIndex.BEE_META);
+        sendData(MetaIndex.BEE_META, b1);
     }
 }

@@ -23,8 +23,7 @@ public abstract class AbstractHorseWatcher extends AgeableWatcher {
     @NmsRemovedIn(NmsVersion.v1_19_R3)
     @MethodDescription
     public void setOwner(UUID uuid) {
-        setData(MetaIndex.HORSE_OWNER, Optional.of(uuid));
-        sendData(MetaIndex.HORSE_OWNER);
+        sendData(MetaIndex.HORSE_OWNER, Optional.of(uuid));
     }
 
     /**
@@ -108,11 +107,11 @@ public abstract class AbstractHorseWatcher extends AgeableWatcher {
         byte j = getData(MetaIndex.HORSE_META);
 
         if (flag) {
-            setData(MetaIndex.HORSE_META, (byte) (j | i));
+            j = (byte) (j | i);
         } else {
-            setData(MetaIndex.HORSE_META, (byte) (j & ~i));
+            j = (byte) (j & ~i);
         }
 
-        sendData(MetaIndex.HORSE_META);
+        sendData(MetaIndex.HORSE_META, j);
     }
 }

@@ -17,9 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by libraryaddict on 20/04/2020.
- */
 public class LDJson implements LDCommand {
     @Override
     public List<String> getTabComplete() {

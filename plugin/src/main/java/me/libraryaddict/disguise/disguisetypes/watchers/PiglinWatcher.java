@@ -3,9 +3,6 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
-/**
- * Created by libraryaddict on 25/06/2020.
- */
 public class PiglinWatcher extends PiglinAbstractWatcher {
     public PiglinWatcher(Disguise disguise) {
         super(disguise);
@@ -16,8 +13,7 @@ public class PiglinWatcher extends PiglinAbstractWatcher {
     }
 
     public void setDancing(boolean dancing) {
-        setData(MetaIndex.PIGLIN_DANCING, dancing);
-        sendData(MetaIndex.PIGLIN_DANCING);
+        sendData(MetaIndex.PIGLIN_DANCING, dancing);
     }
 
     public boolean isUsingCrossbow() {
@@ -25,8 +21,7 @@ public class PiglinWatcher extends PiglinAbstractWatcher {
     }
 
     public void setUsingCrossbow(boolean crossbow) {
-        setData(MetaIndex.PIGLIN_CROSSBOW, crossbow);
-        sendData(MetaIndex.PIGLIN_CROSSBOW);
+        sendData(MetaIndex.PIGLIN_CROSSBOW, crossbow);
     }
 
     public boolean isBaby() {
@@ -34,7 +29,6 @@ public class PiglinWatcher extends PiglinAbstractWatcher {
     }
 
     public void setBaby(boolean baby) {
-        setData(MetaIndex.PIGLIN_BABY, baby);
-        sendData(MetaIndex.PIGLIN_BABY);
+        sendData(MetaIndex.PIGLIN_BABY, baby);
     }
 }

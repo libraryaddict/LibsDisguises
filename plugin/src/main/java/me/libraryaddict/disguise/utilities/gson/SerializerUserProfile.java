@@ -15,9 +15,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-/**
- * Created by libraryaddict on 1/06/2017.
- */
 public class SerializerUserProfile implements JsonDeserializer<UserProfile> {
     private final Type listType = new TypeToken<List<TextureProperty>>() {
     }.getType();

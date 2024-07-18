@@ -175,7 +175,7 @@ public class LibsDisguises extends JavaPlugin {
             }
         } catch (Throwable throwable) {
             try {
-                if (isNumberedBuild() && DisguiseConfig.isAutoUpdate()) {
+                if (isJenkins() && DisguiseConfig.isAutoUpdate()) {
                     getUpdateChecker().doUpdate();
                 }
             } catch (Throwable t) {
@@ -236,7 +236,7 @@ public class LibsDisguises extends JavaPlugin {
             new MetricsInitalizer();
         } catch (Throwable throwable) {
             try {
-                if (isNumberedBuild() && DisguiseConfig.isAutoUpdate()) {
+                if (isJenkins() && DisguiseConfig.isAutoUpdate()) {
                     getUpdateChecker().doUpdate();
                 }
             } catch (Throwable t) {
@@ -377,7 +377,7 @@ public class LibsDisguises extends JavaPlugin {
         getLogger().info("Discovered nms version: (Package: " + nmsPackageName + ") (LD: " + ReflectionManager.getVersion() + ") (MC: " +
             ReflectionManager.getMinecraftVersion() + ")");
 
-        getLogger().info("Jenkins Build: " + (isNumberedBuild() ? "#" : "") + getBuildNo());
+        getLogger().info("Jenkins Build: " + (isJenkins() ? "#" : "") + getBuildNo());
 
         getLogger().info("Build Date: " + buildDate);
     }
@@ -516,11 +516,15 @@ public class LibsDisguises extends JavaPlugin {
     }
 
     public int getBuildNumber() {
-        return isNumberedBuild() ? Integer.parseInt(getBuildNo()) : 0;
+        return isJenkins() ? Integer.parseInt(getBuildNo()) : 0;
     }
 
-    public boolean isNumberedBuild() {
+    public boolean isJenkins() {
         return getBuildNo() != null && getBuildNo().matches("\\d+");
+    }
+
+    public boolean isDebuggingBuild() {
+        return !isJenkins();
     }
 
     private void registerCommand(String commandName, CommandExecutor executioner) {

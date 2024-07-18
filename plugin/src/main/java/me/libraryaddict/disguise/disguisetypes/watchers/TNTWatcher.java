@@ -24,8 +24,7 @@ public class TNTWatcher extends FlagWatcher {
     @NmsAddedIn(NmsVersion.v1_20_R3)
     @MethodMappedAs("setBlock")
     public void setBlockData(WrappedBlockState block) {
-        setData(MetaIndex.TNT_BLOCK_TYPE, block);
-        sendData(MetaIndex.TNT_BLOCK_TYPE);
+        sendData(MetaIndex.TNT_BLOCK_TYPE, block);
     }
 
     @NmsAddedIn(NmsVersion.v1_20_R3)
@@ -35,7 +34,6 @@ public class TNTWatcher extends FlagWatcher {
 
     @NmsAddedIn(NmsVersion.v1_20_R3)
     public void setBlock(BlockData block) {
-        setData(MetaIndex.TNT_BLOCK_TYPE, SpigotConversionUtil.fromBukkitBlockData(block));
-        sendData(MetaIndex.TNT_BLOCK_TYPE);
+        sendData(MetaIndex.TNT_BLOCK_TYPE, SpigotConversionUtil.fromBukkitBlockData(block));
     }
 }

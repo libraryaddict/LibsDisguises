@@ -8,9 +8,6 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-/**
- * Created by libraryaddict on 6/05/2019.
- */
 public class FireballWatcher extends FlagWatcher {
     public FireballWatcher(Disguise disguise) {
         super(disguise);
@@ -27,7 +24,6 @@ public class FireballWatcher extends FlagWatcher {
 
     @NmsAddedIn(NmsVersion.v1_14)
     public void setItemStack(ItemStack item) {
-        setData(MetaIndex.FIREBALL_ITEM, item);
-        sendData(MetaIndex.FIREBALL_ITEM);
+        sendData(MetaIndex.FIREBALL_ITEM, item);
     }
 }

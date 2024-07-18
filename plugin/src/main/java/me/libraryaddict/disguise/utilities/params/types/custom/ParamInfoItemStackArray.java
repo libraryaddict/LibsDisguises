@@ -9,9 +9,6 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 
-/**
- * Created by libraryaddict on 7/09/2018.
- */
 public class ParamInfoItemStackArray extends ParamInfoItemStack {
     public ParamInfoItemStackArray(Class paramClass, String name, String valueType, String description, Enum[] possibleValues) {
         super(paramClass, name, valueType, description, possibleValues);

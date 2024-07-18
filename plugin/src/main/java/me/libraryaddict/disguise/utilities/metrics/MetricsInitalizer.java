@@ -7,15 +7,12 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
-import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
+import me.libraryaddict.disguise.utilities.plugin.LibsDisgInfo;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
-/**
- * Created by libraryaddict on 3/01/2019.
- */
 public class MetricsInitalizer {
     public MetricsInitalizer() {
         infectWithMetrics();
@@ -44,7 +41,7 @@ public class MetricsInitalizer {
         final String premiumType;
 
         if (LibsPremium.isPremium()) {
-            PluginInformation info = LibsPremium.getPaidInformation();
+            LibsDisgInfo info = LibsPremium.getPaidInformation();
 
             if (info == null) {
                 info = LibsPremium.getPluginInformation();

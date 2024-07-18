@@ -16,8 +16,7 @@ public class TameableWatcher extends AgeableWatcher {
     }
 
     public void setOwner(UUID owner) {
-        setData(MetaIndex.TAMEABLE_OWNER, Optional.of(owner));
-        sendData(MetaIndex.TAMEABLE_OWNER);
+        sendData(MetaIndex.TAMEABLE_OWNER, Optional.of(owner));
     }
 
     public boolean isSitting() {
@@ -44,11 +43,11 @@ public class TameableWatcher extends AgeableWatcher {
         byte value = getData(MetaIndex.TAMEABLE_META);
 
         if (flag) {
-            setData(MetaIndex.TAMEABLE_META, (byte) (value | no));
+            value = (byte) (value | no);
         } else {
-            setData(MetaIndex.TAMEABLE_META, (byte) (value & -(no + 1)));
+            value = (byte) (value & -(no + 1));
         }
 
-        sendData(MetaIndex.TAMEABLE_META);
+        sendData(MetaIndex.TAMEABLE_META, value);
     }
 }

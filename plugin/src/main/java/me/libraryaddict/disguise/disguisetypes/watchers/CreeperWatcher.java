@@ -23,8 +23,7 @@ public class CreeperWatcher extends InsentientWatcher {
             ((hasValue(MetaIndex.CREEPER_IGNITED) && isIgnited()) ||
                 (getDisguise().getEntity() instanceof Creeper && ((Creeper) getDisguise().getEntity()).isPowered()));
 
-        setData(MetaIndex.CREEPER_IGNITED, ignited);
-        sendData(MetaIndex.CREEPER_IGNITED);
+        sendData(MetaIndex.CREEPER_IGNITED, ignited);
 
         if (resend) {
             DisguiseUtilities.refreshTrackers(getDisguise());
@@ -37,7 +36,6 @@ public class CreeperWatcher extends InsentientWatcher {
 
     @MethodDescription("Is this Creeper covered in lightning?")
     public void setPowered(boolean powered) {
-        setData(MetaIndex.CREEPER_POWERED, powered);
-        sendData(MetaIndex.CREEPER_POWERED);
+        sendData(MetaIndex.CREEPER_POWERED, powered);
     }
 }

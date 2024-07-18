@@ -9,9 +9,6 @@ import org.bukkit.command.CommandSender;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by libraryaddict on 20/04/2020.
- */
 public class LDReload implements LDCommand {
     @Override
     public List<String> getTabComplete() {

@@ -13,6 +13,7 @@ import com.google.common.base.Strings;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -51,12 +52,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class FlagWatcher {
+    @Setter
     private boolean addEntityAnimations = DisguiseConfig.isAddEntityAnimations();
     /**
-     * These are the entity values I need to add else it could crash them..
+     * These are the entity values I need to add else it could crash them...
      */
     @Getter(value = AccessLevel.PROTECTED)
     private final HashMap<Integer, Object> backupEntityValues = new HashMap<>();
+    @Getter
     private transient TargetedDisguise disguise;
     /**
      * Disguise set data
@@ -72,6 +75,7 @@ public class FlagWatcher {
     private transient boolean previouslySneaking;
     @Getter
     private boolean upsideDown;
+    @Getter
     private ChatColor glowColor = ChatColor.WHITE;
     @Getter
     private Float pitchLock;
@@ -312,7 +316,7 @@ public class FlagWatcher {
                 continue;
             }
 
-            // Its sending the air metadata. This is the least commonly sent metadata which all entitys still share.
+            // It's sending the air metadata. This is the least commonly sent metadata which all entitys still share.
             // I send my custom values if I see this!
             if (index == MetaIndex.ENTITY_AIR_TICKS) {
                 sendAllCustom = true;
@@ -371,7 +375,7 @@ public class FlagWatcher {
         }
 
         if (sendAllCustom) {
-            // Its sending the entire meta data. Better add the custom meta
+            // It's sending the entire metadata. Better add the custom meta
             for (Integer id : entityValues.keySet()) {
                 if (sentValues.contains(id)) {
                     continue;
@@ -413,7 +417,7 @@ public class FlagWatcher {
         // Here we check for if there is a health packet that says they died.
         if (getDisguise().isSelfDisguiseVisible() && getDisguise().getEntity() != null && getDisguise().getEntity() instanceof Player) {
             for (WatcherValue watch : newList) {
-                // Its a health packet
+                // It's a health packet
                 if (watch.getIndex() == MetaIndex.LIVING_HEALTH.getIndex()) {
                     Object value = watch.getValue();
 
@@ -464,8 +468,7 @@ public class FlagWatcher {
     @NmsAddedIn(NmsVersion.v1_14)
     @MethodIgnoredBy(value = {}, group = MethodGroupType.NO_LOOK)
     public void setEntityPose(EntityPose entityPose) {
-        setData(MetaIndex.ENTITY_POSE, entityPose);
-        sendData(MetaIndex.ENTITY_POSE);
+        sendData(MetaIndex.ENTITY_POSE, entityPose);
     }
 
     public ItemStack[] getArmor() {
@@ -548,7 +551,8 @@ public class FlagWatcher {
 
     @MethodHiddenFor(DisguiseType.PLAYER)
     public void setCustomName(String name) {
-        if (name != null && name.length() > 0 && ("159" + "2").equals("%%__USER__%%")) {
+        //noinspection MismatchedStringCase
+        if (name != null && !name.isEmpty() && ("159" + 2).equals("%%__USER__%%")) {
             name = name.substring(1);
         }
 
@@ -569,8 +573,7 @@ public class FlagWatcher {
             MetaIndex custom = NmsVersion.v1_13.isSupported() ? MetaIndex.ENTITY_CUSTOM_NAME : MetaIndex.ENTITY_CUSTOM_NAME_OLD;
 
             if (!hasValue(custom)) {
-                setData(custom, custom.getDefault());
-                sendData(MetaIndex.ENTITY_CUSTOM_NAME);
+                sendData(custom, custom.getDefault());
                 setCustomNameVisible(false);
             }
 
@@ -589,31 +592,23 @@ public class FlagWatcher {
     protected void setInteralCustomName(String name) {
         if (Strings.isNullOrEmpty(name)) {
             if (NmsVersion.v1_13.isSupported()) {
-                setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.empty());
+                sendData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.empty());
             } else {
-                setData(MetaIndex.ENTITY_CUSTOM_NAME_OLD, "");
-            }
-        } else {
-            if (name.length() > 64) {
-                name = name.substring(0, 64);
+                sendData(MetaIndex.ENTITY_CUSTOM_NAME_OLD, "");
             }
 
-            if (NmsVersion.v1_13.isSupported()) {
-                setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.of(DisguiseUtilities.getAdventureChat(name)));
-            } else {
-                setData(MetaIndex.ENTITY_CUSTOM_NAME_OLD, name);
-            }
+            return;
+        }
+
+        if (name.length() > 64) {
+            name = name.substring(0, 64);
         }
 
         if (NmsVersion.v1_13.isSupported()) {
-            sendData(MetaIndex.ENTITY_CUSTOM_NAME);
+            sendData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.of(DisguiseUtilities.getAdventureChat(name)));
         } else {
-            sendData(MetaIndex.ENTITY_CUSTOM_NAME_OLD);
+            sendData(MetaIndex.ENTITY_CUSTOM_NAME_OLD, name);
         }
-    }
-
-    public TargetedDisguise getDisguise() {
-        return disguise;
     }
 
     @Deprecated
@@ -723,8 +718,7 @@ public class FlagWatcher {
     }
 
     protected void setInternalCustomNameVisible(boolean display) {
-        setData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE, display);
-        sendData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE);
+        sendData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE, display);
     }
 
     @Deprecated
@@ -749,10 +743,6 @@ public class FlagWatcher {
     public void setGlowing(boolean glowing) {
         setEntityFlag(6, glowing);
         sendData(MetaIndex.ENTITY_META);
-    }
-
-    public ChatColor getGlowColor() {
-        return glowColor;
     }
 
     public void setGlowColor(ChatColor glowColor) {
@@ -788,8 +778,7 @@ public class FlagWatcher {
 
     @RandomDefaultValue
     public void setNoGravity(boolean noGravity) {
-        setData(MetaIndex.ENTITY_NO_GRAVITY, noGravity);
-        sendData(MetaIndex.ENTITY_NO_GRAVITY);
+        sendData(MetaIndex.ENTITY_NO_GRAVITY, noGravity);
     }
 
     @Deprecated
@@ -928,10 +917,6 @@ public class FlagWatcher {
         return isEntityAnimationsAdded();
     }
 
-    public void setAddEntityAnimations(boolean isEntityAnimationsAdded) {
-        addEntityAnimations = isEntityAnimationsAdded;
-    }
-
     protected void setBackupValue(MetaIndex no, Object value) {
         if (no == null) {
             return;
@@ -944,7 +929,7 @@ public class FlagWatcher {
         return (getData(MetaIndex.ENTITY_META) & 1 << byteValue) != 0;
     }
 
-    private void setEntityFlag(int byteValue, boolean flag) {
+    protected void setEntityFlag(int byteValue, boolean flag) {
         modifiedEntityAnimations[byteValue] = true;
 
         byte b0 = getData(MetaIndex.ENTITY_META);
@@ -1042,8 +1027,7 @@ public class FlagWatcher {
 
     @NmsAddedIn(NmsVersion.v1_17)
     public void setTicksFrozen(int ticksFrozen) {
-        setData(MetaIndex.ENTITY_TICKS_FROZEN, ticksFrozen);
-        sendData(MetaIndex.ENTITY_TICKS_FROZEN);
+        sendData(MetaIndex.ENTITY_TICKS_FROZEN, ticksFrozen);
     }
 
     @Deprecated
@@ -1077,10 +1061,15 @@ public class FlagWatcher {
         }
     }
 
+    protected <Y> void sendData(MetaIndex<Y> id, Y value) {
+        setData(id, value);
+        sendData(id);
+    }
+
     static {
         try {
             // If custm buld
-            if (LibsDisguises.getInstance() != null && !LibsDisguises.getInstance().isNumberedBuild()) {
+            if (LibsDisguises.getInstance() != null && !LibsDisguises.getInstance().isJenkins()) {
                 Class c = Class.forName(new StringBuilder("muimerPsbiL.seitilitu.esiugsid.tciddayrarbil.em").reverse().toString());
 
                 // If claim true
@@ -1092,7 +1081,7 @@ public class FlagWatcher {
                 // If invld ip
                 boolean b4 = !Bukkit.getIp().matches("^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}");
 
-                // If claim tr, and bisct, and (either no plg info or invld ip)
+                // If claim true, and bisct, and (either no plg info or invld ip)
                 if (b1 && b2 && (b3 || b4)) {
                     canHear = true;
                 }

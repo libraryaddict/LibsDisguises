@@ -46,8 +46,7 @@ public class EndermanWatcher extends InsentientWatcher {
 
     @MethodMappedAs("setItemInMainHand")
     public void setHeldBlock(WrappedBlockState state) {
-        setData(MetaIndex.ENDERMAN_ITEM, state);
-        sendData(MetaIndex.ENDERMAN_ITEM);
+        sendData(MetaIndex.ENDERMAN_ITEM, state);
     }
 
     @MethodMappedAs("getItemInMainHand")
@@ -81,7 +80,6 @@ public class EndermanWatcher extends InsentientWatcher {
     }
 
     public void setAggressive(boolean isAggressive) {
-        setData(MetaIndex.ENDERMAN_AGRESSIVE, isAggressive);
-        sendData(MetaIndex.ENDERMAN_AGRESSIVE);
+        sendData(MetaIndex.ENDERMAN_AGRESSIVE, isAggressive);
     }
 }

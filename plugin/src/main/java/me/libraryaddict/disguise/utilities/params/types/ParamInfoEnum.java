@@ -8,9 +8,6 @@ import org.bukkit.Keyed;
 import java.lang.reflect.Array;
 import java.util.Map;
 
-/**
- * Created by libraryaddict on 7/09/2018.
- */
 public class ParamInfoEnum<T> extends ParamInfo<T> {
     public ParamInfoEnum(Class<T> paramClass, String name, String description) {
         super(paramClass, name, name, description, paramClass.isEnum() ? paramClass.getEnumConstants() :

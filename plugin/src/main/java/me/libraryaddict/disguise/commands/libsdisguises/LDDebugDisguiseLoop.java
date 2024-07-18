@@ -16,9 +16,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Created by libraryaddict on 22/05/2021.
- */
 public class LDDebugDisguiseLoop implements LDCommand {
     @Override
     public List<String> getTabComplete() {
@@ -37,7 +34,7 @@ public class LDDebugDisguiseLoop implements LDCommand {
 
     @Override
     public boolean isEnabled() {
-        return !LibsDisguises.getInstance().isNumberedBuild();
+        return !LibsDisguises.getInstance().isJenkins();
     }
 
     @Override

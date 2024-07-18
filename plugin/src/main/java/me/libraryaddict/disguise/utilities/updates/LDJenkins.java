@@ -15,9 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Created by libraryaddict on 26/04/2020.
- */
 public class LDJenkins extends BaseJenkins {
     private UpdateChecker updateChecker;
 

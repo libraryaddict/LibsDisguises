@@ -11,9 +11,6 @@ import org.bukkit.entity.TropicalFish;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by libraryaddict on 6/08/2018.
- */
 public class TropicalFishWatcher extends FishWatcher {
     private enum CraftPattern {
         KOB("KOB", 0, 0, false),
@@ -104,7 +101,6 @@ public class TropicalFishWatcher extends FishWatcher {
 
     @Deprecated
     public void setVariant(int variant) {
-        setData(MetaIndex.TROPICAL_FISH_VARIANT, variant);
-        sendData(MetaIndex.TROPICAL_FISH_VARIANT);
+        sendData(MetaIndex.TROPICAL_FISH_VARIANT, variant);
     }
 }

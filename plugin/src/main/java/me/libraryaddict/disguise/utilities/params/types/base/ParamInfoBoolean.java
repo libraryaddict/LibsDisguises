@@ -6,9 +6,6 @@ import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by libraryaddict on 7/09/2018.
- */
 public class ParamInfoBoolean extends ParamInfo<Boolean> {
     public ParamInfoBoolean(String name, String valueType, String description, Map<String, Boolean> possibleValues) {
         super(Boolean.class, name, valueType, description, possibleValues);

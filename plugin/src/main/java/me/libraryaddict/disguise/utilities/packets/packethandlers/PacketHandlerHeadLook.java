@@ -15,9 +15,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-/**
- * Created by libraryaddict on 3/01/2019.
- */
 public class PacketHandlerHeadLook implements IPacketHandler<WrapperPlayServerEntityHeadLook> {
     /**
      * ProtocolLib: Body rotation is ENTITY_HEAD_ROTATION

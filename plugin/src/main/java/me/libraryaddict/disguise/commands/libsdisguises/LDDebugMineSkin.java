@@ -8,9 +8,6 @@ import org.bukkit.command.CommandSender;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by libraryaddict on 22/05/2021.
- */
 public class LDDebugMineSkin implements LDCommand {
     @Override
     public List<String> getTabComplete() {

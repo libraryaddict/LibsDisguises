@@ -14,8 +14,7 @@ public class InteractionWatcher extends FlagWatcher {
     }
 
     public void setInteractionWidth(float width) {
-        setData(MetaIndex.INTERACTION_WIDTH, width);
-        sendData(MetaIndex.INTERACTION_WIDTH);
+        sendData(MetaIndex.INTERACTION_WIDTH, width);
     }
 
     public float getInteractionHeight() {
@@ -23,8 +22,7 @@ public class InteractionWatcher extends FlagWatcher {
     }
 
     public void setInteractionHeight(float height) {
-        setData(MetaIndex.INTERACTION_HEIGHT, height);
-        sendData(MetaIndex.INTERACTION_HEIGHT);
+        sendData(MetaIndex.INTERACTION_HEIGHT, height);
     }
 
     public boolean isResponsive() {
@@ -32,7 +30,6 @@ public class InteractionWatcher extends FlagWatcher {
     }
 
     public void setResponsive(boolean responsive) {
-        setData(MetaIndex.INTERACTION_RESPONSIVE, responsive);
-        sendData(MetaIndex.INTERACTION_RESPONSIVE);
+        sendData(MetaIndex.INTERACTION_RESPONSIVE, responsive);
     }
 }

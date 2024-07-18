@@ -19,8 +19,7 @@ public class AllayWatcher extends InsentientWatcher {
     @NmsAddedIn(NmsVersion.v1_19_R1)
     @MethodDescription("Is the Allay dancing?")
     public void setDancing(boolean dancing) {
-        setData(MetaIndex.ALLAY_DANCING, dancing);
-        sendData(MetaIndex.ALLAY_DANCING);
+        sendData(MetaIndex.ALLAY_DANCING, dancing);
     }
 
     public boolean isCanDuplicate() {
@@ -30,7 +29,6 @@ public class AllayWatcher extends InsentientWatcher {
     @NmsAddedIn(NmsVersion.v1_19_R1)
     @MethodHiddenFor(value = {}) // Hide from command
     public void setCanDuplicate(boolean canDuplicate) {
-        setData(MetaIndex.ALLAY_CAN_DUPLICATE, canDuplicate);
-        sendData(MetaIndex.ALLAY_CAN_DUPLICATE);
+        sendData(MetaIndex.ALLAY_CAN_DUPLICATE, canDuplicate);
     }
 }

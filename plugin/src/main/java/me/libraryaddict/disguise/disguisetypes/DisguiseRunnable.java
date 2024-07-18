@@ -18,9 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-/**
- * Created by libraryaddict on 20/05/2021.
- */
 class DisguiseRunnable extends BukkitRunnable {
     private int blockX, blockY, blockZ, facing;
     private int deadTicks = 0;

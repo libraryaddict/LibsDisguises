@@ -13,9 +13,6 @@ import org.bukkit.entity.Player;
 
 import java.util.Random;
 
-/**
- * Created by libraryaddict on 3/05/2020.
- */
 public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
 
     @Override

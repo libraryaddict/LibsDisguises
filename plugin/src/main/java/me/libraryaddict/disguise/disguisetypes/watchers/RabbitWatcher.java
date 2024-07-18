@@ -23,7 +23,6 @@ public class RabbitWatcher extends AgeableWatcher {
 
     @RandomDefaultValue
     public void setType(Rabbit.Type type) {
-        setData(MetaIndex.RABBIT_TYPE, type);
-        sendData(MetaIndex.RABBIT_TYPE);
+        sendData(MetaIndex.RABBIT_TYPE, type);
     }
 }

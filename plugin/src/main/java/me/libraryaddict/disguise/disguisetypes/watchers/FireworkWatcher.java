@@ -31,8 +31,7 @@ public class FireworkWatcher extends FlagWatcher {
         newItem = newItem.clone();
         newItem.setAmount(1);
 
-        setData(MetaIndex.FIREWORK_ITEM, newItem);
-        sendData(MetaIndex.FIREWORK_ITEM);
+        sendData(MetaIndex.FIREWORK_ITEM, newItem);
     }
 
     @NmsAddedIn(NmsVersion.v1_14)
@@ -42,8 +41,7 @@ public class FireworkWatcher extends FlagWatcher {
 
     @NmsAddedIn(NmsVersion.v1_14)
     public void setShotAtAngle(boolean shotAtAngle) {
-        setData(MetaIndex.FIREWORK_SHOT_AT_ANGLE, shotAtAngle);
-        sendData(MetaIndex.FIREWORK_SHOT_AT_ANGLE);
+        sendData(MetaIndex.FIREWORK_SHOT_AT_ANGLE, shotAtAngle);
     }
 
     @NmsAddedIn(NmsVersion.v1_14)
@@ -62,11 +60,9 @@ public class FireworkWatcher extends FlagWatcher {
     @NmsAddedIn(NmsVersion.v1_14)
     public void setAttachedEntity(Optional<Integer> entityId) {
         if (NmsVersion.v1_14.isSupported()) {
-            setData(MetaIndex.FIREWORK_ATTACHED_ENTITY, entityId);
-            sendData(MetaIndex.FIREWORK_ATTACHED_ENTITY);
+            sendData(MetaIndex.FIREWORK_ATTACHED_ENTITY, entityId);
         } else {
-            setData(MetaIndex.FIREWORK_ATTACHED_ENTITY_OLD, entityId.orElse(0));
-            sendData(MetaIndex.FIREWORK_ATTACHED_ENTITY_OLD);
+            sendData(MetaIndex.FIREWORK_ATTACHED_ENTITY_OLD, entityId.orElse(0));
         }
     }
 }

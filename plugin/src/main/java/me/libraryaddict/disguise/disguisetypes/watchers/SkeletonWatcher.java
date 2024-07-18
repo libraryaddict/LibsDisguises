@@ -5,9 +5,6 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 
-/**
- * Created by libraryaddict on 15/06/2021.
- */
 public class SkeletonWatcher extends AbstractSkeletonWatcher {
     public SkeletonWatcher(Disguise disguise) {
         super(disguise);
@@ -20,7 +17,6 @@ public class SkeletonWatcher extends AbstractSkeletonWatcher {
 
     @NmsAddedIn(NmsVersion.v1_17)
     public void setConvertingStray(boolean converting) {
-        setData(MetaIndex.SKELETON_CONVERTING_STRAY, converting);
-        sendData(MetaIndex.SKELETON_CONVERTING_STRAY);
+        sendData(MetaIndex.SKELETON_CONVERTING_STRAY, converting);
     }
 }

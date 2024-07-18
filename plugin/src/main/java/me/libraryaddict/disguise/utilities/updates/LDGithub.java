@@ -18,9 +18,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/**
- * Created by libraryaddict on 26/04/2020.
- */
 @AllArgsConstructor
 public class LDGithub {
     @Getter

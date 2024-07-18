@@ -71,8 +71,7 @@ public class MinecartWatcher extends FlagWatcher {
     }
 
     public void setBlockOffset(int i) {
-        setData(MetaIndex.MINECART_BLOCK_Y, i);
-        sendData(MetaIndex.MINECART_BLOCK_Y);
+        sendData(MetaIndex.MINECART_BLOCK_Y, i);
     }
 
     public boolean isViewBlockInCart() {
@@ -80,7 +79,6 @@ public class MinecartWatcher extends FlagWatcher {
     }
 
     public void setViewBlockInCart(boolean viewBlock) {
-        setData(MetaIndex.MINECART_BLOCK_VISIBLE, viewBlock);
-        sendData(MetaIndex.MINECART_BLOCK_VISIBLE);
+        sendData(MetaIndex.MINECART_BLOCK_VISIBLE, viewBlock);
     }
 }

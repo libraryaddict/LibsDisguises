@@ -20,9 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created by libraryaddict on 21/10/2018.
- */
 public class DisguisePermissionsTest {
     @Test
     public void testDisguisesExist() {

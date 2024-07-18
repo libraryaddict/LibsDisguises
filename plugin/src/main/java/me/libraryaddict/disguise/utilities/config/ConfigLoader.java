@@ -15,9 +15,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by libraryaddict on 31/01/2021.
- */
 public class ConfigLoader {
     @Getter
     private final List<String> configs = new ArrayList<>();

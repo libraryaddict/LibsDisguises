@@ -38,7 +38,6 @@ public class SplashPotionWatcher extends FlagWatcher {
     }
 
     public void setSplashPotion(ItemStack item) {
-        setData(MetaIndex.SPLASH_POTION_ITEM, item);
-        sendData(MetaIndex.SPLASH_POTION_ITEM);
+        sendData(MetaIndex.SPLASH_POTION_ITEM, item);
     }
 }

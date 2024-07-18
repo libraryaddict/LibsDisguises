@@ -161,17 +161,6 @@ public class MiscDisguise extends TargetedDisguise {
         }
     }
 
-    /**
-     * Only falling block should use this
-     */
-    public int getId() {
-        if (getType() == DisguiseType.FALLING_BLOCK) {
-            return ((FallingBlockWatcher) getWatcher()).getBlock().getType().ordinal();
-        }
-
-        return id;
-    }
-
     @Override
     public boolean isMiscDisguise() {
         return true;

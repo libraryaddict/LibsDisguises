@@ -32,7 +32,6 @@ public class TippedArrowWatcher extends ArrowWatcher {
 
     @RandomDefaultValue
     public void setColor(Color color) {
-        setData(MetaIndex.TIPPED_ARROW_COLOR, color.asRGB());
-        sendData(MetaIndex.TIPPED_ARROW_COLOR);
+        sendData(MetaIndex.TIPPED_ARROW_COLOR, color.asRGB());
     }
 }

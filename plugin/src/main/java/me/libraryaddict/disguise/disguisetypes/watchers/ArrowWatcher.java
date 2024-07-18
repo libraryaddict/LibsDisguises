@@ -16,8 +16,7 @@ public class ArrowWatcher extends FlagWatcher {
     }
 
     public void setCritical(boolean critical) {
-        setData(MetaIndex.ARROW_CRITICAL, (byte) (critical ? 1 : 0));
-        sendData(MetaIndex.ARROW_CRITICAL);
+        sendData(MetaIndex.ARROW_CRITICAL, (byte) (critical ? 1 : 0));
     }
 
     @NmsAddedIn(NmsVersion.v1_14)
@@ -27,7 +26,6 @@ public class ArrowWatcher extends FlagWatcher {
 
     @NmsAddedIn(NmsVersion.v1_14)
     public void setPierceLevel(int pierceLevel) {
-        setData(MetaIndex.ARROW_PIERCE_LEVEL, (byte) pierceLevel);
-        sendData(MetaIndex.ARROW_PIERCE_LEVEL);
+        sendData(MetaIndex.ARROW_PIERCE_LEVEL, (byte) pierceLevel);
     }
 }

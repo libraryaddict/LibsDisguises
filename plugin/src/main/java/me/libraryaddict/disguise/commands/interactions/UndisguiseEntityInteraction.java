@@ -7,9 +7,6 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-/**
- * Created by libraryaddict on 4/04/2020.
- */
 public class UndisguiseEntityInteraction implements LibsEntityInteract {
     @Override
     public void onInteract(Player p, Entity entity) {

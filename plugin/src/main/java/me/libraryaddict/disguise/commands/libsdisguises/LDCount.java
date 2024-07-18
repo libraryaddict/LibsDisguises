@@ -14,9 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created by libraryaddict on 20/04/2020.
- */
 public class LDCount implements LDCommand {
     @Override
     public List<String> getTabComplete() {

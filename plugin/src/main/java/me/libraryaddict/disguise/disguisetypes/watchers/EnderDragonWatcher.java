@@ -17,7 +17,6 @@ public class EnderDragonWatcher extends InsentientWatcher {
     }
 
     public void setPhase(int phase) {
-        setData(MetaIndex.ENDER_DRAGON_PHASE, phase);
-        sendData(MetaIndex.ENDER_DRAGON_PHASE);
+        sendData(MetaIndex.ENDER_DRAGON_PHASE, phase);
     }
 }

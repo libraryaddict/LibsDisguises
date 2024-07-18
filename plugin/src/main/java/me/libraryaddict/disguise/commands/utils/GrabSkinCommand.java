@@ -25,9 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Created by libraryaddict on 28/12/2019.
- */
 public class GrabSkinCommand implements CommandExecutor {
 
     @Override

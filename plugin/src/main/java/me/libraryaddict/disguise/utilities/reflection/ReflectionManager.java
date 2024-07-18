@@ -2011,9 +2011,9 @@ public class ReflectionManager {
 
                 // Invalidate invalid distribution
                 if (LibsPremium.isPremium() && ((LibsPremium.getPaidInformation() != null && LibsPremium.getPaidInformation().isPremium() &&
-                    !LibsPremium.getPaidInformation().isLegit()) ||
+                    !LibsPremium.getPaidInformation().isPaid()) ||
                     (LibsPremium.getPluginInformation() != null && LibsPremium.getPluginInformation().isPremium() &&
-                        !LibsPremium.getPluginInformation().isLegit()))) {
+                        !LibsPremium.getPluginInformation().isPaid()))) {
                     throw new IllegalStateException(
                         "Error while checking pi rate on startup! Please re-download the jar from SpigotMC before " +
                             "reporting this error!");
@@ -2284,7 +2284,7 @@ public class ReflectionManager {
                     sound.setDamageAndIdleSoundVolume(soundStrength);
 
                     // This should only display on custom builds
-                    if (disguiseType == DisguiseType.COW && soundStrength != 0.4F && !LibsDisguises.getInstance().isNumberedBuild()) {
+                    if (disguiseType == DisguiseType.COW && soundStrength != 0.4F && !LibsDisguises.getInstance().isJenkins()) {
                         LibsDisguises.getInstance().getLogger()
                             .severe("The hurt sound volume may be wrong on the COW disguise! Bad nms update?");
                     }
@@ -2532,6 +2532,14 @@ public class ReflectionManager {
 
     public static String keyedName(Object obj) {
         return ((Keyed) obj).getKey().toString();
+    }
+
+    public static <T> T[] enumValues(Class<T> clss) {
+        if (clss.isEnum()) {
+            return clss.getEnumConstants();
+        }
+
+        return (T[]) Bukkit.getRegistry((Class<Keyed>) clss).stream().toArray();
     }
 
     public static <T> T randomEnum(Class<T> clss) {

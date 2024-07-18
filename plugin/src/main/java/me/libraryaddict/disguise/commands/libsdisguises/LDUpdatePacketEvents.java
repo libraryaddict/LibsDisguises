@@ -11,9 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * Created by libraryaddict on 30/06/2020.
- */
 public class LDUpdatePacketEvents implements LDCommand {
     private final AtomicBoolean updateInProgress = new AtomicBoolean(false);
 

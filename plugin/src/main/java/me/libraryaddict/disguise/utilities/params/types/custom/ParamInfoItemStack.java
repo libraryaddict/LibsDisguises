@@ -15,9 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Locale;
 
-/**
- * Created by libraryaddict on 7/09/2018.
- */
 public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Object> {
     public ParamInfoItemStack(Class paramClass, String name, String valueType, String description, Enum[] possibleValues) {
         super(paramClass, name, valueType, description, possibleValues);

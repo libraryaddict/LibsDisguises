@@ -24,8 +24,7 @@ public class OminousItemSpawnerWatcher extends FlagWatcher {
 
     @MethodDescription("What item is displayed?")
     public void setItemStack(ItemStack item) {
-        setData(MetaIndex.OMINOUS_ITEM_SPAWNER_ITEM, item);
-        sendData(MetaIndex.OMINOUS_ITEM_SPAWNER_ITEM);
+        sendData(MetaIndex.OMINOUS_ITEM_SPAWNER_ITEM, item);
 
         if (!getDisguise().isCustomDisguiseName()) {
             getDisguise().setDisguiseName(TranslateType.DISGUISES.get(DisguiseType.OMINOUS_ITEM_SPAWNER.toReadable()) + " " +

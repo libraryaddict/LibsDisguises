@@ -13,7 +13,6 @@ public class SpiderWatcher extends InsentientWatcher {
     }
 
     public void setClimbing(boolean climbing) {
-        setData(MetaIndex.SPIDER_CLIMB, (byte) (climbing ? 1 : 0));
-        sendData(MetaIndex.SPIDER_CLIMB);
+        sendData(MetaIndex.SPIDER_CLIMB, (byte) (climbing ? 1 : 0));
     }
 }

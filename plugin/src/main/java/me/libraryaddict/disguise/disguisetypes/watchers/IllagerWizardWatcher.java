@@ -19,8 +19,7 @@ public class IllagerWizardWatcher extends IllagerWatcher {
 
     @NmsAddedIn(NmsVersion.v1_14)
     public void setSpell(Spellcaster.Spell spell) {
-        setData(MetaIndex.ILLAGER_SPELL, (byte) spell.ordinal());
-        sendData(MetaIndex.ILLAGER_SPELL);
+        sendData(MetaIndex.ILLAGER_SPELL, (byte) spell.ordinal());
     }
 
     @Deprecated
@@ -32,7 +31,6 @@ public class IllagerWizardWatcher extends IllagerWatcher {
     @Deprecated
     @NmsRemovedIn(NmsVersion.v1_14)
     public void setSpellTicks(int spellTicks) {
-        setData(MetaIndex.ILLAGER_SPELL_TICKS, (byte) spellTicks);
-        sendData(MetaIndex.ILLAGER_SPELL_TICKS);
+        sendData(MetaIndex.ILLAGER_SPELL_TICKS, (byte) spellTicks);
     }
 }

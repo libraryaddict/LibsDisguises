@@ -8,9 +8,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Created by libraryaddict on 6/03/2020.
- */
 public class BisectHosting {
     public boolean isBisectHosted(String pluginName) {
         boolean claimedHosted = DisguiseConfig.isBisectHosted();

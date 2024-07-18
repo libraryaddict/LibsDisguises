@@ -8,9 +8,6 @@ import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 
 import java.lang.reflect.Type;
 
-/**
- * Created by libraryaddict on 5/12/2020.
- */
 public class SerializerParticle implements JsonSerializer<Particle> {
     @Override
     public JsonElement serialize(Particle src, Type typeOfSrc, JsonSerializationContext context) {

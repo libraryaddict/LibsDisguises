@@ -20,8 +20,7 @@ public class TextDisplayWatcher extends DisplayWatcher {
     }
 
     public void setText(String string) {
-        setData(MetaIndex.TEXT_DISPLAY_TEXT, DisguiseUtilities.getAdventureChat(string));
-        sendData(MetaIndex.TEXT_DISPLAY_TEXT);
+        sendData(MetaIndex.TEXT_DISPLAY_TEXT, DisguiseUtilities.getAdventureChat(string));
     }
 
     public int getLineWidth() {
@@ -29,8 +28,7 @@ public class TextDisplayWatcher extends DisplayWatcher {
     }
 
     public void setLineWidth(int width) {
-        setData(MetaIndex.TEXT_DISPLAY_LINE_WIDTH, width);
-        sendData(MetaIndex.TEXT_DISPLAY_LINE_WIDTH);
+        sendData(MetaIndex.TEXT_DISPLAY_LINE_WIDTH, width);
     }
 
     public Color getBackgroundColor() {
@@ -44,8 +42,7 @@ public class TextDisplayWatcher extends DisplayWatcher {
     }
 
     public void setBackgroundColor(Color color) {
-        setData(MetaIndex.TEXT_DISPLAY_BACKGROUND_COLOR, color == null ? -1 : color.asARGB());
-        sendData(MetaIndex.TEXT_DISPLAY_BACKGROUND_COLOR);
+        sendData(MetaIndex.TEXT_DISPLAY_BACKGROUND_COLOR, color == null ? -1 : color.asARGB());
     }
 
     public byte getTextOpacity() {
@@ -57,8 +54,7 @@ public class TextDisplayWatcher extends DisplayWatcher {
             return;
         }
 
-        setData(MetaIndex.TEXT_DISPLAY_TEXT_OPACITY, opacity);
-        sendData(MetaIndex.TEXT_DISPLAY_TEXT_OPACITY);
+        sendData(MetaIndex.TEXT_DISPLAY_TEXT_OPACITY, opacity);
     }
 
     public boolean isShadowed() {
@@ -126,8 +122,7 @@ public class TextDisplayWatcher extends DisplayWatcher {
             flagBits = (byte) (flagBits & ~flag);
         }
 
-        setData(MetaIndex.TEXT_DISPLAY_FLAGS, flagBits);
-        sendData(MetaIndex.TEXT_DISPLAY_FLAGS);
+        sendData(MetaIndex.TEXT_DISPLAY_FLAGS, flagBits);
     }
 
 }

@@ -4,9 +4,6 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import org.bukkit.entity.Parrot;
 
-/**
- * Created by libraryaddict on 9/06/2017.
- */
 public class ParrotWatcher extends TameableWatcher {
     public ParrotWatcher(Disguise disguise) {
         super(disguise);
@@ -17,7 +14,6 @@ public class ParrotWatcher extends TameableWatcher {
     }
 
     public void setVariant(Parrot.Variant variant) {
-        setData(MetaIndex.PARROT_VARIANT, variant);
-        sendData(MetaIndex.PARROT_VARIANT);
+        sendData(MetaIndex.PARROT_VARIANT, variant);
     }
 }

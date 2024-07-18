@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.utilities;
 import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.plugin.BisectHosting;
-import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
+import me.libraryaddict.disguise.utilities.plugin.LibsDisgInfo;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.FileUtil;
@@ -23,12 +23,12 @@ public class LibsPremium {
      * Information of the actively running plugin
      */
     @Getter
-    private static PluginInformation pluginInformation;
+    private static LibsDisgInfo pluginInformation;
     /**
      * Information of the plugin used to activate premium, if exists
      */
     @Getter
-    private static PluginInformation paidInformation;
+    private static LibsDisgInfo paidInformation;
     @Getter
     private static boolean bisectHosted;
 
@@ -102,7 +102,7 @@ public class LibsPremium {
         return Integer.parseInt(currentSplit[0]) <= Integer.parseInt(premSplit[0]);
     }
 
-    public static PluginInformation getInformation(File file) throws Exception {
+    public static LibsDisgInfo getInformation(File file) throws Exception {
         try (URLClassLoader cl = new URLClassLoader(new URL[]{file.toURI().toURL()})) {
             Class c = cl.loadClass(LibsPremium.class.getName());
 
@@ -136,7 +136,7 @@ public class LibsPremium {
 
             String pluginVersion = config.getString("version");
 
-            return new PluginInformation(file.length(), userId, resourceId, downloadId, premium, pluginVersion, pluginBuildNumber,
+            return new LibsDisgInfo(file.length(), userId, resourceId, downloadId, premium, pluginVersion, pluginBuildNumber,
                 pluginBuildDate);
         }
     }
@@ -163,7 +163,7 @@ public class LibsPremium {
                 continue;
             }
 
-            PluginInformation plugin;
+            LibsDisgInfo plugin;
 
             try {
                 plugin = getInformation(file);
@@ -221,7 +221,7 @@ public class LibsPremium {
             if (bisectHosted) {
                 LibsDisguises.getInstance().getLogger().info("Hosted by BisectHosting! Premium enabled!");
 
-                paidInformation = new PluginInformation(0, "13", "32453", "2", true, "0", "#1", "0");
+                paidInformation = new LibsDisgInfo(0, "13", "32453", "2", true, "0", "#1", "0");
 
                 thisPluginIsPaidFor = true;
             } else {
@@ -251,7 +251,7 @@ public class LibsPremium {
     }
 
     public static void check(String version, File file) {
-        thisPluginIsPaidFor = LibsDisguises.getInstance().isNumberedBuild() && isPremium();
+        thisPluginIsPaidFor = LibsDisguises.getInstance().isJenkins() && isPremium();
 
         try {
             pluginInformation = getInformation(file);
@@ -281,7 +281,7 @@ public class LibsPremium {
             }
 
             pluginInformation =
-                new PluginInformation(LibsDisguises.getInstance().getFile().length(), getUserID(), getResourceID(), getDownloadID(),
+                new LibsDisgInfo(LibsDisguises.getInstance().getFile().length(), getUserID(), getResourceID(), getDownloadID(),
                     isPremium(getResourceID(), getUserID()), version, buildNo, pluginBuildDate);
         }
 
@@ -299,7 +299,7 @@ public class LibsPremium {
                 }
 
                 try {
-                    PluginInformation info = getInformation(f);
+                    LibsDisgInfo info = getInformation(f);
 
                     if (info.getBuildNumber() == null || !info.getBuildNumber().matches("#\\d+")) {
                         f.delete();
@@ -312,7 +312,7 @@ public class LibsPremium {
                         continue;
                     }
 
-                    if (!info.isLegit()) {
+                    if (!info.isPaid()) {
                         f.delete();
                         LibsDisguises.getInstance().getLogger().info("Potential virus was deleted: LibsDisguises/" + f.getName());
                         continue;
@@ -340,7 +340,7 @@ public class LibsPremium {
         }
 
         if (isPremium()) {
-            boolean prem = getPaidInformation() == null ? getPluginInformation().isLegit() : getPaidInformation().isLegit();
+            boolean prem = getPaidInformation() == null ? getPluginInformation().isPaid() : getPaidInformation().isPaid();
 
             LibsDisguises.getInstance().getLogger().info("Premium enabled, thank you for supporting Lib's Disguises!" + (!prem ? "!" : ""));
         }

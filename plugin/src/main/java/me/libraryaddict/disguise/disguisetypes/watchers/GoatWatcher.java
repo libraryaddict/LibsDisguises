@@ -5,9 +5,6 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 
-/**
- * Created by libraryaddict on 15/06/2021.
- */
 public class GoatWatcher extends AgeableWatcher {
     public GoatWatcher(Disguise disguise) {
         super(disguise);
@@ -18,8 +15,7 @@ public class GoatWatcher extends AgeableWatcher {
     }
 
     public void setScreaming(boolean screaming) {
-        setData(MetaIndex.GOAT_SCREAMING, screaming);
-        sendData(MetaIndex.GOAT_SCREAMING);
+        sendData(MetaIndex.GOAT_SCREAMING, screaming);
     }
 
     public boolean hasLeftHorn() {
@@ -28,8 +24,7 @@ public class GoatWatcher extends AgeableWatcher {
 
     @NmsAddedIn(NmsVersion.v1_19_R1)
     public void setHasLeftHorn(boolean hasHorn) {
-        setData(MetaIndex.GOAT_HAS_LEFT_HORN, hasHorn);
-        sendData(MetaIndex.GOAT_HAS_LEFT_HORN);
+        sendData(MetaIndex.GOAT_HAS_LEFT_HORN, hasHorn);
     }
 
     public boolean hasRightHorn() {
@@ -38,7 +33,6 @@ public class GoatWatcher extends AgeableWatcher {
 
     @NmsAddedIn(NmsVersion.v1_19_R1)
     public void setHasRightHorn(boolean hasHorn) {
-        setData(MetaIndex.GOAT_HAS_RIGHT_HORN, hasHorn);
-        sendData(MetaIndex.GOAT_HAS_RIGHT_HORN);
+        sendData(MetaIndex.GOAT_HAS_RIGHT_HORN, hasHorn);
     }
 }

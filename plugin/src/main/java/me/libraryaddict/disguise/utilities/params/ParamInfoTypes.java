@@ -35,6 +35,7 @@ import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoUserProf
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoVector3f;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoWrappedBlockData;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Art;
@@ -85,9 +86,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Created by libraryaddict on 7/09/2018.
- */
 public class ParamInfoTypes {
     /**
      * Constructor values are listed here for continuity
@@ -269,7 +267,7 @@ public class ParamInfoTypes {
     private Material[] getMaterials() {
         List<Material> list = new ArrayList<>();
 
-        for (Material material : Material.values()) {
+        for (Material material : ReflectionManager.enumValues(Material.class)) {
             if (material.name().matches("([A-Z]+_)?AIR")) {
                 continue;
             }
@@ -297,7 +295,7 @@ public class ParamInfoTypes {
             return map;
         }
 
-        for (PotionEffectType effectType : PotionEffectType.values()) {
+        for (PotionEffectType effectType : ReflectionManager.enumValues(PotionEffectType.class)) {
             if (effectType == null) {
                 continue;
             }

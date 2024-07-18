@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-/**
- * Created by libraryaddict on 23/05/2020.
- */
 public class ParamInfoSoundGroup extends ParamInfoEnum {
     public ParamInfoSoundGroup() {
         super(String.class, "SoundGroup", "A group of sounds", new HashMap<>());

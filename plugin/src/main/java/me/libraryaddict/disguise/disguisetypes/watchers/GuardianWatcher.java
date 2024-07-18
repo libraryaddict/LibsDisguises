@@ -33,8 +33,7 @@ public class GuardianWatcher extends InsentientWatcher {
      * @param entityId
      */
     public void setTarget(int entityId) {
-        setData(MetaIndex.GUARDIAN_TARGET, entityId);
-        sendData(MetaIndex.GUARDIAN_TARGET);
+        sendData(MetaIndex.GUARDIAN_TARGET, entityId);
     }
 
     public void setTarget(Entity entity) {
@@ -53,8 +52,7 @@ public class GuardianWatcher extends InsentientWatcher {
             return;
         }
 
-        setData(MetaIndex.GUARDIAN_TARGET, player.getEntityId());
-        sendData(MetaIndex.GUARDIAN_TARGET);
+        sendData(MetaIndex.GUARDIAN_TARGET, player.getEntityId());
     }
 
     public boolean isRetractingSpikes() {
@@ -62,7 +60,6 @@ public class GuardianWatcher extends InsentientWatcher {
     }
 
     public void setRetractingSpikes(boolean isRetracting) {
-        setData(MetaIndex.GUARDIAN_RETRACT_SPIKES, isRetracting);
-        sendData(MetaIndex.GUARDIAN_RETRACT_SPIKES);
+        sendData(MetaIndex.GUARDIAN_RETRACT_SPIKES, isRetracting);
     }
 }

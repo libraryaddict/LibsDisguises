@@ -16,9 +16,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-/**
- * Created by libraryaddict on 1/01/2020.
- */
 public class SkinUtils {
     public interface SkinCallback {
         void onError(LibsMsg msg, Object... args);

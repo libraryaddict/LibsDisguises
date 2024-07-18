@@ -20,8 +20,7 @@ public class FishingHookWatcher extends FlagWatcher {
     }
 
     public void setHookedId(int hookedId) {
-        setData(MetaIndex.FISHING_HOOK_HOOKED_ID, hookedId + 1);
-        sendData(MetaIndex.FISHING_HOOK_HOOKED_ID);
+        sendData(MetaIndex.FISHING_HOOK_HOOKED_ID, hookedId + 1);
     }
 
     public boolean isHooked() {
@@ -29,7 +28,6 @@ public class FishingHookWatcher extends FlagWatcher {
     }
 
     public void setHooked(boolean hooked) {
-        setData(MetaIndex.FISHING_HOOK_HOOKED, hooked);
-        sendData(MetaIndex.FISHING_HOOK_HOOKED);
+        sendData(MetaIndex.FISHING_HOOK_HOOKED, hooked);
     }
 }

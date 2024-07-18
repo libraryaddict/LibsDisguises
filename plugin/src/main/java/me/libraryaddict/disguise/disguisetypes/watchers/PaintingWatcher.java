@@ -32,8 +32,7 @@ public class PaintingWatcher extends FlagWatcher {
 
     public void setArt(Art newPainting) {
         if (NmsVersion.v1_19_R1.isSupported()) {
-            setData(MetaIndex.PAINTING, newPainting);
-            sendData(MetaIndex.PAINTING);
+            sendData(MetaIndex.PAINTING, newPainting);
         } else {
             this.painting = newPainting;
 

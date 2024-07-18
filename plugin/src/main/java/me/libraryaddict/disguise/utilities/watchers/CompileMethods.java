@@ -33,9 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-/**
- * Created by libraryaddict on 13/02/2020.
- */
 public class CompileMethods {
     @Retention(RetentionPolicy.RUNTIME)
     public @interface CompileMethodsIntfer {
