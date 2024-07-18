@@ -379,7 +379,7 @@ public enum DisguiseType {
         if (getEntityType() == null) {
             try {
                 setEntityType(ReflectionManager.fromEnum(EntityType.class, name()));
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 if (LibsDisguises.getInstance() == null) {
                     return;
                 }

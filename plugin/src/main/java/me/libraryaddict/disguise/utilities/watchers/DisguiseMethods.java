@@ -82,7 +82,7 @@ public class DisguiseMethods {
     private void loadMethods() {
         List<String> notedSkippedParamTypes = new ArrayList<>();
 
-        try (InputStream stream = LibsDisguises.getInstance().getResource("METHOD_MAPPINGS")) {
+        try (InputStream stream = LibsDisguises.getInstance().getResource("METHOD_MAPPINGS.txt")) {
 
             HashMap<String, Class<? extends FlagWatcher>> classes = new HashMap<>();
             classes.put(FlagWatcher.class.getSimpleName(), FlagWatcher.class);
@@ -158,7 +158,8 @@ public class DisguiseMethods {
 
                 WatcherMethod m =
                     new WatcherMethod(watcher, method, info.getMappedAs(), info.getMethod(), returnType, param, info.isRandomDefault(),
-                        info.isDeprecated() && info.getAdded() == 0, unusableBy, hiddenFor);
+                        info.isDeprecated() && info.getAdded() == 0, unusableBy, hiddenFor, info.getDescription(),
+                        info.isNoVisibleDifference());
 
                 methods.add(m);
 
@@ -224,7 +225,7 @@ public class DisguiseMethods {
                             WatcherMethod method = new WatcherMethod(disguiseClass,
                                 MethodHandles.publicLookup().findVirtual(disguiseClass, methodName, MethodType.methodType(returnType, cl)),
                                 methodName, methodName, null, cl, randomDefault, false, new boolean[DisguiseType.values().length],
-                                new boolean[DisguiseType.values().length]);
+                                new boolean[DisguiseType.values().length], null, false);
 
                             methods.add(method);
 
@@ -241,7 +242,7 @@ public class DisguiseMethods {
 
                             WatcherMethod getMethod = new WatcherMethod(disguiseClass,
                                 MethodHandles.publicLookup().findVirtual(disguiseClass, getName, MethodType.methodType(cl)), getName,
-                                getName, cl, null, randomDefault, false, new boolean[DisguiseType.values().length], hiddenFor);
+                                getName, cl, null, randomDefault, false, new boolean[DisguiseType.values().length], hiddenFor, null, false);
 
                             methods.add(getMethod);
                             break;

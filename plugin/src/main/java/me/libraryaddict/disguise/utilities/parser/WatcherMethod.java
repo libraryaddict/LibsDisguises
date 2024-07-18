@@ -21,6 +21,8 @@ public class WatcherMethod {
     private final boolean hideFromTab;
     private final boolean[] unusableBy;
     private final boolean[] hiddenFor;
+    private final String description;
+    private final boolean noVisibleDifference;
 
     public boolean isUsable(DisguiseType type) {
         return !unusableBy[type.ordinal()];

@@ -7,6 +7,7 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.ClassGetter;
 import me.libraryaddict.disguise.utilities.reflection.WatcherInfo;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodHiddenFor;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodIgnoredBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodMappedAs;
@@ -48,7 +49,7 @@ public class CompileMethods {
 
     public static String[] ignoredDirectories() {
         return new String[]{"META-INF/", "libsdisg/", "me/libraryaddict/disguise/utilities/reflection/v",
-            "me/libraryaddict/disguise/utilities/reflection/ReflectionManagerAbstract.class", "fernflower_","net/kyori/adventure/"};
+            "me/libraryaddict/disguise/utilities/reflection/ReflectionManagerAbstract.class", "fernflower_", "net/kyori/adventure/"};
     }
 
     private static void doFileCount() {
@@ -87,7 +88,7 @@ public class CompileMethods {
             list.add(sound.toString());
         }
 
-        File soundsFile = new File("plugin/target/classes/SOUND_MAPPINGS");
+        File soundsFile = new File("plugin/target/classes/SOUND_MAPPINGS.txt");
 
         try (FileOutputStream fos = new FileOutputStream(soundsFile)) {
             fos.write(String.join("\n", list).getBytes(StandardCharsets.UTF_8));
@@ -173,6 +174,8 @@ public class CompileMethods {
                 DisguiseType[] unusableBy = new DisguiseType[0];
                 DisguiseType[] hiddenFor = new DisguiseType[0];
                 String mappedAs = method.getName();
+                String description = null;
+                boolean noVisibleDifference = false;
 
                 if (method.isAnnotationPresent(NmsAddedIn.class)) {
                     added = method.getAnnotation(NmsAddedIn.class).value().ordinal();
@@ -216,6 +219,16 @@ public class CompileMethods {
                     mappedAs = method.getAnnotation(MethodMappedAs.class).value();
                 }
 
+                if (method.isAnnotationPresent(MethodDescription.class)) {
+                    description = method.getAnnotation(MethodDescription.class).value();
+
+                    if (description.isEmpty()) {
+                        description = null;
+                    }
+
+                    noVisibleDifference = method.getAnnotation(MethodDescription.class).noVisibleDifference();
+                }
+
                 String param = method.getParameterCount() == 1 ? method.getParameterTypes()[0].getName() : null;
 
                 WatcherInfo info = new WatcherInfo();
@@ -228,6 +241,8 @@ public class CompileMethods {
                 info.setDeprecated(method.isAnnotationPresent(Deprecated.class));
                 info.setParam(param);
                 info.setDescriptor(getMethodDescriptor(method));
+                info.setDescription(description);
+                info.setNoVisibleDifference(noVisibleDifference);
                 info.setWatcher(method.getDeclaringClass().getSimpleName());
                 info.setReturnType(method.getReturnType().getName());
                 info.setRandomDefault(method.isAnnotationPresent(RandomDefaultValue.class));
@@ -252,7 +267,7 @@ public class CompileMethods {
 
         String gson = new Gson().toJson(methods);
 
-        File methodsFile = new File("plugin/target/classes/METHOD_MAPPINGS");
+        File methodsFile = new File("plugin/target/classes/METHOD_MAPPINGS.txt");
 
         try (FileOutputStream fos = new FileOutputStream(methodsFile)) {
             fos.write(gson.getBytes(StandardCharsets.UTF_8));
