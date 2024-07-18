@@ -20,7 +20,7 @@
     </properties>
 
     <build>
-        <defaultGoal>exec:java clean install</defaultGoal>
+        <defaultGoal>exec:java clean package</defaultGoal>
         <finalName>LibsDisguises</finalName>
 
         <resources>
