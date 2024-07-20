@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.params.types.custom;
 
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.reflection.ItemStackSerializer;
@@ -63,7 +64,6 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
         return StringUtils.join(ItemStackSerializer.serialize(item), "-");
     }
 
-
     protected static ItemStack parseToItemstack(String string) {
         if (string.isEmpty()) {
             return null;
@@ -122,7 +122,14 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
             }
 
             if (s.contains("{") || s.contains("[")) {
+                ItemStack clone = itemStack.clone();
                 Bukkit.getUnsafe().modifyItemStack(itemStack, s);
+
+                if (DisguiseUtilities.isDebuggingMode() && itemStack.equals(clone)) {
+                    LibsDisguises.getInstance().getLogger().info(
+                        "Potential error when trying to modify an item via Bukkit Unsafe. Item Type: " + clone.getType() + ", Data: '" + s +
+                            "'");
+                }
             }
 
             return itemStack;

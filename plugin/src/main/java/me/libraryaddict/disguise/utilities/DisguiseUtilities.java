@@ -315,6 +315,9 @@ public class DisguiseUtilities {
         io.github.retrooper.packetevents.adventure.serializer.gson.GsonComponentSerializer.gson();
     @Getter
     private static NamespacedKey selfDisguiseScaleNamespace;
+    @Getter
+    @Setter
+    private static boolean debuggingMode;
 
     static {
         try {
@@ -1637,6 +1640,7 @@ public class DisguiseUtilities {
         fancyHiddenTabs = NmsVersion.v1_19_R2.isSupported() && Bukkit.getPluginManager().getPlugin("ViaBackwards") == null;
         savedDisguisesKey = new NamespacedKey(LibsDisguises.getInstance(), "SavedDisguises");
         selfDisguiseScaleNamespace = new NamespacedKey(LibsDisguises.getInstance(), "Self_Disguise_Scaling");
+        debuggingMode = LibsDisguises.getInstance().isDebuggingBuild();
 
         recreateGsonSerializer();
 

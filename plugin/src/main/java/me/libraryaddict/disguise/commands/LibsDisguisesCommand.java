@@ -9,6 +9,7 @@ import me.libraryaddict.disguise.commands.libsdisguises.LDCount;
 import me.libraryaddict.disguise.commands.libsdisguises.LDDebugDisguiseLoop;
 import me.libraryaddict.disguise.commands.libsdisguises.LDDebugMineSkin;
 import me.libraryaddict.disguise.commands.libsdisguises.LDDebugPlayer;
+import me.libraryaddict.disguise.commands.libsdisguises.LDDebugging;
 import me.libraryaddict.disguise.commands.libsdisguises.LDHelp;
 import me.libraryaddict.disguise.commands.libsdisguises.LDJson;
 import me.libraryaddict.disguise.commands.libsdisguises.LDMetaInfo;
@@ -55,6 +56,7 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
         getCommands().add(new LDDebugMineSkin());
         getCommands().add(new LDDebugDisguiseLoop());
         getCommands().add(new LDMissingDescription());
+        getCommands().add(new LDDebugging());
     }
 
     protected ArrayList<String> filterTabs(ArrayList<String> list, String[] origArgs) {
