@@ -21,7 +21,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.network.ServerPlayerConnection;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.decoration.Motive;
@@ -55,7 +54,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -177,12 +175,19 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     @Override
-    public ServerEntity getEntityTrackerEntry(Entity target) throws Exception {
+    public ChunkMap.TrackedEntity getEntityTracker(Entity target) {
         ServerLevel world = ((CraftWorld) target.getWorld()).getHandle();
         ServerChunkCache chunkSource = world.getChunkSource();
         ChunkMap chunkMap = chunkSource.chunkMap;
         Int2ObjectMap<ChunkMap.TrackedEntity> entityMap = chunkMap.entityMap;
-        ChunkMap.TrackedEntity trackedEntity = entityMap.get(target.getEntityId());
+
+        return entityMap.get(target.getEntityId());
+    }
+
+    @Override
+    public ServerEntity getEntityTrackerEntry(Entity target) throws Exception {
+        ChunkMap.TrackedEntity trackedEntity = getEntityTracker(target);
+
         if (trackedEntity == null) {
             return null;
         }

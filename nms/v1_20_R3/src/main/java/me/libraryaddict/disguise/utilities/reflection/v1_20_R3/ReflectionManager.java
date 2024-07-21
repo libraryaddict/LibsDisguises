@@ -211,12 +211,19 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     @Override
-    public ServerEntity getEntityTrackerEntry(Entity target) throws Exception {
+    public ChunkMap.TrackedEntity getEntityTracker(Entity target) {
         ServerLevel world = ((CraftWorld) target.getWorld()).getHandle();
         ServerChunkCache chunkSource = world.getChunkSource();
         ChunkMap chunkMap = chunkSource.chunkMap;
         Int2ObjectMap<ChunkMap.TrackedEntity> entityMap = chunkMap.entityMap;
-        ChunkMap.TrackedEntity trackedEntity = entityMap.get(target.getEntityId());
+
+        return entityMap.get(target.getEntityId());
+    }
+
+    @Override
+    public ServerEntity getEntityTrackerEntry(Entity target) throws Exception {
+        ChunkMap.TrackedEntity trackedEntity = getEntityTracker(target);
+
         if (trackedEntity == null) {
             return null;
         }

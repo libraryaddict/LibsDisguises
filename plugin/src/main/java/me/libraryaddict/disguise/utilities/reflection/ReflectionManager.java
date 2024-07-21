@@ -201,19 +201,25 @@ public class ReflectionManager {
             nmsReflection = getReflectionManager(getVersion());
 
             getGameProfile = getCraftMethod("CraftPlayer", "getProfile");
-            trackedPlayers = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers");
+            trackedPlayers = getNmsField("EntityTrackerEntry", "trackedPlayers");
 
-            if (DisguiseUtilities.isRunningPaper() && !NmsVersion.v1_17.isSupported()) {
-                trackedPlayersMap = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap");
+            // In 1.12 to 1.13, it's all in EntityTrackerEntry
+            // In 1.14+, we have it in EntityTracker in PlayerChunkMap
+            if (NmsVersion.v1_14.isSupported()) {
+                clearEntityTracker = getNmsMethod("PlayerChunkMap$EntityTracker", "a", getNmsClass("EntityPlayer"));
+                addEntityTracker = getNmsMethod("PlayerChunkMap$EntityTracker", "b", getNmsClass("EntityPlayer"));
+            } else {
+                clearEntityTracker = getNmsMethod("EntityTrackerEntry", "clear", getNmsClass("EntityPlayer"));
+                addEntityTracker = getNmsMethod("EntityTrackerEntry", "updatePlayer", getNmsClass("EntityPlayer"));
             }
 
-            clearEntityTracker = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "a" : "clear",
-                ReflectionManager.getNmsClass("EntityPlayer"));
-            addEntityTracker = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "b" : "updatePlayer",
-                ReflectionManager.getNmsClass("EntityPlayer"));
-            trackerIsMoving = ReflectionManager.getNmsField("EntityTrackerEntry", NmsVersion.v1_20_R2.isSupported() ? "i" :
+            trackerIsMoving = getNmsField("EntityTrackerEntry", NmsVersion.v1_20_R2.isSupported() ? "i" :
                 NmsVersion.v1_19_R1.isSupported() ? "p" :
                     NmsVersion.v1_17.isSupported() ? "r" : NmsVersion.v1_14.isSupported() ? "q" : "isMoving");
+
+            if (DisguiseUtilities.isRunningPaper() && !NmsVersion.v1_17.isSupported()) {
+                trackedPlayersMap = getNmsField("EntityTrackerEntry", "trackedPlayerMap");
+            }
 
             if (nmsReflection != null) {
                 sessionService = nmsReflection.getMinecraftSessionService();
@@ -359,6 +365,7 @@ public class ReflectionManager {
         } else {
             trackerField = getNmsField("WorldServer", "tracker");
             entitiesField = getNmsField("EntityTracker", "trackedEntities");
+
             ihmGet = getNmsMethod("IntHashMap", "get", int.class);
         }
 
@@ -407,7 +414,7 @@ public class ReflectionManager {
             return nmsReflection.hasInvul(entity);
         }
 
-        Object nmsEntity = ReflectionManager.getNmsEntity(entity);
+        Object nmsEntity = getNmsEntity(entity);
 
         try {
             if (entity instanceof LivingEntity) {
@@ -926,6 +933,22 @@ public class ReflectionManager {
         return getCraftConstructor(getCraftClass(className), parameters);
     }
 
+    public static Object getEntityTracker(Entity target) throws Exception {
+        if (nmsReflection != null) {
+            return nmsReflection.getEntityTracker(target);
+        } else if (!NmsVersion.v1_14.isSupported()) {
+            return getEntityTrackerEntry(target);
+        }
+
+        Object world = getWorldServer(target.getWorld());
+
+        Object chunkProvider = chunkProviderField.get(world);
+        Object chunkMap = chunkMapField.get(chunkProvider);
+        Map trackedEntities = (Map) trackedEntitiesField.get(chunkMap);
+
+        return trackedEntities.get(target.getEntityId());
+    }
+
     public static Object getEntityTrackerEntry(Entity target) throws Exception {
         if (nmsReflection != null) {
             return nmsReflection.getEntityTrackerEntry(target);
@@ -1166,22 +1189,22 @@ public class ReflectionManager {
     }
 
     @SneakyThrows
-    public static void clearEntityTracker(Object tracker, Object player) {
-        clearEntityTracker.invoke(tracker, player);
+    public static void clearEntityTracker(Object trackerEntry, Object player) {
+        clearEntityTracker.invoke(trackerEntry, player);
     }
 
     @SneakyThrows
-    public static void addEntityTracker(Object tracker, Object player) {
-        addEntityTracker.invoke(tracker, player);
+    public static void addEntityTracker(Object trackerEntry, Object player) {
+        addEntityTracker.invoke(trackerEntry, player);
     }
 
     @SneakyThrows
     public static void addEntityToTrackedMap(Object tracker, Player player) {
-        Object nmsEntity = ReflectionManager.getPlayerConnectionOrPlayer(player);
+        Object nmsEntity = getPlayerConnectionOrPlayer(player);
 
         // Add the player to their own entity tracker
         if (!DisguiseUtilities.isRunningPaper() || NmsVersion.v1_17.isSupported()) {
-            ReflectionManager.getTrackedPlayers(tracker).add(nmsEntity);
+            getTrackedPlayers(tracker).add(nmsEntity);
         } else {
             Map<Object, Object> map = ((Map<Object, Object>) trackedPlayersMap.get(tracker));
             map.put(nmsEntity, true);
@@ -1190,10 +1213,10 @@ public class ReflectionManager {
 
     @SneakyThrows
     public static void removeEntityFromTracked(Object tracker, Player player) {
-        Object nmsEntity = ReflectionManager.getPlayerConnectionOrPlayer(player);
+        Object nmsEntity = getPlayerConnectionOrPlayer(player);
 
         if (!DisguiseUtilities.isRunningPaper() || NmsVersion.v1_17.isSupported()) {
-            ReflectionManager.getTrackedPlayers(tracker).remove(nmsEntity);
+            getTrackedPlayers(tracker).remove(nmsEntity);
         } else {
             Map<Object, Object> map = ((Map<Object, Object>) trackedPlayersMap.get(tracker));
             map.remove(nmsEntity);
@@ -1240,7 +1263,7 @@ public class ReflectionManager {
         }
 
         try {
-            return pingField.getInt(ReflectionManager.getNmsEntity(player));
+            return pingField.getInt(getNmsEntity(player));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -2052,14 +2075,14 @@ public class ReflectionManager {
     private static void createNMSValues(DisguiseType disguiseType) {
         String nmsEntityName = toReadable(disguiseType.name());
 
-        Class nmsClass = ReflectionManager.getNmsClassIgnoreErrors("Entity" + nmsEntityName);
+        Class nmsClass = getNmsClassIgnoreErrors("Entity" + nmsEntityName);
 
         if (nmsClass == null || Modifier.isAbstract(nmsClass.getModifiers())) {
             String[] split = splitReadable(disguiseType.name());
             ArrayUtils.reverse(split);
 
             nmsEntityName = StringUtils.join(split);
-            nmsClass = ReflectionManager.getNmsClassIgnoreErrors("Entity" + nmsEntityName);
+            nmsClass = getNmsClassIgnoreErrors("Entity" + nmsEntityName);
 
             if (nmsClass == null || Modifier.isAbstract(nmsClass.getModifiers())) {
                 nmsEntityName = null;
@@ -2180,18 +2203,18 @@ public class ReflectionManager {
                 return;
             }
 
-            Object nmsEntity = ReflectionManager.createEntityInstance(disguiseType,
-                nmsReflection != null ? disguiseType.getEntityType().getKey().getKey() : nmsEntityName);
+            Object nmsEntity =
+                createEntityInstance(disguiseType, nmsReflection != null ? disguiseType.getEntityType().getKey().getKey() : nmsEntityName);
 
             if (nmsEntity == null) {
                 LibsDisguises.getInstance().getLogger().warning("Entity not found! (" + nmsEntityName + ")");
                 return;
             }
 
-            disguiseType.setTypeId(NmsVersion.v1_13.isSupported() ? ReflectionManager.getEntityType(disguiseType.getEntityType()) : null,
-                ReflectionManager.getEntityTypeId(disguiseType.getEntityType()));
+            disguiseType.setTypeId(NmsVersion.v1_13.isSupported() ? getEntityType(disguiseType.getEntityType()) : null,
+                getEntityTypeId(disguiseType.getEntityType()));
 
-            Entity bukkitEntity = ReflectionManager.getBukkitEntity(nmsEntity);
+            Entity bukkitEntity = getBukkitEntity(nmsEntity);
 
             DisguiseValues disguiseValues =
                 new DisguiseValues(disguiseType, bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0);
@@ -2222,8 +2245,8 @@ public class ReflectionManager {
                 indexes.remove(metaIndex);
 
                 Object ourDefaultBukkit = metaIndex.getDefault();
-                Object ourDefaultSerialized = ReflectionManager.convertMetaToSerialized(metaIndex, ourDefaultBukkit);
-                Object minecraftDefaultBukkit = ReflectionManager.convertMetaFromSerialized(metaIndex, data.getValue());
+                Object ourDefaultSerialized = convertMetaToSerialized(metaIndex, ourDefaultBukkit);
+                Object minecraftDefaultBukkit = convertMetaFromSerialized(metaIndex, data.getValue());
                 Object minecraftDefaultSerialized = data.getValue();
 
                 if (minecraftDefaultBukkit == null) {
@@ -2236,7 +2259,7 @@ public class ReflectionManager {
 
                 if (minecraftDefaultBukkit.getClass().getSimpleName().equals("CraftItemStack") &&
                     ourDefaultBukkit.getClass().getSimpleName().equals("ItemStack")) {
-                    ourDefaultBukkit = ReflectionManager.getCraftItem((ItemStack) ourDefaultBukkit);
+                    ourDefaultBukkit = getCraftItem((ItemStack) ourDefaultBukkit);
                 }
 
                 if (ourDefaultBukkit.getClass() != minecraftDefaultBukkit.getClass() || metaIndex.getDataType() != data.getType() ||
@@ -2279,7 +2302,7 @@ public class ReflectionManager {
             SoundGroup sound = SoundGroup.getGroup(disguiseType.name());
 
             if (sound != null) {
-                Float soundStrength = ReflectionManager.getSoundModifier(nmsEntity);
+                Float soundStrength = getSoundModifier(nmsEntity);
 
                 if (soundStrength != null) {
                     sound.setDamageAndIdleSoundVolume(soundStrength);
@@ -2293,20 +2316,20 @@ public class ReflectionManager {
             }
 
             // Get the bounding box
-            disguiseValues.setAdultBox(ReflectionManager.getBoundingBox(bukkitEntity));
+            disguiseValues.setAdultBox(getBoundingBox(bukkitEntity));
 
             if (bukkitEntity instanceof Ageable) {
                 ((Ageable) bukkitEntity).setBaby();
 
-                disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
+                disguiseValues.setBabyBox(getBoundingBox(bukkitEntity));
             } else if (bukkitEntity instanceof Zombie) {
                 ((Zombie) bukkitEntity).setBaby(true);
 
-                disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
+                disguiseValues.setBabyBox(getBoundingBox(bukkitEntity));
             } else if (bukkitEntity instanceof ArmorStand) {
                 ((ArmorStand) bukkitEntity).setSmall(true);
 
-                disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
+                disguiseValues.setBabyBox(getBoundingBox(bukkitEntity));
             }
         } catch (Exception ex) {
             LibsDisguises.getInstance().getLogger()

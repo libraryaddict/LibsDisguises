@@ -1889,7 +1889,9 @@ public class DisguiseUtilities {
                     }
                 }, 2);
             } else {
-                final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
+                final Object entityTracker = ReflectionManager.getEntityTracker(disguise.getEntity());
+                final Object entityTrackerEntry =
+                    !NmsVersion.v1_14.isSupported() ? entityTracker : ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
 
                 if (entityTrackerEntry == null) {
                     return;
@@ -1905,7 +1907,7 @@ public class DisguiseUtilities {
                         continue;
                     }
 
-                    ReflectionManager.clearEntityTracker(entityTrackerEntry, p);
+                    ReflectionManager.clearEntityTracker(entityTracker, p);
 
                     WrapperPlayServerDestroyEntities destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
 
@@ -1913,7 +1915,7 @@ public class DisguiseUtilities {
 
                     Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
                         try {
-                            ReflectionManager.addEntityTracker(entityTrackerEntry, p);
+                            ReflectionManager.addEntityTracker(entityTracker, p);
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
@@ -1938,8 +1940,9 @@ public class DisguiseUtilities {
 
         if (entity.isValid()) {
             try {
-
-                final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(entity);
+                final Object entityTracker = ReflectionManager.getEntityTracker(entity);
+                final Object entityTrackerEntry =
+                    NmsVersion.v1_14.isSupported() ? entityTracker : ReflectionManager.getEntityTrackerEntry(entity);
 
                 if (entityTrackerEntry != null) {
                     Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTrackerEntry);
@@ -1952,14 +1955,14 @@ public class DisguiseUtilities {
                             continue;
                         }
 
-                        ReflectionManager.clearEntityTracker(entityTrackerEntry, p);
+                        ReflectionManager.clearEntityTracker(entityTracker, p);
 
                         WrapperPlayServerDestroyEntities destroyPacket = getDestroyPacket(entity.getEntityId());
                         PacketEvents.getAPI().getPlayerManager().sendPacket(player, destroyPacket);
 
                         Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
                             try {
-                                ReflectionManager.addEntityTracker(entityTrackerEntry, p);
+                                ReflectionManager.addEntityTracker(entityTracker, p);
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             }
@@ -2001,7 +2004,9 @@ public class DisguiseUtilities {
                 }, 2);
             }
 
-            final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
+            final Object entityTracker = ReflectionManager.getEntityTracker(disguise.getEntity());
+            final Object entityTrackerEntry =
+                !NmsVersion.v1_14.isSupported() ? entityTracker : ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
 
             if (entityTrackerEntry != null) {
                 Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTrackerEntry);
@@ -2013,14 +2018,14 @@ public class DisguiseUtilities {
                     if (disguise.getEntity() == player || !disguise.canSee(player)) {
                         continue;
                     }
-                    ReflectionManager.clearEntityTracker(entityTrackerEntry, p);
+                    ReflectionManager.clearEntityTracker(entityTracker, p);
 
                     WrapperPlayServerDestroyEntities destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
                     PacketEvents.getAPI().getPlayerManager().sendPacket(player, destroyPacket);
 
                     Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
                         try {
-                            ReflectionManager.addEntityTracker(entityTrackerEntry, p);
+                            ReflectionManager.addEntityTracker(entityTracker, p);
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }

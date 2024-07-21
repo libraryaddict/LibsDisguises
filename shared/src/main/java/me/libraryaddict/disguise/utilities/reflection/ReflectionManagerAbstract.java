@@ -52,6 +52,8 @@ public interface ReflectionManagerAbstract {
 
     ItemStack getCraftItem(ItemStack bukkitItem);
 
+    Object getEntityTracker(Entity target) throws Exception;
+
     Object getEntityTrackerEntry(Entity target) throws Exception;
 
     Object getMinecraftServer();
