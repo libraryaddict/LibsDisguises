@@ -295,7 +295,7 @@ public class ParamInfoTypes {
             return map;
         }
 
-        for (PotionEffectType effectType : ReflectionManager.enumValues(PotionEffectType.class)) {
+        for (PotionEffectType effectType : PotionEffectType.values()) {
             if (effectType == null) {
                 continue;
             }
