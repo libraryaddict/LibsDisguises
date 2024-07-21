@@ -58,6 +58,10 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
                 name += ":" + TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("glow");
             }
 
+            if (NmsVersion.v1_14.isSupported() && item.getItemMeta().hasCustomModelData()) {
+                name += ":custom_model_" + item.getItemMeta().getCustomModelData();
+            }
+
             return name;
         }
 
@@ -172,6 +176,7 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
 
         Integer amount = null;
         boolean enchanted = false;
+        Integer customModel = null;
 
         for (int i = 1; i < split.length; i++) {
             String s = split[i];
@@ -180,6 +185,8 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
                 enchanted = true;
             } else if (s.matches("\\d+") && amount == null) {
                 amount = Integer.parseInt(s);
+            } else if (NmsVersion.v1_14.isSupported() && s.toLowerCase(Locale.ENGLISH).matches("^custom_model_-?\\d+$")) {
+                customModel = Integer.parseInt(s.split("_", 3)[2]);
             } else {
                 throw new IllegalArgumentException();
             }
@@ -189,6 +196,10 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
 
         if (enchanted) {
             itemStack.addUnsafeEnchantment(DisguiseUtilities.getDurabilityEnchantment(), 1);
+        }
+
+        if (customModel != null) {
+            itemStack.getItemMeta().setCustomModelData(customModel);
         }
 
         return itemStack;
