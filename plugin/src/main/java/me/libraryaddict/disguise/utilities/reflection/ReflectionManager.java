@@ -409,6 +409,12 @@ public class ReflectionManager {
         }
     }
 
+    public static long getGameTime(Entity entity) {
+        if (entity==null||entity.getWorld()==null ||!NmsVersion.v1_19_R3.isSupported())return 0L;
+
+        return entity.getWorld().getGameTime();
+    }
+
     public static boolean hasInvul(Entity entity) {
         if (nmsReflection != null) {
             return nmsReflection.hasInvul(entity);
