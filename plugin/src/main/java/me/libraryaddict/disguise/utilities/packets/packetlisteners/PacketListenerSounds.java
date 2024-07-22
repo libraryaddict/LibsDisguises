@@ -42,7 +42,6 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             return;
         }
 
-
         Sound sound;
         float volume;
         float pitch;
@@ -57,6 +56,11 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             volume = soundEffect.getVolume();
             pitch = soundEffect.getPitch();
             sound = soundEffect.getSound();
+
+            if (sound == null) {
+                return;
+            }
+
             String soundKey = NmsVersion.v1_16.isSupported() ? sound.getSoundId().toString() : sound.getSoundId().getKey();
 
             Vector3i loc = soundEffect.getEffectPosition();
@@ -105,6 +109,10 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             volume = entitySoundEffect.getVolume();
             pitch = entitySoundEffect.getPitch();
             sound = entitySoundEffect.getSound();
+
+            if (sound == null) {
+                return;
+            }
 
             disguise = DisguiseUtilities.getDisguise(observer, entitySoundEffect.getEntityId());
         }
