@@ -57,7 +57,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             pitch = soundEffect.getPitch();
             sound = soundEffect.getSound();
 
-            if (sound == null) {
+            if (sound == null || sound.getSoundId() == null) {
                 return;
             }
 
