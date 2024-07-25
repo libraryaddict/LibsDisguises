@@ -115,8 +115,8 @@ public class LibsDisguises extends JavaPlugin {
                             "installs PacketEvents. Please do not report any issues with this plugin.");
                 } else if (!DisguiseConfig.isAutoUpdate()) {
                     getLogger().warning(
-                        "Defined in plugins/LibsDisguises/configs/libsdisguises.yml, you have requested that Lib's Disguises never " +
-                            "auto updates, which includes PacketEvents. Please do not report any issues with this plugin.");
+                        "Defined in plugins/LibsDisguises/configs/libsdisguises.yml, you have requested that Lib's Disguises never auto " +
+                            "updates, which includes PacketEvents. Please do not report any issues with this plugin.");
                 } else {
                     String reason = getPacketEventsFailedReason(plugin);
 
@@ -315,16 +315,16 @@ public class LibsDisguises extends JavaPlugin {
         // Creates more problems than it solves
        /* if (NmsVersion.v1_21_R1.isSupported()) {
             getLogger().info(
-                "Detected you are running 1.21, you may need to enable `enum-compatibility-mode` in your server's bukkit.yml if you are " +
-                    "experiencing errors on Lib's Disguises load");
+                "Detected you are running 1.21, you may need to enable `enum-compatibility-mode` in your server's bukkit.yml if you are
+                experiencing errors on Lib's Disguises load");
         }*/
 
         try {
             Class cl = Class.forName("org.bukkit.Server$Spigot");
         } catch (ClassNotFoundException e) {
             getLogger().severe(
-                "Oh dear, you seem to be using CraftBukkit. Please use Spigot or Paper instead! This plugin will continue to load, " +
-                    "but it will look like a mugging victim");
+                "Oh dear, you seem to be using CraftBukkit. Please use Spigot or Paper instead! This plugin will continue to load, but it" +
+                    " will look like a mugging victim");
         }
     }
 
@@ -353,14 +353,20 @@ public class LibsDisguises extends JavaPlugin {
         int expected = pluginYml.getInt("file-count", fileCount);
 
         if (fileCount != expected) {
-            getLogger().severe("Lib's Disguises may be infected with malware, there were " + (fileCount - expected) +
-                " unknown files injected into the jar. Please redownload from a trusted source such as SpigotMC. If this warning " +
-                "shows even after updating, try https://www.spigotmc.org/resources/spigot-anti-malware.64982/ but you will likely " +
-                "need to reinstall all your plugins, jars, etc as just one infected plugin will infect everything else when it loads.");
             getLogger().severe(
-                "This normally happens when a server owner is tricked into adding third party plugins. Please note that Lib's " +
-                    "Disguises is only detecting this and doesn't know what plugins are infected, only that Lib's Disguises itself " +
-                    "has been infected");
+                "Hi, this is libraryaddict from Lib's Disguises informing you that I have detected that my plugin Lib's Disguises looks " +
+                    "like another plugin (unknown) has injected malware into it as soon as it started running on your server, there were " +
+                    (fileCount - expected) +
+                    " unknown files injected into the jar. Please redownload from a trusted source such as SpigotMC. If this warning " +
+                    "shows even after updating, try https://www.spigotmc.org/resources/spigot-anti-malware.64982/ but you will likely " +
+                    "need to reinstall all your plugins, jars, etc as just one infected plugin will infect everything else when it loads.");
+            getLogger().severe(
+                "Unfortunately I have seen this happen from time to time, this normally happens when a server owner is tricked into " +
+                    "adding third party plugins. Please note that Lib's Disguises is only detecting this and doesn't know what plugins " +
+                    "are infected, only that Lib's Disguises itself was infected immediately after you installed it in your server. The " +
+                    "jar in your plugins folder will be bigger than what you downloaded from SpigotMC, you can easily check that for " +
+                    "yourself. I can't help you deal with the malware, there's no shortcuts but to redownload everything and remember not" +
+                    " to download from shady sources.");
         }
     }
 
@@ -390,8 +396,8 @@ public class LibsDisguises extends JavaPlugin {
         // Add a message so people are more aware
         if (!DisguiseConfig.isTallSelfDisguises()) {
             LibsDisguises.getInstance().getLogger().info(
-                "Config 'TallSelfDisguises' is set to 'false', LD will hide oversized disguises from self disguise. https://www" +
-                    ".spigotmc.org/wiki/lib-s-disguises-faq/#tall-disguises-self-disguises");
+                "Config 'TallSelfDisguises' is set to 'false', LD will hide oversized disguises from self disguise. https://www.spigotmc" +
+                    ".org/wiki/lib-s-disguises-faq/#tall-disguises-self-disguises");
         }
     }
 
