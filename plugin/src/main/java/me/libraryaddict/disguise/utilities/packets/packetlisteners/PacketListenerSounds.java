@@ -58,6 +58,8 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             sound = soundEffect.getSound();
 
             if (sound == null || sound.getSoundId() == null) {
+                // Set to null so PE doesn't try to re-encode it
+                event.setLastUsedWrapper(null);
                 return;
             }
 
@@ -111,6 +113,8 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             sound = entitySoundEffect.getSound();
 
             if (sound == null) {
+                // Set to null so PE doesn't try to re-encode it
+                event.setLastUsedWrapper(null);
                 return;
             }
 
