@@ -2857,7 +2857,7 @@ public class DisguiseUtilities {
         }
 
         if (!storedEnchantsComp.isEmpty() && storedEnchantsComp.getEnchantments().containsKey(null)) {
-            enchantsComp.setEnchantments(new LinkedHashMap<>(enchantsComp.getEnchantments()));
+            storedEnchantsComp.setEnchantments(new LinkedHashMap<>(enchantsComp.getEnchantments()));
             storedEnchantsComp.setEnchantmentLevel(null, 0);
         }
 
