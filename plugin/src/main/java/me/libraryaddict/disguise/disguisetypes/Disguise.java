@@ -558,14 +558,14 @@ public abstract class Disguise {
 
         // Here we have the scale of the player itself, where they'd be scaled up or down to match the disguise's scale
         // So a disguise that's 0.5 blocks high, will have the player be given something like 0.33 scale
-        double playerScale = disguiseHeight / (1.7 * playerHeightScale);
+        double playerScale = disguiseHeight / (1.8 * playerHeightScale);
         playerScale = Math.min(playerScale, DisguiseConfig.getScaleSelfDisguisesMax());
 
         // The max size the self disguise is allowed to be, as it'd hide the player's view
         double prevScale = this.selfDisguiseTallScaleMax;
         // Adjust so it's not blocking eyes. So smaller than normal
         // And ofc, it's 1 if the disguise was not too tall to begin with
-        this.selfDisguiseTallScaleMax = DisguiseUtilities.isTallDisguise(this) ? (1.5 * playerScale) / disguiseHeight : 1;
+        this.selfDisguiseTallScaleMax = DisguiseUtilities.isTallDisguise(this) ? (1.4 * playerScale) / disguiseHeight : 1;
 
         if (!isDisguiseInUse() || !(getEntity() instanceof Player) || !canScaleDisguise() ||
             !((TargetedDisguise) this).canSee((Player) getEntity())) {
