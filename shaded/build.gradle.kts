@@ -3,7 +3,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 plugins {
-    `java`
+    java
     alias(libs.plugins.shadowjar)
     application
 }
@@ -46,17 +46,11 @@ tasks {
         // Always inject timestamp & version
         outputs.upToDateWhen { false }
 
-        var number = "unknown";
-
-        if (gradle.startParameter.taskNames.contains("publish")) {
-            number = System.getProperty("build.number", "unknown");
-        }
-
         filesMatching("plugin.yml") {
             expand(
                 "libsdisguisesVersion" to project(":plugin").version,
                 "timestamp" to DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(LocalDateTime.now()),
-                "buildNumber" to number
+                "buildNumber" to System.getProperty("build.number", "unknown")
             )
         }
     }
