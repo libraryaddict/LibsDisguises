@@ -19,22 +19,22 @@ dependencies {
 
 publishing {
     repositories {
-//        maven {
-//            name = "md_5-releases"
-//            url = uri("https://repo.md-5.net/content/repositories/releases/")
-//            credentials {
-//                username = project.findProperty("repoUser") as String? ?: System.getenv("REPO_USER")
-//                password = project.findProperty("repoPassword") as String? ?: System.getenv("REPO_PASSWORD")
-//            }
-//        }
-//        maven {
-//            name = "md_5-snapshots"
-//            url = uri("https://repo.md-5.net/content/repositories/snapshots/")
-//            credentials {
-//                username = project.findProperty("repoUser") as String? ?: System.getenv("REPO_USER")
-//                password = project.findProperty("repoPassword") as String? ?: System.getenv("REPO_PASSWORD")
-//            }
-//        }
+        maven {
+            name = "md_5-releases"
+            url = uri("https://repo.md-5.net/content/repositories/releases/")
+            credentials {
+                username = project.findProperty("repoUser") as String? ?: System.getenv("REPO_USER")
+                password = project.findProperty("repoPassword") as String? ?: System.getenv("REPO_PASSWORD")
+            }
+        }
+        maven {
+            name = "md_5-snapshots"
+            url = uri("https://repo.md-5.net/content/repositories/snapshots/")
+            credentials {
+                username = project.findProperty("repoUser") as String? ?: System.getenv("REPO_USER")
+                password = project.findProperty("repoPassword") as String? ?: System.getenv("REPO_PASSWORD")
+            }
+        }
         mavenLocal()
     }
     publications {
