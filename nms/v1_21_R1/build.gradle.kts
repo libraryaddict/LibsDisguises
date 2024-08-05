@@ -12,4 +12,5 @@ dependencies {
     compileOnly(libs.com.mojang.authlib.new)
     compileOnly(libs.io.netty.netty.buffer)
     compileOnly(libs.it.unimi.dsi.fastutil)
+    compileOnly(libs.com.mojang.datafixerupper)
 }
