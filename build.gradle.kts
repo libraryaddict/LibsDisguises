@@ -2,6 +2,12 @@ plugins {
     `java-library`
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
 subprojects {
     repositories {
         mavenCentral()
@@ -30,13 +36,11 @@ subprojects {
 
     apply(plugin = "java-library")
 
-    java {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-    }
 
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
-        sourceCompatibility = "1.8"
+        sourceCompatibility = "8"
+        targetCompatibility = "8"
     }
 
     group = "me.libraryaddict.disguises"

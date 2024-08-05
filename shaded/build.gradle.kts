@@ -62,10 +62,6 @@ tasks {
     }
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-}
-
 application {
     mainClass = "me.libraryaddict.disguise.utilities.watchers.CompileMethods"
     applicationDefaultJvmArgs = listOf(
