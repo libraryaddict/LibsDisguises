@@ -31,15 +31,15 @@ tasks {
     task("jenkins") {
         mustRunAfter("run")
 
-        doLast {
-            copy {
-                from(shadowJar.get().archiveFile.get().asFile.absolutePath)
-                into(rootProject.projectDir.absolutePath + "\\target")
-                rename {
-                    "LibsDisguises.jar"
-                }
-            }
-        }
+//        doLast {
+//            copy {
+//                from(shadowJar.get().archiveFile.get().asFile.absolutePath)
+//                into(rootProject.projectDir.absolutePath + "\\target")
+//                rename {
+//                    "LibsDisguises.jar"
+//                }
+//            }
+//        }
     }
 
     processResources {
@@ -99,6 +99,7 @@ dependencies {
     testCompileOnly(libs.org.projectlombok.lombok)
     testAnnotationProcessor(libs.org.projectlombok.lombok)
 
+    // Dependencies that are used to compile, and will also be provided at test runtime
     testImplementation(project(":shared"))
     testImplementation(project(":plugin"))
     testImplementation(libs.libsdisguises.minimessage)
@@ -108,8 +109,10 @@ dependencies {
     testImplementation(libs.net.kyori.adventure.text.minimessage)
     testImplementation(libs.net.kyori.adventure.text.serializer.gson)
     testImplementation(libs.net.kyori.adventure.text.serializer.json)
+    // dependencies that are only used when running the tests
     testRuntimeOnly(libs.org.spigotmc.spigot.api)
     testRuntimeOnly(libs.org.spigotmc.spigot)
+    testRuntimeOnly(libs.commons.lang.commons.lang)
 }
 
 java {
