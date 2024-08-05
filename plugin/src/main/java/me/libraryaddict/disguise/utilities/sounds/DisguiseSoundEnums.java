@@ -11,6 +11,7 @@ import java.util.HashMap;
 /**
  * Only living disguises go in here!
  */
+@Getter
 public enum DisguiseSoundEnums {
     ALLAY(Sound.ENTITY_ALLAY_HURT, null, Sound.ENTITY_ALLAY_DEATH,
         new Sound[]{Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, Sound.ENTITY_ALLAY_AMBIENT_WITH_ITEM}, Sound.ENTITY_ALLAY_ITEM_GIVEN,
@@ -184,7 +185,7 @@ public enum DisguiseSoundEnums {
         Sound.ENTITY_PANDA_SNEEZE),
 
     PARROT(Sound.ENTITY_PARROT_HURT, Sound.ENTITY_PARROT_STEP, Sound.ENTITY_PARROT_DEATH, Sound.ENTITY_PARROT_AMBIENT,
-        Arrays.stream(Sound.values()).filter(
+        (Object) Arrays.stream(Sound.values()).filter(
                 sound -> sound.name().contains("PARROT_IMITATE") || sound == Sound.ENTITY_PARROT_EAT || sound == Sound.ENTITY_PARROT_FLY)
             .toArray(Sound[]::new)),
 
@@ -328,7 +329,6 @@ public enum DisguiseSoundEnums {
     ZOMBIFIED_PIGLIN(Sound.ENTITY_ZOMBIFIED_PIGLIN_HURT, null, Sound.ENTITY_ZOMBIFIED_PIGLIN_DEATH, Sound.ENTITY_ZOMBIFIED_PIGLIN_AMBIENT,
         Sound.ENTITY_ZOMBIFIED_PIGLIN_ANGRY, Sound.ENTITY_PIGLIN_CONVERTED_TO_ZOMBIFIED);
 
-    @Getter
     private final HashMap<String, SoundType> sounds = new HashMap<>();
 
     DisguiseSoundEnums(Object hurt, Object step, Object death, Object idle, Object... sounds) {

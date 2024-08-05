@@ -6,10 +6,11 @@ import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.junit.Assert;
 
 import java.lang.invoke.MethodHandle;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisguiseCloneTest {
 
@@ -94,7 +95,7 @@ public class DisguiseCloneTest {
                 if (!dString.equals(cString)) {
                     System.err.println(dString);
                     System.err.println(cString);
-                    Assert.fail("Cloned disguise is not the same!");
+                    fail("Cloned disguise is not the same!");
                 }
             }
         } catch (Exception ex) {

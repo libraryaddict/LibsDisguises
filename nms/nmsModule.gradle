@@ -1,0 +1,40 @@
+// Code copied from https://github.com/Shopkeepers/Shopkeepers/tree/master
+
+apply plugin: 'java-library'
+
+apply from: rootProject.file('nms/specialSource.gradle')
+
+ext {
+    // This needs to be defined by projects that apply this script.
+    craftbukkitVersion = 'UNSPECIFIED'
+    // This can be overridden by projects that apply this script.
+    remapServerCode = true
+}
+
+dependencies {
+    implementation project(':shared')
+    afterEvaluate {
+        if (remapServerCode) {
+            implementation "org.spigotmc:spigot:${craftbukkitVersion}:remapped-mojang"
+        } else {
+            implementation "org.spigotmc:spigot:${craftbukkitVersion}"
+        }
+    }
+}
+
+afterEvaluate {
+    if (remapServerCode) {
+        jar {
+            doLast {
+                def outputFiles = outputs.files.files
+                for (inputFile in outputFiles) {
+                    File intermediateFile = new File(temporaryDir, inputFile.name.replace('.jar', '-obf.jar'))
+                    File outputFile = inputFile
+                    remapMojangToSpigot(inputFile, intermediateFile, outputFile, craftbukkitVersion)
+                }
+            }
+        }
+    }
+}
+
+// Note: The NMS modules are not published as standalone artifacts, but are shaded into the final plugin jar.

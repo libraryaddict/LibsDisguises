@@ -16,59 +16,85 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundEnums;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class CompileMethods {
     public static void main(String[] args) {
-        doMethods();
-        doSounds();
-        doFileCount();
+        Path zipFilePath = Paths.get(System.getProperty("jar.path"));
+
+        try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
+            Files.write(fs.getPath("/METHOD_MAPPINGS.txt"), doMethods());
+            Files.write(fs.getPath("/SOUND_MAPPINGS.txt"), doSounds());
+            // Count after we write the mappings
+            Files.write(fs.getPath("/plugin.yml"), doFileCount());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    private static void doFileCount() {
-        int totalCount = 0;
+    private static int getJarFileCount(File file, String... skipFiles) {
+        try (JarFile jar = new JarFile(file)) {
+            int count = 0;
 
-        for (String folder : new String[]{"plugin/target/classes", "shaded/target/classes"}) {
-            totalCount += getFileCount(new File(folder));
-        }
+            Enumeration<JarEntry> entries = jar.entries();
 
-        try {
-            Files.write(new File(new File("shaded/target/classes"), "plugin.yml").toPath(),
-                ("\nfile-count: " + totalCount).getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
+            loop:
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+
+                if (entry.isDirectory()) {
+                    continue;
+                }
+
+                for (String skipFile : skipFiles) {
+                    if (!skipFile.equals(entry.getName())) {
+                        continue;
+                    }
+
+                    continue loop;
+                }
+
+                count++;
+            }
+
+            return count;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static int getFileCount(File folder) {
-        int count = 0;
+    private static byte[] doFileCount() {
+        int totalCount = getJarFileCount(new File(System.getProperty("jar.path")), "METHOD_MAPPINGS.txt", "SOUND_MAPPINGS.txt") + 2;
 
-        for (File f : folder.listFiles()) {
-            if (f.isFile()) {
-                count++;
-            } else {
-                count += getFileCount(f);
-            }
+        try {
+            Path path = new File(new File("build/resources/main"), "plugin.yml").toPath();
+            String pluginYaml =
+                Files.readString(path, StandardCharsets.UTF_8).replaceFirst("file-count: -?\\d+", "file-count: " + totalCount);
+            return pluginYaml.getBytes(StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-
-        return count;
     }
 
-    private static void doSounds() {
+    private static byte[] doSounds() {
         List<String> list = new ArrayList<>();
 
         for (DisguiseSoundEnums e : DisguiseSoundEnums.values()) {
@@ -77,16 +103,9 @@ public class CompileMethods {
             list.add(sound.toString());
         }
 
-        File soundsFile = new File("shaded/target/classes/SOUND_MAPPINGS.txt");
-
-        try (FileOutputStream fos = new FileOutputStream(soundsFile)) {
-            fos.write(String.join("\n", list).getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return String.join("\n", list).getBytes(StandardCharsets.UTF_8);
     }
 
-    @NotNull
     private static StringBuilder getSoundAsString(DisguiseSoundEnums e) {
         StringBuilder sound = new StringBuilder(e.name());
 
@@ -122,7 +141,7 @@ public class CompileMethods {
         classes.add(c);
     }
 
-    private static void doMethods() {
+    private static byte[] doMethods() {
         ArrayList<Class<?>> classes =
             ClassGetter.getClassesForPackage(FlagWatcher.class, "me.libraryaddict.disguise.disguisetypes.watchers");
 
@@ -258,15 +277,7 @@ public class CompileMethods {
             throw new IllegalStateException("Methods were not compiled");
         }
 
-        String gson = new Gson().toJson(methods);
-
-        File methodsFile = new File("shaded/target/classes/METHOD_MAPPINGS.txt");
-
-        try (FileOutputStream fos = new FileOutputStream(methodsFile)) {
-            fos.write(gson.getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return new Gson().toJson(methods).getBytes(StandardCharsets.UTF_8);
     }
 
     static String getDescriptorForClass(final Class c) {

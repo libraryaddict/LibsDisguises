@@ -1,0 +1,73 @@
+// Code copied from https://github.com/Shopkeepers/Shopkeepers/tree/master
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    configurations.create('specialSource')
+
+    dependencies {
+        specialSource 'net.md-5:SpecialSource:1.11.4:shaded'
+    }
+}
+
+// Spigot server code remapping: https://www.spigotmc.org/threads/spigot-bungeecord-1-17-1-17-1.510208/
+// These dependencies and mappings are installed into the local Maven repository when BuildTools builds the Spigot dependencies.
+def m2Repo = new File(repositories.mavenLocal().url.path)
+def remappedMojang = new File(m2Repo, 'org/spigotmc/spigot/{craftbukkitVersion}/spigot-{craftbukkitVersion}-remapped-mojang.jar').path
+def remappedObf = new File(m2Repo, 'org/spigotmc/spigot/{craftbukkitVersion}/spigot-{craftbukkitVersion}-remapped-obf.jar').path
+def mojangMappings = new File(m2Repo, 'org/spigotmc/minecraft-server/{craftbukkitVersion}/minecraft-server-{craftbukkitVersion}-maps-mojang.txt').path
+def spigotMappings = new File(m2Repo, 'org/spigotmc/minecraft-server/{craftbukkitVersion}/minecraft-server-{craftbukkitVersion}-maps-spigot.csrg').path
+
+def specialSource = buildscript.configurations.specialSource.resolvedConfiguration.getFirstLevelModuleDependencies().find {
+    it.moduleGroup == 'net.md-5' && it.moduleName == 'SpecialSource'
+}.moduleArtifacts.first().file.path
+
+// Converts from Mojang's mappings to Minecraft's obfuscated mappings.
+ext.remapMojangToObfuscated = { inputFile, outputFile, craftbukkitVersion ->
+    println '> remapMojangToObfuscated'
+    println '  Input: ' + inputFile.path
+    println '  Output: ' + outputFile.path
+    println '  CraftBukkit version: ' + craftbukkitVersion
+    def classpathSeparator = System.properties['path.separator']
+    exec {
+        commandLine 'java',
+                '-cp', "${specialSource}${classpathSeparator}${remappedMojang}".replace('{craftbukkitVersion}', craftbukkitVersion),
+                'net.md_5.specialsource.SpecialSource',
+                '--live',
+                '-i', inputFile.path,
+                '-o', outputFile.path,
+                '-m', mojangMappings.replace('{craftbukkitVersion}', craftbukkitVersion),
+                '--reverse'
+    }
+}
+
+// Converts from Minecraft's obfuscated mappings to Spigot's mappings.
+ext.remapObfuscatedToSpigot = { inputFile, outputFile, craftbukkitVersion ->
+    println '> remapObfuscatedToSpigot'
+    println '  Input: ' + inputFile.path
+    println '  Output: ' + outputFile.path
+    println '  CraftBukkit version: ' + craftbukkitVersion
+    def classpathSeparator = System.properties['path.separator']
+    exec {
+        commandLine 'java',
+                '-cp', "${specialSource}${classpathSeparator}${remappedObf}".replace('{craftbukkitVersion}', craftbukkitVersion),
+                'net.md_5.specialsource.SpecialSource',
+                '--live',
+                '-i', inputFile.path,
+                '-o', outputFile.path,
+                '-m', spigotMappings.replace('{craftbukkitVersion}', craftbukkitVersion)
+    }
+}
+
+// Converts from Mojang's mappings to Spigot's mappings.
+ext.remapMojangToSpigot = { inputFile, intermediateFile, outputFile, craftbukkitVersion ->
+    println '> remapMojangToSpigot'
+    println '  Input: ' + inputFile.path
+    println '  Intermediate: ' + intermediateFile.path
+    println '  Output: ' + outputFile.path
+    println '  CraftBukkit version: ' + craftbukkitVersion
+    remapMojangToObfuscated(inputFile, intermediateFile, craftbukkitVersion)
+    remapObfuscatedToSpigot(intermediateFile, outputFile, craftbukkitVersion)
+}

@@ -285,7 +285,6 @@ public class DisguiseUtilities {
     private static final HashMap<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
     @Getter
     private static boolean runningPaper;
-    @Getter
     private static MineSkinAPI mineSkinAPI;
     @Getter
     private static boolean invalidFile;

@@ -1,0 +1,9 @@
+plugins {
+    `java-library`
+}
+
+apply(from = rootProject.file("nms/nmsModule.gradle"))
+
+extra["craftbukkitVersion"] = "1.21-R0.1-SNAPSHOT";
+
+description = "v1_21_R1"

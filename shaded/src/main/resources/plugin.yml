@@ -1,13 +1,14 @@
 name: LibsDisguises
 main: me.libraryaddict.disguise.LibsDisguises
 description: A disguise plugin with various disguises.
-version: ${libsdisguises.version}
+version: ${libsdisguisesVersion}
 build-date: ${timestamp}
-build-number: ${build.number}
+build-number: ${buildNumber}
 author: libraryaddict
 authors: [ Byteflux, Navid K. ]
 softdepend: [ packetevents ]
 api-version: '1.13'
+file-count: 0
 commands:
   libsdisguises:
     aliases: [ libsdisg, ld ]

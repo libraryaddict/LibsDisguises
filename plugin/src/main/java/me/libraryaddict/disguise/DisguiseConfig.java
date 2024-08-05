@@ -187,8 +187,6 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static int maxClonedDisguises;
-    @Getter
-    @Setter
     private static int uuidGeneratedVersion;
     @Getter
     @Setter

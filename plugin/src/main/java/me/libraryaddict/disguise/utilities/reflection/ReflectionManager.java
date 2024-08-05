@@ -410,7 +410,9 @@ public class ReflectionManager {
     }
 
     public static long getGameTime(Entity entity) {
-        if (entity==null||entity.getWorld()==null ||!NmsVersion.v1_19_R3.isSupported())return 0L;
+        if (entity == null || entity.getWorld() == null || !NmsVersion.v1_19_R3.isSupported()) {
+            return 0L;
+        }
 
         return entity.getWorld().getGameTime();
     }
@@ -504,26 +506,15 @@ public class ReflectionManager {
         return null;
     }
 
-    public static int getJarFileCount(File file, String... ignoredDirectories) throws IOException {
+    public static int getJarFileCount(File file) throws IOException {
         try (JarFile jar = new JarFile(file)) {
             int count = 0;
 
             Enumeration<JarEntry> entry = jar.entries();
 
-            loop:
             while (entry.hasMoreElements()) {
-                JarEntry element = entry.nextElement();
-
-                if (element.isDirectory()) {
+                if (entry.nextElement().isDirectory()) {
                     continue;
-                }
-
-                for (String ignored : ignoredDirectories) {
-                    if (!element.getName().startsWith(ignored)) {
-                        continue;
-                    }
-
-                    continue loop;
                 }
 
                 count++;

@@ -349,14 +349,14 @@ public class LibsDisguises extends JavaPlugin {
         buildNumber = StringUtils.stripToNull(pluginYml.getString("build-number"));
         buildDate = StringUtils.stripToNull(pluginYml.getString("build-date"));
 
-        int fileCount = ReflectionManager.getJarFileCount(getFile(), LibsPremium.ignoredDirectories());
+        int fileCount = ReflectionManager.getJarFileCount(getFile());
         int expected = pluginYml.getInt("file-count", fileCount);
 
         if (fileCount != expected) {
             getLogger().severe(
                 "Hi, this is libraryaddict from Lib's Disguises informing you that I have detected that my plugin Lib's Disguises looks " +
-                    "like another plugin (unknown) has injected malware into it as soon as it started running on your server, there were " +
-                    (fileCount - expected) +
+                    "like another plugin (don't know which) has injected malware into it as soon as Lib's Disguises started running on " +
+                    "your server, there were " + (fileCount - expected) +
                     " unknown files injected into the jar. Please redownload from a trusted source such as SpigotMC. If this warning " +
                     "shows even after updating, try https://www.spigotmc.org/resources/spigot-anti-malware.64982/ but you will likely " +
                     "need to reinstall all your plugins, jars, etc as just one infected plugin will infect everything else when it loads.");
