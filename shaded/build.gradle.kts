@@ -111,3 +111,8 @@ dependencies {
     testRuntimeOnly(libs.org.spigotmc.spigot.api)
     testRuntimeOnly(libs.org.spigotmc.spigot)
 }
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
