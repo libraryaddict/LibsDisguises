@@ -113,6 +113,8 @@ dependencies {
     testRuntimeOnly(libs.org.spigotmc.spigot.api)
     testRuntimeOnly(libs.org.spigotmc.spigot)
     testRuntimeOnly(libs.commons.lang.commons.lang)
+    testRuntimeOnly(libs.io.netty.netty.buffer)
+    testRuntimeOnly(libs.io.netty.netty.codec)
 }
 
 java {
