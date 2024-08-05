@@ -1,5 +1,6 @@
 plugins {
     `maven-publish`
+      id("org.hibernate.build.maven-repo-auth") version "3.0.4"
 }
 
 version = "10.0.44-SNAPSHOT"
