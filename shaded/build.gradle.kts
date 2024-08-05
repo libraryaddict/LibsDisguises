@@ -115,7 +115,7 @@ dependencies {
     testRuntimeOnly(libs.commons.lang.commons.lang)
     testRuntimeOnly(libs.io.netty.netty.buffer)
     testRuntimeOnly(libs.io.netty.netty.codec)
-    testRuntimeOnly(libs.com.mojang.authlib)
+    testRuntimeOnly(libs.com.mojang.authlib.new)
 }
 
 java {
