@@ -20,20 +20,21 @@ dependencies {
 
 publishing {
     repositories {
-        if (!project.version.toString().contains("SNAPSHOT")) {
-            maven {
-                name = "md_5-releases"
-                url = uri("https://repo.md-5.net/content/repositories/releases/")
-            }
-        } else {
+        // If this is a snapshot build, use the snapshot repo
+        // Otherwise, use the release repo
+        if (project.version.toString().contains("-SNAPSHOT")) {
             maven {
                 name = "md_5-snapshots"
                 url = uri("https://repo.md-5.net/content/repositories/snapshots/")
             }
+        } else {
+            maven {
+                name = "md_5-releases"
+                url = uri("https://repo.md-5.net/content/repositories/releases/")
+            }
         }
-
-        mavenLocal()
     }
+
     publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
