@@ -10,4 +10,6 @@ description = "v1_19_R1"
 
 dependencies {
     compileOnly(libs.com.mojang.authlib.old)
+    compileOnly(libs.io.netty.netty.buffer)
+    compileOnly(libs.it.unimi.dsi.fastutil)
 }

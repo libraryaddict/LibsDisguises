@@ -20,12 +20,14 @@ shadow-version = "8.1.1"
 junit-version = "4.13.2"
 junit-jupiter-version = "5.9.3"
 mockito-version = "5.12.0"
+it-unimi-dsi-fastutil-version = "8.5.8"
 
 [libraries]
 com-mojang-authlib-old = { module = "com.mojang:authlib", version.ref = "com-mojang-authlib-old" }
 com-mojang-authlib-new = { module = "com.mojang:authlib", version.ref = "com-mojang-authlib-new" }
 commons-lang-commons-lang = { module = "commons-lang:commons-lang", version.ref = "commons-lang-commons-lang" }
 io-netty-netty-buffer = { module = "io.netty:netty-buffer", version.ref = "io-netty-netty-buffer" }
+it-unimi-dsi-fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "it-unimi-dsi-fastutil-version" }
 io-netty-netty-codec = { module = "io.netty:netty-codec", version.ref = "io-netty-netty-codec" }
 io-papermc-paper-paper-api = { module = "io.papermc.paper:paper-api", version.ref = "io-papermc-paper-paper-api" }
 net-kyori-adventure-api = { module = "net.kyori:adventure-api", version.ref = "net-kyori-adventure-api" }
