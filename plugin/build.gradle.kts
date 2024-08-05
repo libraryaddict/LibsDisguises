@@ -9,7 +9,7 @@ dependencies {
     compileOnly(libs.io.netty.netty.buffer)
     compileOnly(libs.io.netty.netty.codec)
     compileOnly(libs.commons.lang.commons.lang)
-    compileOnly(libs.com.mojang.authlib)
+    compileOnly(libs.com.mojang.authlib.new)
     compileOnly(libs.org.spigotmc.spigot.api)
     compileOnly(libs.com.retro.packetevents)
     compileOnly(libs.libsdisguises.minimessage)
