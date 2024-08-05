@@ -1,6 +1,6 @@
 plugins {
     `maven-publish`
-      id("org.hibernate.build.maven-repo-auth") version "3.0.4"
+    id("org.hibernate.build.maven-repo-auth") version "3.0.4"
 }
 
 version = "10.0.44-SNAPSHOT"
@@ -20,14 +20,18 @@ dependencies {
 
 publishing {
     repositories {
-        maven {
-            name = "md_5-releases"
-            url = uri("https://repo.md-5.net/content/repositories/releases/")
+        if (!project.version.toString().contains("SNAPSHOT")) {
+            maven {
+                name = "md_5-releases"
+                url = uri("https://repo.md-5.net/content/repositories/releases/")
+            }
+        } else {
+            maven {
+                name = "md_5-snapshots"
+                url = uri("https://repo.md-5.net/content/repositories/snapshots/")
+            }
         }
-        maven {
-            name = "md_5-snapshots"
-            url = uri("https://repo.md-5.net/content/repositories/snapshots/")
-        }
+
         mavenLocal()
     }
     publications {
