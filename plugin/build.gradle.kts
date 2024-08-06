@@ -7,13 +7,13 @@ version = "10.0.44-SNAPSHOT"
 
 dependencies {
     compileOnly(project(":shared"))
+    compileOnly(project(":minimessage", "shadow"))
     compileOnly(libs.io.netty.netty.buffer)
     compileOnly(libs.io.netty.netty.codec)
     compileOnly(libs.commons.lang.commons.lang)
     compileOnly(libs.com.mojang.authlib.new)
     compileOnly(libs.org.spigotmc.spigot.api)
     compileOnly(libs.com.retro.packetevents)
-    compileOnly(libs.libsdisguises.minimessage)
     compileOnly(libs.io.papermc.paper.paper.api);
     compileOnly(libs.it.unimi.dsi.fastutil)
 }
