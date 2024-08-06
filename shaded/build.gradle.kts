@@ -72,7 +72,7 @@ testing {
 }
 
 dependencies {
-    shadow(libs.libsdisguises.minimessage) {
+    shadow(project(":minimessage", "shadow")) {
         exclude("*")
     }
     shadow(project(":shared")) {
@@ -96,7 +96,7 @@ dependencies {
     // Dependencies that are used to compile, and will also be provided at test runtime
     testImplementation(project(":shared"))
     testImplementation(project(":plugin"))
-    testImplementation(libs.libsdisguises.minimessage)
+    testImplementation(project(":minimessage", "shadow"))
     testImplementation(libs.mockito)
     testImplementation(libs.com.retro.packetevents)
     testImplementation(libs.net.kyori.adventure.api)

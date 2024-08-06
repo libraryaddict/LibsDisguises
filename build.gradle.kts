@@ -37,6 +37,7 @@ subprojects {
         toolchain {
             languageVersion = JavaLanguageVersion.of(21)
         }
+        disableAutoTargetJvm()
     }
 
     tasks.withType<JavaCompile> {
