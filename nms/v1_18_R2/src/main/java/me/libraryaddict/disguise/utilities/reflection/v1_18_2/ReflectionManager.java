@@ -233,7 +233,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
             return 0.0f;
         } else {
             try {
-                Method method = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("eu");
+                Method method = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("ev");
                 method.setAccessible(true);
 
                 return (Float) method.invoke(entity);
