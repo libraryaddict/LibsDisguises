@@ -206,8 +206,10 @@ public class ReflectionManager {
             // In 1.12 to 1.13, it's all in EntityTrackerEntry
             // In 1.14+, we have it in EntityTracker in PlayerChunkMap
             if (NmsVersion.v1_14.isSupported()) {
-                clearEntityTracker = getNmsMethod("PlayerChunkMap$EntityTracker", "a", getNmsClass("EntityPlayer"));
-                addEntityTracker = getNmsMethod("PlayerChunkMap$EntityTracker", "b", getNmsClass("EntityPlayer"));
+                clearEntityTracker = getNmsMethod("PlayerChunkMap$EntityTracker", NmsVersion.v1_18.isSupported() ? "a" : "clear",
+                    getNmsClass("EntityPlayer"));
+                addEntityTracker = getNmsMethod("PlayerChunkMap$EntityTracker", NmsVersion.v1_18.isSupported() ? "b" : "updatePlayer",
+                    getNmsClass("EntityPlayer"));
             } else {
                 clearEntityTracker = getNmsMethod("EntityTrackerEntry", "clear", getNmsClass("EntityPlayer"));
                 addEntityTracker = getNmsMethod("EntityTrackerEntry", "updatePlayer", getNmsClass("EntityPlayer"));
