@@ -31,15 +31,15 @@ tasks {
     task("jenkins") {
         mustRunAfter("run")
 
-//        doLast {
-//            copy {
-//                from(shadowJar.get().archiveFile.get().asFile.absolutePath)
-//                into(rootProject.projectDir.absolutePath + "\\target")
-//                rename {
-//                    "LibsDisguises.jar"
-//                }
-//            }
-//        }
+        doLast {
+            copy {
+                from(shadowJar.get().archiveFile.get().asFile.absolutePath)
+                into(rootProject.projectDir.absolutePath + "\\target")
+                rename {
+                    "LibsDisguises.jar"
+                }
+            }
+        }
     }
 
     processResources {
