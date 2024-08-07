@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.shadowjar)
-    `maven-publish`
 }
 
 dependencies {
@@ -20,7 +19,6 @@ tasks {
     }
 
     build {
-        dependsOn(publish)
         dependsOn(shadowJar)
     }
 
@@ -28,18 +26,5 @@ tasks {
         configurations = listOf(project.configurations.shadow.get())
         relocate("net.kyori", "libsdisg.shaded.net.kyori")
         archiveClassifier.set("shadow")
-    }
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("relocated") {
-            artifact(tasks["shadowJar"]) {
-                classifier = null
-            }
-        }
-    }
-    repositories {
-        mavenLocal()
     }
 }

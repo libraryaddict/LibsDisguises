@@ -41,7 +41,6 @@ org-spigotmc-spigot = { module = "org.spigotmc:spigot", version.ref = "org-spigo
 org-spigotmc-spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "org-spigotmc-spigot-latest" }
 com-retro-packetevents = { module = "com.github.retrooper:packetevents-spigot", version.ref = "com-retro-packetevents-version" }
 org-projectlombok-lombok = { module = "org.projectlombok:lombok", version.ref = "lombok-version" }
-#libsdisguises-minimessage = { module = "me.libraryaddict.disguises:minimessage", version = "1.0-SNAPSHOT" }
 junit-plugin = { module = "junit:junit", version.ref = "junit-version" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter-version" }
 mockito = { module = "org.mockito:mockito-core", version.ref = "mockito-version" }
