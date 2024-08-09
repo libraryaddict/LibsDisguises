@@ -167,7 +167,7 @@ public class PacketEventsUpdater {
         return true;
     }
 
-    private boolean doReleaseUpdate(String requiredVersion) throws IOException {
+    public boolean doReleaseUpdate(@Nullable String requiredVersion) throws IOException {
         URL url = new URL("https://api.modrinth.com/v2/project/packetevents/version");
         // Creating a connection
         HttpURLConnection con = (HttpURLConnection) url.openConnection();

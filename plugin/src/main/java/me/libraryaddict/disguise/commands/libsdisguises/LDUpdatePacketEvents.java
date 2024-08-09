@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
+import me.libraryaddict.disguise.DisguiseConfig.UpdatesBranch;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.updates.PacketEventsUpdater;
@@ -9,6 +10,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LDUpdatePacketEvents implements LDCommand {
@@ -16,7 +18,7 @@ public class LDUpdatePacketEvents implements LDCommand {
 
     @Override
     public List<String> getTabComplete() {
-        return Arrays.asList("updatepacketevents", "updatepe", "packetevents");
+        return Arrays.asList("updatepacketevents", "updatepe", "packetevents", "pe");
     }
 
     @Override
@@ -40,6 +42,22 @@ public class LDUpdatePacketEvents implements LDCommand {
             return;
         }
 
+        UpdatesBranch branch;
+
+        if (args.length > 1) {
+            if (args[1].toLowerCase(Locale.ENGLISH).contains("snapshot")) {
+                branch = UpdatesBranch.SNAPSHOTS;
+            } else if (args[1].toLowerCase(Locale.ENGLISH).contains("release")) {
+                branch = UpdatesBranch.RELEASES;
+            } else {
+                sendMessage(sender,
+                    "Unrecognized third argument, you can provide 'snapshots' and 'release' to force an update to one of those");
+                return;
+            }
+        } else {
+            branch = UpdatesBranch.SAME_BUILDS;
+        }
+
         sendMessage(sender, "Please hold, now downloading PacketEvents..");
 
         new BukkitRunnable() {
@@ -48,7 +66,15 @@ public class LDUpdatePacketEvents implements LDCommand {
                 PacketEventsUpdater updater = new PacketEventsUpdater();
 
                 try {
-                    boolean outcome = updater.doUpdate();
+                    boolean outcome;
+
+                    if (branch == UpdatesBranch.SAME_BUILDS) {
+                        outcome = updater.doSnapshotUpdate();
+                    } else if (branch == UpdatesBranch.RELEASES) {
+                        outcome = updater.doReleaseUpdate(null);
+                    } else {
+                        outcome = updater.doUpdate();
+                    }
 
                     new BukkitRunnable() {
                         @Override
