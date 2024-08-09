@@ -68,7 +68,7 @@ public class LDUpdatePacketEvents implements LDCommand {
                 try {
                     boolean outcome;
 
-                    if (branch == UpdatesBranch.SAME_BUILDS) {
+                    if (branch == UpdatesBranch.SNAPSHOTS) {
                         outcome = updater.doSnapshotUpdate();
                     } else if (branch == UpdatesBranch.RELEASES) {
                         outcome = updater.doReleaseUpdate(null);
