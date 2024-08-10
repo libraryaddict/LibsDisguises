@@ -6,6 +6,7 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import lombok.SneakyThrows;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -63,7 +64,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.lang.reflect.Modifier;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -72,16 +73,35 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReflectionManager implements ReflectionManagerAbstract {
     private Field dataItemsField;
+    private final Field trackedEntityField;
+    private final AtomicInteger entityCounter;
+    private final Method entityDefaultSoundMethod;
+    private final Method itemMetaDeserialize;
 
+    @SneakyThrows
     public ReflectionManager() {
         for (Field f : SynchedEntityData.class.getDeclaredFields()) {
-            if (!f.getType().isArray()) {
+            if (Modifier.isStatic(f.getModifiers()) || !Int2ObjectMap.class.isAssignableFrom(f.getType())) {
                 continue;
             }
 
             f.setAccessible(true);
             dataItemsField = f;
         }
+
+        Field entityCounter = net.minecraft.world.entity.Entity.class.getDeclaredField("d");
+        entityCounter.setAccessible(true);
+        this.entityCounter = (AtomicInteger) entityCounter.get(null);
+
+        trackedEntityField = ChunkMap.TrackedEntity.class.getDeclaredField("b");
+        trackedEntityField.setAccessible(true);
+
+        // Default is protected method, 1.0F on EntityLiving.class
+        entityDefaultSoundMethod = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("eV");
+        entityDefaultSoundMethod.setAccessible(true);
+
+        Class<?> aClass = Class.forName("org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMetaItem$SerializableMeta");
+        itemMetaDeserialize = aClass.getDeclaredMethod("deserialize", Map.class);
     }
 
     public boolean hasInvul(Entity entity) {
@@ -107,20 +127,11 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     @Override
     public int getNewEntityId(boolean increment) {
-        try {
-            Field entityCounter = net.minecraft.world.entity.Entity.class.getDeclaredField("d");
-            entityCounter.setAccessible(true);
-            AtomicInteger atomicInteger = (AtomicInteger) entityCounter.get(null);
-            if (increment) {
-                return atomicInteger.incrementAndGet();
-            } else {
-                return atomicInteger.get();
-            }
-        } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
+        if (increment) {
+            return entityCounter.incrementAndGet();
+        } else {
+            return entityCounter.get();
         }
-
-        return -1;
     }
 
     @Override
@@ -216,10 +227,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
             return null;
         }
 
-        Field field = ChunkMap.TrackedEntity.class.getDeclaredField("b");
-        field.setAccessible(true);
-
-        return (ServerEntity) field.get(trackedEntity);
+        return (ServerEntity) trackedEntityField.get(trackedEntity);
     }
 
     @Override
@@ -256,11 +264,8 @@ public class ReflectionManager implements ReflectionManagerAbstract {
             return 0.0f;
         } else {
             try {
-                Method method = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("eV");
-                method.setAccessible(true);
-
-                return (Float) method.invoke(entity);
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                return (Float) entityDefaultSoundMethod.invoke(entity);
+            } catch (InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
@@ -363,11 +368,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     @Override
     public ItemMeta getDeserializedItemMeta(Map<String, Object> meta) {
         try {
-            Class<?> aClass = Class.forName("org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMetaItem$SerializableMeta");
-            Method deserialize = aClass.getDeclaredMethod("deserialize", Map.class);
-            Object itemMeta = deserialize.invoke(null, meta);
-
-            return (ItemMeta) itemMeta;
+            return (ItemMeta) itemMetaDeserialize.invoke(null, meta);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -375,19 +376,19 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return null;
     }
 
+    @SneakyThrows
     @Override
     public ByteBuf getDataWatcherValues(Entity entity) {
-        net.minecraft.world.entity.Entity ent = (net.minecraft.world.entity.Entity) getNmsEntity(entity);
-        List<SynchedEntityData.DataValue<?>> dataList = ent.getEntityData().getNonDefaultValues();
-
-        if (dataList == null) {
-            return null;
-        }
+        SynchedEntityData watcher = ((CraftEntity) entity).getHandle().getEntityData();
+        Int2ObjectMap<SynchedEntityData.DataItem<?>> dataItems = (Int2ObjectMap<SynchedEntityData.DataItem<?>>) dataItemsField.get(watcher);
 
         ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer();
         FriendlyByteBuf serializer = new FriendlyByteBuf(buf);
 
-        dataList.forEach(d -> d.write(serializer));
+        for (SynchedEntityData.DataItem dataItem : dataItems.values()) {
+            dataItem.value().write(serializer);
+        }
+
         serializer.writeByte(255);
 
         return buf;
