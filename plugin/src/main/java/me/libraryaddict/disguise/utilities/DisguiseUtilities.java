@@ -3485,13 +3485,13 @@ public class DisguiseUtilities {
 
                 if (NmsVersion.v1_19_R1.isSupported()) {
                     WrapperPlayServerSpawnEntity spawnEntity =
-                        new WrapperPlayServerSpawnEntity(standIds[0], Optional.of(UUID.randomUUID()), EntityTypes.ARMOR_STAND,
+                        new WrapperPlayServerSpawnEntity(standIds[i], Optional.of(UUID.randomUUID()), EntityTypes.ARMOR_STAND,
                             new Vector3d(loc.getX(), y, loc.getZ()), 0f, 0f, 0f, 0, Optional.of(Vector3d.zero()));
 
                     packets.add(spawnEntity);
                 } else {
                     WrapperPlayServerSpawnLivingEntity spawnEntity =
-                        new WrapperPlayServerSpawnLivingEntity(standIds[0], UUID.randomUUID(), EntityTypes.ARMOR_STAND,
+                        new WrapperPlayServerSpawnLivingEntity(standIds[i], UUID.randomUUID(), EntityTypes.ARMOR_STAND,
                             new com.github.retrooper.packetevents.protocol.world.Location(loc.getX(), y, loc.getZ(), 0f, 0f), 0f,
                             Vector3d.zero(), watcherValues);
 
