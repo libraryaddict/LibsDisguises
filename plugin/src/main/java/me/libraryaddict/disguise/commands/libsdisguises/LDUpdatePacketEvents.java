@@ -36,6 +36,15 @@ public class LDUpdatePacketEvents implements LDCommand {
     }
 
     @Override
+    public List<String> onTabComplete(String[] args) {
+        if (args.length == 2) {
+            return Arrays.asList("snapshots", "releases");
+        }
+
+        return null;
+    }
+
+    @Override
     public void onCommand(CommandSender sender, String[] args) {
         if (updateInProgress.get()) {
             sendMessage(sender, "Update already in progress");
@@ -58,7 +67,8 @@ public class LDUpdatePacketEvents implements LDCommand {
             branch = UpdatesBranch.SAME_BUILDS;
         }
 
-        sendMessage(sender, "Please hold, now downloading PacketEvents..");
+        sendMessage(sender, "Please hold, now downloading " + (branch == UpdatesBranch.RELEASES ? "latest release for " :
+            branch == UpdatesBranch.SNAPSHOTS ? "latest snapshot build for " : "") + "PacketEvents..");
 
         new BukkitRunnable() {
             @Override
@@ -80,9 +90,9 @@ public class LDUpdatePacketEvents implements LDCommand {
                         @Override
                         public void run() {
                             if (outcome) {
-                                sendMessage(sender, "Download success! Restart server to finish update!");
+                                sendMessage(sender, "Packetevents download success! Restart server to finish update!");
                             } else {
-                                sendMessage(sender, "Update failed, you may need to update PacketEvents");
+                                sendMessage(sender, "Packetevents update failed, you may need to update PacketEvents");
                             }
                         }
                     }.runTask(LibsDisguises.getInstance());
@@ -92,7 +102,7 @@ public class LDUpdatePacketEvents implements LDCommand {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            sendMessage(sender, "Update failed, " + ex.getMessage());
+                            sendMessage(sender, "Packetevents update failed, " + ex.getMessage());
                         }
                     }.runTask(LibsDisguises.getInstance());
                 } finally {
