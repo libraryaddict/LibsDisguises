@@ -448,12 +448,8 @@ public class LibsDisguises extends JavaPlugin {
             return;
         }
 
-        if (LibsPremium.isPremium()) {
-            new DisguisePlaceholders().register();
-            getLogger().info("PlaceholderAPI support enabled");
-        } else {
-            getLogger().info("PlaceholderAPI support not enabled, requires Lib's Disguises premium");
-        }
+        new DisguisePlaceholders().register();
+        getLogger().info("PlaceholderAPI support enabled");
     }
 
     @NotNull

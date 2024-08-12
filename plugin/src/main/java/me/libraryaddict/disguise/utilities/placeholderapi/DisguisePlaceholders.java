@@ -15,14 +15,6 @@ public class DisguisePlaceholders extends PlaceholderExpansion {
     private final HashMap<String, DPlaceholder> placeholders = new HashMap<>();
 
     public DisguisePlaceholders() {
-        if (!LibsPremium.isPremium()) {
-            return;
-        }
-
-        create();
-    }
-
-    private void create() {
         add(new PlaceholderDisguiseType());
         add(new PlaceholderDisguiseName());
         add(new PlaceholderDisguiseHeight());
