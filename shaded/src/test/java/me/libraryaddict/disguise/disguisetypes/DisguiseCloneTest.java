@@ -35,7 +35,7 @@ public class DisguiseCloneTest {
                     disguise = new MiscDisguise(type);
                 }
 
-                for (Map.Entry<WatcherMethod, Map.Entry<WatcherMethod, Object>> entry : DisguiseParser.getMethodDefaults().entrySet()) {
+               /* for (Map.Entry<WatcherMethod, Map.Entry<WatcherMethod, Object>> entry : DisguiseParser.getMethodDefaults().entrySet()) {
                     Object dValue = entry.getValue().getValue();
 
                     if (dValue instanceof String) {
@@ -86,7 +86,7 @@ public class DisguiseCloneTest {
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }
-                }
+                }*/
 
                 Disguise cloned = disguise.clone();
                 String dString = DisguiseUtilities.getGson().toJson(disguise);

@@ -36,6 +36,7 @@ import me.libraryaddict.disguise.utilities.metrics.MetricsInitalizer;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.placeholderapi.DisguisePlaceholders;
 import me.libraryaddict.disguise.utilities.reflection.ClassMappings;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
@@ -231,6 +232,8 @@ public class LibsDisguises extends JavaPlugin {
 
             registerListeners();
             registerCommands();
+
+            integratePlaceholderApi();
 
             new MetricsInitalizer();
         } catch (Throwable throwable) {
@@ -438,6 +441,19 @@ public class LibsDisguises extends JavaPlugin {
         registerCommand("grabhead", new GrabHeadCommand());
 
         unregisterCommands(false);
+    }
+
+    private void integratePlaceholderApi() {
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null) {
+            return;
+        }
+
+        if (LibsPremium.isPremium()) {
+            new DisguisePlaceholders().register();
+            getLogger().info("PlaceholderAPI support enabled");
+        } else {
+            getLogger().info("PlaceholderAPI support not enabled, requires Lib's Disguises premium");
+        }
     }
 
     @NotNull

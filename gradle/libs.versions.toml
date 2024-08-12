@@ -22,6 +22,7 @@ junit-jupiter-version = "5.9.3"
 mockito-version = "5.12.0"
 it-unimi-dsi-fastutil-version = "8.5.8"
 com-mojang-datafixerupper = "7.0.14"
+placeholder-api = "2.11.6"
 
 [libraries]
 com-mojang-datafixerupper = { module = "com.mojang:datafixerupper", version.ref = "com-mojang-datafixerupper" }
@@ -44,6 +45,7 @@ org-projectlombok-lombok = { module = "org.projectlombok:lombok", version.ref = 
 junit-plugin = { module = "junit:junit", version.ref = "junit-version" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter-version" }
 mockito = { module = "org.mockito:mockito-core", version.ref = "mockito-version" }
+placeholder-api = { module = "me.clip:placeholderapi", version.ref = "placeholder-api" }
 
 [plugins]
 shadowjar = { id = "com.github.johnrengelman.shadow", version.ref = "shadow-version" }

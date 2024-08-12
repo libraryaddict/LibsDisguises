@@ -45,8 +45,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +62,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class DisguiseParser {
     private static class InvalidSkinHits {
@@ -98,10 +97,7 @@ public class DisguiseParser {
         }
     }
 
-    /**
-     * <Setter, <Getter, DefaultValue>>
-     */
-    private static final HashMap<WatcherMethod, Map.Entry<WatcherMethod, Object>> defaultWatcherValues = new HashMap<>();
+    private static final List<WatcherGetterSetter> watcherMethods = new ArrayList<>();
     private static final List<ExtraDisguiseParam> extraDisguiseParams = new ArrayList<>();
     private static final ConcurrentHashMap<String, List<Consumer<UserProfile>>> fetchingSkins = new ConcurrentHashMap<>();
     private static long lastPremiumMessage;
@@ -151,20 +147,19 @@ public class DisguiseParser {
                         continue;
                     }
 
-                    String getName = setMethod.getMappedName().substring(3); // Remove 'set'
+                    String sharedName = setMethod.getMappedName().substring(3); // Remove 'set'
+                    String getPrefix = "get";
 
-                    if (getName.equals("HasNectar")) {
-                        getName = "hasNectar";
-                    } else if (getName.equals("HasStung")) {
-                        getName = "hasStung";
-                    } else if (getName.matches("^Has((Left)|(Right))Horn$")) {
-                        getName = "has" + getName.substring(3);
+                    if (sharedName.matches("^Has(Nectar|Stung)$") || sharedName.matches("^Has((Left)|(Right))Horn$")) {
+                        sharedName = sharedName.substring(3);
+                        getPrefix = "has";
                     } else if (setMethod.getParam().isAssignableFrom(boolean.class)) {
-                        getName = "is" + getName;
+                        getPrefix = "is";
                     } else {
-                        getName = "get" + getName;
+                        getPrefix = "get";
                     }
 
+                    String getName = getPrefix + sharedName;
                     WatcherMethod getMethod = null;
 
                     for (WatcherMethod m : allMethods) {
@@ -205,7 +200,7 @@ public class DisguiseParser {
                         defaultValue = getMethod.getMethod().bindTo(invokeWith).invoke();
                     }
 
-                    addWatcherDefault(setMethod, getMethod, defaultValue);
+                    addWatcherDefault(new WatcherGetterSetter(setMethod, getMethod, defaultValue, sharedName));
                 }
             }
         } catch (Throwable e) {
@@ -371,16 +366,57 @@ public class DisguiseParser {
         });
     }
 
-    public static HashMap<WatcherMethod, Entry<WatcherMethod, Object>> getMethodDefaults() {
-        return defaultWatcherValues;
-    }
-
     public static String parseToString(Disguise disguise) {
         return parseToString(disguise, true);
     }
 
     public static String parseToString(Disguise disguise, boolean outputSkinData) {
         return parseToString(disguise, outputSkinData, false);
+    }
+
+    public static String parseToString(Disguise disguise, WatcherMethod method) throws Throwable {
+        // Ensure its a getter
+        if (method.getOwner() != null) {
+            method = method.getOwner().getGetter();
+        }
+
+        Object invokeWith = method.getWatcherClass().isInstance(disguise) ? disguise : disguise.getWatcher();
+
+        Object ourValue = method.getMethod().bindTo(invokeWith).invoke();
+
+        // Escape a hacky fix for custom names, disguised players with custom names don't want to show it
+        // so it was set to an empty string.
+        if ("".equals(ourValue) && method.getMappedName().equals("getCustomName")) {
+            ourValue = null;
+        }
+
+        if (method.getMappedName().equals("getSkin") && disguise.isPlayerDisguise()) {
+            PlayerDisguise pDisg = (PlayerDisguise) disguise;
+            ourValue = pDisg.getName();
+
+            if (pDisg.getSkin() != null) {
+                if (pDisg.getSkin().length() <= 32) {
+                    ourValue = pDisg.getSkin();
+                }
+            } else if (pDisg.getUserProfile() != null && pDisg.getUserProfile().getName() != null) {
+                ourValue = pDisg.getUserProfile().getName();
+            }
+        }
+
+        String valueString;
+
+        if (ourValue != null) {
+            valueString = ParamInfoManager.getParamInfo(ourValue.getClass()).toString(ourValue);
+
+            if (ourValue instanceof String) {
+                return TranslateType.DISGUISE_OPTIONS_PARAMETERS.reverseGet(valueString);
+            }
+
+            return valueString;
+        }
+
+        return TranslateType.DISGUISE_OPTIONS_PARAMETERS.reverseGet("null");
+
     }
 
     /**
@@ -399,20 +435,25 @@ public class DisguiseParser {
             WatcherMethod[] methods = ParamInfoManager.getDisguiseWatcherMethods(disguise.getType().getWatcherClass());
 
             for (int i = methods.length - 1; i >= 0; i--) {
-                WatcherMethod m = methods[i];
+                WatcherGetterSetter getterSetter = methods[i].getOwner();
+
+                if (getterSetter == null) {
+                    continue;
+                }
+
+                WatcherMethod setter = getterSetter.getSetter();
+                WatcherMethod getter = getterSetter.getGetter();
 
                 // Special handling for this method
-                if (m.getMappedName().equals("addPotionEffect")) {
-                    MethodHandle getPotion = MethodHandles.publicLookup()
-                        .bind(disguise.getWatcher(), "getPotionEffects", MethodType.methodType(PotionEffectType[].class));
-                    PotionEffectType[] types = (PotionEffectType[]) getPotion.invoke();
+                if (getter.getMappedName().equals("getPotionEffects")) {
+                    PotionEffectType[] types = (PotionEffectType[]) getter.getMethod().invoke();
 
                     for (PotionEffectType type : types) {
                         if (type == null) {
                             continue;
                         }
 
-                        stringBuilder.append(" ").append(TranslateType.DISGUISE_OPTIONS.reverseGet(m.getMappedName())).append(" ")
+                        stringBuilder.append(" ").append(TranslateType.DISGUISE_OPTIONS.reverseGet(setter.getMappedName())).append(" ")
                             .append(TranslateType.DISGUISE_OPTIONS_PARAMETERS.reverseGet(type.getName()));
                     }
 
@@ -420,20 +461,20 @@ public class DisguiseParser {
                 }
 
                 // Also for this method. You can't override it, so why output it
-                if (m.getMappedName().equals("setNoGravity")) {
+                if (setter.getMappedName().equals("setNoGravity")) {
                     continue;
                 }
 
                 if (disguise.isPlayerDisguise()) {
                     // Player disguises render this useless
-                    if (m.getMappedName().equals("setCustomName")) {
+                    if (setter.getMappedName().equals("setCustomName")) {
                         continue;
                         // If the name matches tablist, why output again?
-                    } else if (m.getMappedName().equals("setTablistName") &&
+                    } else if (setter.getMappedName().equals("setTablistName") &&
                         ((PlayerDisguise) disguise).getName().equals(((PlayerDisguise) disguise).getTablistName())) {
                         continue;
                         // Why output the skin again, when its the same as the name?
-                    } else if (m.getMappedName().equals("setSkin") &&
+                    } else if (setter.getMappedName().equals("setSkin") &&
                         ((PlayerDisguise) disguise).getName().equals(((PlayerDisguise) disguise).getSkin())) {
                         continue;
                     }
@@ -442,23 +483,17 @@ public class DisguiseParser {
                 // TODO Ideally we'd determine if the disguise name is the default and can be reconstructed
                 // Realistically, probably not. Too much work?
 
-                Entry<WatcherMethod, Object> entry = defaultWatcherValues.get(m);
+                Object invokeWith = setter.getWatcherClass().isInstance(disguise) ? disguise : disguise.getWatcher();
 
-                if (entry == null) {
-                    continue;
-                }
-
-                Object invokeWith = m.getWatcherClass().isInstance(disguise) ? disguise : disguise.getWatcher();
-
-                Object ourValue = entry.getKey().getMethod().bindTo(invokeWith).invoke();
+                Object ourValue = getter.getMethod().bindTo(invokeWith).invoke();
 
                 // Escape a hacky fix for custom names, disguised players with custom names don't want to show it
                 // so it was set to an empty string.
-                if ("".equals(ourValue) && m.getMappedName().equals("setCustomName")) {
+                if ("".equals(ourValue) && setter.getMappedName().equals("setCustomName")) {
                     ourValue = null;
                 }
 
-                if (m.getMappedName().equals("setSkin") && !outputSkinData) {
+                if (setter.getMappedName().equals("setSkin") && !outputSkinData) {
                     PlayerDisguise pDisg = (PlayerDisguise) disguise;
                     ourValue = pDisg.getName();
 
@@ -473,12 +508,12 @@ public class DisguiseParser {
                     }
                 } else {
                     // If its the same as default, continue
-                    if (!m.isRandomDefault() && Objects.deepEquals(entry.getValue(), ourValue)) {
+                    if (!setter.isRandomDefault() && Objects.deepEquals(getterSetter.getDefaultValue(), ourValue)) {
                         continue;
                     }
                 }
 
-                stringBuilder.append(" ").append(TranslateType.DISGUISE_OPTIONS.reverseGet(m.getMappedName()));
+                stringBuilder.append(" ").append(TranslateType.DISGUISE_OPTIONS.reverseGet(setter.getMappedName()));
 
                 if (ourValue instanceof Boolean && (Boolean) ourValue) {
                     continue;
@@ -525,7 +560,6 @@ public class DisguiseParser {
                         if (!(throwable instanceof StackOverflowError)) {
                             throwable.printStackTrace();
                         }
-                        continue;
                     }
                 }
 
@@ -544,23 +578,36 @@ public class DisguiseParser {
         return null;
     }
 
-    private static void addWatcherDefault(WatcherMethod setMethod, WatcherMethod getMethod, Object object) {
-        if (defaultWatcherValues.containsKey(setMethod)) {
-            Object dObj = defaultWatcherValues.get(setMethod).getValue();
+    private static void addWatcherDefault(WatcherGetterSetter watcherGetterSetter) {
+        List<WatcherGetterSetter> existing =
+            watcherMethods.stream().filter(method -> method.getSetter().equals(watcherGetterSetter.getSetter()))
+                .collect(Collectors.toList());
 
-            if (!Objects.deepEquals(dObj, object)) {
-                throw new IllegalStateException(String.format(
-                    "%s has conflicting values in class %s! This means it expected the same value again but " + "received a " +
-                        "different value on a different disguise! %s is not the same as %s!", setMethod.toString(), setMethod, object,
-                    dObj));
+        if (existing.isEmpty()) {
+            if (watcherGetterSetter.getGetter().getOwner() != null || watcherGetterSetter.getSetter().getOwner() != null) {
+                throw new IllegalStateException(
+                    "Trying to register an older on an existing watcher! Lack of info as this shouldn't be called");
             }
 
+            watcherGetterSetter.getSetter().setOwner(watcherGetterSetter);
+            watcherGetterSetter.getGetter().setOwner(watcherGetterSetter);
+
+            watcherMethods.add(watcherGetterSetter);
             return;
         }
 
-        Map.Entry<WatcherMethod, Object> entry = new HashMap.SimpleEntry<>(getMethod, object);
+        if (existing.size() > 1) {
+            throw new IllegalStateException("Shouldn't have more than 1 getter/setter for " + watcherGetterSetter.getSetter().getName());
+        }
 
-        defaultWatcherValues.put(setMethod, entry);
+        Object dObj = existing.get(0).getDefaultValue();
+
+        if (!Objects.deepEquals(dObj, watcherGetterSetter.getDefaultValue())) {
+            throw new IllegalStateException(String.format(
+                "%s has conflicting values in class %s! This means it expected the same value again but " + "received a " +
+                    "different value on a different disguise! %s is not the same as %s!", watcherGetterSetter.getSetter().toString(),
+                watcherGetterSetter.getSetter(), watcherGetterSetter.getDefaultValue(), dObj));
+        }
     }
 
     private static void doCheck(CommandSender sender, DisguisePermissions permissions, DisguisePerm disguisePerm,

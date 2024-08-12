@@ -26,6 +26,10 @@ subprojects {
         maven {
             url = uri("https://repo.codemc.io/repository/maven-snapshots/")
         }
+
+        maven {
+            url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+        }
     }
 
     apply(plugin = "java-library")

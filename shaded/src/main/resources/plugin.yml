@@ -6,7 +6,7 @@ build-date: ${timestamp}
 build-number: ${buildNumber}
 author: libraryaddict
 authors: [ Byteflux, Navid K. ]
-softdepend: [ packetevents ]
+softdepend: [ packetevents, PlaceholderAPI ]
 api-version: '1.13'
 file-count: 0
 commands:

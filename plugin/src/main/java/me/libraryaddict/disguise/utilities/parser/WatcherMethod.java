@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities.parser;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 
@@ -11,6 +12,8 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 @Getter
 public class WatcherMethod {
+    @Setter
+    private WatcherGetterSetter owner;
     private final Class<? extends FlagWatcher> watcherClass;
     private final MethodHandle method;
     private final String mappedName;

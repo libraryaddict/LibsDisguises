@@ -16,6 +16,7 @@ dependencies {
     compileOnly(libs.com.retro.packetevents)
     compileOnly(libs.io.papermc.paper.paper.api);
     compileOnly(libs.it.unimi.dsi.fastutil)
+    compileOnly(libs.placeholder.api)
 }
 
 publishing {

@@ -36,8 +36,8 @@ public class DisguiseMethods {
     @Getter
     private final ArrayList<WatcherMethod> methods = new ArrayList<>();
 
-    public ArrayList<WatcherMethod> getMethods(Class c) {
-        ArrayList<WatcherMethod> methods = new ArrayList<>();
+    public List<WatcherMethod> getMethods(Class c) {
+        List<WatcherMethod> methods = new ArrayList<>();
 
         if (watcherMethods.containsKey(c)) {
             methods.addAll(watcherMethods.get(c));
