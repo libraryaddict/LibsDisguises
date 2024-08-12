@@ -25,6 +25,10 @@ public interface DPlaceholder {
     }
 
     default String parse(Player player, String[] args) {
+        if (isNullableDisguise() && player == null) {
+            return parse((Disguise) null, args);
+        }
+
         Disguise disguise = DisguiseAPI.getDisguise(player);
 
         if (!isNullableDisguise() && disguise == null) {
