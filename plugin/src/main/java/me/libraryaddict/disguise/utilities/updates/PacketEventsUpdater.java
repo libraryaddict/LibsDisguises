@@ -57,10 +57,11 @@ public class PacketEventsUpdater {
      */
     public static String getMinimumPacketEventsVersion() {
         // Unfortunately PacketEvents does not have build info, so we'll hope you are using the latest snapshot if we fallback to that
+        // Edit, it now includes build time which we'll use at a later point in the future
 
-        // At time of writing, release is 2.3.0, and snapshot builds are all "2.3.1-SNAPSHOT"
+        // At time of writing, release is 2.4.0, and snapshot builds are all "2.5.0-SNAPSHOT"
         // This means we'll always fail a release check!
-        return "2.4.0";
+        return "2.5.0";
     }
 
     private boolean isNotBukkitPlugin(String name) {
