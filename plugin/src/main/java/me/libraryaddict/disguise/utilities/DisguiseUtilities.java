@@ -77,6 +77,8 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArmorStandWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.TextDisplayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.gson.SerializerBlockData;
 import me.libraryaddict.disguise.utilities.gson.SerializerChatComponent;
@@ -119,6 +121,7 @@ import org.bukkit.boss.KeyedBossBar;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -411,7 +414,7 @@ public class DisguiseUtilities {
     }
 
     public static void doSkinUUIDWarning(CommandSender sender) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player) || DisguiseConfig.getUUIDGeneratedVersion() == 3) {
             return;
         }
 
@@ -3404,7 +3407,7 @@ public class DisguiseUtilities {
         return null;
     }
 
-    public static List<PacketWrapper<?>> getNamePackets(Disguise disguise, String[] internalOldNames) {
+    public static List<PacketWrapper<?>> getNamePackets(Disguise disguise, Player viewer, String[] internalOldNames) {
         ArrayList<PacketWrapper<?>> packets = new ArrayList<>();
         String[] newNames = (disguise instanceof PlayerDisguise && !((PlayerDisguise) disguise).isNameVisible()) ? new String[0] :
             reverse(disguise.getMultiName());
@@ -3438,6 +3441,7 @@ public class DisguiseUtilities {
         double heightScale = disguise.getNameHeightScale();
         double startingY = loc.getY() + (height * heightScale);
         startingY += (DisguiseUtilities.getNameSpacing() * (heightScale - 1)) * 0.35;
+        boolean useTextDisplay = NmsVersion.v1_19_R3.isSupported();
 
         for (int i = 0; i < newNames.length; i++) {
             if (i < internalOldNames.length) {
@@ -3463,19 +3467,30 @@ public class DisguiseUtilities {
             } else {
                 List<EntityData> watcherValues = new ArrayList<>();
 
-                for (MetaIndex index : MetaIndex.getMetaIndexes(ArmorStandWatcher.class)) {
+                for (MetaIndex index : MetaIndex.getMetaIndexes(useTextDisplay ? TextDisplayWatcher.class : ArmorStandWatcher.class)) {
                     Object val = index.getDefault();
 
                     if (index == MetaIndex.ENTITY_META) {
                         val = (byte) 32;
                     } else if (index == MetaIndex.ARMORSTAND_META) {
                         val = (byte) 19;
-                    } else if (index == MetaIndex.ENTITY_CUSTOM_NAME) {
-                        val = Optional.of(getAdventureChat(newNames[i]));
                     } else if (index == MetaIndex.ENTITY_CUSTOM_NAME_OLD) {
                         val = ChatColor.translateAlternateColorCodes('&', newNames[i]);
                     } else if (index == MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE) {
-                        val = true;
+                        val = disguise.isPlayerDisguise() || disguise.getWatcher().isCustomNameVisible();
+                    }
+                    // Armorstand specific
+                    else if (index == MetaIndex.ENTITY_CUSTOM_NAME && !useTextDisplay) {
+                        val = Optional.of(getAdventureChat(newNames[i]));
+                    }
+                    // Text Display specific
+                    else if (index == MetaIndex.TEXT_DISPLAY_TEXT) {
+                        val = getAdventureChat(newNames[i]);
+                    } else if (index == MetaIndex.DISPLAY_SCALE && !disguise.isMiscDisguise()) {
+                        Double scale = viewer == disguise.getEntity() ? disguise.getSelfDisguiseTallScaleMax() :
+                            ((LivingWatcher) disguise.getWatcher()).getScale();
+                    } else if (index == MetaIndex.DISPLAY_BILLBOARD_RENDER_CONSTRAINTS) {
+                        val = (byte) ReflectionManager.enumOrdinal(Display.Billboard.CENTER);
                     }
 
                     watcherValues.add(new WatcherValue(index, val, true).getDataValue());
@@ -3483,7 +3498,13 @@ public class DisguiseUtilities {
 
                 double y = startingY + (getNameSpacing() * i);
 
-                if (NmsVersion.v1_19_R1.isSupported()) {
+                if (useTextDisplay) {
+                    WrapperPlayServerSpawnEntity spawnEntity =
+                        new WrapperPlayServerSpawnEntity(standIds[i], Optional.of(UUID.randomUUID()), EntityTypes.TEXT_DISPLAY,
+                            new Vector3d(loc.getX(), y, loc.getZ()), 0f, 0f, 0f, 0, Optional.of(Vector3d.zero()));
+
+                    packets.add(spawnEntity);
+                } else if (NmsVersion.v1_19_R1.isSupported()) {
                     WrapperPlayServerSpawnEntity spawnEntity =
                         new WrapperPlayServerSpawnEntity(standIds[i], Optional.of(UUID.randomUUID()), EntityTypes.ARMOR_STAND,
                             new Vector3d(loc.getX(), y, loc.getZ()), 0f, 0f, 0f, 0, Optional.of(Vector3d.zero()));
