@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.updates;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.util.PEVersions;
 import com.google.gson.Gson;
 import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -24,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.CodeSource;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -56,12 +58,27 @@ public class PacketEventsUpdater {
      * Returns the min required version, as in any older version will just not work.
      */
     public static String getMinimumPacketEventsVersion() {
-        // Unfortunately PacketEvents does not have build info, so we'll hope you are using the latest snapshot if we fallback to that
-        // Edit, it now includes build time which we'll use at a later point in the future
-
         // At time of writing, release is 2.4.0, and snapshot builds are all "2.5.0-SNAPSHOT"
         // This means we'll always fail a release check!
         return "2.5.0";
+    }
+
+    /**
+     * PacketEvents must have a build timestamp of this or more recent
+     */
+    public static Instant getMinimumPacketEventsBuildTimestamp() {
+        // As taken from the most recent packetevents compiled jar
+        return Instant.ofEpochMilli(1723957995204L);
+    }
+
+    public static boolean isPacketEventsOutdated(Instant requiredTime) {
+        try {
+            return PEVersions.BUILD_TIMESTAMP.isBefore(requiredTime);
+        } catch (Throwable ignored) {
+            // If error is thrown, then the field is missing and we're definitely outdated
+        }
+
+        return true;
     }
 
     private boolean isNotBukkitPlugin(String name) {
@@ -330,6 +347,7 @@ public class PacketEventsUpdater {
             return true;
         }
 
-        return isOlderThan(PacketEventsUpdater.getMinimumPacketEventsVersion(), packetEventsVersion);
+        return isOlderThan(PacketEventsUpdater.getMinimumPacketEventsVersion(), packetEventsVersion) ||
+            isPacketEventsOutdated(getMinimumPacketEventsBuildTimestamp());
     }
 }

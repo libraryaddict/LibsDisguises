@@ -459,8 +459,6 @@ public class LibsDisguises extends JavaPlugin {
 
             @Override
             public void run() {
-                getLogger().severe("!! May I have your attention please !!");
-
                 if (isPacketEventsUpdateDownloaded()) {
                     getLogger().severe(
                         "An update for PacketEvents has been downloaded and will be installed when the server restarts. When possible, " +
@@ -472,12 +470,6 @@ public class LibsDisguises extends JavaPlugin {
                     getLogger().severe("https://www.spigotmc.org/resources/packetevents-api.80279/");
                     getLogger().severe("Or! Use /ld packetevents - To have Lib's Disguises download the latest release from Modrinth");
                 }
-
-                if (timesRun++ > 0) {
-                    getLogger().severe("This message is on repeat due to the sheer number of people who don't see this.");
-                }
-
-                getLogger().severe("!! May I have your attention please !!");
             }
         };
     }

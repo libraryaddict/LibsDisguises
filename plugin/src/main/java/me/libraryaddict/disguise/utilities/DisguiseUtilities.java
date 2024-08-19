@@ -2912,18 +2912,17 @@ public class DisguiseUtilities {
     public static void sendPacketEventsUpdateMessage(CommandSender p, String version, String requiredPacketEvents) {
         // If we already automatically updated PE
         if (LibsDisguises.getInstance().isPacketEventsUpdateDownloaded()) {
-            // No need to be urgent about it if server uptime is less than a day and player is not an op
-            if (!p.isOp() && LibsDisguises.getInstance().getServerStarted() + TimeUnit.DAYS.toMillis(1) > System.currentTimeMillis()) {
-                return;
-            }
-            // If they are an op, give a 12 hour grace period
-            if (p.isOp() && LibsDisguises.getInstance().getServerStarted() + TimeUnit.HOURS.toMillis(12) > System.currentTimeMillis()) {
+            /*// Grace period of an absurd value, because some people leave the servers up this long
+            int daysGracePeriod = p.isOp() ? 14 : 31;
+
+            // If the grace period hasn't elapsed since server startup, don't send any messages
+            if (LibsDisguises.getInstance().getServerStarted() + TimeUnit.DAYS.toMillis(daysGracePeriod) > System.currentTimeMillis()) {
                 return;
             }
 
             p.sendMessage(ChatColor.RED +
-                "Please ask the server owner to restart the server, an update for PacketEvents has been downloaded and is pending a " +
-                "server restart to install.");
+                "[LibsDisguises] Please ask the server owner to restart the server, an update for PacketEvents has been downloaded and is pending a " +
+                "server restart to install.");*/
             return;
         }
 
