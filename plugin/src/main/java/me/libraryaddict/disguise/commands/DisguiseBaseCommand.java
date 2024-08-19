@@ -360,6 +360,10 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
     }
 
     protected DisguisePermissions getPermissions(CommandSender sender) {
+        if (!LibsPremium.isPremium() && getClass() == DisguiseCommand.class && sender instanceof Player && !sender.isOp()) {
+            sender = Bukkit.getConsoleSender();
+        }
+
         return DisguiseParser.getPermissions(sender, getPermNode());
     }
 
