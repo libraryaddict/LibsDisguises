@@ -345,7 +345,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
         }
 
         if (!disguise.isPlayerDisguise() || inLineOfSight) {
-            DisguiseUtilities.getNamePackets(disguise, new String[0]).forEach(packets::addPacket);
+            DisguiseUtilities.getNamePackets(disguise, observer, new String[0]).forEach(packets::addPacket);
         }
 
         // If armor must be sent because its currently not displayed and would've been sent normally

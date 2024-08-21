@@ -34,7 +34,7 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
             return;
         }
 
-        final Player observer = (Player) event.getPlayer();
+        final Player observer = event.getPlayer();
 
         if (observer == null) {
             return;
@@ -84,7 +84,6 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
             if (packet == wrapper) {
                 event.markForReEncode(true);
                 continue;
-                //packet = DisguiseUtilities.unsafeClone(event, wrapper);
             }
 
             PacketEvents.getAPI().getPlayerManager().sendPacketSilently(observer, packet);

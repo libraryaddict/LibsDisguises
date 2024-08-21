@@ -230,7 +230,7 @@ public class DisguiseConfig {
     private static boolean tallSelfDisguises, tallSelfDisguisesScaling;
     @Getter
     @Setter
-    private static PlayerNameType playerNameType = PlayerNameType.TEAMS;
+    private static DisguiseNameType disguiseNameType = DisguiseNameType.TEAMS;
     @Getter
     @Setter
     private static boolean overrideCustomNames;
@@ -300,11 +300,11 @@ public class DisguiseConfig {
     private static boolean uniquePlayerDisguiseUUIDs;
 
     public static boolean isArmorstandsName() {
-        return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
+        return getDisguiseNameType() == DisguiseNameType.ARMORSTANDS;
     }
 
     public static boolean isExtendedNames() {
-        return getPlayerNameType() == PlayerNameType.EXTENDED;
+        return getDisguiseNameType() == DisguiseNameType.EXTENDED;
     }
 
     public static boolean isAutoUpdate() {
@@ -532,7 +532,11 @@ public class DisguiseConfig {
     }
 
     public static boolean isScoreboardNames() {
-        return getPlayerNameType() != PlayerNameType.VANILLA;
+        // TODO Rename this to a more informative name
+        // For example, what does "scoreboard" mean in this context?
+        // Is it using scoreboard listener? Is it using scoreboard to store names? Is it using scoreboard for colors?
+        // Is this for the text limit? Too many questions! Expand out the config, or add these questions to the enum itself!
+        return getDisguiseNameType() != DisguiseNameType.VANILLA;
     }
 
     public static void removeCustomDisguise(String disguise) {
@@ -714,7 +718,7 @@ public class DisguiseConfig {
         }
 
         try {
-            setPlayerNameType(PlayerNameType.valueOf(config.getString("PlayerNames").toUpperCase(Locale.ENGLISH)));
+            setDisguiseNameType(DisguiseNameType.valueOf(config.getString("PlayerNames").toUpperCase(Locale.ENGLISH)));
         } catch (Exception ex) {
             LibsDisguises.getInstance().getLogger()
                 .warning("Cannot parse '" + config.getString("PlayerNames") + "' to a valid option for PlayerNames");
@@ -1158,14 +1162,22 @@ public class DisguiseConfig {
         PacketsManager.setHearDisguisesListener(isSoundsEnabled);
     }
 
-    public enum PlayerNameType {
+    public enum DisguiseNameType {
         VANILLA,
-        TEAMS,
         EXTENDED,
+        TEAMS,
         ARMORSTANDS;
 
         public boolean isTeams() {
             return this == TEAMS || this == EXTENDED;
+        }
+
+        public boolean isDisplayNameCopy() {
+            return this != VANILLA && this != EXTENDED;
+        }
+
+        public boolean isScoreboardPacketListenerNeeded() {
+            return this == EXTENDED || this == TEAMS;
         }
     }
 

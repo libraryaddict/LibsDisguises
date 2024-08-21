@@ -2921,7 +2921,8 @@ public class DisguiseUtilities {
             }
 
             p.sendMessage(ChatColor.RED +
-                "[LibsDisguises] Please ask the server owner to restart the server, an update for PacketEvents has been downloaded and is pending a " +
+                "[LibsDisguises] Please ask the server owner to restart the server, an update for PacketEvents has been downloaded and is
+                 pending a " +
                 "server restart to install.");*/
             return;
         }
@@ -3440,7 +3441,11 @@ public class DisguiseUtilities {
         double heightScale = disguise.getNameHeightScale();
         double startingY = loc.getY() + (height * heightScale);
         startingY += (DisguiseUtilities.getNameSpacing() * (heightScale - 1)) * 0.35;
-        boolean useTextDisplay = NmsVersion.v1_19_R3.isSupported();
+        // TODO If we support text display, there will not be any real features unfortunately
+        // Text Display is too "jumpy" so it'd require the display to be mounted on another entity, which probably means more packets than before
+        // With the only upside that we can customize how the text is displayed, such as visible through blocks, background color, etc
+        // But then there's also the issue of how we expose that
+        boolean useTextDisplay = false;// LibsDisguises.getInstance().isDebuggingBuild() && NmsVersion.v1_19_R3.isSupported();
 
         for (int i = 0; i < newNames.length; i++) {
             if (i < internalOldNames.length) {
@@ -3476,10 +3481,12 @@ public class DisguiseUtilities {
                     } else if (index == MetaIndex.ENTITY_CUSTOM_NAME_OLD) {
                         val = ChatColor.translateAlternateColorCodes('&', newNames[i]);
                     } else if (index == MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE) {
-                        val = disguise.isPlayerDisguise() || disguise.getWatcher().isCustomNameVisible();
+                        // Unfortunately text display custom name visible won't work as expected either
+                        // It's either always hidden, or always showing if true
+                        val = true; //disguise.isPlayerDisguise() || disguise.getWatcher().isCustomNameVisible();
                     }
                     // Armorstand specific
-                    else if (index == MetaIndex.ENTITY_CUSTOM_NAME && !useTextDisplay) {
+                    else if (index == MetaIndex.ENTITY_CUSTOM_NAME) {
                         val = Optional.of(getAdventureChat(newNames[i]));
                     }
                     // Text Display specific
@@ -3488,6 +3495,7 @@ public class DisguiseUtilities {
                     } else if (index == MetaIndex.DISPLAY_SCALE && !disguise.isMiscDisguise()) {
                         Double scale = viewer == disguise.getEntity() ? disguise.getSelfDisguiseTallScaleMax() :
                             ((LivingWatcher) disguise.getWatcher()).getScale();
+                        // TODO Expand this out
                     } else if (index == MetaIndex.DISPLAY_BILLBOARD_RENDER_CONSTRAINTS) {
                         val = (byte) ReflectionManager.enumOrdinal(Display.Billboard.CENTER);
                     }

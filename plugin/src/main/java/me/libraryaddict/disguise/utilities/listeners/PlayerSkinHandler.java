@@ -335,7 +335,7 @@ public class PlayerSkinHandler implements Listener {
                 }
 
                 if (DisguiseConfig.isArmorstandsName() && disguise.isNameVisible() && disguise.getMultiNameLength() > 0) {
-                    List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(disguise, new String[0]);
+                    List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(disguise, player, new String[0]);
 
                     for (PacketWrapper p : packets) {
                         PacketEvents.getAPI().getPlayerManager().sendPacket(player, p);

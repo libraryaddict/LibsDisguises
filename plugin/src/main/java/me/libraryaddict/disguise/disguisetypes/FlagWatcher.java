@@ -515,7 +515,7 @@ public class FlagWatcher {
                 continue;
             }
 
-            List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(getDisguise(), new String[0]);
+            List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(getDisguise(), player, new String[0]);
 
             for (PacketWrapper<?> packet : packets) {
                 PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);

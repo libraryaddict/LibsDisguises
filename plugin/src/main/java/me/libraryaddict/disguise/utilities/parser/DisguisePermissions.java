@@ -204,10 +204,8 @@ public class DisguisePermissions {
             permissions.put("libsdisguises.*.*.*", true);
             isOperator = true;
         } else {
-            isOperator = sender.isOp();
+            isOperator = sender == Bukkit.getConsoleSender() || sender.isOp();
         }
-
-        isOperator = sender == Bukkit.getConsoleSender() || sender.isOp();
 
         for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
             String perm = permission.getPermission().toLowerCase(Locale.ENGLISH);

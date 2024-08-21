@@ -329,6 +329,8 @@ public class LibsPremium {
                 }
             }
 
+            bisectHosted = isPremium("", "");
+
             if (!foundBetter) {
                 File f = LibsDisguises.getInstance().getFile();
 
@@ -344,10 +346,5 @@ public class LibsPremium {
 
             LibsDisguises.getInstance().getLogger().info("Premium enabled, thank you for supporting Lib's Disguises!" + (!prem ? "!" : ""));
         }
-    }
-
-    public static String[] ignoredDirectories() {
-        return new String[]{"META-INF/", "libsdisg/", "me/libraryaddict/disguise/utilities/reflection/v",
-            "me/libraryaddict/disguise/utilities/reflection/ReflectionManagerAbstract.class", "fernflower_", "net/kyori/adventure/"};
     }
 }

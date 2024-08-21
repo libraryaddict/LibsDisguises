@@ -246,7 +246,7 @@ public abstract class Disguise {
                 continue;
             }
 
-            List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(this, oldName);
+            List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(this, player, oldName);
 
             for (PacketWrapper<?> packet : packets) {
                 PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
