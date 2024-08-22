@@ -407,7 +407,8 @@ public class LibsDisguises extends JavaPlugin {
     private void startOutdatedPacketevents() {
         if (!DisguiseConfig.isNeverUpdatePacketEvents() && PacketEventsUpdater.isPacketEventsOutdated()) {
             String requiredPacketEvents = PacketEventsUpdater.getMinimumPacketEventsVersion();
-            String version = Bukkit.getPluginManager().getPlugin("packetevents").getDescription().getVersion();
+            Plugin plugin = Bukkit.getPluginManager().getPlugin("packetevents");
+            String version = plugin == null ? "[PacketEvents Plugin Missing]" : plugin.getDescription().getVersion();
 
             BukkitRunnable runnable = createPacketEventsOutdatedRunnable(version, requiredPacketEvents);
             runnable.run();
