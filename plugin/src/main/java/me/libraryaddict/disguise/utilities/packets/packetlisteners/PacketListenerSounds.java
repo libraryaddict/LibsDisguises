@@ -36,7 +36,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             return;
         }
 
-        Player observer = (Player) event.getPlayer();
+        Player observer = event.getPlayer();
 
         if (observer == null) {
             return;

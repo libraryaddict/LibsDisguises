@@ -3,15 +3,11 @@ package me.libraryaddict.disguise.utilities;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
-import com.github.retrooper.packetevents.protocol.component.ComponentTypes;
-import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemEnchantments;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentType;
 import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentTypes;
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
-import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
-import com.github.retrooper.packetevents.protocol.nbt.NBTList;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.particle.Particle;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
@@ -142,7 +138,6 @@ import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -2833,72 +2828,11 @@ public class DisguiseUtilities {
     }
 
     public static ItemStack toBukkitItemStack(com.github.retrooper.packetevents.protocol.item.ItemStack itemStack) {
-        return SpigotConversionUtil.toBukkitItemStack(stripEnchants(itemStack));
+        return SpigotConversionUtil.toBukkitItemStack(itemStack);
     }
 
     public static com.github.retrooper.packetevents.protocol.item.ItemStack fromBukkitItemStack(ItemStack itemStack) {
-        return stripEnchants(SpigotConversionUtil.fromBukkitItemStack(itemStack));
-    }
-
-    public static com.github.retrooper.packetevents.protocol.item.ItemStack stripEnchants(
-        com.github.retrooper.packetevents.protocol.item.ItemStack itemStack) {
-        // We have to copy/paste what PE does for reading enchants because it'll refuse to expose enchants that'll crash netty
-        // So we have to read it ourselves
-        // (This was decompiled instead of source code, no particular reason)
-        if (!NmsVersion.v1_13.isSupported() || itemStack == null) {
-            // Lets just skip 1.12, this is really a 1.20.6 issue anyways
-            return itemStack;
-        }
-
-        ItemEnchantments enchantsComp = itemStack.getComponentOr(ComponentTypes.ENCHANTMENTS, ItemEnchantments.EMPTY);
-        ItemEnchantments storedEnchantsComp = itemStack.getComponentOr(ComponentTypes.STORED_ENCHANTMENTS, ItemEnchantments.EMPTY);
-
-        if (!enchantsComp.isEmpty() && enchantsComp.getEnchantments().containsKey(null)) {
-            enchantsComp.setEnchantments(new LinkedHashMap<>(enchantsComp.getEnchantments()));
-            enchantsComp.setEnchantmentLevel(null, 0);
-        }
-
-        if (!storedEnchantsComp.isEmpty() && storedEnchantsComp.getEnchantments().containsKey(null)) {
-            storedEnchantsComp.setEnchantments(new LinkedHashMap<>(enchantsComp.getEnchantments()));
-            storedEnchantsComp.setEnchantmentLevel(null, 0);
-        }
-
-        @Nullable NBTCompound nbt = itemStack.getNBT();
-
-        if (nbt == null) {
-            return itemStack;
-        }
-
-        String tagName = NmsVersion.v1_12.isSupported() ? "Enchantments" : "ench";
-        if (itemStack.getType() == ItemTypes.ENCHANTED_BOOK) {
-            tagName = "StoredEnchantments";
-        }
-
-        @Nullable NBTList<NBTCompound> nbtList = nbt.getCompoundListTagOrNull(tagName);
-
-        if (nbtList == null) {
-            return itemStack;
-        }
-
-        int index = 0;
-
-        for (NBTCompound nbtCompound : new ArrayList<>(nbtList.getTags())) {
-            EnchantmentType type = EnchantmentTypes.getByName(nbtCompound.getStringTagValueOrNull("id"));
-
-            if (type != null) {
-                index++;
-                continue;
-            }
-
-            nbtList.removeTag(index);
-        }
-
-        return itemStack;
-    }
-
-    public static boolean hasCustomEnchants(com.github.retrooper.packetevents.protocol.item.ItemStack itemStack) {
-
-        return false;
+        return SpigotConversionUtil.fromBukkitItemStack(itemStack);
     }
 
     public static BaseComponent[] getColoredChat(String message) {
@@ -3442,7 +3376,8 @@ public class DisguiseUtilities {
         double startingY = loc.getY() + (height * heightScale);
         startingY += (DisguiseUtilities.getNameSpacing() * (heightScale - 1)) * 0.35;
         // TODO If we support text display, there will not be any real features unfortunately
-        // Text Display is too "jumpy" so it'd require the display to be mounted on another entity, which probably means more packets than before
+        // Text Display is too "jumpy" so it'd require the display to be mounted on another entity, which probably means more packets
+        // than before
         // With the only upside that we can customize how the text is displayed, such as visible through blocks, background color, etc
         // But then there's also the issue of how we expose that
         boolean useTextDisplay = false;// LibsDisguises.getInstance().isDebuggingBuild() && NmsVersion.v1_19_R3.isSupported();

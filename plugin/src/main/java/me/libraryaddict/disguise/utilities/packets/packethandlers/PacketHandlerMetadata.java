@@ -45,14 +45,6 @@ public class PacketHandlerMetadata implements IPacketHandler<WrapperPlayServerEn
             return;
         }
 
-        // Workaround for this pending fix https://github.com/retrooper/packetevents/issues/869
-        for (WatcherValue object : watchableObjects) {
-            if (object.getDataValue().getValue() instanceof ItemStack &&
-                DisguiseUtilities.hasCustomEnchants((ItemStack) object.getDataValue().getValue())) {
-                object.getDataValue().setValue(DisguiseUtilities.stripEnchants((ItemStack) object.getDataValue().getValue()));
-            }
-        }
-
         WrapperPlayServerEntityMetadata metaPacket = ReflectionManager.getMetadataPacket(entity.getEntityId(), watchableObjects);
 
         packets.addPacket(metaPacket);

@@ -73,7 +73,6 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
             // If they are in creative and clicked on a slot
             if (event.getPacketType() == Client.CREATIVE_INVENTORY_ACTION) {
                 WrapperPlayClientCreativeInventoryAction wrapper = new WrapperPlayClientCreativeInventoryAction(event);
-                wrapper.setItemStack(DisguiseUtilities.stripEnchants(wrapper.getItemStack()));
 
                 int slot = wrapper.getSlot();
 
@@ -112,12 +111,6 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
                 }
             } else if (event.getPacketType() == Client.CLICK_WINDOW) {
                 WrapperPlayClientClickWindow packet = new WrapperPlayClientClickWindow(event);
-
-                packet.setCarriedItemStack(DisguiseUtilities.stripEnchants(packet.getCarriedItemStack()));
-
-                if (packet.getSlots().isPresent()) {
-                    packet.getSlots().get().replaceAll((slot, item) -> DisguiseUtilities.stripEnchants(item));
-                }
 
                 int slot = packet.getSlot();
 
@@ -221,8 +214,6 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
             if (event.getPacketType() == Server.SET_SLOT) {
                 WrapperPlayServerSetSlot packet = new WrapperPlayServerSetSlot(event);
 
-                packet.setItem(DisguiseUtilities.stripEnchants(packet.getItem()));
-
                 // If the inventory is the players inventory
                 if (packet.getWindowId() != 0) {
                     return;
@@ -263,12 +254,6 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
                 }
             } else if (event.getPacketType() == Server.WINDOW_ITEMS) {
                 WrapperPlayServerWindowItems packet = new WrapperPlayServerWindowItems(event);
-
-                packet.getItems().replaceAll(DisguiseUtilities::stripEnchants);
-
-                if (packet.getCarriedItem().isPresent()) {
-                    packet.setCarriedItem(DisguiseUtilities.stripEnchants(packet.getCarriedItem().get()));
-                }
 
                 // If the inventory is the players inventory
                 if (packet.getWindowId() != 0) {

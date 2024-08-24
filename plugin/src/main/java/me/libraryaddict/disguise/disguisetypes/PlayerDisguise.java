@@ -292,7 +292,7 @@ public class PlayerDisguise extends TargetedDisguise {
             }
         }
 
-        if (DisguiseConfig.isCopyPlayerTeamInfo() && DisguiseConfig.getDisguiseNameType().isDisplayNameCopy()) {
+        if (DisguiseConfig.isCopyPlayerTeamInfo() && DisguiseConfig.getPlayerNameType().isDisplayNameCopy()) {
             name = DisguiseUtilities.getDisplayName(name);
         }
 
@@ -308,7 +308,7 @@ public class PlayerDisguise extends TargetedDisguise {
 
         int cLimit;
 
-        switch (DisguiseConfig.getDisguiseNameType()) {
+        switch (DisguiseConfig.getPlayerNameType()) {
             case TEAMS:
                 cLimit = (NmsVersion.v1_13.isSupported() ? 64 : 16) * 2;
                 break;

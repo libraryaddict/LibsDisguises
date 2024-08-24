@@ -230,7 +230,7 @@ public class DisguiseConfig {
     private static boolean tallSelfDisguises, tallSelfDisguisesScaling;
     @Getter
     @Setter
-    private static DisguiseNameType disguiseNameType = DisguiseNameType.TEAMS;
+    private static PlayerNameType playerNameType = PlayerNameType.TEAMS;
     @Getter
     @Setter
     private static boolean overrideCustomNames;
@@ -300,11 +300,11 @@ public class DisguiseConfig {
     private static boolean uniquePlayerDisguiseUUIDs;
 
     public static boolean isArmorstandsName() {
-        return getDisguiseNameType() == DisguiseNameType.ARMORSTANDS;
+        return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
     }
 
     public static boolean isExtendedNames() {
-        return getDisguiseNameType() == DisguiseNameType.EXTENDED;
+        return getPlayerNameType() == PlayerNameType.EXTENDED;
     }
 
     public static boolean isAutoUpdate() {
@@ -536,7 +536,7 @@ public class DisguiseConfig {
         // For example, what does "scoreboard" mean in this context?
         // Is it using scoreboard listener? Is it using scoreboard to store names? Is it using scoreboard for colors?
         // Is this for the text limit? Too many questions! Expand out the config, or add these questions to the enum itself!
-        return getDisguiseNameType() != DisguiseNameType.VANILLA;
+        return getPlayerNameType() != PlayerNameType.VANILLA;
     }
 
     public static void removeCustomDisguise(String disguise) {
@@ -718,7 +718,7 @@ public class DisguiseConfig {
         }
 
         try {
-            setDisguiseNameType(DisguiseNameType.valueOf(config.getString("PlayerNames").toUpperCase(Locale.ENGLISH)));
+            setPlayerNameType(PlayerNameType.valueOf(config.getString("PlayerNames").toUpperCase(Locale.ENGLISH)));
         } catch (Exception ex) {
             LibsDisguises.getInstance().getLogger()
                 .warning("Cannot parse '" + config.getString("PlayerNames") + "' to a valid option for PlayerNames");
@@ -1162,7 +1162,7 @@ public class DisguiseConfig {
         PacketsManager.setHearDisguisesListener(isSoundsEnabled);
     }
 
-    public enum DisguiseNameType {
+    public enum PlayerNameType {
         VANILLA,
         EXTENDED,
         TEAMS,

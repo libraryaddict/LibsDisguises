@@ -199,7 +199,7 @@ public class PacketsManager {
         PacketEvents.getAPI().getEventManager().registerListener(mainListener);
         PacketEvents.getAPI().getEventManager().registerListener(new PacketListenerEntityDestroy());
 
-        if (NmsVersion.v1_13.isSupported() && DisguiseConfig.getDisguiseNameType().isScoreboardPacketListenerNeeded()) {
+        if (NmsVersion.v1_13.isSupported() && DisguiseConfig.getPlayerNameType().isScoreboardPacketListenerNeeded()) {
             PacketEvents.getAPI().getEventManager().registerListener(new PacketListenerScoreboardTeam());
         }
     }

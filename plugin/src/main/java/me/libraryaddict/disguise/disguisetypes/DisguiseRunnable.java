@@ -81,6 +81,8 @@ class DisguiseRunnable extends BukkitRunnable {
         // If entity is no longer valid. Remove it.
         if (disguise.getEntity() instanceof Player && !((Player) disguise.getEntity()).isOnline()) {
             disguise.removeDisguise();
+
+            return;
         } else if (disguise.disguiseExpires > 0 && (DisguiseConfig.isDynamicExpiry() ? disguise.disguiseExpires-- == 1 :
             disguise.disguiseExpires < System.currentTimeMillis())) { // If disguise expired
             disguise.removeDisguise();
@@ -107,7 +109,7 @@ class DisguiseRunnable extends BukkitRunnable {
 
         deadTicks = 0;
 
-        // If the disguise type is invisibable, we need to resend the entity packet else it will turn invisible
+        // If the disguise type is invisible, we need to resend the entity packet else it will turn invisible
         if (refreshRate > 0 && lastRefreshed + refreshRate < System.currentTimeMillis()) {
             lastRefreshed = System.currentTimeMillis();
 

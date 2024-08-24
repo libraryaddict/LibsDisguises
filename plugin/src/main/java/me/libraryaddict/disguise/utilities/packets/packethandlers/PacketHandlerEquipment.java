@@ -42,7 +42,7 @@ public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerE
         for (Equipment equipment : originalPacket.getEquipment()) {
             EquipmentSlot slot = equipment.getSlot();
             ItemStack itemInDisguise = disguise.getWatcher().getItemStack(DisguiseUtilities.getSlot(slot));
-            com.github.retrooper.packetevents.protocol.item.ItemStack itemInPacket = DisguiseUtilities.stripEnchants(equipment.getItem());
+            com.github.retrooper.packetevents.protocol.item.ItemStack itemInPacket = equipment.getItem();
 
             // Workaround for this pending fix https://github.com/retrooper/packetevents/issues/869
             equipment.setItem(itemInPacket);
