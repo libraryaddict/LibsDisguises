@@ -34,8 +34,7 @@ public class ParamInfoWrappedBlockData extends ParamInfo {
     @Getter
     private static class WrappedData {
         private final Map<StateValue, Object> data;
-        private final WrappedBlockState block;
-        private final String blockName;
+        private final StateType stateType;
 
         public StateValue getKey(String key) {
             for (StateValue v : data.keySet()) {
@@ -47,6 +46,10 @@ public class ParamInfoWrappedBlockData extends ParamInfo {
             }
 
             return null;
+        }
+
+        public String getBlockName() {
+            return stateType.getName();
         }
     }
 
@@ -97,7 +100,7 @@ public class ParamInfoWrappedBlockData extends ParamInfo {
                 map.put(v, state.getInternalData().get(v));
             }
 
-            defaultBlockStates.add(new WrappedData(map, state, type.getName()));
+            defaultBlockStates.add(new WrappedData(map, type));
         }
     }
 
@@ -116,7 +119,8 @@ public class ParamInfoWrappedBlockData extends ParamInfo {
         List<String> parseSplit = asSplit(string.toLowerCase(Locale.ENGLISH), false);
         Set<String> set = new HashSet<>();
 
-        WrappedData bData = defaultBlockStates.stream().filter(b -> b.blockName.equalsIgnoreCase(parseSplit.get(0))).findAny().orElse(null);
+        WrappedData bData =
+            defaultBlockStates.stream().filter(b -> b.getBlockName().equalsIgnoreCase(parseSplit.get(0))).findAny().orElse(null);
 
         // If they're beyond the block stage
         if (bData == null && (parseSplit.size() > 2 || (parseSplit.size() == 2 && !parseSplit.get(1).isEmpty()))) {
@@ -260,7 +264,7 @@ public class ParamInfoWrappedBlockData extends ParamInfo {
             return null;
         }
 
-        String prefix = bData.blockName + "[" + String.join(",", validData);
+        String prefix = bData.getBlockName() + "[" + String.join(",", validData);
 
         if (set.size() == 1) {
             String v = set.iterator().next();
@@ -300,13 +304,16 @@ public class ParamInfoWrappedBlockData extends ParamInfo {
             throw new DisguiseParseException(LibsMsg.PARSE_BLOCK_STATE_UNKNOWN_BLOCK_SYNTAX, string);
         }
 
-        WrappedData bData = defaultBlockStates.stream().filter(b -> b.blockName.equalsIgnoreCase(parseSplit.get(0))).findAny().orElse(null);
+        WrappedData bData =
+            defaultBlockStates.stream().filter(b -> b.getBlockName().equalsIgnoreCase(parseSplit.get(0))).findAny().orElse(null);
 
         if (bData == null) {
             throw new DisguiseParseException(LibsMsg.PARSE_BLOCK_STATE_UNKNOWN_BLOCK, parseSplit.get(0), string);
         }
 
-        WrappedBlockState blockState = bData.getBlock().clone();
+        WrappedBlockState blockState =
+            WrappedBlockState.getDefaultState(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(), bData.getStateType(),
+                true);
         cloneBlockstate.invoke(blockState);
 
         for (int i = 1; i < parseSplit.size() - 1; i++) {
@@ -360,8 +367,7 @@ public class ParamInfoWrappedBlockData extends ParamInfo {
     public String toString(Object object) {
         WrappedBlockState state = (WrappedBlockState) object;
 
-        WrappedData defaultState =
-            defaultBlockStates.stream().filter(b -> b.getBlock().getType() == state.getType()).findAny().orElse(null);
+        WrappedData defaultState = defaultBlockStates.stream().filter(b -> b.getStateType() == state.getType()).findAny().orElse(null);
 
         if (defaultState == null) {
             return null;
