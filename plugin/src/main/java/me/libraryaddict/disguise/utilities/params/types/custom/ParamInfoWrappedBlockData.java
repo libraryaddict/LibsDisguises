@@ -89,7 +89,8 @@ public class ParamInfoWrappedBlockData extends ParamInfo {
                 continue;
             }
 
-            WrappedBlockState state = type.createBlockState();
+            WrappedBlockState state =
+                WrappedBlockState.getDefaultState(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(), type, false);
 
             LinkedHashMap<StateValue, Object> map = new LinkedHashMap<>();
 
