@@ -406,7 +406,15 @@ public class DisguiseParser {
         String valueString;
 
         if (ourValue != null) {
-            valueString = ParamInfoManager.getParamInfo(ourValue.getClass()).toString(ourValue);
+            ParamInfo paramInfo = ParamInfoManager.getParamInfo(ourValue.getClass());
+
+            if (paramInfo == null) {
+                LibsDisguises.getInstance().getLogger()
+                    .info("Unhandled parameter for " + ourValue.getClass() + ", ParamInfo was not found");
+                return "null";
+            }
+
+            valueString = paramInfo.toString(ourValue);
 
             if (ourValue instanceof String) {
                 return TranslateType.DISGUISE_OPTIONS_PARAMETERS.reverseGet(valueString);
@@ -522,7 +530,15 @@ public class DisguiseParser {
                 String valueString;
 
                 if (ourValue != null) {
-                    valueString = ParamInfoManager.getParamInfo(ourValue.getClass()).toString(ourValue);
+                    ParamInfo paramInfo = ParamInfoManager.getParamInfo(ourValue.getClass());
+
+                    if (paramInfo == null) {
+                        LibsDisguises.getInstance().getLogger()
+                            .info("Unhandled parameter for " + ourValue.getClass() + ", ParamInfo was not found");
+                        continue;
+                    }
+
+                    valueString = paramInfo.toString(ourValue);
 
                     if (ourValue instanceof String) {
                         valueString = TranslateType.DISGUISE_OPTIONS_PARAMETERS.reverseGet(valueString);
