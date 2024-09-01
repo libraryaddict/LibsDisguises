@@ -2822,7 +2822,10 @@ public class DisguiseUtilities {
             message = message.replace("§" + color.getChar(), "<" + color.name().toLowerCase(Locale.ENGLISH) + ">");
         }
 
-        String serialized = internalComponentSerializer.serialize(getMiniMessage().deserialize(message.replace("§", "&")));
+        // The <underline> thing is because the proper syntax is <underlined> but it's not consistant among several plugins including
+        // Essentials & Kyori
+        String serialized = internalComponentSerializer.serialize(getMiniMessage().deserialize(
+            message.replace("<underline>", "<underlined>").replace("</underline>", "</underlined>").replace("§", "&")));
 
         return externalComponentSerializer.deserialize(serialized);
     }
