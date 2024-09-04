@@ -406,7 +406,13 @@ public class DisguiseParser {
         String valueString;
 
         if (ourValue != null) {
-            ParamInfo paramInfo = ParamInfoManager.getParamInfo(method.getReturnType());
+            ParamInfo paramInfo;
+
+            if (ourValue instanceof String) {
+                paramInfo = ParamInfoManager.getParamInfo(String.class);
+            } else {
+                paramInfo = ParamInfoManager.getParamInfo(method.getReturnType());
+            }
 
             if (paramInfo == null) {
                 LibsDisguises.getInstance().getLogger()
@@ -530,7 +536,13 @@ public class DisguiseParser {
                 String valueString;
 
                 if (ourValue != null) {
-                    ParamInfo paramInfo = ParamInfoManager.getParamInfo(getter.getReturnType());
+                    ParamInfo paramInfo;
+
+                    if (ourValue instanceof String) {
+                        paramInfo = ParamInfoManager.getParamInfo(String.class);
+                    } else {
+                        paramInfo = ParamInfoManager.getParamInfo(getter.getReturnType());
+                    }
 
                     if (paramInfo == null) {
                         LibsDisguises.getInstance().getLogger()
