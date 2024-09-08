@@ -3,6 +3,8 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Llama;
 
@@ -28,6 +30,7 @@ public class LlamaWatcher extends ChestedHorseWatcher {
         return AnimalColor.getColorByWool(getData(MetaIndex.LLAMA_CARPET)).getDyeColor();
     }
 
+    @NmsRemovedIn(NmsVersion.v1_20_R4)
     public void setCarpet(DyeColor dyeColor) {
         sendData(MetaIndex.LLAMA_CARPET, dyeColor == null ? -1 : (int) dyeColor.getWoolData());
     }
