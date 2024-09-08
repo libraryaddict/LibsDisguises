@@ -25,6 +25,10 @@ public enum AnimalColor {
     WHITE(DyeColor.WHITE, NmsVersion.v1_13.isSupported() ? Material.getMaterial("BONE_MEAL") : null),
     YELLOW(DyeColor.YELLOW, NmsVersion.v1_14.isSupported() ? Material.getMaterial("YELLOW_DYE") : Material.getMaterial("DANDELION_YELLOW"));
 
+    public Material getCarpetMaterial() {
+        return Material.valueOf(name() + "_CARPET");
+    }
+
     public static AnimalColor getColorByWool(int woolId) {
         for (AnimalColor color : values()) {
             if (woolId != color.getDyeColor().getWoolData()) {
