@@ -22,6 +22,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 public class PacketListenerSounds extends SimplePacketListenerAbstract {
@@ -68,8 +69,8 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             Vector3i loc = soundEffect.getEffectPosition();
 
             loop:
-            for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
-                for (TargetedDisguise entityDisguise : disguises) {
+            for (Set<TargetedDisguise> disguises : new ArrayList<>(DisguiseUtilities.getDisguises().values())) {
+                for (TargetedDisguise entityDisguise : new ArrayList<>(disguises)) {
                     Entity entity = entityDisguise.getEntity();
 
                     if (entity == null || entity.getWorld() != observer.getWorld()) {
