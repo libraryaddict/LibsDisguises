@@ -19,6 +19,16 @@ dependencies {
     compileOnly(libs.placeholder.api)
 }
 
+tasks.withType<Javadoc>().configureEach {
+    title = "LibsDisguises"
+
+    javadocTool.set(
+        javaToolchains.javadocToolFor {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    )
+}
+
 publishing {
     repositories {
         // If 'publishToExternalRepo' is false or missing, only publish to local.

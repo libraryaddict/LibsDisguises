@@ -949,8 +949,8 @@ public class MetaIndex<Y> {
     }
 
     /**
-     * Simple verification for the dev that he's setting up the FlagType's properly.
-     * All flag types should be from 0 to <Max Number> with no empty numbers.
+     * Simple verification for the dev that they're setting up the FlagType's properly.
+     * All flag types should be from 0 to {@code Max Number} with no empty numbers.
      * All flag types should never occur twice.
      */
     public static void validateMetadata() {
@@ -1067,7 +1067,7 @@ public class MetaIndex<Y> {
 
     /**
      * @param watcherClass - A flagwatcher class
-     * @return ArrayList<MetaIndex> registered to that FlagWatcher
+     * @return MetaIndexes registered to that FlagWatcher
      */
     public static ArrayList<MetaIndex> getMetaIndexes(Class<? extends FlagWatcher> watcherClass) {
         ArrayList<MetaIndex> list = new ArrayList<>();
