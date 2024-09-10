@@ -26,6 +26,20 @@ tasks.withType<Javadoc>().configureEach {
         javaToolchains.javadocToolFor {
             setDestinationDir(file("../build/docs/javadoc"))
             languageVersion = JavaLanguageVersion.of(21)
+            include(
+                "me/libraryaddict/disguise/*",
+                "me/libraryaddict/disguise/disguisetypes/**",
+                "me/libraryaddict/disguise/events/**",
+                "me/libraryaddict/disguise/utilities/DisguiseUtilities.java",
+                "me/libraryaddict/disguise/utilities/SkinUtils.java",
+                "me/libraryaddict/disguise/utilities/mineskin/**",
+                "me/libraryaddict/disguise/utilities/params/**",
+                "me/libraryaddict/disguise/utilities/parser/**",
+                "me/libraryaddict/disguise/utilities/reflection/LibsProfileLookup.java",
+                "me/libraryaddict/disguise/utilities/reflection/NmsVersion.java",
+                "me/libraryaddict/disguise/utilities/reflection/ReflectionManager.java",
+                "me/libraryaddict/disguise/utilities/translations/**",
+            )
         }
     )
 }
