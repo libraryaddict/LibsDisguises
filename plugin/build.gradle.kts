@@ -24,13 +24,10 @@ tasks.withType<Javadoc>().configureEach {
 
     javadocTool.set(
         javaToolchains.javadocToolFor {
+            setDestinationDir(file("../build/docs/javadoc"))
             languageVersion = JavaLanguageVersion.of(21)
         }
     )
-}
-
-tasks.named("publish") {
-    apply(plugin = "org.hibernate.build.maven-repo-auth")
 }
 
 publishing {
@@ -40,15 +37,19 @@ publishing {
         // Otherwise, use the release repo
         if (System.getProperty("publishToExternalRepo", "false").equals("false")) {
             mavenLocal();
-        } else if (project.version.toString().contains("-SNAPSHOT")) {
-            maven {
-                name = "md_5-snapshots"
-                url = uri("https://repo.md-5.net/content/repositories/snapshots/")
-            }
         } else {
-            maven {
-                name = "md_5-releases"
-                url = uri("https://repo.md-5.net/content/repositories/releases/")
+            apply(plugin = "org.hibernate.build.maven-repo-auth")
+
+            if (project.version.toString().contains("-SNAPSHOT")) {
+                maven {
+                    name = "md_5-snapshots"
+                    url = uri("https://repo.md-5.net/content/repositories/snapshots/")
+                }
+            } else {
+                maven {
+                    name = "md_5-releases"
+                    url = uri("https://repo.md-5.net/content/repositories/releases/")
+                }
             }
         }
     }
