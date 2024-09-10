@@ -1,6 +1,6 @@
 plugins {
     `maven-publish`
-    id("org.hibernate.build.maven-repo-auth") version "3.0.4"
+    id("org.hibernate.build.maven-repo-auth") version "3.0.4" apply false
 }
 
 version = "10.0.44-SNAPSHOT"
@@ -27,6 +27,10 @@ tasks.withType<Javadoc>().configureEach {
             languageVersion = JavaLanguageVersion.of(21)
         }
     )
+}
+
+tasks.named("publish") {
+    apply(plugin = "org.hibernate.build.maven-repo-auth")
 }
 
 publishing {
