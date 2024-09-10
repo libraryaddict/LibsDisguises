@@ -20,4 +20,4 @@ jobs:
           java-version: 17
           target-folder: javadoc
           project: gradle
-          custom-command: gradle :plugin javadoc
+          custom-command: gradle plugin:javadoc
