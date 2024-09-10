@@ -34,7 +34,7 @@ tasks.withType<Javadoc>().configureEach {
                 "me/libraryaddict/disguise/utilities/SkinUtils.java",
                 "me/libraryaddict/disguise/utilities/mineskin/**",
                 "me/libraryaddict/disguise/utilities/params/**",
-                "me/libraryaddict/disguise/utilities/parser/**",
+                "me/libraryaddict/disguise/utilities/parser/*",
                 "me/libraryaddict/disguise/utilities/reflection/LibsProfileLookup.java",
                 "me/libraryaddict/disguise/utilities/reflection/NmsVersion.java",
                 "me/libraryaddict/disguise/utilities/reflection/ReflectionManager.java",
