@@ -101,6 +101,7 @@ public class DisguiseAPI {
             return null;
         }
 
+        // No need to call clone, it was parsed from raw by invoking this method
         return disguise.getValue();
     }
 
