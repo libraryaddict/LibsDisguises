@@ -230,6 +230,17 @@ public class LibsEquipment implements EntityEquipment {
 
     //@Override
     @Deprecated
+    public float getDropChance(EquipmentSlot equipmentSlot) {
+        return 0;
+    }
+
+    //@Override
+    @Deprecated
+    public void setDropChance(EquipmentSlot equipmentSlot, float v) {
+    }
+
+    //@Override
+    @Deprecated
     public void setBoots(ItemStack boots, boolean silent) {
         setBoots(boots);
     }

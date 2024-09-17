@@ -289,7 +289,21 @@ public class DisguiseUtilities {
     @Getter
     private static final char[] alphabet = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
     private static final Pattern urlMatcher = Pattern.compile("^(?:(https?)://)?([-\\w_.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
+    /**
+     * -- GETTER --
+     *  Returns the list of people who have /disguiseViewSelf toggled
+     *
+     * @return
+     */
+    @Getter
     private final static List<UUID> viewSelf = new ArrayList<>();
+    /**
+     * -- GETTER --
+     *  Returns the list of people who have /disguiseviewbar toggled
+     *
+     * @return
+     */
+    @Getter
     private final static List<UUID> viewBar = new ArrayList<>();
     private static long lastSavedPreferences;
     @Getter
@@ -441,43 +455,60 @@ public class DisguiseUtilities {
         }.runTaskLater(LibsDisguises.getInstance(), 20 * TimeUnit.SECONDS.toMillis(120));
     }
 
-    /**
-     * Returns the list of people who have /disguiseViewSelf toggled
-     *
-     * @return
-     */
-    public static List<UUID> getViewSelf() {
-        return viewSelf;
-    }
-
-    public static String getDisplayName(CommandSender player) {
-        if (player == null) {
+    public static String getDisplayName(CommandSender commandSender) {
+        if (commandSender == null) {
             return "???";
         }
 
-        if (!(player instanceof Player)) {
-            return player.getName();
+        if (!(commandSender instanceof Player)) {
+            return commandSender.getName();
         }
 
-        Team team = ((Player) player).getScoreboard().getEntryTeam(player.getName());
+        Player player = (Player) commandSender;
+
+        Team team = player.getScoreboard().getEntryTeam(commandSender.getName());
 
         if (team == null) {
-            team = ((Player) player).getScoreboard().getEntryTeam(((Player) player).getUniqueId().toString());
+            team = player.getScoreboard().getEntryTeam(player.getUniqueId().toString());
         }
 
         String name;
 
         if (team == null || (StringUtils.isEmpty(team.getPrefix()) && StringUtils.isEmpty(team.getSuffix()))) {
-            name = ((Player) player).getDisplayName();
+            // Only in paper on 1.16+ can we fetch this via component
+            if (isRunningPaper() && NmsVersion.v1_16.isSupported()) {
+                name = toMiniMessage(player.displayName());
 
-            if (name.equals(player.getName())) {
-                name = ((Player) player).getPlayerListName();
+                if (name.equals(player.getName())) {
+                    name = toMiniMessage(player.playerListName());
+                }
+            } else {
+                name = player.getDisplayName();
+
+                if (name.equals(player.getName())) {
+                    name = player.getPlayerListName();
+                }
             }
         } else {
-            name = team.getPrefix() + team.getColor() + player.getName() + team.getSuffix();
+            // Only in paper on 1.16+ can we fetch the prefix & suffix via component
+            if (isRunningPaper() && NmsVersion.v1_16.isSupported()) {
+                // This nasty workaround is because kyori isn't able to tell if "&lText &cHere" should have "Here" bold or not.
+                // Normally the &c would have reset it, but (checked on 1.21) using getPrefix will return the above text when the "Here"
+                // should explicitly not be bold
+                // That is expected, however Kyori minimessage parses it as bold.
+                // It's treating the string as "<bold>text <red>here</red></bold>" instead of "<bold>text </bold><red>here</red>"
+                name = toMiniMessage(team.prefix()) + team.getColor() + player.getName() + toMiniMessage(team.suffix());
+            } else {
+                name = team.getPrefix() + team.getColor() + player.getName() + team.getSuffix();
+            }
         }
 
         return getHexedColors(name);
+    }
+
+    private static String toMiniMessage(Component component) {
+        // Why do we run this through two serializers? Because the alternative is that we shade 2 versions of minimessage instead of just 1.
+        return getMiniMessage().serialize(internalComponentSerializer.deserialize(externalComponentSerializer.serialize(component)));
     }
 
     public static String getHexedColors(String string) {
@@ -630,15 +661,6 @@ public class DisguiseUtilities {
             LibsDisguises.getInstance().getLogger().warning("preferences.json has been deleted as its corrupt");
             viewPreferences.delete();
         }
-    }
-
-    /**
-     * Returns the list of people who have /disguiseviewbar toggled
-     *
-     * @return
-     */
-    public static List<UUID> getViewBar() {
-        return viewBar;
     }
 
     public static void setPlayerVelocity(Player player) {
@@ -2822,10 +2844,12 @@ public class DisguiseUtilities {
             message = message.replace("§" + color.getChar(), "<" + color.name().toLowerCase(Locale.ENGLISH) + ">");
         }
 
-        // The <underline> thing is because the proper syntax is <underlined> but it's not consistant among several plugins including
+        // The <underline> thing is because the proper syntax is <underlined> but the tag name is not consistant among several plugins
+        // including
         // Essentials & Kyori
-        String serialized = internalComponentSerializer.serialize(getMiniMessage().deserialize(
-            message.replace("<underline>", "<underlined>").replace("</underline>", "</underlined>").replace("§", "&")));
+        message = message.replace("<underline>", "<underlined>").replace("</underline>", "</underlined>");
+
+        String serialized = internalComponentSerializer.serialize(getMiniMessage().deserialize(message.replace("§", "&")));
 
         return externalComponentSerializer.deserialize(serialized);
     }
