@@ -3,8 +3,10 @@ package me.libraryaddict.disguise.utilities.listeners;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
+import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfo;
@@ -173,7 +175,7 @@ public class PlayerSkinHandler implements Listener {
         if (spawn) {
             packets.getDelayedPacketsMap().entrySet().removeIf(entry -> {
                 entry.getValue().removeIf(packet -> packet.getPacketTypeData().getPacketType() == PacketType.Play.Server.ENTITY_EQUIPMENT &&
-                    isRemove(skin, packet));
+                    isProcessedLater(skin, packet));
 
                 return entry.getValue().isEmpty();
             });
@@ -181,21 +183,33 @@ public class PlayerSkinHandler implements Listener {
             return;
         }
 
-        packets.getPackets().removeIf(packet -> isRemove(skin, packet));
+        packets.getPackets().removeIf(packet -> isProcessedLater(skin, packet));
 
         packets.getDelayedPacketsMap().entrySet().removeIf(entry -> {
-            entry.getValue().removeIf(packet -> isRemove(skin, packet));
+            entry.getValue().removeIf(packet -> isProcessedLater(skin, packet));
 
             return entry.getValue().isEmpty();
         });
     }
 
-    private boolean isRemove(PlayerSkin skin, PacketWrapper packetContainer) {
+    private boolean isProcessedLater(PlayerSkin skin, PacketWrapper packetContainer) {
         PacketTypeCommon type = packetContainer.getPacketTypeData().getPacketType();
 
         // Only do equip atm
         if (type == PacketType.Play.Server.ENTITY_EQUIPMENT) {
-            skin.getSleptPackets().computeIfAbsent(3, (a) -> new ArrayList<>()).add(packetContainer);
+            // We clone the packet, attempts to fix a crash reported via discord for "IllegalReferenceCountException"
+            // Working theory is that the equipment packet sent via packetlistener has some leftover data or whatnot
+            // And it doesn't handle being sent again very well
+            WrapperPlayServerEntityEquipment equipment = (WrapperPlayServerEntityEquipment) packetContainer;
+
+            List<Equipment> list = new ArrayList<>();
+
+            for (Equipment equip : equipment.getEquipment()) {
+                list.add(new Equipment(equip.getSlot(), equip.getItem().copy()));
+            }
+
+            skin.getSleptPackets().computeIfAbsent(3, (a) -> new ArrayList<>())
+                .add(new WrapperPlayServerEntityEquipment(equipment.getEntityId(), list));
 
             return true;
         }
