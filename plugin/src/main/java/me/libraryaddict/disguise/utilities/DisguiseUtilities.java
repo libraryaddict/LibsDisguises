@@ -291,7 +291,7 @@ public class DisguiseUtilities {
     private static final Pattern urlMatcher = Pattern.compile("^(?:(https?)://)?([-\\w_.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
     /**
      * -- GETTER --
-     *  Returns the list of people who have /disguiseViewSelf toggled
+     * Returns the list of people who have /disguiseViewSelf toggled
      *
      * @return
      */
@@ -299,7 +299,7 @@ public class DisguiseUtilities {
     private final static List<UUID> viewSelf = new ArrayList<>();
     /**
      * -- GETTER --
-     *  Returns the list of people who have /disguiseviewbar toggled
+     * Returns the list of people who have /disguiseviewbar toggled
      *
      * @return
      */
@@ -2837,11 +2837,19 @@ public class DisguiseUtilities {
         return ChatColor.translateAlternateColorCodes('&', string);
     }
 
+    public static String getName(ChatColor color) {
+        if (color == ChatColor.MAGIC) {
+            return "obfuscated";
+        }
+
+        return color.name().toLowerCase(Locale.ENGLISH);
+    }
+
     public static Component getAdventureChat(String message) {
         // Hacky fix because some users use color codes and I probably do somewhere
         // And adventure chat will break instead of letting people live in the past
         for (ChatColor color : ChatColor.values()) {
-            message = message.replace("§" + color.getChar(), "<" + color.name().toLowerCase(Locale.ENGLISH) + ">");
+            message = message.replace("§" + color.getChar(), "<" + getName(color) + ">");
         }
 
         // The <underline> thing is because the proper syntax is <underlined> but the tag name is not consistant among several plugins

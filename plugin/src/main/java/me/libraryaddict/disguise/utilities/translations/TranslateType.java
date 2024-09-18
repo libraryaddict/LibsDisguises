@@ -174,7 +174,7 @@ public enum TranslateType {
                 value = translated.get(vanilla);
 
                 for (ChatColor color : ChatColor.values()) {
-                    value = value.replace("§" + color.getChar(), "<" + color.name().toLowerCase(Locale.ENGLISH) + ">");
+                    value = value.replace("§" + color.getChar(), "<" + DisguiseUtilities.getName(color) + ">");
                 }
             }
         }

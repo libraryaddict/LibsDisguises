@@ -9,8 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import java.util.Locale;
-
 public enum LibsMsg {
     NO_DISGUISES_IN_USE("<red>There are no disguises in use!"),
     ACTIVE_DISGUISES_COUNT("<dark_green>There are %s disguises active"),
@@ -357,7 +355,7 @@ public enum LibsMsg {
         String raw = getRaw();
 
         for (ChatColor c : ChatColor.values()) {
-            raw = raw.replace("<" + c.name().toLowerCase(Locale.ENGLISH) + ">", "§" + c.getChar());
+            raw = raw.replace("<" + DisguiseUtilities.getName(c) + ">", "§" + c.getChar());
         }
 
         return raw;
