@@ -600,8 +600,8 @@ public class FlagWatcher {
             return;
         }
 
-        if (name.length() > 64) {
-            name = name.substring(0, 64);
+        if (name.length() > 256) {
+            name = name.substring(0, 256);
         }
 
         if (NmsVersion.v1_13.isSupported()) {
