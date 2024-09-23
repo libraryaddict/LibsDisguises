@@ -61,7 +61,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
 
         if (DisguiseConfig.isNameOfPlayerShownAboveDisguise() && !sender.hasPermission("libsdisguises.hidename")) {
             if (disguise.getWatcher() instanceof LivingWatcher) {
-                disguise.getWatcher().setCustomName(getDisplayName(sender));
+                disguise.getWatcher().setCustomName(getDisplayName(disguise, sender));
 
                 if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
                     disguise.getWatcher().setCustomNameVisible(true);

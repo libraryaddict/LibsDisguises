@@ -12,6 +12,7 @@ import me.libraryaddict.disguise.commands.modify.DisguiseModifyCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyEntityCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyPlayerCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyRadiusCommand;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -293,7 +294,13 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         return new ArrayList<>(new HashSet<>(list));
     }
 
-    protected String getDisplayName(CommandSender player) {
+    protected String getDisplayName(Disguise disguise, CommandSender player) {
+        // If we can't do fancy names, and this nametag can't go beyond the 16 char name limit
+        // Then we shouldn't say anything but the actual name
+        if (disguise.isPlayerDisguise() && !DisguiseConfig.isScoreboardNames()) {
+            return player.getName();
+        }
+
         String name = DisguiseConfig.getNameAboveDisguise().replace("%simple%", player.getName());
 
         if (name.contains("%complex%")) {
