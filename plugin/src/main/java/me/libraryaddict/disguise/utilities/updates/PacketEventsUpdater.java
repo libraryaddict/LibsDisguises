@@ -60,6 +60,7 @@ public class PacketEventsUpdater {
     public static String getMinimumPacketEventsVersion() {
         // At time of writing, release is 2.4.0, and snapshot builds are all "2.5.0-SNAPSHOT"
         // This means we'll always fail a release check!
+        // But now that 2.5.0 has released, it'll update to the release build
         return "2.5.0";
     }
 
