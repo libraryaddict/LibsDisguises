@@ -2681,7 +2681,8 @@ public class DisguiseUtilities {
 
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, spawn);
 
-            sendSelfPacket(player, new WrapperPlayServerEntityMetadata(player.getEntityId(), ReflectionManager.getEntityWatcher(player)));
+            sendSelfPacket(player,
+                new WrapperPlayServerEntityMetadata(DisguiseAPI.getSelfDisguiseId(), ReflectionManager.getEntityWatcher(player)));
 
             // Send the velocity packets
             if (ReflectionManager.isEntityTrackerMoving(entityTrackerEntry)) {

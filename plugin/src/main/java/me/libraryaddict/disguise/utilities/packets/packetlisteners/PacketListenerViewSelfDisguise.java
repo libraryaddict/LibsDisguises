@@ -50,7 +50,7 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
         }
 
         try {
-            final Player observer = (Player) event.getPlayer();
+            final Player observer = event.getPlayer();
 
             if (observer == null) {
                 return;
@@ -58,8 +58,10 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
 
             PacketWrapper wrapper = DisguiseUtilities.constructWrapper(event);
 
+            int entityId = DisguiseUtilities.getEntityId(wrapper);
+
             // If packet isn't meant for the disguised player's self disguise
-            if (DisguiseUtilities.getEntityId(wrapper) != observer.getEntityId()) {
+            if (entityId != observer.getEntityId() && entityId != DisguiseAPI.getSelfDisguiseId()) {
                 return;
             }
 
@@ -92,7 +94,7 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
                     newPacket.getPacketTypeData().getPacketType() != Server.PLAYER_INFO_UPDATE &&
                     newPacket.getPacketTypeData().getPacketType() != Server.DESTROY_ENTITIES &&
                     DisguiseUtilities.getEntityId(newPacket) == observer.getEntityId()) {
-
+                    // No need to check if this is self disguise ID since we're only looking for unmapped
                     DisguiseUtilities.writeSelfDisguiseId(observer.getEntityId(), newPacket);
                 }
 
@@ -154,6 +156,10 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
 
                 if (observer.isSprinting()) {
                     b = (byte) (b | 1 << 3);
+                }
+
+                if (observer.isGliding()) {
+                    b = (byte) (b | 1 << 7);
                 }
 
                 WatcherValue watch = new WatcherValue(MetaIndex.ENTITY_META, b, true);

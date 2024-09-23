@@ -25,6 +25,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSp
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnPlayer;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateAttributes;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
+import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -100,6 +101,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
         Float pitchLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getPitchLock() : null;
         Float yawLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getYawLock() : null;
+        int entityId = observer == disguisedEntity ? DisguiseAPI.getSelfDisguiseId() : disguisedEntity.getEntityId();
 
         float yaw = (yawLock == null ? loc.getYaw() : yawLock);
         float pitch = (pitchLock == null ? loc.getPitch() : pitchLock);
@@ -124,8 +126,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
             WrapperPlayServerSpawnExperienceOrb spawnOrb =
-                new WrapperPlayServerSpawnExperienceOrb(disguisedEntity.getEntityId(), loc.getX(), loc.getY() + 0.06, loc.getZ(),
-                    (short) 1);
+                new WrapperPlayServerSpawnExperienceOrb(entityId, loc.getX(), loc.getY() + 0.06, loc.getZ(), (short) 1);
             packets.addPacket(spawnOrb);
         } else {
             if (!NmsVersion.v1_19_R1.isSupported() && disguise.getType() == DisguiseType.PAINTING) {
@@ -133,14 +134,14 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 PaintingType paintingType = PaintingType.getById(id);
                 Direction direction = DisguiseUtilities.getHangingDirection(yaw);
                 WrapperPlayServerSpawnPainting spawnPainting =
-                    new WrapperPlayServerSpawnPainting(disguisedEntity.getEntityId(), disguise.getUUID(), paintingType,
+                    new WrapperPlayServerSpawnPainting(entityId, disguise.getUUID(), paintingType,
                         new Vector3i(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), direction);
 
                 packets.addPacket(spawnPainting);
 
                 // Make the teleport packet to make it visible..
                 WrapperPlayServerEntityTeleport teleportPainting =
-                    new WrapperPlayServerEntityTeleport(disguisedEntity.getEntityId(), pLoc, disguisedEntity.isOnGround());
+                    new WrapperPlayServerEntityTeleport(entityId, pLoc, disguisedEntity.isOnGround());
                 packets.addPacket(teleportPainting);
             } else if (disguise.getType().isPlayer()) {
                 PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
@@ -152,8 +153,6 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     disguisedEntity.getPassengers().contains(observer) || dist > (50 * 50) ||
                     (observer.getLocation().add(observer.getLocation().getDirection().normalize()).toVector()
                         .distanceSquared(disguisedEntity.getLocation().toVector()) - dist) < 0.3;
-
-                int entityId = disguisedEntity.getEntityId();
 
                 PlayerSkinHandler.PlayerSkin skin;
 
@@ -215,8 +214,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     DisguiseUtilities.createSanitizedWatcherValues(observer, disguisedEntity, disguise.getWatcher());
 
                 if (NmsVersion.v1_15.isSupported()) {
-                    WrapperPlayServerEntityMetadata metaPacket =
-                        ReflectionManager.getMetadataPacket(disguisedEntity.getEntityId(), watcherValues);
+                    WrapperPlayServerEntityMetadata metaPacket = ReflectionManager.getMetadataPacket(entityId, watcherValues);
 
                     packets.addPacket(metaPacket);
                 } else {
@@ -254,8 +252,9 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 com.github.retrooper.packetevents.protocol.entity.type.EntityType entityType = getEntityType(disguise);
 
                 Vector vec = disguisedEntity.getVelocity();
-                spawnEntity = new WrapperPlayServerSpawnEntity(disguisedEntity.getEntityId(), Optional.of(disguise.getUUID()), entityType,
-                    new Vector3d(x, y, z), pitch, yaw, yaw, data, Optional.of(new Vector3d(vec.getX(), vec.getY(), vec.getZ())));
+                spawnEntity =
+                    new WrapperPlayServerSpawnEntity(entityId, Optional.of(disguise.getUUID()), entityType, new Vector3d(x, y, z), pitch,
+                        yaw, yaw, data, Optional.of(new Vector3d(vec.getX(), vec.getY(), vec.getZ())));
 
                 packets.addPacket(spawnEntity);
 
@@ -263,8 +262,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 if (NmsVersion.v1_19_R2.isSupported()) {
                     List<WatcherValue> watcherValues =
                         DisguiseUtilities.createSanitizedWatcherValues(observer, disguisedEntity, disguise.getWatcher());
-                    WrapperPlayServerEntityMetadata metaPacket =
-                        ReflectionManager.getMetadataPacket(disguisedEntity.getEntityId(), watcherValues);
+                    WrapperPlayServerEntityMetadata metaPacket = ReflectionManager.getMetadataPacket(entityId, watcherValues);
 
                     packets.addPacket(metaPacket);
                 }
@@ -275,8 +273,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     spawnEntity.setVelocity(Optional.of(new Vector3d(0, 0, 0)));
 
                     if (disguise.getType() == DisguiseType.DROPPED_ITEM) {
-                        WrapperPlayServerEntityVelocity velocity =
-                            new WrapperPlayServerEntityVelocity(disguisedEntity.getEntityId(), new Vector3d(0, 0, 0));
+                        WrapperPlayServerEntityVelocity velocity = new WrapperPlayServerEntityVelocity(entityId, new Vector3d(0, 0, 0));
 
                         packets.addPacket(velocity);
                     }
@@ -294,7 +291,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
         if (packets.getPackets().size() <= 1 || disguise.isPlayerDisguise()) {
             WrapperPlayServerEntityRotation rotateHead =
-                new WrapperPlayServerEntityRotation(disguisedEntity.getEntityId(), yaw, pitch, disguisedEntity.isOnGround());
+                new WrapperPlayServerEntityRotation(entityId, yaw, pitch, disguisedEntity.isOnGround());
 
             if (!DisguiseUtilities.isRunningPaper()) {
                 packets.addPacket(rotateHead);
@@ -304,7 +301,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
         }
 
         if (disguise.getType() == DisguiseType.EVOKER_FANGS) {
-            packets.addPacket(new WrapperPlayServerEntityStatus(disguisedEntity.getEntityId(), 4));
+            packets.addPacket(new WrapperPlayServerEntityStatus(entityId, 4));
         }
 
         if (disguise.getWatcher() instanceof LivingWatcher) {
@@ -340,7 +337,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             }
 
             if (!attributes.isEmpty()) {
-                packets.addPacket(new WrapperPlayServerUpdateAttributes(disguisedEntity.getEntityId(), attributes));
+                packets.addPacket(new WrapperPlayServerUpdateAttributes(entityId, attributes));
             }
         }
 
@@ -374,7 +371,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     continue;
                 }
 
-                WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(disguisedEntity.getEntityId(),
+                WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(entityId,
                     Collections.singletonList(new Equipment(slot, DisguiseUtilities.fromBukkitItemStack(itemToSend))));
 
                 packets.addDelayedPacket(packet);
@@ -382,7 +379,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
         }
 
         if (disguisedEntity != observer && observer.getSpectatorTarget() == disguisedEntity) {
-            WrapperPlayServerCamera camera = new WrapperPlayServerCamera(disguisedEntity.getEntityId());
+            WrapperPlayServerCamera camera = new WrapperPlayServerCamera(entityId);
             packets.addPacket(camera);
         }
     }
@@ -398,12 +395,14 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
         com.github.retrooper.packetevents.protocol.entity.type.EntityType entityType = getEntityType(disguise);
         PacketWrapper spawnEntity;
+        int entityId = observer == disguisedEntity ? DisguiseAPI.getSelfDisguiseId() : disguisedEntity.getEntityId();
 
         if (NmsVersion.v1_19_R1.isSupported()) {
-            spawnEntity = new WrapperPlayServerSpawnEntity(disguisedEntity.getEntityId(), disguise.getUUID(), entityType,
-                SpigotConversionUtil.fromBukkitLocation(loc), loc.getYaw(), 0, new Vector3d(vec.getX(), vec.getY(), vec.getZ()));
+            spawnEntity =
+                new WrapperPlayServerSpawnEntity(entityId, disguise.getUUID(), entityType, SpigotConversionUtil.fromBukkitLocation(loc),
+                    loc.getYaw(), 0, new Vector3d(vec.getX(), vec.getY(), vec.getZ()));
         } else {
-            spawnEntity = new WrapperPlayServerSpawnLivingEntity(disguisedEntity.getEntityId(), disguise.getUUID(), entityType,
+            spawnEntity = new WrapperPlayServerSpawnLivingEntity(entityId, disguise.getUUID(), entityType,
                 SpigotConversionUtil.fromBukkitLocation(loc), loc.getPitch(), new Vector3d(vec.getX(), vec.getY(), vec.getZ()),
                 new ArrayList<>());
         }
