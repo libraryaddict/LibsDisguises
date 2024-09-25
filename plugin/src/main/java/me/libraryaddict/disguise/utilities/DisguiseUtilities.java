@@ -3029,7 +3029,7 @@ public class DisguiseUtilities {
         } else if (wrapper instanceof WrapperPlayServerAttachEntity) {
             return ((WrapperPlayServerAttachEntity) wrapper).getAttachedId();
         } else if (wrapper instanceof WrapperPlayServerCollectItem) {
-            return ((WrapperPlayServerCollectItem) wrapper).getCollectedEntityId();
+            return ((WrapperPlayServerCollectItem) wrapper).getCollectorEntityId();
         } else {
             throw new IllegalStateException("The packet " + wrapper.getClass() + " has no entity ID");
         }
