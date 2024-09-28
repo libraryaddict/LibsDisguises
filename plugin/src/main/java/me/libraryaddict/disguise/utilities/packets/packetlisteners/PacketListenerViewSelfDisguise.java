@@ -130,24 +130,25 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
             if (event.getPacketType() == Server.ENTITY_METADATA) {
                 WrapperPlayServerEntityMetadata metadata = (WrapperPlayServerEntityMetadata) wrapper;
 
+                if (metadata.getEntityId() == observer.getEntityId()) {
                /* if (!LibsPremium.getPluginInformation().isPremium() || LibsPremium.getPaidInformation() != null ||
                     LibsPremium.getPluginInformation().getBuildNumber().matches("#\\d+")) {
 
                     event.setPacket(packet = packet.deepClone());
                 }*/
 
-                for (EntityData data : metadata.getEntityMetadata()) {
-                    if (data.getIndex() != 0) {
-                        continue;
+                    for (EntityData data : metadata.getEntityMetadata()) {
+                        if (data.getIndex() != 0) {
+                            continue;
+                        }
+                        byte b = (byte) data.getValue();
+
+                        // Add invisibility, remove glowing
+                        byte a = (byte) ((b | 1 << 5) & ~(1 << 6));
+
+                        data.setValue(a);
                     }
-                    byte b = (byte) data.getValue();
-
-                    // Add invisibility, remove glowing
-                    byte a = (byte) ((b | 1 << 5) & ~(1 << 6));
-
-                    data.setValue(a);
                 }
-
             } else if (event.getPacketType() == Server.SPAWN_PLAYER || event.getPacketType() == Server.SPAWN_ENTITY) {
                 event.setCancelled(true);
 
