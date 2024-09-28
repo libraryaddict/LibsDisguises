@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities.packets.packethandlers;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerAttachEntity;
+import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
@@ -31,7 +32,7 @@ public class PacketHandlerAttachEntity implements IPacketHandler<WrapperPlayServ
 
         WrapperPlayServerAttachEntity packet = packets.getOriginalPacket();
 
-        if (packet.getAttachedId() == observer.getEntityId()) {
+        if (packet.getAttachedId() == observer.getEntityId() || packet.getAttachedId() == DisguiseAPI.getSelfDisguiseId()) {
             packets.clear();
 
             DisguiseUtilities.sendInvisibleSlime(observer, entity.getEntityId());
