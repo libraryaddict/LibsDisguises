@@ -8,8 +8,13 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
+import org.bukkit.Color;
 import org.bukkit.DyeColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Wolf;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 public class WolfWatcher extends TameableWatcher {
 
@@ -107,5 +112,46 @@ public class WolfWatcher extends TameableWatcher {
     @NmsAddedIn(NmsVersion.v1_20_R4)
     public Wolf.Variant getVariant() {
         return getData(MetaIndex.WOLF_VARIANT);
+    }
+
+    @NmsAddedIn(NmsVersion.v1_20_R4)
+    public ItemStack getWolfArmor() {
+        return getEquipment().getItem(EquipmentSlot.BODY);
+    }
+
+    @NmsAddedIn(NmsVersion.v1_20_R4)
+    public void setWolfArmor(ItemStack item) {
+        getEquipment().setItem(EquipmentSlot.BODY, item);
+    }
+
+    @NmsAddedIn(NmsVersion.v1_20_R4)
+    public Color getWolfArmorColor() {
+        ItemStack item = getWolfArmor();
+
+        if (item == null || item.getType() != Material.WOLF_ARMOR) {
+            return null;
+        }
+
+        return ((LeatherArmorMeta) item.getItemMeta()).getColor();
+    }
+
+    @NmsAddedIn(NmsVersion.v1_20_R4)
+    public void setWolfArmorColor(Color color) {
+        if (color == null) {
+            setWolfArmor(null);
+            return;
+        }
+
+        ItemStack item = getWolfArmor();
+
+        if (item == null || item.getType() != Material.WOLF_ARMOR) {
+            item = new ItemStack(Material.WOLF_ARMOR);
+        }
+
+        LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
+        meta.setColor(color);
+        item.setItemMeta(meta);
+
+        setWolfArmor(item);
     }
 }
