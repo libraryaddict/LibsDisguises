@@ -20,8 +20,12 @@ ViewSelfDisguisesDefault: true
 # The player's move, jump, etc is unchanged
 SelfDisguisesScaling: false
 
-# The max size a self disguise will change the player to match, 1 means they can only shrink, 2 means they can go up to 2x the size
-# There is no min set as there's not much of a point, disable this entirely if you need the min.
+# The following two settings controls the min and max scale that can be applied to a self disguise so that the player's viewpoint will shrink/grow to match.
+# This means they will not shrink below the min, and will not grow beyond the max
+# 0.3 means 30% of the player's size. 0.72 means 72%, 2 means 200%, etc.
+# The minimum scale (per Minecraft) is 0.06
+SelfDisguisesScaleMin: 0.06
+# The default is 1, so players can only shrink and if disguised as something larger, will not see themselves become taller
 SelfDisguisesScaleMax: 1
 
 # Shall the disguised hear their disguise sounds or their damage sounds.

@@ -294,6 +294,9 @@ public class DisguiseConfig {
     private static boolean scaleSelfDisguises;
     @Getter
     @Setter
+    private static double scaleSelfDisguisesMin;
+    @Getter
+    @Setter
     private static double scaleSelfDisguisesMax;
     @Getter
     @Setter
@@ -605,6 +608,7 @@ public class DisguiseConfig {
         setViewDisguises(config.getBoolean("ViewSelfDisguises"));
         setViewSelfDisguisesDefault(config.getBoolean("ViewSelfDisguisesDefault"));
         setScaleSelfDisguises(config.getBoolean("SelfDisguisesScaling"));
+        setScaleSelfDisguisesMin(config.getDouble("SelfDisguisesScaleMin"));
         setScaleSelfDisguisesMax(config.getDouble("SelfDisguisesScaleMax"));
         setSelfDisguisesSoundsReplaced(config.getBoolean("HearSelfDisguise"));
         setShowDisguisedPlayersInTab(config.getBoolean("ShowPlayerDisguisesInTab"));
