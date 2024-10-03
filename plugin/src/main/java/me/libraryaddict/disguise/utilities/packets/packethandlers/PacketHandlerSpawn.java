@@ -307,16 +307,16 @@ public class PacketHandlerSpawn implements IPacketHandler {
         if (disguise.getWatcher() instanceof LivingWatcher) {
             List<WrapperPlayServerUpdateAttributes.Property> attributes = new ArrayList<>();
 
-            if (NmsVersion.v1_21_R1.isSupported()) {
+            if (NmsVersion.v1_20_R4.isSupported()) {
                 Double scale = ((LivingWatcher) disguise.getWatcher()).getScale();
 
                 if (observer == disguisedEntity && DisguiseConfig.isTallSelfDisguisesScaling()) {
                     if (scale == null) {
-                        scale = DisguiseUtilities.getActualEntityScale(observer);
+                        scale = DisguiseUtilities.getEntityScaleWithoutLibsDisguises(observer);
                     }
 
                     attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE,
-                        Math.min(disguise.getSelfDisguiseTallScaleMax(), scale), new ArrayList<>()));
+                        Math.min(disguise.getInternals().getSelfDisguiseTallScaleMax(), scale), new ArrayList<>()));
                 } else if (scale != null) {
                     attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, scale, new ArrayList<>()));
                 }

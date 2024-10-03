@@ -56,13 +56,14 @@ public class PacketHandlerAttributes implements IPacketHandler<WrapperPlayServer
                 // If it's for the self disguise and the disguise had to be scaled down
                 if (entity == observer && DisguiseConfig.isTallSelfDisguisesScaling()) {
                     attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE,
-                        Math.min(disguise.getSelfDisguiseTallScaleMax(), scale == null ? property.getValue() : scale), new ArrayList<>()));
+                        Math.min(disguise.getInternals().getSelfDisguiseTallScaleMax(), scale == null ? property.getValue() : scale),
+                        new ArrayList<>()));
                 } else {
                     if (scale == null) {
-                        attributes.add(property);
-                    } else {
-                        attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, scale, new ArrayList<>()));
+                        scale = disguise.getInternals().getPacketEntityScale(property.getValue());
                     }
+
+                    attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, scale, new ArrayList<>()));
                 }
             } else if (property.getAttribute() == Attributes.GENERIC_GRAVITY) {
                 attributes.add(property);

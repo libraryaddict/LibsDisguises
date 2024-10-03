@@ -16,6 +16,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodGroupType;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsedBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import org.bukkit.Color;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -55,14 +56,14 @@ public class LivingWatcher extends FlagWatcher {
         return clone;
     }
 
-    @NmsAddedIn(NmsVersion.v1_21_R1)
+    @NmsAddedIn(NmsVersion.v1_20_R4)
     public Double getScale() {
         return viewScale;
     }
 
-    @NmsAddedIn(NmsVersion.v1_21_R1)
+    @NmsAddedIn(NmsVersion.v1_20_R4)
     public void setScale(Double viewScale) {
-        if (!NmsVersion.v1_21_R1.isSupported()) {
+        if (!NmsVersion.v1_20_R4.isSupported()) {
             return;
         }
 
@@ -87,14 +88,14 @@ public class LivingWatcher extends FlagWatcher {
         if (getScale() != null) {
             scaleToSend = getScale();
         } else {
-            scaleToSend = DisguiseUtilities.getActualEntityScale(getDisguise().getEntity());
+            scaleToSend = DisguiseUtilities.getEntityScaleWithoutLibsDisguises(getDisguise().getEntity());
         }
 
         Entity entity = getDisguise().getEntity();
 
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
             double toSend = player == entity && DisguiseConfig.isTallSelfDisguisesScaling() ?
-                Math.min(getDisguise().getSelfDisguiseTallScaleMax(), scaleToSend) : scaleToSend;
+                Math.min(getDisguise().getInternals().getSelfDisguiseTallScaleMax(), scaleToSend) : scaleToSend;
 
             WrapperPlayServerUpdateAttributes.Property property =
                 new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, toSend, new ArrayList<>());

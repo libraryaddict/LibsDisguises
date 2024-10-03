@@ -182,7 +182,7 @@ public class DisguiseMethods {
                     "setHidePlayer", "setExpires", "setNotifyBar", "setBossBarColor", "setBossBarStyle", "setTallDisguisesVisible",
                     "setDynamicName", "setSoundGroup", "setDisguiseName", "setDeadmau5Ears"));
 
-            if (NmsVersion.v1_21_R1.isSupported()) {
+            if (NmsVersion.v1_20_R4.isSupported()) {
                 extraMethods.add("setScalePlayerToDisguise");
             }
 

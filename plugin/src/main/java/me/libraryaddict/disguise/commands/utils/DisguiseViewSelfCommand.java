@@ -44,7 +44,7 @@ public class DisguiseViewSelfCommand implements CommandExecutor {
             // If they're disguised, tall disguises are hidden, it's a tall disguise
             // Then tell the player, it's not a bug! The disguise is too tall
             if (disguise != null && !disguise.isTallDisguisesVisible() &&
-                (!NmsVersion.v1_21_R1.isSupported() || !DisguiseConfig.isTallSelfDisguisesScaling() ||
+                (!NmsVersion.v1_20_R4.isSupported() || !DisguiseConfig.isTallSelfDisguisesScaling() ||
                     (disguise.isMiscDisguise() || disguise.getType() == DisguiseType.ENDER_DRAGON)) && disguise.canSee(player) &&
                 DisguiseUtilities.isTallDisguise(disguise)) {
                 LibsMsg.VIEW_SELF_TALL_NOTE.send(player);

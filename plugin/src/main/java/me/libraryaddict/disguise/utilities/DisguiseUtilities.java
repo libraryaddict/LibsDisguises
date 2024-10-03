@@ -405,7 +405,7 @@ public class DisguiseUtilities {
     }
 
     public static void removeSelfDisguiseScale(Entity entity) {
-        if (!NmsVersion.v1_21_R1.isSupported() || isInvalidFile() || !(entity instanceof LivingEntity)) {
+        if (!NmsVersion.v1_20_R4.isSupported() || isInvalidFile() || !(entity instanceof LivingEntity)) {
             return;
         }
 
@@ -3464,7 +3464,7 @@ public class DisguiseUtilities {
                     else if (index == MetaIndex.TEXT_DISPLAY_TEXT) {
                         val = getAdventureChat(newNames[i]);
                     } else if (index == MetaIndex.DISPLAY_SCALE && !disguise.isMiscDisguise()) {
-                        Double scale = viewer == disguise.getEntity() ? disguise.getSelfDisguiseTallScaleMax() :
+                        Double scale = viewer == disguise.getEntity() ? disguise.getInternals().getSelfDisguiseTallScaleMax() :
                             ((LivingWatcher) disguise.getWatcher()).getScale();
                         // TODO Expand this out
                     } else if (index == MetaIndex.DISPLAY_BILLBOARD_RENDER_CONSTRAINTS) {
@@ -3513,7 +3513,7 @@ public class DisguiseUtilities {
     /**
      * Grabs the scale of the entity as if the LibsDisguises: attributes did not exist
      */
-    public static double getActualEntityScale(Entity entity) {
+    public static double getEntityScaleWithoutLibsDisguises(Entity entity) {
         if (!(entity instanceof LivingEntity)) {
             return 1;
         }
