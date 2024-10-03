@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -21,7 +22,8 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
     public ParamInfoItemStack(Class paramClass, String name, String valueType, String description, Enum[] possibleValues) {
         super(paramClass, name, valueType, description, possibleValues);
 
-        setOtherValues("null", "%held-item%", "%offhand-item%", "%helmet%", "%chestplate%", "%leggings%", "%boots%");
+        setOtherValues("null", "%held-item%", "%offhand-item%", "%helmet%", "%chestplate%", "%leggings%", "%boots%", "custom_model_",
+            "head");
     }
 
     @Override
@@ -165,7 +167,14 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
         if (split[0].isEmpty() || split[0].equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("null"))) {
             return null;
         }
-        Material material = ReflectionManager.getMaterial(split[0].toUpperCase(Locale.ENGLISH));
+
+        Material material;
+
+        if (split[0].equalsIgnoreCase("head")) {
+            material = Material.PLAYER_HEAD;
+        } else {
+            material = ReflectionManager.getMaterial(split[0].toUpperCase(Locale.ENGLISH));
+        }
 
         if (material == null) {
             material = Material.getMaterial(split[0].toUpperCase(Locale.ENGLISH));
@@ -178,11 +187,15 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
         Integer amount = null;
         boolean enchanted = false;
         Integer customModel = null;
+        String headOwner = null;
 
         for (int i = 1; i < split.length; i++) {
             String s = split[i];
 
-            if (!enchanted && s.equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("glow"))) {
+            // If this is a player head, and matches a player's name
+            if (split[0].equalsIgnoreCase("head") && s.matches("^[a-zA-Z_\\d]{1,16}$")) {
+                headOwner = s;
+            } else if (!enchanted && s.equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("glow"))) {
                 enchanted = true;
             } else if (s.matches("\\d+") && amount == null) {
                 amount = Integer.parseInt(s);
@@ -202,6 +215,12 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
         if (customModel != null) {
             ItemMeta meta = itemStack.getItemMeta();
             meta.setCustomModelData(customModel);
+            itemStack.setItemMeta(meta);
+        }
+
+        if (headOwner != null && itemStack.getItemMeta() instanceof SkullMeta) {
+            SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
+            meta.setOwner(headOwner);
             itemStack.setItemMeta(meta);
         }
 
