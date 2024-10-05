@@ -552,7 +552,7 @@ public abstract class Disguise {
     }
 
     protected void adjustTallSelfDisguiseScale() {
-        if (!canScaleDisguise()) {
+        if (!canScaleDisguise() || !isDisguiseInUse() || getEntity() == null) {
             return;
         }
 
