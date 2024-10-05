@@ -85,7 +85,8 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
                     cloned = new WrapperPlayServerEntityRelativeMove(standId, rot.getDeltaX(), rot.getDeltaY(), rot.getDeltaZ(),
                         rot.isOnGround());
                 } else {
-                    throw new IllegalStateException("Unknown packet " + packet.getClass());
+                    // It seems that EntityStatus packet was being added at some point, probably in some other transformation
+                    continue; //   throw new IllegalStateException("Unknown packet " + packet.getClass());
                 }
 
                 toAdd.add(cloned);
