@@ -285,7 +285,11 @@ public class PlayerDisguise extends TargetedDisguise {
 
     public void setName(String name) {
         if (getName().equals("<Inherit>") && getEntity() != null) {
-            name = getEntity().getCustomName();
+            if (getEntity() instanceof Player) {
+                name = getEntity().getName();
+            } else {
+                name = getEntity().getCustomName();
+            }
 
             if (name == null || name.isEmpty()) {
                 name = getEntity().getType().name();
