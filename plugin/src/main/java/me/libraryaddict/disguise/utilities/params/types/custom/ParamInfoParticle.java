@@ -113,7 +113,8 @@ public class ParamInfoParticle extends ParamInfoEnum {
         for (Field field : ParticleTypes.class.getFields()) {
             int mods = field.getModifiers();
 
-            if (!Modifier.isFinal(mods) || !Modifier.isPublic(mods) || !Modifier.isStatic(mods)) {
+            if (!Modifier.isFinal(mods) || !Modifier.isPublic(mods) || !Modifier.isStatic(mods) ||
+                field.isAnnotationPresent(Deprecated.class)) {
                 continue;
             }
 
