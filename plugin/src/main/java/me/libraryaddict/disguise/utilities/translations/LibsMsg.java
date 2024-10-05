@@ -326,12 +326,14 @@ public enum LibsMsg {
     LD_COMMAND_HELP("<blue>/libsdisguises help - <aqua>Returns this!"),
     LD_COMMAND_COUNT("<blue>/libsdisguises count - <aqua>Tells you how many active disguises there are"),
     LD_COMMAND_METAINFO("<blue>/libsdisguises metainfo - <aqua>Debugging info, tells you what the metadata is for a disguise"),
-    LD_COMMAND_CONFIG("<blue>/libsdisguises config - <aqua>Tells you what's not normal in your config"),
+    LD_COMMAND_CONFIG("<blue>/libsdisguises config - <aqua>Checks for modified values in Lib's Disguises config"),
     LD_COMMAND_UPDATE("<blue>/libsdisguises update - <aqua>" +
         "'update' will fetch an update, 'update dev' will fetch a dev build update, 'update release' will fetch a" +
         " release build update and 'update!' will download that update!"),
     LD_COMMAND_CHANGELOG("<blue>/libsdisguises changelog - <aqua>Gives you the changelog of the current update fetched"),
     LD_DEBUG_MINESKIN("<blue>/libsdisguises mineskin - <aqua>Prints debug information about MineSkin to console"),
+    LD_DEBUG_MODE("<blue>/libsdisguises debugging - <aqua>For internal use to debug stuff"),
+    LD_DEBUG_DISGUISE_LOOP("<blue>/libsdisguises disguiseloop - <aqua>Used to quickly loop through every disguise for problematic ones"),
     LD_DEBUG_MINESKIN_TOGGLE("<blue>MineSkin debug is now %s, this command toggles the printing of MineSkin information to console"),
     LD_COMMAND_JSON("<blue>/libsdisguises json - <aqua>Turns the current held item into a string format"),
     LD_COMMAND_MODS("<blue>/libsdisguises mods <Player?> - <aqua>" +

@@ -40,6 +40,6 @@ public class LDDebugging implements LDCommand {
 
     @Override
     public LibsMsg getHelp() {
-        return LibsMsg.LD_DEBUG_MINESKIN;
+        return LibsMsg.LD_DEBUG_MODE;
     }
 }
