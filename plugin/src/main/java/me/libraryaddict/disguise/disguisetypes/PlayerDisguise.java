@@ -698,7 +698,13 @@ public class PlayerDisguise extends TargetedDisguise {
                 setName(name);
             }
         } else if (getName().equals("<Inherit>") && getEntity() != null) {
-            String name = getEntity().getCustomName();
+            String name;
+
+            if (getEntity() instanceof Player) {
+                name = DisguiseUtilities.translateAlternateColorCodes(DisguiseUtilities.getDisplayName(getEntity()));
+            } else {
+                name = getEntity().getCustomName();
+            }
 
             if (name == null || name.isEmpty()) {
                 name = getEntity().getType().name();
