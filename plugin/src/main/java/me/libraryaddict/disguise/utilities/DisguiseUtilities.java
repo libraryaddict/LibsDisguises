@@ -1323,7 +1323,19 @@ public class DisguiseUtilities {
                 }
             }
 
-            ReflectionManager.setBoundingBox(entity, disguiseBox);
+            double scale = 1;
+
+            if (NmsVersion.v1_20_R4.isSupported() && disguise.getWatcher() instanceof LivingWatcher) {
+                Double disguiseScale = ((LivingWatcher) disguise.getWatcher()).getScale();
+
+                if (disguiseScale != null) {
+                    scale = disguiseScale;
+                } else {
+                    scale = DisguiseUtilities.getEntityScaleWithoutLibsDisguises(disguise.getEntity());
+                }
+            }
+
+            ReflectionManager.setBoundingBox(entity, disguiseBox, scale);
         } else {
             DisguiseValues entityValues = DisguiseValues.getDisguiseValues(DisguiseType.getType(entity.getType()));
 
@@ -1336,7 +1348,7 @@ public class DisguiseUtilities {
                 }
             }
 
-            ReflectionManager.setBoundingBox(entity, entityBox);
+            ReflectionManager.setBoundingBox(entity, entityBox, DisguiseUtilities.getEntityScaleWithoutLibsDisguises(disguise.getEntity()));
         }
     }
 
@@ -3514,7 +3526,7 @@ public class DisguiseUtilities {
      * Grabs the scale of the entity as if the LibsDisguises: attributes did not exist
      */
     public static double getEntityScaleWithoutLibsDisguises(Entity entity) {
-        if (!(entity instanceof LivingEntity)) {
+        if (!NmsVersion.v1_20_R4.isSupported() || !(entity instanceof LivingEntity)) {
             return 1;
         }
 

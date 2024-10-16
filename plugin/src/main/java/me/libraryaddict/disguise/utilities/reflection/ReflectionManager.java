@@ -1373,9 +1373,13 @@ public class ReflectionManager {
         return null;
     }
 
-    public static void setBoundingBox(Entity entity, FakeBoundingBox newBox) {
+    public static void setBoundingBox(Entity entity, FakeBoundingBox newBox, double scale) {
+        double x = newBox.getX();
+        double y = newBox.getY();
+        double z = newBox.getZ();
+
         if (nmsReflection != null) {
-            nmsReflection.setBoundingBox(entity, newBox.getX(), newBox.getY(), newBox.getZ());
+            nmsReflection.setBoundingBox(entity, x, y, z);
             return;
         }
 
@@ -1383,8 +1387,8 @@ public class ReflectionManager {
             Location loc = entity.getLocation();
 
             Object boundingBox =
-                boundingBoxConstructor.newInstance(loc.getX() - (newBox.getX() / 2), loc.getY(), loc.getZ() - (newBox.getZ() / 2),
-                    loc.getX() + (newBox.getX() / 2), loc.getY() + newBox.getY(), loc.getZ() + (newBox.getZ() / 2));
+                boundingBoxConstructor.newInstance(loc.getX() - (x / 2), loc.getY(), loc.getZ() - (z / 2), loc.getX() + (x / 2),
+                    loc.getY() + y, loc.getZ() + (z / 2));
 
             setBoundingBoxMethod.invoke(getNmsEntity(entity), boundingBox);
         } catch (Exception ex) {
