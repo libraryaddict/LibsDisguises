@@ -36,14 +36,22 @@ import java.util.UUID;
     @Getter
     private final NamespacedKey bossBar = new NamespacedKey("libsdisguises", UUID.randomUUID().toString());
 
+    protected double getActualEntityScale() {
+        return ((LivingEntity) disguise.getEntity()).getAttribute(Attribute.GENERIC_SCALE).getValue();
+    }
+
+    protected double getRawEntityScaleWithoutLibsDisguises() {
+        return DisguiseUtilities.getEntityScaleWithoutLibsDisguises(disguise.getEntity());
+    }
+
     public double getEntityScaleWithoutLibsDisguises() {
-        double actualScale = ((LivingEntity) disguise.getEntity()).getAttribute(Attribute.GENERIC_SCALE).getValue();
+        double actualScale = getActualEntityScale();
 
         // If nothing has changed
         if (entityScaleWithLibsDisguises != actualScale) {
             // Update the packet field as well, as we expect it to change
             entityScaleWithLibsDisguises = entityScaleLastSentViaPackets = actualScale;
-            entityScaleWithoutLibsDisguises = DisguiseUtilities.getEntityScaleWithoutLibsDisguises(disguise.getEntity());
+            entityScaleWithoutLibsDisguises = getRawEntityScaleWithoutLibsDisguises();
         }
 
         return entityScaleWithoutLibsDisguises;

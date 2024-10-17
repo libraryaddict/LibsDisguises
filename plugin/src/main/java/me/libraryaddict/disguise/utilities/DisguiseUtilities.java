@@ -2781,7 +2781,7 @@ public class DisguiseUtilities {
             box = values.getAdultBox();
         }
 
-        return box != null && !(box.getY() <= 1.7D);
+        return box != null && box.getY() >= 1.7D;
     }
 
     public static String getPlayerListName(Player player) {

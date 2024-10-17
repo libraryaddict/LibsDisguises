@@ -556,38 +556,59 @@ public abstract class Disguise {
             return;
         }
 
+        // TODO Extract this into DisguiseUtilities so that junit tests can be setup
+
         // Get the scale, default to "not scaled" if not a player
-        double entityScaleWithoutLibsDisguises = getInternals().getEntityScaleWithoutLibsDisguises();
-        double disguiseHeight = getHeight() * getNameHeightScale();
+        double playerScaleWithoutLibsDisguises = getInternals().getEntityScaleWithoutLibsDisguises();
+        // This is the height of the disguise, along with the name height
+        double naturalHeightOfDisguise = getHeight();
+        double increasedNaturalHeightOfDisguise = getHeight() * getNameHeightScale();
+
+        if (DisguiseUtilities.isTallDisguise(this)) {
+            increasedNaturalHeightOfDisguise *= 1.2;
+        }
 
         // Here we have the scale of the player itself, where they'd be scaled up or down to match the disguise's scale
         // So a disguise that's 0.5 blocks high, will have the player be given something like 0.33 scale
-        double playerScale = disguiseHeight / (1.8 * entityScaleWithoutLibsDisguises);
-        // Clamp the scale to the min and max
-        playerScale = Math.max(Math.min(playerScale, DisguiseConfig.getScaleSelfDisguisesMax()), DisguiseConfig.getScaleSelfDisguisesMin());
+        double scalerToMakePlayerSeePerspective = 1;
+
+        if (isScalePlayerToDisguise()) {
+            scalerToMakePlayerSeePerspective = naturalHeightOfDisguise / (1.8 * playerScaleWithoutLibsDisguises);
+
+            // Clamp the scale to the min and max
+            scalerToMakePlayerSeePerspective = Math.min(scalerToMakePlayerSeePerspective, DisguiseConfig.getScaleSelfDisguisesMax());
+            scalerToMakePlayerSeePerspective = Math.max(scalerToMakePlayerSeePerspective, DisguiseConfig.getScaleSelfDisguisesMin());
+        }
 
         // The max size the self disguise is allowed to be, as it'd hide the player's view
-        double prevScale = getInternals().getSelfDisguiseTallScaleMax();
-        double newScale = DisguiseUtilities.isTallDisguise(this) ? (1.4 * playerScale) / disguiseHeight : 1;
+        double prevPersonalDisguiseScaleMax = getInternals().getSelfDisguiseTallScaleMax();
         // Adjust so it's not blocking eyes. So smaller than normal
         // And ofc, it's 1 if the disguise was not too tall to begin with
-        getInternals().setSelfDisguiseTallScaleMax(newScale);
+        double newPersonalDisguiseScaleMax = (1.2 * scalerToMakePlayerSeePerspective) / increasedNaturalHeightOfDisguise;
 
+        getInternals().setSelfDisguiseTallScaleMax(newPersonalDisguiseScaleMax);
+
+        adjustSelfDisguiseScale(prevPersonalDisguiseScaleMax, newPersonalDisguiseScaleMax, playerScaleWithoutLibsDisguises,
+            scalerToMakePlayerSeePerspective);
+    }
+
+    private void adjustSelfDisguiseScale(double prevPersonalDisguiseScaleMax, double newPersonalDisguiseScaleMax,
+                                         double playerScaleWithoutLibsDisguises, double personalPlayerScaleAttribute) {
         if (!isDisguiseInUse() || !(getEntity() instanceof Player) || !canScaleDisguise() ||
             !((TargetedDisguise) this).canSee((Player) getEntity())) {
             return;
         }
 
-        if (prevScale != newScale && isSelfDisguiseVisible()) {
+        if (prevPersonalDisguiseScaleMax != newPersonalDisguiseScaleMax && isSelfDisguiseVisible()) {
             double scaleToSend;
 
             if (((LivingWatcher) getWatcher()).getScale() != null) {
                 scaleToSend = ((LivingWatcher) getWatcher()).getScale();
             } else {
-                scaleToSend = entityScaleWithoutLibsDisguises;
+                scaleToSend = playerScaleWithoutLibsDisguises;
             }
 
-            scaleToSend = Math.min(scaleToSend, newScale);
+            scaleToSend = Math.min(scaleToSend, newPersonalDisguiseScaleMax);
 
             // The scale of the self disguise, not the player
             WrapperPlayServerUpdateAttributes.Property property =
@@ -606,15 +627,18 @@ public abstract class Disguise {
                 .orElse(null);
 
         // Disabled or not allowed or doesn't need to scale up
-        if (!isScalePlayerToDisguise() || (!LibsPremium.isPremium() && !DisguiseConfig.isScaleSelfDisguises()) || playerScale == 1 ||
-            isPlayerDisguise()) {
+        if (!isScalePlayerToDisguise() || !LibsPremium.isPremium() || !DisguiseConfig.isScaleSelfDisguises() ||
+            personalPlayerScaleAttribute == 1 || isPlayerDisguise()) {
             if (modifier != null) {
                 attribute.removeModifier(modifier);
             }
         } else if (isScalePlayerToDisguise() && DisguiseConfig.isScaleSelfDisguises()) {
+            personalPlayerScaleAttribute -= 1;
+
             if (modifier != null) {
                 // Nothing changed, don't change anything
-                if (modifier.getAmount() == playerScale && modifier.getOperation() == AttributeModifier.Operation.MULTIPLY_SCALAR_1) {
+                if (modifier.getAmount() == personalPlayerScaleAttribute &&
+                    modifier.getOperation() == AttributeModifier.Operation.MULTIPLY_SCALAR_1) {
                     return;
                 }
 
@@ -622,7 +646,7 @@ public abstract class Disguise {
             }
 
             // Subtract 1, as 1 is added internally
-            attribute.addModifier(new AttributeModifier(DisguiseUtilities.getSelfDisguiseScaleNamespace(), playerScale - 1,
+            attribute.addModifier(new AttributeModifier(DisguiseUtilities.getSelfDisguiseScaleNamespace(), personalPlayerScaleAttribute,
                 AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.ANY));
         }
     }
