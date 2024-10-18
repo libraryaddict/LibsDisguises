@@ -25,7 +25,7 @@ Permissions:
 
   # What should the default permissions be for seeing commands?
   # This is a config option because I can't verify if they should be able to see commands normally due to my
-  # permissions system. My system is complex, but its a ton of control.
+  # permissions system. My system is complex, but it's a ton of control.
   # This isn't an issue normally, but I recently received complaints from someone who doesn't believe in permissions...
   # Some of you may also wish to hide these commands!
   # The permissions for commands are a simple 'libsdisguises.seecmd.command' where 'command' can be

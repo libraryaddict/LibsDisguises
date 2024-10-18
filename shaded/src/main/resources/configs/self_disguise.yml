@@ -1,9 +1,10 @@
-# This config file is for settings that are about the players themselves, and the player disguises!
-
-# MineSkin will at a later date give you less delay for skin requests, if you fill this in with a valid API you too can take advantage of this!
-# This requires you to have a Minecraft account registered with MineSkin, that account must be owned by you and will have its skin changed constantly.
-# https://mineskin.org/apikey
-MineSkinAPIKey: 'N/A'
+# For self disguises, they need to have the armor and the held item removed
+# Else they see floating armor, floating held items.
+# This turns the items invisible in the disguised players inventory. It does not actually remove them!
+RemoveArmor: true
+RemoveHeldItem: false
+# An exception for creative mode as this can actually delete the item from the inventory due to creative being weird
+RemoveCreativeEquipment: false
 
 # Shall the players view their disguises?
 # Best used when viewing yourself in 3rd person
@@ -43,19 +44,3 @@ TallSelfDisguises: false
 # This setting only works if the disguise wouldn't be shown as it's too tall, aka the above setting is false
 # This will only work on living disguises!
 TallSelfDisguisesScaling: true
-
-# Hide players in tab when disguised? This means a disguised player cannot be seen when you press tab! This can be toggled on/off per disguise
-HideDisguisedPlayersFromTab: false
-
-# Always show player disguises in tab? The names will continue to appear in tab until the disguise is removed.
-ShowPlayerDisguisesInTab: false
-
-# On player disguise, a fake player is added to tablist so the skin can load properly.
-# This option is ignored if 'ShowPlayerDisguisesInTab' is enabled.
-# How many ticks before tab packet is sent to remove from tablist. This shouldn't need to be touched
-TablistRemoveDelay: 3
-
-# To prevent skins from defaulting to alex/steve, there is a timer that only expires after X ticks or when the player moves
-# You shouldn't actually touch this, but eh. Your server.
-# Default is 5 seconds
-PlayerDisguisesTablistExpiresMove: 100

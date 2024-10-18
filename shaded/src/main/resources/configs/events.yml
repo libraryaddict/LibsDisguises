@@ -1,4 +1,15 @@
-# This config file is for settings that effects combat!
+#Stop shulker disguises from moving, they're weird.
+# This will only stop players that were disguised as a shulker from moving, any other entity will not be affected.
+StopShulkerDisguisesFromMoving: true
+
+# Turn this to true to have players undisguised when switching worlds
+UndisguiseOnWorldChange: false
+
+# Should the disguise be removed if the disguised player places a block?
+UndisguiseOnBlockPlace: false
+
+# Should the disguise be removed if the disguised player breaks a block?
+UndisguiseOnBlockBreak: false
 
 # This prevents disguised players from being targeted by monsters.
 # This doesn't prevent their targeting you if already targeting when disguised

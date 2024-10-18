@@ -1,0 +1,49 @@
+# This modifies the bounding box, This is stuff like can a arrow hit them.
+# If you turn this to true, arrows will act like they hit the disguise in the right place!
+# Clients will not see any difference in the hitboxes they are attacking, this is a server-sided calculation!
+# So someone disguised as a enderdragon will easily get shot down by arrows!
+# This WILL conflict with NoCheatPlus. Other plugins may also get problems.
+# This shouldn't really be enabled for players as it also interferes with their movement because the server thinks
+# the player is larger than they really are.
+# That makes the player unable to approach this building because the server thinks they are trying to glitch inside
+# blocks.
+# This feature is highly experimental and is guaranteed to cause problems for players who are disguised
+ModifyBoundingBox: false
+
+# There are four options you can use
+# VANILLA - Names are limited to 16 chars but can't be changed without resending disguise
+# TEAMS - Names are limited to 32 chars but can be changed willy nilly
+# EXTENDED - Names are limited to 48 chars but can't be changed without resending disguise
+# ARMORSTANDS - Names are limited to 256 chars, uses a mix of armorstands and teams to do this. Slightly hacky.
+# Downside of armorstand names is that there's a chance of it becoming desynced from the player disguise
+# And names will always display even if the entity is invisible using potion effects
+# With ArmorStands & the Premium version, you can also use multiple lines in the nametag, use \n as a seperator.
+# Read the next option for more information.
+PlayerNames: ARMORSTANDS
+
+# On player disguise, a fake player is added to tablist so the skin can load properly.
+# This option is ignored if 'ShowPlayerDisguisesInTab' is enabled.
+# How many ticks before tab packet is sent to remove from tablist. This shouldn't need to be touched
+TablistRemoveDelay: 3
+
+# To prevent skins from defaulting to alex/steve, there is a timer that only expires after X ticks or when the player moves
+# You shouldn't actually touch this, but eh. Your server.
+# Default is 5 seconds
+PlayerDisguisesTablistExpiresMove: 100
+
+# What disguise types are default to OP only, because they are prone to abuse.
+# By default, this contains TEXT_DISPLAY, ITEM_DISPLAY, BLOCK_DISPLAY and INTERACTION
+DisabledDisguises:
+  - TEXT_DISPLAY
+  - ITEM_DISPLAY
+  - BLOCK_DISPLAY
+  - INTERACTION
+
+# These disguise methods are also limited to OP only, because they're open to abuse
+# setInvisible has overlap with the config option for disabled invsibility, if either is used, it will be disabled.
+# Thankfully, only trusted people are OP. So this doesn't need further configuration.
+# Command users who has the permission return true for "libsdisguises.*.*.*" will also have access.
+DisabledMethods:
+  - setYModifier
+  - setNameYModifier
+  - setInvisible

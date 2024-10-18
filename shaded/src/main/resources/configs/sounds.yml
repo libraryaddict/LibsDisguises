@@ -4,6 +4,7 @@
 # The default disguises already have their sound groups and you cannot use their names.
 # This means no 'PLAYER' 'COW' etc
 # This is an example group, 'GroupName' will never be loaded.
+
 GroupName:
   # If you don't set one of these options, or it is empty. Then no sound will be played for that sound type
   # So if hurt is missing, it won't play a hurt noise

@@ -1,10 +1,10 @@
-# This config is for options that are about Libs Disguises itself, not the disguises.
+# MineSkin will at a later date give you less delay for skin requests, if you fill this in with a valid API you too can take advantage of this!
+# This requires you to have a Minecraft account registered with MineSkin, that account must be owned by you and will have its skin changed constantly.
+# https://mineskin.org/apikey
+MineSkinAPIKey: 'N/A'
 
 # Contact Mojang's servers? Disabling this option will disable player disguises if there's no skin to use!
 ContactMojangServers: true
-
-# Should the plugin use translations? Note that a player must see the message before it will appear in translations.yml
-Translations: false
 
 # Shall I notify those with the correct permission when there's a LibsDisguises update?
 # Disabling this will also disable notifications when the plugin updated
@@ -28,3 +28,31 @@ ChangedConfig: false
 # Should the config automatically update itself each time there's a config entry missing?
 # The old config will have any custom comments or invalid config entries wiped.
 UpdateConfig: true
+
+# You shouldn't need to touch this, but if you do; This was added so scoreboard stuff that affects a certain UUID, will still continue to affect that UUID
+# This doesn't affect player disguises as those would be severely impacted
+# If you are getting issues using this, please do not report them. You disable this at your own risk.
+RandomUUIDs: true
+
+# Player disguises by default generate a unique UUID per disguise, this will disable it if 'false' and may create issues
+UniquePlayerUUID: true
+
+# When you for some strange reason don't want PacketEvents to update, enable this!
+# Disclaimer: If you enable this, you are responsible for ensuring PacketEvents is up to date.
+NeverUpdatePacketEvents: false
+
+# This means that the plugin doesn't need to constantly call Mojang just to find a skin for an offline player
+# However some people may prefer to disable this.
+# Even if you disable this, if there was disguises in the cache already then it will use them
+SaveGameProfiles: true
+
+# This option is useless if you don't enable SaveGameProfiles!
+# If a player has been disguised before and their skin saved into the cache
+# When they join the server will automatically update the cache in case they changed their skin
+UpdateGameProfiles: true
+
+# Disguises have a 'setExpires' option which removes the disguise after a set amount of time
+# By default, this is set to false which means it expires 9 minutes afterwards, even if they logged off.
+# If true, it means they will experience the full 9 minutes, even if they log on for just a minute per day
+# Expired message can be hidden with an empty translation message
+DynamicExpiry: false

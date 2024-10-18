@@ -1,0 +1,19 @@
+# THESE ARE PREMIUM ONLY FEATURES. TO USE THEM, PURCHASE THE PLUGIN.
+
+# Saves disguises so that they persist after server shutdown, chunks unload, player logouts and so on.
+# As such, this completely replaces the KeepDisguises aspect which has been removed except for the player death.
+# Players - Are player disguises saved
+# Entities - Are entities disguises saved (This is everything that's not a player)
+# If you are using the dev builds, place your premium version of Lib's Disguises.jar inside the LibsDisguises folder
+# This will enable premium only features for the dev builds.
+# The saved disguises are saved in a json file format inside the plugin folder, there will be no other formats
+SaveDisguises:
+  Players: false
+  Entities: false
+
+# Does the player keep their disguise after they die?
+KeepDisguises:
+  PlayerDeath: false
+
+# Should the plugin use translations? Note that a player must see the message before it will appear in translations.yml
+Translations: false

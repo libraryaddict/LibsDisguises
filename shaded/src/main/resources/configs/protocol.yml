@@ -1,5 +1,9 @@
 # This config is for options that should only be touched if you're having compatibility issues with other plugins
 
+# Shall I disguise the sounds?
+# This turns your damage sound into a MOOOO
+DisguiseSounds: true
+
 # Some players have issues with conflicting plugins where disguised entities will show the wrong armor
 # This should be left alone unless you're trying to solve this issue. Such as MM and stone blocks.
 # When true, the plugin will hide player disguises armor to prevent a minor visual bug for half a second
@@ -8,14 +12,6 @@ PlayerHideArmor: true
 # Some disguises have randomized options on disguise, such as a fox type or a villager breed.
 # This may be problematic for some server owners, so you can disable it below
 RandomDisguiseOptions: true
-
-# For self disguises, they need to have the armor and the held item removed
-# Else they see floating armor, floating held items.
-# This turns the items invisible in the disguised players inventory. It does not actually remove them!
-RemoveArmor: true
-RemoveHeldItem: false
-# An exception for creative mode as this can actually delete the item from the inventory due to creative being weird
-RemoveCreativeEquipment: false
 
 # If you set a disguise to burning, it will no longer be able to be shown as sneaking or invisible.
 # Set this to true if you want the disguise to get the animations of the disguised entity. Such as invisible, on fire, sprinting, sneaking, blocking
@@ -73,3 +69,18 @@ PacketsEnabled:
 # Added to support a Chinese Minecraft Server which uses their own skin server unless the UUID is not version 4.
 # Changing this from 4 to say, 3. Means their server will fetch skins from Mojang instead.
 UUIDVersion: 4
+
+# When a sheep or wolf is right clicked with dye. The client automatically assumes it was successful and displays the sheep's wool or the wolfs collar as dyed.
+# This is a option that either prevents that happening, or it changes their color officially in the plugin so that everyone sees it changed.
+# Its currently set to false which means that the color is not changed and will refresh itself to the player.
+# Please note that this will not remove the dye from their hands. This also does not check if the disguised entity is actually a sheep/wolf and wants a say in its color.
+DyeableSheep: false
+DyeableWolf: false
+DyeableCat: false
+
+# Can a player interact with a llama with carpet to set or change their carpet color?
+CarpetableLlama: false
+
+# Can a player interact with a non-saddled horse of any type, to give it a saddle?
+# This does not change what you can ride or control!
+SaddleableHorse: false
