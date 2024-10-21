@@ -449,14 +449,14 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     public Wolf.Variant getWolfVariantFromInt(int wolfVariant) {
         Registry<WolfVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.WOLF_VARIANT);
 
-        return CraftWolf.CraftVariant.minecraftHolderToBukkit(registry.getHolder(wolfVariant - 1).get());
+        return CraftWolf.CraftVariant.minecraftHolderToBukkit(registry.getHolder(wolfVariant).get());
     }
 
     @Override
     public int getWolfVariantAsInt(Wolf.Variant type) {
         Registry<WolfVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.WOLF_VARIANT);
 
-        return registry.getIdOrThrow(CraftWolf.CraftVariant.bukkitToMinecraft(type)) + 1;
+        return registry.getIdOrThrow(CraftWolf.CraftVariant.bukkitToMinecraft(type));
     }
 
     @Override
