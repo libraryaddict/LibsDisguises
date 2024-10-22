@@ -44,6 +44,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.UnsafeValues;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_21_R1.CraftArt;
@@ -83,6 +84,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     private final Field trackedEntityField;
     private final AtomicInteger entityCounter;
     private final Method entityDefaultSoundMethod;
+    private final UnsafeValues craftMagicNumbers;
 
     @SneakyThrows
     public ReflectionManager() {
@@ -105,6 +107,8 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         // Default is protected method, 1.0F on EntityLiving.class
         entityDefaultSoundMethod = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("fa");
         entityDefaultSoundMethod.setAccessible(true);
+
+        craftMagicNumbers = (UnsafeValues) CraftMagicNumbers.class.getField("INSTANCE").get(null);
     }
 
     public boolean hasInvul(Entity entity) {
@@ -297,7 +301,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     @Override
     public Material getMaterial(String name) {
-        return CraftMagicNumbers.INSTANCE.getMaterial(name, CraftMagicNumbers.INSTANCE.getDataVersion());
+        return craftMagicNumbers.getMaterial(name, craftMagicNumbers.getDataVersion());
     }
 
     @Override
