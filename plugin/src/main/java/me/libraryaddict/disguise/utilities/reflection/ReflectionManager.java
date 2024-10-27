@@ -1453,7 +1453,7 @@ public class ReflectionManager {
         } else if (index == MetaIndex.WOLF_VARIANT) {
             return (T) nmsReflection.getWolfVariantFromInt((int) value);
         } else if (index == MetaIndex.CAT_COLLAR || index == MetaIndex.WOLF_COLLAR) {
-            return (T) AnimalColor.getColorByDye((int) value);
+            return (T) AnimalColor.getColorByWool((int) value);
         } else if (index.isItemStack()) {
             return (T) DisguiseUtilities.toBukkitItemStack((com.github.retrooper.packetevents.protocol.item.ItemStack) value);
         } else if (index.isBlock() || index.isBlockOpt()) {
@@ -1556,7 +1556,7 @@ public class ReflectionManager {
         } else if (value instanceof Rabbit.Type) {
             return RabbitType.getTypeId((Rabbit.Type) value);
         } else if (index == MetaIndex.CAT_COLLAR || index == MetaIndex.WOLF_COLLAR) {
-            return (int) ((AnimalColor) value).getDyeColor().getDyeData();
+            return (int) ((AnimalColor) value).getDyeColor().getWoolData();
         } else if (value instanceof Enum && !(value instanceof SnifferState || value instanceof EntityPose || value instanceof BlockFace ||
             value instanceof ArmadilloState)) {
             int v = enumOrdinal(value);
