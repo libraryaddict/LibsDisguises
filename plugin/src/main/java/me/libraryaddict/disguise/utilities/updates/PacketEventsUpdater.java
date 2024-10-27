@@ -61,7 +61,8 @@ public class PacketEventsUpdater {
         // At time of writing, release is 2.4.0, and snapshot builds are all "2.5.0-SNAPSHOT"
         // This means we'll always fail a release check!
         // But now that 2.5.0 has released, it'll update to the release build
-        return "2.5.0";
+        // Then I changed this once again!
+        return "2.6.0";
     }
 
     /**
@@ -69,7 +70,7 @@ public class PacketEventsUpdater {
      */
     public static Instant getMinimumPacketEventsBuildTimestamp() {
         // As taken from the most recent packetevents compiled jar
-        return Instant.ofEpochMilli(1726865049970L);
+        return Instant.ofEpochMilli(1729986313878L);
     }
 
     public static boolean isPacketEventsOutdated(Instant requiredTime) {
