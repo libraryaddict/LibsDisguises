@@ -49,7 +49,7 @@ public class MobDisguise extends TargetedDisguise {
             if (getType() == DisguiseType.ARMOR_STAND) {
                 return (((ArmorStandWatcher) getWatcher()).isSmall() ? values.getBabyBox() : values.getAdultBox()).getY();
             } else if (getType() == DisguiseType.SLIME || getType() == DisguiseType.MAGMA_CUBE) {
-                return 0.51 * (0.255 * ((SlimeWatcher) getWatcher()).getSize());
+                return 0.52 * (((SlimeWatcher) getWatcher()).getSize());
             }
         }
 
