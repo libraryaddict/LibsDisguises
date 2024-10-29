@@ -301,6 +301,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static boolean uniquePlayerDisguiseUUIDs;
+    @Getter
+    @Setter
+    private static boolean hideDeathMessages;
 
     public static boolean isArmorstandsName() {
         return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
@@ -710,6 +713,7 @@ public class DisguiseConfig {
         String apiKey = config.getString("MineSkinAPIKey");
         setSoundsEnabled(config.getBoolean("DisguiseSounds"));
         setUniquePlayerDisguiseUUIDs(config.getBoolean("UniquePlayerUUID"));
+        setHideDeathMessages(config.getBoolean("HideDeathMessages"));
 
         if (apiKey != null && apiKey.matches("[a-zA-Z\\d]{8,}")) {
             DisguiseUtilities.getMineSkinAPI().setApiKey(apiKey);

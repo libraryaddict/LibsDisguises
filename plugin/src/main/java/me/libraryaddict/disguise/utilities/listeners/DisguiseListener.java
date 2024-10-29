@@ -40,6 +40,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -841,5 +842,14 @@ public class DisguiseListener implements Listener {
         runnable.runTaskLater(LibsDisguises.getInstance(), secondsExpire * 20L);
 
         disguiseRunnable.put(playerName, runnable);
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        if (!DisguiseConfig.isHideDeathMessages() || !DisguiseAPI.isDisguised(event.getPlayer())) {
+            return;
+        }
+
+        event.setDeathMessage(null);
     }
 }

@@ -38,3 +38,6 @@ RetaliationCombat: false
 # If RetaliationCombat is false, or it's true but they haven't fought back in PvPTimer seconds, then they can't fight back.
 # This also controls it so they can't fight back PvPTimer seconds after applying a disguise
 PvPTimer: 5
+
+# If this is enabled, death messages will not show for players if they were disguised
+HideDeathMessages: false
