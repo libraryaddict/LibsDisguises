@@ -110,7 +110,6 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] origArgs) {
-        ArrayList<String> tabs = new ArrayList<>();
         String[] args = getPreviousArgs(origArgs);
 
         DisguisePermissions perms = getPermissions(sender);

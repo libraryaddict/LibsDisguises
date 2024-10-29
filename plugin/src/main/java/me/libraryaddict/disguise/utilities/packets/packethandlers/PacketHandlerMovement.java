@@ -25,7 +25,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -46,54 +45,7 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
     @Override
     public void handle(Disguise disguise, LibsPackets<T> packets, Player observer, Entity entity) {
         handleMovement(disguise, packets, observer, entity);
-        addMultiNames(disguise, packets);
-    }
-
-    private void addMultiNames(Disguise disguise, LibsPackets<T> packets) {
-        int len = disguise.getMultiNameLength();
-
-        if (len == 0) {
-            return;
-        }
-
-        ArrayList<PacketWrapper> toAdd = new ArrayList<>();
-        double height = (disguise.getHeight() + disguise.getWatcher().getNameYModifier());
-        double heightScale = disguise.getNameHeightScale();
-        height *= heightScale;
-        height += (DisguiseUtilities.getNameSpacing() * (heightScale - 1)) * 0.35;
-
-        for (PacketWrapper packet : packets.getPackets()) {
-            if (packet instanceof WrapperPlayServerEntityRotation) {
-                continue;
-            }
-
-            for (int i = 0; i < len; i++) {
-                int standId = disguise.getArmorstandIds()[i];
-                PacketWrapper cloned;
-
-                if (packet instanceof WrapperPlayServerEntityTeleport) {
-                    WrapperPlayServerEntityTeleport tele = (WrapperPlayServerEntityTeleport) packet;
-                    cloned = new WrapperPlayServerEntityTeleport(standId,
-                        tele.getPosition().add(0, height + (DisguiseUtilities.getNameSpacing() * i), 0), tele.getYaw(), tele.getPitch(),
-                        tele.isOnGround());
-                } else if (packet instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
-                    WrapperPlayServerEntityRelativeMoveAndRotation rot = (WrapperPlayServerEntityRelativeMoveAndRotation) packet;
-                    cloned = new WrapperPlayServerEntityRelativeMoveAndRotation(standId, rot.getDeltaX(), rot.getDeltaY(), rot.getDeltaZ(),
-                        rot.getYaw(), rot.getPitch(), rot.isOnGround());
-                } else if (packet instanceof WrapperPlayServerEntityRelativeMove) {
-                    WrapperPlayServerEntityRelativeMove rot = (WrapperPlayServerEntityRelativeMove) packet;
-                    cloned = new WrapperPlayServerEntityRelativeMove(standId, rot.getDeltaX(), rot.getDeltaY(), rot.getDeltaZ(),
-                        rot.isOnGround());
-                } else {
-                    // It seems that EntityStatus packet was being added at some point, probably in some other transformation
-                    continue; //   throw new IllegalStateException("Unknown packet " + packet.getClass());
-                }
-
-                toAdd.add(cloned);
-            }
-        }
-
-        packets.getPackets().addAll(toAdd);
+        DisguiseUtilities.adjustNamePositions(disguise, packets);
     }
 
     private void handleMovement(Disguise disguise, LibsPackets<T> packets, Player observer, Entity entity) {

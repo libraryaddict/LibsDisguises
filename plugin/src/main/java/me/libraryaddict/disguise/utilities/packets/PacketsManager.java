@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Ser
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerClientCustomPayload;
@@ -15,6 +16,7 @@ import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListene
 import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerScoreboardTeam;
 import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerSounds;
 import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerTabList;
+import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerVehicleMovement;
 import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerViewSelfDisguise;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Bukkit;
@@ -51,6 +53,11 @@ public class PacketsManager {
             if (DisguiseConfig.isLoginPayloadPackets()) {
                 PacketEvents.getAPI().getEventManager().registerListener(customPayload);
             }
+
+            PacketListenerVehicleMovement vehicleMovement = new PacketListenerVehicleMovement();
+            Bukkit.getPluginManager().registerEvents(vehicleMovement, LibsDisguises.getInstance());
+
+            PacketEvents.getAPI().getEventManager().registerListener(vehicleMovement);
 
             initialListenersRegistered = true;
             PacketEvents.getAPI().getSettings().fullStackTrace(true);

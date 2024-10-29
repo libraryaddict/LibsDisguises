@@ -138,6 +138,7 @@ import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -282,7 +283,7 @@ public class DisguiseUtilities {
     private static final Cache<Integer, Long> velocityTimes = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.SECONDS).build();
     private static final HashMap<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
     @Getter
-    private static boolean runningPaper;
+    private static boolean runningPaper, runningGeyser;
     private static MineSkinAPI mineSkinAPI;
     @Getter
     private static boolean invalidFile;
@@ -336,6 +337,8 @@ public class DisguiseUtilities {
             runningPaper = Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData") != null;
         } catch (Exception ignored) {
         }
+
+        runningGeyser = Bukkit.getPluginManager().getPlugin("Geyser-Spigot") != null;
 
         if (LibsDisguises.getInstance() == null) {
             profileCache = null;
@@ -504,6 +507,65 @@ public class DisguiseUtilities {
         }
 
         return getHexedColors(name);
+    }
+
+    public static void adjustNamePositions(Disguise disguise, LibsPackets<? extends PacketWrapper> packets) {
+        List<PacketWrapper> newPackets = adjustNamePositions(disguise, packets.getPackets());
+
+        if (newPackets == null) {
+            return;
+        }
+
+        packets.getPackets().addAll(newPackets);
+    }
+
+    public static @Nullable List<PacketWrapper> adjustNamePositions(Disguise disguise, List<PacketWrapper> packets) {
+        int len = disguise.getMultiNameLength();
+
+        if (len == 0) {
+            return null;
+        }
+
+        ArrayList<PacketWrapper> toAdd = new ArrayList<>();
+        double height = (disguise.getHeight() + disguise.getWatcher().getNameYModifier());
+        double heightScale = disguise.getNameHeightScale();
+        height *= heightScale;
+        height += (DisguiseUtilities.getNameSpacing() * (heightScale - 1)) * 0.35;
+
+        for (PacketWrapper packet : packets) {
+            if (packet instanceof WrapperPlayServerEntityRotation) {
+                continue;
+            }
+
+            for (int i = 0; i < len; i++) {
+                int standId = disguise.getArmorstandIds()[i];
+                PacketWrapper cloned;
+
+                if (packet instanceof WrapperPlayServerEntityTeleport) {
+                    // TODO Handle if this is a vehicle movement
+                    WrapperPlayServerEntityTeleport tele = (WrapperPlayServerEntityTeleport) packet;
+
+                    cloned = new WrapperPlayServerEntityTeleport(standId,
+                        tele.getPosition().add(0, height + (DisguiseUtilities.getNameSpacing() * i), 0), tele.getYaw(), tele.getPitch(),
+                        tele.isOnGround());
+                } else if (packet instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
+                    WrapperPlayServerEntityRelativeMoveAndRotation rot = (WrapperPlayServerEntityRelativeMoveAndRotation) packet;
+                    cloned = new WrapperPlayServerEntityRelativeMoveAndRotation(standId, rot.getDeltaX(), rot.getDeltaY(), rot.getDeltaZ(),
+                        rot.getYaw(), rot.getPitch(), rot.isOnGround());
+                } else if (packet instanceof WrapperPlayServerEntityRelativeMove) {
+                    WrapperPlayServerEntityRelativeMove rot = (WrapperPlayServerEntityRelativeMove) packet;
+                    cloned = new WrapperPlayServerEntityRelativeMove(standId, rot.getDeltaX(), rot.getDeltaY(), rot.getDeltaZ(),
+                        rot.isOnGround());
+                } else {
+                    // It seems that EntityStatus packet was being added at some point, probably in some other transformation
+                    continue; //   throw new IllegalStateException("Unknown packet " + packet.getClass());
+                }
+
+                toAdd.add(cloned);
+            }
+        }
+
+        return toAdd;
     }
 
     private static String toMiniMessage(Component component) {
