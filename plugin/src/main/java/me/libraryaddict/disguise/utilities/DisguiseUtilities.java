@@ -338,8 +338,6 @@ public class DisguiseUtilities {
         } catch (Exception ignored) {
         }
 
-        runningGeyser = Bukkit.getPluginManager().getPlugin("Geyser-Spigot") != null;
-
         if (LibsDisguises.getInstance() == null) {
             profileCache = null;
             sanitySkinCacheFile = null;
@@ -348,6 +346,7 @@ public class DisguiseUtilities {
             profileCache = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins");
             sanitySkinCacheFile = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins/sanity.json");
             savedDisguises = new File(LibsDisguises.getInstance().getDataFolder(), "SavedDisguises");
+            runningGeyser = Bukkit.getPluginManager().getPlugin("Geyser-Spigot") != null;
         }
 
         entityItem = EntityType.fromName("item");
