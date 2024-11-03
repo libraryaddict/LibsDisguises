@@ -10,17 +10,6 @@
 # This feature is highly experimental and is guaranteed to cause problems for players who are disguised
 ModifyBoundingBox: false
 
-# There are four options you can use
-# VANILLA - Names are limited to 16 chars but can't be changed without resending disguise
-# TEAMS - Names are limited to 32 chars but can be changed willy nilly
-# EXTENDED - Names are limited to 48 chars but can't be changed without resending disguise
-# ARMORSTANDS - Names are limited to 256 chars, uses a mix of armorstands and teams to do this. Slightly hacky.
-# Downside of armorstand names is that there's a chance of it becoming desynced from the player disguise
-# And names will always display even if the entity is invisible using potion effects
-# With ArmorStands & the Premium version, you can also use multiple lines in the nametag, use \n as a seperator.
-# Read the next option for more information.
-PlayerNames: ARMORSTANDS
-
 # On player disguise, a fake player is added to tablist so the skin can load properly.
 # This option is ignored if 'ShowPlayerDisguisesInTab' is enabled.
 # How many ticks before tab packet is sent to remove from tablist. This shouldn't need to be touched
