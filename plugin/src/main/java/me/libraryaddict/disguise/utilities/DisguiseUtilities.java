@@ -107,6 +107,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -314,6 +315,8 @@ public class DisguiseUtilities {
     @Getter
     private static boolean fancyHiddenTabs;
     @Getter
+    private static NamespacedKey oldSavedDisguisesKey;
+    @Getter
     private static NamespacedKey savedDisguisesKey;
     private static final Map<Enchantment, EnchantmentType> whitelistedEnchantments = new HashMap<Enchantment, EnchantmentType>();
     @Getter
@@ -327,6 +330,8 @@ public class DisguiseUtilities {
         io.github.retrooper.packetevents.adventure.serializer.gson.GsonComponentSerializer.gson();
     @Getter
     private static NamespacedKey selfDisguiseScaleNamespace;
+    @Getter
+    private static Attribute scaleAttribute;
     @Getter
     @Setter
     private static boolean debuggingMode;
@@ -347,6 +352,11 @@ public class DisguiseUtilities {
             sanitySkinCacheFile = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins/sanity.json");
             savedDisguises = new File(LibsDisguises.getInstance().getDataFolder(), "SavedDisguises");
             runningGeyser = Bukkit.getPluginManager().getPlugin("Geyser-Spigot") != null;
+
+            if (NmsVersion.v1_20_R4.isSupported()) {
+                scaleAttribute =
+                    Registry.ATTRIBUTE.get(NamespacedKey.minecraft(NmsVersion.v1_21_R2.isSupported() ? "scale" : "generic.scale"));
+            }
         }
 
         entityItem = EntityType.fromName("item");
@@ -411,7 +421,7 @@ public class DisguiseUtilities {
             return;
         }
 
-        AttributeInstance attribute = ((LivingEntity) entity).getAttribute(Attribute.GENERIC_SCALE);
+        AttributeInstance attribute = ((LivingEntity) entity).getAttribute(getScaleAttribute());
         attribute.getModifiers().stream().filter(a -> a.getKey().equals(DisguiseUtilities.getSelfDisguiseScaleNamespace()))
             .forEach(attribute::removeModifier);
     }
@@ -969,6 +979,10 @@ public class DisguiseUtilities {
 
         PersistentDataContainer container = entity.getPersistentDataContainer();
         String data = container.get(savedDisguisesKey, PersistentDataType.STRING);
+
+        if (data == null) {
+            data = container.get(oldSavedDisguisesKey, PersistentDataType.STRING);
+        }
 
         if (data == null) {
             return getSavedDisguises(entity.getUniqueId());
@@ -1730,7 +1744,8 @@ public class DisguiseUtilities {
 
     public static void init() {
         fancyHiddenTabs = NmsVersion.v1_19_R2.isSupported() && Bukkit.getPluginManager().getPlugin("ViaBackwards") == null;
-        savedDisguisesKey = new NamespacedKey(LibsDisguises.getInstance(), "SavedDisguises");
+        oldSavedDisguisesKey = new NamespacedKey(LibsDisguises.getInstance(), "SavedDisguises");
+        savedDisguisesKey = new NamespacedKey(LibsDisguises.getInstance(), "LibsDisguises_SavedDisguises");
         selfDisguiseScaleNamespace = new NamespacedKey(LibsDisguises.getInstance(), "Self_Disguise_Scaling");
         debuggingMode = LibsDisguises.getInstance().isDebuggingBuild();
 
@@ -3354,6 +3369,26 @@ public class DisguiseUtilities {
             case MINECART_MOB_SPAWNER:
             case MINECART_TNT:
                 return value + 90;
+            case ACACIA_BOAT:
+            case ACACIA_CHEST_BOAT:
+            case BAMBOO_RAFT:
+            case BAMBOO_CHEST_RAFT:
+            case BIRCH_BOAT:
+            case BIRCH_CHEST_BOAT:
+            case CHERRY_BOAT:
+            case CHERRY_CHEST_BOAT:
+            case DARK_OAK_BOAT:
+            case DARK_OAK_CHEST_BOAT:
+            case JUNGLE_BOAT:
+            case JUNGLE_CHEST_BOAT:
+            case MANGROVE_BOAT:
+            case MANGROVE_CHEST_BOAT:
+            case OAK_BOAT:
+            case OAK_CHEST_BOAT:
+            case PALE_OAK_BOAT:
+            case PALE_OAK_CHEST_BOAT:
+            case SPRUCE_BOAT:
+            case SPRUCE_CHEST_BOAT:
             case BOAT:
             case ENDER_DRAGON:
             case WITHER_SKULL:
@@ -3591,7 +3626,7 @@ public class DisguiseUtilities {
             return 1;
         }
 
-        AttributeInstance attribute = ((LivingEntity) entity).getAttribute(Attribute.GENERIC_SCALE);
+        AttributeInstance attribute = ((LivingEntity) entity).getAttribute(getScaleAttribute());
 
         double scale = attribute.getBaseValue();
         double modifiedScale = 0;
@@ -3720,6 +3755,26 @@ public class DisguiseUtilities {
             case SPLASH_POTION:
             case THROWN_EXP_BOTTLE:
             case WITHER_SKULL:
+            case ACACIA_BOAT:
+            case ACACIA_CHEST_BOAT:
+            case BAMBOO_RAFT:
+            case BAMBOO_CHEST_RAFT:
+            case BIRCH_BOAT:
+            case BIRCH_CHEST_BOAT:
+            case CHERRY_BOAT:
+            case CHERRY_CHEST_BOAT:
+            case DARK_OAK_BOAT:
+            case DARK_OAK_CHEST_BOAT:
+            case JUNGLE_BOAT:
+            case JUNGLE_CHEST_BOAT:
+            case MANGROVE_BOAT:
+            case MANGROVE_CHEST_BOAT:
+            case OAK_BOAT:
+            case OAK_CHEST_BOAT:
+            case PALE_OAK_BOAT:
+            case PALE_OAK_CHEST_BOAT:
+            case SPRUCE_BOAT:
+            case SPRUCE_CHEST_BOAT:
                 return yMod + 0.7;
             case DROPPED_ITEM:
                 return yMod + 0.13;
