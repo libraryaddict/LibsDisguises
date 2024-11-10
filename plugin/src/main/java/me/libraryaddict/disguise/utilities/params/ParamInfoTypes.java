@@ -64,6 +64,7 @@ import org.bukkit.entity.Panda;
 import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Pose;
 import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.Salmon;
 import org.bukkit.entity.Sniffer;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.entity.TropicalFish;
@@ -197,6 +198,10 @@ public class ParamInfoTypes {
 
         if (NmsVersion.v1_21_R1.isSupported()) {
             paramInfos.add(new ParamInfoEnum(ArmadilloState.class, "Armadillo State", "The current state of an Armadillo"));
+        }
+
+        if (NmsVersion.v1_21_R2.isSupported()) {
+            paramInfos.add(new ParamInfoEnum(Salmon.Variant.class, "Salmon Variant", "The size of a salmon"));
         }
 
         paramInfos.add(new ParamInfoEnum(DisguiseConfig.NotifyBar.class, "NotifyBar", "Where the disguised indicator should appear"));

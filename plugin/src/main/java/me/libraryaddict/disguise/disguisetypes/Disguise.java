@@ -28,7 +28,6 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.boss.BarColor;
@@ -621,7 +620,7 @@ public abstract class Disguise {
         }
 
         // Now we figure out the scale we need to have the player at the same eye level of the disguise
-        AttributeInstance attribute = ((Player) getEntity()).getAttribute(Attribute.GENERIC_SCALE);
+        AttributeInstance attribute = ((Player) getEntity()).getAttribute(DisguiseUtilities.getScaleAttribute());
         AttributeModifier modifier =
             attribute.getModifiers().stream().filter(a -> a.getKey().equals(DisguiseUtilities.getSelfDisguiseScaleNamespace())).findAny()
                 .orElse(null);

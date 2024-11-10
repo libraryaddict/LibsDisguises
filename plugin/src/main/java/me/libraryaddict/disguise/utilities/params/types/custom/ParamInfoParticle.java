@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.utilities.params.types.custom;
 
+import com.github.retrooper.packetevents.protocol.color.AlphaColor;
+import com.github.retrooper.packetevents.protocol.color.Color;
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
 import com.github.retrooper.packetevents.protocol.particle.data.ParticleBlockStateData;
 import com.github.retrooper.packetevents.protocol.particle.data.ParticleColorData;
@@ -9,24 +11,27 @@ import com.github.retrooper.packetevents.protocol.particle.data.ParticleDustData
 import com.github.retrooper.packetevents.protocol.particle.data.ParticleItemStackData;
 import com.github.retrooper.packetevents.protocol.particle.data.ParticleSculkChargeData;
 import com.github.retrooper.packetevents.protocol.particle.data.ParticleShriekData;
+import com.github.retrooper.packetevents.protocol.particle.data.ParticleTrailData;
 import com.github.retrooper.packetevents.protocol.particle.data.ParticleVibrationData;
 import com.github.retrooper.packetevents.protocol.particle.type.ParticleType;
 import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes;
 import com.github.retrooper.packetevents.protocol.world.positionsource.builtin.BlockPositionSource;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
+import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.util.Vector3i;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -51,39 +56,121 @@ public class ParamInfoParticle extends ParamInfoEnum {
         private final Class<? extends ParticleData> data;
     }
 
+    public static class PacketColorParser {
+        private final String[] args;
+        private final boolean decimalMode;
+        private final boolean alphaColor;
+
+        PacketColorParser(String[] args, boolean alphaColor) {
+            this.args = args;
+
+            decimalMode = Arrays.stream(args).anyMatch(s -> s.contains("."));
+            this.alphaColor = alphaColor;
+        }
+
+        private void validateArgs() {
+            int expect = (args.length >= 3 ? 3 : 1);
+
+            if (expect != args.length && alphaColor) {
+                expect++;
+            }
+
+            if (args.length != expect) {
+                throw new IllegalArgumentException("Expected " + expect + " args, but got " + args.length);
+            }
+        }
+
+        public Color parseFromNameOrInt() throws DisguiseParseException {
+            // At least 1 arg, max of 2
+            // Alpha can only have "alpha:colorname" or "int"
+
+            String colorStr = args[args.length - 1];
+
+            // Must not have 2 args if its an int
+            if (colorStr.matches("-?\\d+")) {
+                if (args.length != 1) {
+                    throw new IllegalArgumentException("Only expected 1 arg, not 2 when parsing int color");
+                }
+
+                if (alphaColor) {
+                    return new AlphaColor(Integer.parseInt(colorStr));
+                }
+
+                return new Color(Integer.parseInt(colorStr));
+            }
+
+            int alpha = args.length > 1 ? getInt(args[0]) : 255;
+
+            String[] toPass = args;
+
+            if (alphaColor && (toPass.length == 2 || toPass.length == 4)) {
+                toPass = Arrays.copyOfRange(toPass, 1, toPass.length);
+            }
+
+            org.bukkit.Color color =
+                ((ParamInfoColor) ParamInfoManager.getParamInfo(org.bukkit.Color.class)).parseToColor(StringUtils.join(toPass, ","));
+
+            if (alphaColor) {
+                return new AlphaColor(alpha, color.getRed(), color.getGreen(), color.getBlue());
+            }
+
+            return new Color(color.getRed(), color.getGreen(), color.getBlue());
+        }
+
+        public Color parseFromRGB() {
+            // At least 3 args were given
+
+            int r = getInt(args[args.length - 3]);
+            int g = getInt(args[args.length - 2]);
+            int b = getInt(args[args.length - 1]);
+
+            if (alphaColor) {
+                int alpha = args.length > 3 ? getInt(args[0]) : 255;
+
+                return new AlphaColor(alpha, r, g, b);
+            }
+
+            return new Color(r, g, b);
+        }
+
+        public Color parse() throws DisguiseParseException {
+            validateArgs();
+
+            if (args.length > 2) {
+                return parseFromRGB();
+            }
+
+            return parseFromNameOrInt();
+        }
+
+        private int getInt(String s) {
+            if (decimalMode) {
+                return (int) (Double.parseDouble(s) * 255);
+            }
+
+            return Integer.parseInt(s);
+        }
+
+    }
+
     @RequiredArgsConstructor
+    @Accessors(chain = true)
+    @Setter
     private static class ColorParser {
         private final String[] split;
-        private final boolean decimalPointColor;
+        private boolean alphaColor;
         @Getter
         private int argsConsumed;
 
-        public float[] getColor() throws DisguiseParseException {
+        public Color getColor() throws DisguiseParseException {
+            // Might need to redo this whole class, esp for alpha support
             int need = getArgsNeed();
             int start = split.length - (argsConsumed + need);
             String[] copyOf = Arrays.copyOfRange(split, start, start + need);
 
             argsConsumed += need;
 
-            if (copyOf.length == 3) {
-                return new float[]{Float.parseFloat(copyOf[0]), Float.parseFloat(copyOf[1]), Float.parseFloat(copyOf[2])};
-            } else if (copyOf[0].equals("-1")) {
-                return new float[]{-1, -1, -1};
-            }
-
-            Color color = ((ParamInfoColor) ParamInfoManager.getParamInfo(Color.class)).parseToColor(StringUtils.join(copyOf, ","));
-
-            float r = color.getRed();
-            float g = color.getGreen();
-            float b = color.getBlue();
-
-            if (decimalPointColor) {
-                r /= 255f;
-                g /= 255f;
-                b /= 255f;
-            }
-
-            return new float[]{r, g, b};
+            return new PacketColorParser(copyOf, alphaColor).parse();
         }
 
         public int getArgsRemaining() {
@@ -91,6 +178,11 @@ public class ParamInfoParticle extends ParamInfoEnum {
         }
 
         private int getArgsNeed() {
+            if (alphaColor) {
+                // We always expect to consume all args at the current state of it, so return everything
+                return getArgsRemaining();
+            }
+
             return split[split.length - (1 + argsConsumed)].matches("-?\\d+(\\.\\d+)?") ? 3 : 1;
         }
 
@@ -203,37 +295,37 @@ public class ParamInfoParticle extends ParamInfoEnum {
         return enums;
     }
 
-    private String colorToString(int color) {
-        for (Map.Entry<String, Color> entry : ParamInfoColor.getStaticColors().entrySet()) {
-            Color c = entry.getValue();
+    private String alphaColorToString(int color) {
+        if (color == -1) {
+            return String.valueOf(color);
+        }
 
-            if (c.asRGB() != color) {
+        AlphaColor alphaColor = new AlphaColor(color);
+
+        for (Map.Entry<String, org.bukkit.Color> entry : ParamInfoColor.getStaticColors().entrySet()) {
+            org.bukkit.Color c = entry.getValue();
+
+            if (c.getRed() != alphaColor.red() || c.getGreen() != alphaColor.green() || c.getBlue() != alphaColor.blue()) {
                 continue;
             }
 
-            return entry.getKey();
+            // Always include the alpha to show usage
+            return alphaColor.alpha() + ":" + entry.getKey();
         }
 
-        return String.valueOf(color);
+        // Return in Alpha:Red,Green,Blue format to be more readable
+        return alphaColor.alpha() + ":" + alphaColor.red() + "," + alphaColor.green() + "," + alphaColor.blue();
     }
 
-    private String colorToString(float red, float green, float blue) {
-        int r = (int) red * 255;
-        int g = (int) green * 255;
-        int b = (int) blue * 255;
+    private String colorToString(int red, int green, int blue) {
+        for (Map.Entry<String, org.bukkit.Color> entry : ParamInfoColor.getStaticColors().entrySet()) {
+            org.bukkit.Color c = entry.getValue();
 
-        for (Map.Entry<String, Color> entry : ParamInfoColor.getStaticColors().entrySet()) {
-            Color c = entry.getValue();
-
-            if (r != c.getRed() || g != c.getGreen() || b != c.getBlue()) {
+            if (red != c.getRed() || green != c.getGreen() || blue != c.getBlue()) {
                 continue;
             }
 
             return entry.getKey();
-        }
-
-        if (red % 1 == 0 && green % 1 == 0 && blue % 1 == 0) {
-            return (int) red + "," + (int) green + "," + (int) blue;
         }
 
         return red + "," + green + "," + blue;
@@ -260,9 +352,14 @@ public class ParamInfoParticle extends ParamInfoEnum {
                     returns += ":" + dust.getScale();
                 }
 
-                returns += ":" + colorToString(dust.getRed(), dust.getGreen(), dust.getBlue());
+                returns += ":" + colorToString((int) (dust.getRed() * 255), (int) (dust.getGreen() * 255), (int) (dust.getBlue() * 255));
             } else if (data instanceof ParticleColorData) {
-                returns += ":" + colorToString(((ParticleColorData) data).getColor());
+                returns += ":" + alphaColorToString(((ParticleColorData) data).getColor());
+            } else if (data instanceof ParticleTrailData) {
+                ParticleTrailData trail = (ParticleTrailData) data;
+
+                returns += ":" + trail.getTarget().getX() + "," + trail.getTarget().getY() + "," + trail.getTarget().getZ() + ":" +
+                    colorToString(trail.getColor().red(), trail.getColor().green(), trail.getColor().blue());
             } else if (data instanceof ParticleDustColorTransitionData) {
                 ParticleDustColorTransitionData dust = (ParticleDustColorTransitionData) data;
 
@@ -272,9 +369,10 @@ public class ParamInfoParticle extends ParamInfoEnum {
                     returns += dust.getScale() + ":";
                 }
 
-                returns += colorToString(dust.getStartRed(), dust.getStartGreen(), dust.getStartBlue());
+                returns +=
+                    colorToString((int) (dust.getStartRed() * 255), (int) (dust.getStartGreen() * 255), (int) (dust.getStartBlue() * 255));
                 returns += ":";
-                returns += colorToString(dust.getEndRed(), dust.getEndGreen(), dust.getEndBlue());
+                returns += colorToString((int) (dust.getEndRed() * 255), (int) (dust.getEndGreen() * 255), (int) (dust.getEndBlue() * 255));
             } else if (data instanceof ParticleSculkChargeData) {
                 returns += ":" + ((ParticleSculkChargeData) data).getRoll();
             } else if (data instanceof ParticleVibrationData) {
@@ -352,11 +450,11 @@ public class ParamInfoParticle extends ParamInfoEnum {
             }
 
         } else if (cl == ParticleDustData.class) {
-            float[] color = new float[3];
+            Color color = new Color(0, 0, 0);
             float scale = 1;
 
             if (split.length > 0) {
-                ColorParser parser = new ColorParser(split, true);
+                ColorParser parser = new ColorParser(split).setAlphaColor(false);
 
                 if (!parser.canConsume()) {
                     throw new DisguiseParseException(LibsMsg.PARSE_PARTICLE_DUST, name, string);
@@ -381,7 +479,7 @@ public class ParamInfoParticle extends ParamInfoEnum {
                 }
             }
 
-            data = new ParticleDustData(scale, color[0], color[1], color[2]);
+            data = new ParticleDustData(scale, color);
         } else if (cl == ParticleDustColorTransitionData.class) {
             // Scale is optional, color is either a name, or three numbers. Same for the second color.
             // So it can be from 1 to 7 args.
@@ -390,10 +488,10 @@ public class ParamInfoParticle extends ParamInfoEnum {
 
             // We work backwards. Figure out the last color, then if we have enough args, another color, then if we have enough args, the
             // scale, then if we have enough args, throw.
-            ColorParser parser = new ColorParser(split, true);
+            ColorParser parser = new ColorParser(split).setAlphaColor(false);
 
-            float[] color1;
-            float[] color2;
+            Color color1;
+            Color color2;
 
             try {
                 color2 = parser.getColor();
@@ -415,7 +513,7 @@ public class ParamInfoParticle extends ParamInfoEnum {
                 scale = Math.min(100, Math.max(0.2f, scale));
             }
 
-            data = new ParticleDustColorTransitionData(scale, color1[0], color1[1], color1[2], color2[0], color2[1], color2[2]);
+            data = new ParticleDustColorTransitionData(scale, color1, color2);
         } else if (cl == ParticleShriekData.class) {
             int delay = 60;
 
@@ -442,7 +540,7 @@ public class ParamInfoParticle extends ParamInfoEnum {
 
             data = new ParticleSculkChargeData(roll);
         } else if (cl == ParticleColorData.class) {
-            int color = getColorAsInt(string, split, name);
+            int color = getColorAsInt(string, split, name, true);
 
             data = new ParticleColorData(color);
         } else if (cl == ParticleVibrationData.class) {
@@ -468,6 +566,40 @@ public class ParamInfoParticle extends ParamInfoEnum {
             }
 
             data = new ParticleVibrationData(startBlock, sourceBlock, ticks);
+        } else if (cl == ParticleTrailData.class) {
+            // x,y,z
+            // x,y,z,red
+            // x,y,z,red,blue,green
+            // 3, 4, 6
+            if (split.length < 3 || split.length == 5 || split.length > 6) {
+                throw new DisguiseParseException(LibsMsg.PARSE_PARTICLE_TRAIL, name, string);
+            }
+
+            // Verify the first 3 args are doubles
+            for (int i = 0; i < 3; i++) {
+                if (split[i].matches("-?\\d+(\\.\\d+)?")) {
+                    continue;
+                }
+
+                throw new DisguiseParseException(LibsMsg.PARSE_PARTICLE_TRAIL, name, string);
+            }
+
+            Vector3d target = new Vector3d(Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]));
+
+            Color color;
+
+            if (split.length > 3) {
+                try {
+                    color = new ColorParser(Arrays.copyOfRange(split, 3, split.length)).getColor();
+                } catch (Exception ex) {
+                    throw new DisguiseParseException(LibsMsg.PARSE_PARTICLE_TRAIL, name, string);
+                }
+            } else {
+                // Creaking has two colors 16545810 : 6250335
+                color = new Color(95, 95, 255);
+            }
+
+            data = new ParticleTrailData(target, color);
         }
 
         if (data == null) {
@@ -482,19 +614,16 @@ public class ParamInfoParticle extends ParamInfoEnum {
         return new com.github.retrooper.packetevents.protocol.particle.Particle<>(pType, data);
     }
 
-    private static int getColorAsInt(String string, String[] split, String name) throws DisguiseParseException {
-        int color = 0;
+    private static int getColorAsInt(String string, String[] split, String name, boolean alphaColor) throws DisguiseParseException {
+        int color = alphaColor ? -1 : 0;
 
         if (split.length == 1 && split[0].matches("-?\\d+")) {
             color = Integer.parseInt(split[0]);
         } else if (split.length > 0) {
-            ColorParser parser = new ColorParser(split, false);
+            ColorParser parser = new ColorParser(split).setAlphaColor(alphaColor);
 
             try {
-                float[] colors = parser.getColor();
-
-                color =
-                    new com.github.retrooper.packetevents.protocol.color.Color((int) colors[0], (int) colors[1], (int) colors[2]).asRGB();
+                color = parser.getColor().asRGB();
             } catch (Exception ex) {
                 throw new DisguiseParseException(LibsMsg.PARSE_PARTICLE_COLOR, name, string);
             }
@@ -503,6 +632,7 @@ public class ParamInfoParticle extends ParamInfoEnum {
                 throw new DisguiseParseException(LibsMsg.PARSE_PARTICLE_COLOR, name, string);
             }
         }
+
         return color;
     }
 

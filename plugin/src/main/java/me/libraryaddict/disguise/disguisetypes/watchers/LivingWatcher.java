@@ -2,6 +2,10 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.attribute.Attributes;
+import com.github.retrooper.packetevents.protocol.particle.Particle;
+import com.github.retrooper.packetevents.protocol.particle.data.ParticleColorData;
+import com.github.retrooper.packetevents.protocol.particle.data.ParticleData;
+import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes;
 import com.github.retrooper.packetevents.util.Vector3i;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateAttributes;
 import lombok.Getter;
@@ -26,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 public class LivingWatcher extends FlagWatcher {
@@ -246,15 +250,48 @@ public class LivingWatcher extends FlagWatcher {
         sendData(MetaIndex.LIVING_POTION_AMBIENT, particles);
     }
 
+    @NmsAddedIn(NmsVersion.v1_20_R4)
+    public void addParticle(Particle<? extends ParticleData> particle) {
+        getData(MetaIndex.LIVING_PARTICLES).add(particle);
+        sendData(MetaIndex.LIVING_PARTICLES);
+    }
+
+    @SafeVarargs
+    @NmsAddedIn(NmsVersion.v1_20_R4)
+    public final void removeParticles(Particle<? extends ParticleData>... particles) {
+        for (Particle<? extends ParticleData> particle : particles) {
+            getData(MetaIndex.LIVING_PARTICLES).remove(particle);
+        }
+
+        sendData(MetaIndex.LIVING_PARTICLES);
+    }
+
+    @NmsAddedIn(NmsVersion.v1_20_R4)
+    public List<Particle<? extends ParticleData>> getParticles() {
+        return Collections.unmodifiableList(getData(MetaIndex.LIVING_PARTICLES));
+    }
+
     public Color getParticlesColor() {
-        int color = getData(MetaIndex.LIVING_POTIONS);
-        return Color.fromRGB(color);
+        if (!NmsVersion.v1_20_R4.isSupported()) {
+            return Color.fromRGB(getData(MetaIndex.LIVING_POTIONS));
+        }
+
+        return getData(MetaIndex.LIVING_PARTICLES).stream().filter(p -> p.getType() == ParticleTypes.ENTITY_EFFECT).findAny()
+            .map(p -> Color.fromRGB(((ParticleColorData) p.getData()).getColor())).orElse(Color.BLACK);
     }
 
     public void setParticlesColor(Color color) {
         potionEffects.clear();
 
-        sendData(MetaIndex.LIVING_POTIONS, color.asRGB());
+        if (NmsVersion.v1_20_R4.isSupported()) {
+            List<Particle<?>> particles = new ArrayList<>(getData(MetaIndex.LIVING_PARTICLES));
+            particles.removeIf(d -> d.getType() == ParticleTypes.ENTITY_EFFECT);
+            particles.add(new Particle<>(ParticleTypes.ENTITY_EFFECT, new ParticleColorData(color.asRGB())));
+
+            sendData(MetaIndex.LIVING_PARTICLES, particles);
+        } else {
+            sendData(MetaIndex.LIVING_POTIONS, color.asRGB());
+        }
     }
 
     private int getPotions() {
@@ -289,19 +326,19 @@ public class LivingWatcher extends FlagWatcher {
         return color.mixColors(colors.toArray(new Color[0])).asRGB();
     }
 
+    @Deprecated
     public boolean hasPotionEffect(PotionEffectType type) {
         return potionEffects.contains(type.getName());
     }
 
+    @Deprecated
     public PotionEffectType[] getPotionEffects() {
         PotionEffectType[] effects = new PotionEffectType[potionEffects.size()];
 
         int i = 0;
 
-        Iterator<String> itel = potionEffects.iterator();
-
-        while (itel.hasNext()) {
-            PotionEffectType type = PotionEffectType.getByName(itel.next());
+        for (String potionEffect : potionEffects) {
+            PotionEffectType type = PotionEffectType.getByName(potionEffect);
 
             effects[i++] = type;
         }
@@ -309,6 +346,8 @@ public class LivingWatcher extends FlagWatcher {
         return effects;
     }
 
+    @Deprecated
+    @NmsRemovedIn(NmsVersion.v1_20_R4)
     public void addPotionEffect(PotionEffectType potionEffect) {
         if (!hasPotionEffect(potionEffect)) {
             potionEffects.add(potionEffect.getName());
@@ -317,6 +356,8 @@ public class LivingWatcher extends FlagWatcher {
         sendPotionEffects();
     }
 
+    @Deprecated
+    @NmsRemovedIn(NmsVersion.v1_20_R4)
     public void removePotionEffect(PotionEffectType potionEffect) {
         if (hasPotionEffect(potionEffect)) {
             potionEffects.remove(potionEffect.getId());

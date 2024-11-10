@@ -1021,6 +1021,7 @@ public class FlagWatcher {
         }
     }
 
+    @NmsAddedIn(NmsVersion.v1_17)
     public int getTicksFrozen() {
         return getData(MetaIndex.ENTITY_TICKS_FROZEN);
     }

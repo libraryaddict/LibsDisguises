@@ -87,6 +87,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.PolarBearWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PufferFishWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.RabbitWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.RaiderWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SalmonWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SheepWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ShulkerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SkeletonWatcher;
@@ -136,6 +137,7 @@ import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Panda;
 import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.Salmon;
 import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.ItemStack;
 
@@ -248,6 +250,9 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<Byte> ARROW_PIERCE_LEVEL = new MetaIndex<>(ArrowWatcher.class, 2, (byte) 0);
 
+    @NmsAddedIn(NmsVersion.v1_21_R2)
+    public static MetaIndex<Boolean> ARROW_IN_GROUND = new MetaIndex<>(ArrowWatcher.class, 3, false);
+
     @NmsAddedIn(NmsVersion.v1_17)
     public static MetaIndex<Axolotl.Variant> AXOLOTL_VARIANT =
         new MetaIndex<>(AxolotlWatcher.class, 0, NmsVersion.v1_17.isSupported() ? Axolotl.Variant.LUCY : null);
@@ -277,14 +282,14 @@ public class MetaIndex<Y> {
     public static MetaIndex<WrappedBlockState> BLOCK_DISPLAY_BLOCK_STATE =
         new MetaIndex<>(BlockDisplayWatcher.class, 0, WrappedBlockState.getDefaultState(StateTypes.AIR));
 
+    public static MetaIndex<Integer> BOAT_LAST_HIT = new MetaIndex<>(BoatWatcher.class, 0, 0);
+
+    public static MetaIndex<Integer> BOAT_DIRECTION = new MetaIndex<>(BoatWatcher.class, 1, 1);
+
     /**
      * How damaged the boat is
      */
     public static MetaIndex<Float> BOAT_DAMAGE = new MetaIndex<>(BoatWatcher.class, 2, 0F);
-
-    public static MetaIndex<Integer> BOAT_DIRECTION = new MetaIndex<>(BoatWatcher.class, 1, 1);
-
-    public static MetaIndex<Integer> BOAT_LAST_HIT = new MetaIndex<>(BoatWatcher.class, 0, 0);
 
     public static MetaIndex<Boolean> BOAT_LEFT_PADDLING = new MetaIndex<>(BoatWatcher.class, 5, false);
 
@@ -297,6 +302,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<TreeSpecies> BOAT_TYPE_OLD = new MetaIndex<>(BoatWatcher.class, 3, TreeSpecies.GENERIC);
 
     @NmsAddedIn(NmsVersion.v1_19_R1)
+    @NmsRemovedIn(NmsVersion.v1_21_R2)
     public static MetaIndex<Boat.Type> BOAT_TYPE_NEW =
         new MetaIndex<>(BoatWatcher.class, 3, NmsVersion.v1_19_R1.isSupported() ? Boat.Type.OAK : null);
 
@@ -763,6 +769,10 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<Boolean> RAIDER_CASTING_SPELL = new MetaIndex<>(RaiderWatcher.class, 0, false);
 
+    @NmsAddedIn(NmsVersion.v1_21_R2)
+    public static MetaIndex<Salmon.Variant> SALMON_VARIANT =
+        new MetaIndex<>(SalmonWatcher.class, 0, NmsVersion.v1_21_R2.isSupported() ? Salmon.Variant.MEDIUM : null);
+
     /**
      * Also has 'is sheared' meta
      */
@@ -956,6 +966,7 @@ public class MetaIndex<Y> {
     public static void validateMetadata() {
         HashMap<Class, Integer> maxValues = new HashMap<>();
 
+        // Put the amount of indexes in a FlagWatcher class into a map, so we know FlagWatcher.class has say, 8 total indexes in that class
         for (MetaIndex type : values()) {
             if (maxValues.containsKey(type.getFlagWatcher()) && maxValues.get(type.getFlagWatcher()) > type.getIndex()) {
                 continue;
@@ -967,15 +978,19 @@ public class MetaIndex<Y> {
         for (Entry<Class, Integer> entry : maxValues.entrySet()) {
             loop:
 
+            // Loop over every class with a MetaIndex owned
             for (int i = 0; i < entry.getValue(); i++) {
                 MetaIndex found = null;
 
+                // Loop over every MetaIndex
                 for (MetaIndex type : values()) {
+                    // If the index does not match the entry
                     if (type.getIndex() != i) {
                         continue;
                     }
 
-                    if (!ReflectionManager.isAssignableFrom(entry.getKey(), type.getFlagWatcher())) {
+                    // If the MetaIndex is not a superclass of the entry
+                    if (!ReflectionManager.isAssignableFrom(type.getFlagWatcher(), entry.getKey())) {
                         continue;
                     }
 
@@ -1055,7 +1070,7 @@ public class MetaIndex<Y> {
                 continue;
             }
 
-            if (!ReflectionManager.isAssignableFrom(watcherClass, type.getFlagWatcher())) {
+            if (!ReflectionManager.isAssignableFrom(type.getFlagWatcher(), watcherClass)) {
                 continue;
             }
 
@@ -1073,7 +1088,7 @@ public class MetaIndex<Y> {
         ArrayList<MetaIndex> list = new ArrayList<>();
 
         for (MetaIndex type : values()) {
-            if (type == null || !ReflectionManager.isAssignableFrom(watcherClass, type.getFlagWatcher())) {
+            if (type == null || !ReflectionManager.isAssignableFrom(type.getFlagWatcher(), watcherClass)) {
                 continue;
             }
 

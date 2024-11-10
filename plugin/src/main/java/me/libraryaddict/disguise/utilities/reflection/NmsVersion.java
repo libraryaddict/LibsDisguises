@@ -18,6 +18,7 @@ public enum NmsVersion {
     v1_20_R3("1.20.3", "1.20.4"),
     v1_20_R4("1.20.5", "1.20.6"),
     v1_21_R1("1.21", "1.21.1"),
+    v1_21_R2("1.21.3"), // 1.21.2 was hotfixed by 1.21.3
     UNSUPPORTED("N/A");
 
     @Getter

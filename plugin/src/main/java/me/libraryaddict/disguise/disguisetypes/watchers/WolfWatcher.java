@@ -73,6 +73,7 @@ public class WolfWatcher extends TameableWatcher {
         }
     }
 
+    @NmsAddedIn(NmsVersion.v1_16)
     public int getAnger() {
         return getData(MetaIndex.WOLF_ANGER);
     }

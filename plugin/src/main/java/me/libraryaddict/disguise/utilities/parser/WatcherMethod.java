@@ -26,6 +26,7 @@ public class WatcherMethod {
     private final boolean[] hiddenFor;
     private final String description;
     private final boolean noVisibleDifference;
+    private final int added, removed; // Used for verifying correctness
 
     public boolean isUsable(DisguiseType type) {
         return !unusableBy[type.ordinal()];

@@ -37,7 +37,7 @@ import java.util.UUID;
     private final NamespacedKey bossBar = new NamespacedKey("libsdisguises", UUID.randomUUID().toString());
 
     protected double getActualEntityScale() {
-        return ((LivingEntity) disguise.getEntity()).getAttribute(Attribute.GENERIC_SCALE).getValue();
+        return ((LivingEntity) disguise.getEntity()).getAttribute(DisguiseUtilities.getScaleAttribute()).getValue();
     }
 
     protected double getRawEntityScaleWithoutLibsDisguises() {

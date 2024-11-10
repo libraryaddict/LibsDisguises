@@ -12,6 +12,7 @@ public class AllayWatcher extends InsentientWatcher {
         super(disguise);
     }
 
+    @NmsAddedIn(NmsVersion.v1_19_R1)
     public boolean isDancing() {
         return getData(MetaIndex.ALLAY_DANCING);
     }
@@ -22,6 +23,7 @@ public class AllayWatcher extends InsentientWatcher {
         sendData(MetaIndex.ALLAY_DANCING, dancing);
     }
 
+    @NmsAddedIn(NmsVersion.v1_19_R1)
     public boolean isCanDuplicate() {
         return getData(MetaIndex.ALLAY_CAN_DUPLICATE);
     }

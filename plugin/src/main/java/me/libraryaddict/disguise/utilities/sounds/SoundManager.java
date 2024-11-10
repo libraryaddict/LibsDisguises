@@ -112,11 +112,11 @@ public class SoundManager {
                         continue;
                     }
 
-                    String[] sounds = s.split(",");
+                    String[] sounds = s.split(",", -1);
 
                     for (String sound : sounds) {
                         try {
-                            Sound actualSound = Sound.valueOf(sound);
+                            Sound actualSound = ReflectionManager.fromEnum(Sound.class,sound);
 
                             group.addSound(actualSound, type);
                         } catch (Exception ignored) {

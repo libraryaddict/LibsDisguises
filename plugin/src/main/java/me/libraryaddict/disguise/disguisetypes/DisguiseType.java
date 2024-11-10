@@ -18,6 +18,10 @@ import org.bukkit.entity.EntityType;
 import java.util.Locale;
 
 public enum DisguiseType {
+    @NmsAddedIn(NmsVersion.v1_21_R2) ACACIA_BOAT,
+
+    @NmsAddedIn(NmsVersion.v1_21_R2) ACACIA_CHEST_BOAT,
+
     @NmsAddedIn(NmsVersion.v1_19_R1) ALLAY,
 
     AREA_EFFECT_CLOUD(3),
@@ -30,15 +34,23 @@ public enum DisguiseType {
 
     @NmsAddedIn(NmsVersion.v1_17) AXOLOTL,
 
+    @NmsAddedIn(NmsVersion.v1_21_R2) BAMBOO_CHEST_RAFT,
+
+    @NmsAddedIn(NmsVersion.v1_21_R2) BAMBOO_RAFT,
+
     BAT,
 
     @NmsAddedIn(NmsVersion.v1_15) BEE,
+
+    @NmsAddedIn(NmsVersion.v1_21_R2) BIRCH_BOAT,
+
+    @NmsAddedIn(NmsVersion.v1_21_R2) BIRCH_CHEST_BOAT,
 
     BLAZE,
 
     @NmsAddedIn(NmsVersion.v1_19_R3) BLOCK_DISPLAY,
 
-    BOAT(1),
+    @NmsRemovedIn(NmsVersion.v1_21_R2) BOAT(1),
 
     @NmsAddedIn(NmsVersion.v1_21_R1) BOGGED,
 
@@ -52,15 +64,27 @@ public enum DisguiseType {
 
     CAVE_SPIDER,
 
-    CHICKEN,
+    @NmsAddedIn(NmsVersion.v1_21_R2) CHERRY_BOAT,
 
-    @NmsAddedIn(NmsVersion.v1_19_R1) CHEST_BOAT,
+    @NmsAddedIn(NmsVersion.v1_21_R2) CHERRY_CHEST_BOAT,
+
+    @NmsAddedIn(NmsVersion.v1_19_R1) @NmsRemovedIn(NmsVersion.v1_21_R2) CHEST_BOAT,
+
+    CHICKEN,
 
     @NmsAddedIn(NmsVersion.v1_13) COD,
 
     COW,
 
+    @NmsAddedIn(NmsVersion.UNSUPPORTED) CREAKING,
+
+    @NmsAddedIn(NmsVersion.UNSUPPORTED) CREAKING_TRANSIENT,
+
     CREEPER,
+
+    @NmsAddedIn(NmsVersion.v1_21_R2) DARK_OAK_BOAT,
+
+    @NmsAddedIn(NmsVersion.v1_21_R2) DARK_OAK_CHEST_BOAT,
 
     @NmsAddedIn(NmsVersion.v1_13) DOLPHIN,
 
@@ -68,13 +92,17 @@ public enum DisguiseType {
 
     DRAGON_FIREBALL(93),
 
-    @NmsAddedIn(NmsVersion.v1_13) DROWNED,
-
     DROPPED_ITEM(2, "item", 1),
+
+    @NmsAddedIn(NmsVersion.v1_13) DROWNED,
 
     EGG(62),
 
     ELDER_GUARDIAN,
+
+    ENDERMAN,
+
+    ENDERMITE,
 
     ENDER_CRYSTAL(51, "end_crystal"),
 
@@ -83,10 +111,6 @@ public enum DisguiseType {
     ENDER_PEARL(65),
 
     ENDER_SIGNAL(72, "eye_of_ender"),
-
-    ENDERMAN,
-
-    ENDERMITE,
 
     EVOKER,
 
@@ -102,9 +126,9 @@ public enum DisguiseType {
 
     FISHING_HOOK(90, "fishing_bobber"),
 
-    @NmsAddedIn(NmsVersion.v1_19_R1) FROG,
-
     @NmsAddedIn(NmsVersion.v1_14) FOX,
+
+    @NmsAddedIn(NmsVersion.v1_19_R1) FROG,
 
     GHAST,
 
@@ -134,13 +158,21 @@ public enum DisguiseType {
 
     ITEM_FRAME(71),
 
+    @NmsAddedIn(NmsVersion.v1_21_R2) JUNGLE_BOAT,
+
+    @NmsAddedIn(NmsVersion.v1_21_R2) JUNGLE_CHEST_BOAT,
+
+    LEASH_HITCH(77, "leash_knot"),
+
     LLAMA,
 
     LLAMA_SPIT(68),
 
-    LEASH_HITCH(77, "leash_knot"),
-
     MAGMA_CUBE,
+
+    @NmsAddedIn(NmsVersion.v1_21_R2) MANGROVE_BOAT,
+
+    @NmsAddedIn(NmsVersion.v1_21_R2) MANGROVE_CHEST_BOAT,
 
     @NmsAddedIn(NmsVersion.v1_17) MARKER,
 
@@ -158,19 +190,27 @@ public enum DisguiseType {
 
     MINECART_TNT(10, "tnt_minecart", 3),
 
-    MODDED_MISC,
-
     MODDED_LIVING,
+
+    MODDED_MISC,
 
     MULE,
 
     MUSHROOM_COW("mooshroom"),
+
+    @NmsAddedIn(NmsVersion.v1_21_R2) OAK_BOAT,
+
+    @NmsAddedIn(NmsVersion.v1_21_R2) OAK_CHEST_BOAT,
 
     OCELOT,
 
     @NmsAddedIn(NmsVersion.v1_21_R1) OMINOUS_ITEM_SPAWNER,
 
     PAINTING,
+
+    @NmsAddedIn(NmsVersion.v1_21_R2) PALE_OAK_BOAT,
+
+    @NmsAddedIn(NmsVersion.v1_21_R2) PALE_OAK_CHEST_BOAT,
 
     @NmsAddedIn(NmsVersion.v1_14) PANDA,
 
@@ -180,11 +220,11 @@ public enum DisguiseType {
 
     PIG,
 
-    @NmsRemovedIn(NmsVersion.v1_16) PIG_ZOMBIE("zombified_piglin"),
-
     @NmsAddedIn(NmsVersion.v1_16) PIGLIN,
 
     @NmsAddedIn(NmsVersion.v1_16) PIGLIN_BRUTE,
+
+    @NmsRemovedIn(NmsVersion.v1_16) PIG_ZOMBIE("zombified_piglin"),
 
     @NmsAddedIn(NmsVersion.v1_14) PILLAGER,
 
@@ -230,6 +270,10 @@ public enum DisguiseType {
 
     SPLASH_POTION(73, "potion"),
 
+    @NmsAddedIn(NmsVersion.v1_21_R2) SPRUCE_BOAT,
+
+    @NmsAddedIn(NmsVersion.v1_21_R2) SPRUCE_CHEST_BOAT,
+
     SQUID,
 
     STRAY,
@@ -244,9 +288,9 @@ public enum DisguiseType {
 
     @NmsRemovedIn(NmsVersion.v1_14) TIPPED_ARROW(60),
 
-    @NmsAddedIn(NmsVersion.v1_13) TRIDENT(94),
-
     @NmsAddedIn(NmsVersion.v1_14) TRADER_LLAMA,
+
+    @NmsAddedIn(NmsVersion.v1_13) TRIDENT(94),
 
     @NmsAddedIn(NmsVersion.v1_13) TROPICAL_FISH,
 

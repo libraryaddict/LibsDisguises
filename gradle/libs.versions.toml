@@ -14,12 +14,12 @@ junit-jupiter-version = "5.9.3"
 mockito-version = "5.12.0"
 
 net-kyori-adventure-api = "4.17.0"
-com-retro-packetevents = "2.5.0-SNAPSHOT"
+com-retro-packetevents = "2.6.0"
 placeholder-api = "2.11.6"
 
 bungeecord-chat = "1.16-R0.4"
-org-spigotmc-spigot = "1.21-R0.1-SNAPSHOT"
-io-papermc-paper-api = "1.21.1-R0.1-SNAPSHOT"
+org-spigotmc-spigot = "1.21.3-R0.1-SNAPSHOT"
+io-papermc-paper-api = "1.21.3-R0.1-SNAPSHOT"
 
 
 [libraries]

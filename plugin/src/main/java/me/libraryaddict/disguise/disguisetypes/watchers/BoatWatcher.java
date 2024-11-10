@@ -16,6 +16,11 @@ public class BoatWatcher extends FlagWatcher {
     public BoatWatcher(Disguise disguise) {
         super(disguise);
 
+        // As of 1.21.3, boat types are now different entity types
+        if (NmsVersion.v1_21_R2.isSupported()) {
+            return;
+        }
+
         if (NmsVersion.v1_19_R1.isSupported()) {
             setType(Boat.Type.OAK);
         } else {
@@ -62,12 +67,14 @@ public class BoatWatcher extends FlagWatcher {
     }
 
     @NmsAddedIn(NmsVersion.v1_19_R1)
+    @NmsRemovedIn(NmsVersion.v1_21_R2)
     @MethodMappedAs("getBoatType")
     public Boat.Type getType() {
         return getData(MetaIndex.BOAT_TYPE_NEW);
     }
 
     @NmsAddedIn(NmsVersion.v1_19_R1)
+    @NmsRemovedIn(NmsVersion.v1_21_R2)
     @MethodMappedAs("setBoatType")
     @MethodDescription("What type of wood is this boat made of?")
     public void setType(Boat.Type type) {

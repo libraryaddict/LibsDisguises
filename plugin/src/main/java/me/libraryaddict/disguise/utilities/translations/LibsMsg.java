@@ -175,6 +175,8 @@ public enum LibsMsg {
     PARSE_PARTICLE_ITEM("<red>Expected <green>%s:Material,Amount?,Glow?<red>, received <green>%s</green> instead"),
     PARSE_PARTICLE_SHULK_CHARGE("<red>Expected <green>%s:Roll(number.0)</green>, received <green>%s</green> instead"),
     PARSE_PARTICLE_SHRIEK("<red>Expected <green>%s:Delay(number.0)</green>, received <green>%s</green> instead"),
+    PARSE_PARTICLE_TRAIL(
+        "<red>Expected <green>%s:Target(3 numbers),Color(3 numbers or red/blue/etc)</green> eg <green>X,Y,Z:RED</green>, received <green>%s</green> instead"),
     PARSE_PARTICLE_DUST(
         "<red>Expected <green>%s:Size(Optional Number),Color(3 numbers or red/blue/etc)</green>, received <green>%s</green> instead"),
     PARSE_PARTICLE_DUST_TRANSITION(

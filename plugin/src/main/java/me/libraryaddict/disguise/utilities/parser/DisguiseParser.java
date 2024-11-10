@@ -187,13 +187,19 @@ public class DisguiseParser {
                         continue;
                     }
 
+                    if (getMethod.getAdded() != setMethod.getAdded() || getMethod.getRemoved() != setMethod.getRemoved()) {
+                        LibsDisguises.getInstance().getLogger().severe(String.format(
+                            "The methods %s and %s do not have matching NmsAdded and NmsRemoved, this is an oversight by the author of " +
+                                "LibsDisguises", getMethod.getName(), setMethod.getName()));
+                    }
+
                     Object defaultValue = null;
 
                     // Value is randomish so shouldn't be checked, should always specify value when setting
                     if (!setMethod.isRandomDefault()) {
                         Object invokeWith = watcher;
 
-                        if (!FlagWatcher.class.isAssignableFrom(getMethod.getWatcherClass())) {
+                        if (!ReflectionManager.isAssignableFrom(FlagWatcher.class, getMethod.getWatcherClass())) {
                             invokeWith = disguise;
                         }
 
@@ -1116,7 +1122,7 @@ public class DisguiseParser {
 
                     MethodHandle handle = m.getMethod();
 
-                    if (FlagWatcher.class.isAssignableFrom(m.getWatcherClass())) {
+                    if (ReflectionManager.isAssignableFrom(FlagWatcher.class, m.getWatcherClass())) {
                         handle = handle.bindTo(disguise.getWatcher());
                     } else {
                         handle = handle.bindTo(disguise);

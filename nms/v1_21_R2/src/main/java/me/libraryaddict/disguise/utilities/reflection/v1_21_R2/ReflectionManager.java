@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.utilities.reflection.v1_21_R1;
+package me.libraryaddict.disguise.utilities.reflection.v1_21_R2;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
@@ -21,6 +21,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ClientInformation;
+import net.minecraft.server.level.ParticleStatus;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
@@ -28,6 +29,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.animal.CatVariant;
 import net.minecraft.world.entity.animal.FrogVariant;
@@ -47,20 +49,20 @@ import org.bukkit.Sound;
 import org.bukkit.UnsafeValues;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_21_R1.CraftArt;
-import org.bukkit.craftbukkit.v1_21_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_21_R1.CraftSound;
-import org.bukkit.craftbukkit.v1_21_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_21_R1.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_21_R1.entity.CraftCat;
-import org.bukkit.craftbukkit.v1_21_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_21_R1.entity.CraftFrog;
-import org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_21_R1.entity.CraftWolf;
-import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_21_R1.inventory.SerializableMeta;
-import org.bukkit.craftbukkit.v1_21_R1.util.CraftMagicNumbers;
-import org.bukkit.craftbukkit.v1_21_R1.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_21_R2.CraftArt;
+import org.bukkit.craftbukkit.v1_21_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_21_R2.CraftSound;
+import org.bukkit.craftbukkit.v1_21_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_21_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_21_R2.entity.CraftCat;
+import org.bukkit.craftbukkit.v1_21_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_21_R2.entity.CraftFrog;
+import org.bukkit.craftbukkit.v1_21_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_21_R2.entity.CraftWolf;
+import org.bukkit.craftbukkit.v1_21_R2.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_21_R2.inventory.SerializableMeta;
+import org.bukkit.craftbukkit.v1_21_R2.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_21_R2.util.CraftNamespacedKey;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -106,7 +108,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         entityTrackerField.setAccessible(true);
 
         // Default is protected method, 1.0F on EntityLiving.class
-        entityDefaultSoundMethod = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("fa");
+        entityDefaultSoundMethod = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("fg");
         entityDefaultSoundMethod.setAccessible(true);
 
         craftMagicNumbers = (UnsafeValues) CraftMagicNumbers.class.getField("INSTANCE").get(null);
@@ -118,7 +120,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         if (nmsEntity instanceof net.minecraft.world.entity.LivingEntity) {
             return nmsEntity.invulnerableTime > 0;
         } else {
-            return nmsEntity.isInvulnerableTo(nmsEntity.damageSources().generic());
+            return nmsEntity.isInvulnerableToBase(nmsEntity.damageSources().generic());
         }
     }
 
@@ -162,10 +164,10 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         if (entityType == net.minecraft.world.entity.EntityType.PLAYER) {
             GameProfile gameProfile = new GameProfile(new UUID(0, 0), "Steve");
             ClientInformation information =
-                new ClientInformation("english", 10, ChatVisiblity.FULL, true, 0, HumanoidArm.RIGHT, true, true);
+                new ClientInformation("english", 10, ChatVisiblity.FULL, true, 0, HumanoidArm.RIGHT, true, true, ParticleStatus.ALL);
             entity = new ServerPlayer(getMinecraftServer(), world, gameProfile, information);
         } else {
-            entity = entityType.create(world);
+            entity = entityType.create(world, EntitySpawnReason.LOAD);
         }
 
         if (entity == null) {
@@ -297,7 +299,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     @Override
     public String getSoundString(Sound sound) {
-        return CraftSound.bukkitToMinecraft(sound).getLocation().toString();
+        return CraftSound.bukkitToMinecraft(sound).location().toString();
     }
 
     @Override
@@ -324,7 +326,8 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     @Override
     public Object registerEntityType(NamespacedKey key) {
         net.minecraft.world.entity.EntityType<net.minecraft.world.entity.Entity> newEntity =
-            new net.minecraft.world.entity.EntityType<>(null, null, false, false, false, false, null, null, 0, 0, 0, FeatureFlagSet.of());
+            new net.minecraft.world.entity.EntityType<>(null, null, false, false, false, false, null, null, 0, 0, 0,
+                "descId." + key.toString(), Optional.empty(), FeatureFlagSet.of());
         Registry.register(BuiltInRegistries.ENTITY_TYPE, CraftNamespacedKey.toMinecraft(key), newEntity);
         newEntity.getDescriptionId();
         return newEntity; // TODO ??? Some reflection in legacy that I'm unsure about
@@ -410,56 +413,56 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     @Override
     public Cat.Type getCatTypeFromInt(int catType) {
-        Registry<CatVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.CAT_VARIANT);
+        Registry<CatVariant> registry = MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.CAT_VARIANT);
 
-        return CraftCat.CraftType.minecraftHolderToBukkit(registry.getHolder(catType).get());
+        return CraftCat.CraftType.minecraftHolderToBukkit(registry.get(catType).get());
     }
 
     @Override
     public int getCatVariantAsInt(Cat.Type type) {
-        Registry<CatVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.CAT_VARIANT);
+        Registry<CatVariant> registry = MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.CAT_VARIANT);
 
         return registry.getIdOrThrow(CraftCat.CraftType.bukkitToMinecraft(type));
     }
 
     @Override
     public Frog.Variant getFrogVariantFromInt(int frogType) {
-        Registry<FrogVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.FROG_VARIANT);
+        Registry<FrogVariant> registry = MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.FROG_VARIANT);
 
-        return CraftFrog.CraftVariant.minecraftHolderToBukkit(registry.getHolder(frogType).get());
+        return CraftFrog.CraftVariant.minecraftHolderToBukkit(registry.get(frogType).get());
     }
 
     @Override
     public int getFrogVariantAsInt(Frog.Variant type) {
-        Registry<FrogVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.FROG_VARIANT);
+        Registry<FrogVariant> registry = MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.FROG_VARIANT);
 
         return registry.getIdOrThrow(CraftFrog.CraftVariant.bukkitToMinecraft(type));
     }
 
     @Override
     public Art getPaintingFromInt(int paintingId) {
-        Registry<PaintingVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.PAINTING_VARIANT);
+        Registry<PaintingVariant> registry = MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.PAINTING_VARIANT);
 
-        return CraftArt.minecraftHolderToBukkit(registry.getHolder(paintingId - 1).get());
+        return CraftArt.minecraftHolderToBukkit(registry.get(paintingId - 1).get());
     }
 
     @Override
     public int getPaintingAsInt(Art type) {
-        Registry<PaintingVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.PAINTING_VARIANT);
+        Registry<PaintingVariant> registry = MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.PAINTING_VARIANT);
 
         return registry.getIdOrThrow(CraftArt.bukkitToMinecraft(type)) + 1;
     }
 
     @Override
     public Wolf.Variant getWolfVariantFromInt(int wolfVariant) {
-        Registry<WolfVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.WOLF_VARIANT);
+        Registry<WolfVariant> registry = MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.WOLF_VARIANT);
 
-        return CraftWolf.CraftVariant.minecraftHolderToBukkit(registry.getHolder(wolfVariant - 1).get());
+        return CraftWolf.CraftVariant.minecraftHolderToBukkit(registry.get(wolfVariant - 1).get());
     }
 
     @Override
     public int getWolfVariantAsInt(Wolf.Variant type) {
-        Registry<WolfVariant> registry = MinecraftServer.getDefaultRegistryAccess().registryOrThrow(Registries.WOLF_VARIANT);
+        Registry<WolfVariant> registry = MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.WOLF_VARIANT);
 
         return registry.getIdOrThrow(CraftWolf.CraftVariant.bukkitToMinecraft(type)) + 1;
     }

@@ -16,9 +16,11 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundEnums;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
+import org.bukkit.Sound;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
@@ -106,6 +108,24 @@ public class CompileMethods {
         return String.join("\n", list).getBytes(StandardCharsets.UTF_8);
     }
 
+    private static List<String> getMatchingFields(String pattern) {
+        List<String> matches = new ArrayList<>();
+
+        for (Field field : Sound.class.getFields()) {
+            if (!Modifier.isStatic(field.getModifiers()) || field.getType() != Sound.class) {
+                continue;
+            }
+
+            if (!field.getName().matches(pattern)) {
+                continue;
+            }
+
+            matches.add(field.getName());
+        }
+
+        return matches;
+    }
+
     private static StringBuilder getSoundAsString(DisguiseSoundEnums e) {
         StringBuilder sound = new StringBuilder(e.name());
 
@@ -119,11 +139,17 @@ public class CompileMethods {
                     continue;
                 }
 
+                String soundValue = entry.getKey();
+
+                if (soundValue.contains("*")) {
+                    soundValue = String.join(",", getMatchingFields(soundValue));
+                }
+
                 if (i++ > 0) {
                     sound.append(",");
                 }
 
-                sound.append(entry.getKey());
+                sound.append(soundValue);
             }
         }
         return sound;

@@ -9,6 +9,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoSoundGroup;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.watchers.DisguiseMethods;
 
 import java.util.ArrayList;
@@ -138,7 +139,7 @@ public class ParamInfoManager {
 
         if (declaring == LivingWatcher.class) {
             return 1;
-        } else if (!(FlagWatcher.class.isAssignableFrom(declaring)) || declaring == FlagWatcher.class) {
+        } else if (!(ReflectionManager.isAssignableFrom(FlagWatcher.class, declaring)) || declaring == FlagWatcher.class) {
             return 2;
         }
 

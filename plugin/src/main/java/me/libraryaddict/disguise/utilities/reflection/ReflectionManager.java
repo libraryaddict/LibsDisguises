@@ -31,8 +31,11 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.RabbitType;
+import me.libraryaddict.disguise.disguisetypes.watchers.AgeableAquaWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.BoatWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ChestBoatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FishWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.IllagerWizardWatcher;
@@ -94,6 +97,7 @@ import org.bukkit.entity.Panda;
 import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.Salmon;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
@@ -1452,6 +1456,8 @@ public class ReflectionManager {
             return (T) nmsReflection.getPaintingFromInt((int) value);
         } else if (index == MetaIndex.WOLF_VARIANT) {
             return (T) nmsReflection.getWolfVariantFromInt((int) value);
+        } else if (index == MetaIndex.SALMON_VARIANT) {
+            return (T) Salmon.Variant.valueOf(((String) value).toUpperCase(Locale.ENGLISH));
         } else if (index == MetaIndex.CAT_COLLAR || index == MetaIndex.WOLF_COLLAR) {
             return (T) AnimalColor.getColorByWool((int) value);
         } else if (index.isItemStack()) {
@@ -1542,6 +1548,12 @@ public class ReflectionManager {
                 if (NmsVersion.v1_20_R4.isSupported()) {
                     if (value instanceof Wolf.Variant) {
                         return nmsReflection.getWolfVariantAsInt((Wolf.Variant) value);
+                    }
+
+                    if (NmsVersion.v1_21_R2.isSupported()) {
+                        if (value instanceof Salmon.Variant) {
+                            return ((Salmon.Variant) value).name().toLowerCase(Locale.ENGLISH);
+                        }
                     }
                 }
             }
@@ -1647,14 +1659,27 @@ public class ReflectionManager {
         return null;
     }
 
-    public static boolean isAssignableFrom(Class toCheck, Class checkAgainst) {
-        if (!NmsVersion.v1_14.isSupported() && toCheck != checkAgainst) {
-            if (toCheck == OcelotWatcher.class) {
-                toCheck = TameableWatcher.class;
+    public static boolean isAssignableFrom(Class baseAbstractClass, Class extendingClass) {
+        if (!NmsVersion.v1_14.isSupported() && extendingClass != baseAbstractClass) {
+            if (extendingClass == OcelotWatcher.class) {
+                extendingClass = TameableWatcher.class;
             }
         }
 
-        return checkAgainst.isAssignableFrom(toCheck);
+        if (!NmsVersion.v1_21_R2.isSupported() && extendingClass != baseAbstractClass) {
+            // We want to make sure that AquaWatcher does not say it is owned by AgeableWatcher
+
+            // If AquaWatcher is extended by extendingClass
+            // If baseAbstractClass is or extends AgeableWatcher
+            // Then we can make it jump
+            if (AgeableAquaWatcher.class.isAssignableFrom(extendingClass) && baseAbstractClass.isAssignableFrom(AgeableWatcher.class)) {
+                extendingClass = InsentientWatcher.class;
+            }
+        }
+
+        // If adding more in here, don't forget to change getSuperClass
+
+        return baseAbstractClass.isAssignableFrom(extendingClass);
     }
 
     public static Class getSuperClass(Class cl) {
@@ -1662,11 +1687,15 @@ public class ReflectionManager {
             return null;
         }
 
-        if (!NmsVersion.v1_14.isSupported()) {
-            if (cl == OcelotWatcher.class) {
-                return TameableWatcher.class;
-            }
+        if (!NmsVersion.v1_14.isSupported() && cl == OcelotWatcher.class) {
+            return TameableWatcher.class;
         }
+
+        if (!NmsVersion.v1_21_R2.isSupported() && cl == AgeableAquaWatcher.class) {
+            return InsentientWatcher.class;
+        }
+
+        // If adding more in here, don't forget to change isAssignableFrom
 
         return cl.getSuperclass();
     }
@@ -1945,7 +1974,6 @@ public class ReflectionManager {
                     watcherClass = ModdedWatcher.class;
                     break;
                 case COD:
-                case SALMON:
                     watcherClass = FishWatcher.class;
                     break;
                 case SPECTRAL_ARROW:
@@ -1960,7 +1988,6 @@ public class ReflectionManager {
                 case MINECART_TNT:
                     watcherClass = MinecartWatcher.class;
                     break;
-                case SPIDER:
                 case CAVE_SPIDER:
                     watcherClass = SpiderWatcher.class;
                     break;
@@ -1982,6 +2009,30 @@ public class ReflectionManager {
                     break;
                 case PUFFERFISH:
                     watcherClass = PufferFishWatcher.class;
+                    break;
+                case ACACIA_CHEST_BOAT:
+                case BAMBOO_CHEST_RAFT:
+                case BIRCH_CHEST_BOAT:
+                case CHERRY_CHEST_BOAT:
+                case DARK_OAK_CHEST_BOAT:
+                case JUNGLE_CHEST_BOAT:
+                case MANGROVE_CHEST_BOAT:
+                case OAK_CHEST_BOAT:
+                case PALE_OAK_CHEST_BOAT:
+                case SPRUCE_CHEST_BOAT:
+                    watcherClass = ChestBoatWatcher.class;
+                    break;
+                case ACACIA_BOAT:
+                case BAMBOO_RAFT:
+                case BIRCH_BOAT:
+                case CHERRY_BOAT:
+                case DARK_OAK_BOAT:
+                case JUNGLE_BOAT:
+                case MANGROVE_BOAT:
+                case OAK_BOAT:
+                case PALE_OAK_BOAT:
+                case SPRUCE_BOAT:
+                    watcherClass = BoatWatcher.class;
                     break;
                 default:
                     watcherClass = (Class<? extends FlagWatcher>) Class.forName(
@@ -2480,6 +2531,11 @@ public class ReflectionManager {
                 return EntityDataTypes.BLOCK_FACE;
             } else if (index == MetaIndex.AREA_EFFECT_CLOUD_COLOR) {
                 return EntityDataTypes.INT;
+            } else if (index == MetaIndex.SALMON_VARIANT) {
+                // TODO PacketEvents may add Salmon variant at a future date, also could be doing something redundant here
+                // Such as could be mapping the variant to what we serialize
+                // Doubt it though
+                return EntityDataTypes.STRING;
             }
 
             Type type1 = ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
