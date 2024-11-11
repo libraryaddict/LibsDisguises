@@ -981,10 +981,6 @@ public class DisguiseUtilities {
         String data = container.get(savedDisguisesKey, PersistentDataType.STRING);
 
         if (data == null) {
-            data = container.get(oldSavedDisguisesKey, PersistentDataType.STRING);
-        }
-
-        if (data == null) {
             return getSavedDisguises(entity.getUniqueId());
         }
 
@@ -1744,8 +1740,7 @@ public class DisguiseUtilities {
 
     public static void init() {
         fancyHiddenTabs = NmsVersion.v1_19_R2.isSupported() && Bukkit.getPluginManager().getPlugin("ViaBackwards") == null;
-        oldSavedDisguisesKey = new NamespacedKey(LibsDisguises.getInstance(), "SavedDisguises");
-        savedDisguisesKey = new NamespacedKey(LibsDisguises.getInstance(), "saved_disguises");
+        savedDisguisesKey = new NamespacedKey(LibsDisguises.getInstance(), "SavedDisguises");
         selfDisguiseScaleNamespace = new NamespacedKey(LibsDisguises.getInstance(), "Self_Disguise_Scaling");
         debuggingMode = LibsDisguises.getInstance().isDebuggingBuild();
 
