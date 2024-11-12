@@ -14,11 +14,23 @@ buildscript {
 
 // Spigot server code remapping: https://www.spigotmc.org/threads/spigot-bungeecord-1-17-1-17-1.510208/
 // These dependencies and mappings are installed into the local Maven repository when BuildTools builds the Spigot dependencies.
-def m2Repo = new File(repositories.mavenLocal().url.path)
-def remappedMojang = new File(m2Repo, 'org/spigotmc/spigot/{craftbukkitVersion}/spigot-{craftbukkitVersion}-remapped-mojang.jar').path
-def remappedObf = new File(m2Repo, 'org/spigotmc/spigot/{craftbukkitVersion}/spigot-{craftbukkitVersion}-remapped-obf.jar').path
-def mojangMappings = new File(m2Repo, 'org/spigotmc/minecraft-server/{craftbukkitVersion}/minecraft-server-{craftbukkitVersion}-maps-mojang.txt').path
-def spigotMappings = new File(m2Repo, 'org/spigotmc/minecraft-server/{craftbukkitVersion}/minecraft-server-{craftbukkitVersion}-maps-spigot.csrg').path
+def gradleCache = new File(System.getProperty("user.home"), '.gradle/caches/modules-2/files-2.1')
+def findInGradleCache = { group, module, version, fileName ->
+    def baseDir = new File(gradleCache, "${group}/${module}/${version}")
+
+    if (!baseDir.exists()) {
+        throw new Exception("Failed to resolve ${baseDir} when trying to load ${fileName}. Cache missing");
+    }
+
+    def result = baseDir.listFiles()?.findAll { it.isDirectory() }?.collectMany({ it.listFiles().flatten() })?.find { it.name == fileName }?.path
+
+    if (result == null) {
+        throw new Exception("Failed to resolve ${baseDir}/<cache key>/${fileName}");
+    }
+
+    return result;
+}
+
 
 def specialSource = buildscript.configurations.specialSource.resolvedConfiguration.getFirstLevelModuleDependencies().find {
     it.moduleGroup == 'net.md-5' && it.moduleName == 'SpecialSource'
@@ -26,6 +38,9 @@ def specialSource = buildscript.configurations.specialSource.resolvedConfigurati
 
 // Converts from Mojang's mappings to Minecraft's obfuscated mappings.
 ext.remapMojangToObfuscated = { inputFile, outputFile, craftbukkitVersion ->
+    def remappedMojang = findInGradleCache("org.spigotmc", "spigot", craftbukkitVersion, "spigot-${craftbukkitVersion}-remapped-mojang.jar")
+    def mojangMappings = findInGradleCache("org.spigotmc", "minecraft-server", craftbukkitVersion, "minecraft-server-${craftbukkitVersion}-maps-mojang.txt")
+
     println '> remapMojangToObfuscated'
     println '  Input: ' + inputFile.path
     println '  Output: ' + outputFile.path
@@ -38,13 +53,16 @@ ext.remapMojangToObfuscated = { inputFile, outputFile, craftbukkitVersion ->
                 '--live',
                 '-i', inputFile.path,
                 '-o', outputFile.path,
-                '-m', mojangMappings.replace('{craftbukkitVersion}', craftbukkitVersion),
+                '-m', mojangMappings,
                 '--reverse'
     }
 }
 
 // Converts from Minecraft's obfuscated mappings to Spigot's mappings.
 ext.remapObfuscatedToSpigot = { inputFile, outputFile, craftbukkitVersion ->
+    def spigotMappings = findInGradleCache("org.spigotmc", "minecraft-server", craftbukkitVersion, "minecraft-server-${craftbukkitVersion}-maps-spigot.csrg")
+    def remappedObf = findInGradleCache("org.spigotmc", "spigot", craftbukkitVersion, "spigot-${craftbukkitVersion}-remapped-obf.jar")
+
     println '> remapObfuscatedToSpigot'
     println '  Input: ' + inputFile.path
     println '  Output: ' + outputFile.path
@@ -57,7 +75,7 @@ ext.remapObfuscatedToSpigot = { inputFile, outputFile, craftbukkitVersion ->
                 '--live',
                 '-i', inputFile.path,
                 '-o', outputFile.path,
-                '-m', spigotMappings.replace('{craftbukkitVersion}', craftbukkitVersion)
+                '-m', spigotMappings
     }
 }
 

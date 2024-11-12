@@ -208,9 +208,9 @@ public enum DisguiseType {
 
     PAINTING,
 
-    @NmsAddedIn(NmsVersion.v1_21_R2) PALE_OAK_BOAT,
+    @NmsAddedIn(NmsVersion.UNSUPPORTED) PALE_OAK_BOAT,
 
-    @NmsAddedIn(NmsVersion.v1_21_R2) PALE_OAK_CHEST_BOAT,
+    @NmsAddedIn(NmsVersion.UNSUPPORTED) PALE_OAK_CHEST_BOAT,
 
     @NmsAddedIn(NmsVersion.v1_14) PANDA,
 
