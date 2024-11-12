@@ -24,6 +24,8 @@ afterEvaluate {
             implementation "org.spigotmc:spigot:${craftbukkitVersion}"
         }
     }
+
+    configurations.compileClasspath.resolve()
 }
 
 afterEvaluate {
