@@ -25,7 +25,9 @@ afterEvaluate {
         }
     }
 
-    configurations.compileClasspath.resolve()
+    configurations.all {
+        resolutionStrategy.force "org.spigotmc:spigot:${craftbukkitVersion}:remapped-mojang"
+    }
 }
 
 afterEvaluate {
