@@ -10,9 +10,6 @@ description = "v1_20_R1"
 
 dependencies {
     compileOnly(libs.com.mojang.authlib.old)
-    compileOnly(libs.io.netty.netty.buffer)
-    compileOnly(libs.it.unimi.dsi.fastutil)
-    compileOnly(libs.com.mojang.datafixerupper)
 }
 
 java {

@@ -5,7 +5,6 @@ plugins {
 subprojects {
     repositories {
         mavenCentral()
-        mavenLocal()
 
         maven {
             url = uri("https://repo.md-5.net/content/groups/public/")
