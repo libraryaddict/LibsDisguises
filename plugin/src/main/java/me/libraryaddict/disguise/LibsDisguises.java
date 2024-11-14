@@ -174,6 +174,8 @@ public class LibsDisguises extends JavaPlugin {
                 commandConfig.load();
             }
         } catch (Throwable throwable) {
+            ClassMappings.deleteMappingsCache(getDataFolder());
+
             try {
                 if (isJenkins() && DisguiseConfig.isAutoUpdate()) {
                     getUpdateChecker().doUpdate();
@@ -237,6 +239,8 @@ public class LibsDisguises extends JavaPlugin {
 
             new MetricsInitalizer();
         } catch (Throwable throwable) {
+            ClassMappings.deleteMappingsCache(getDataFolder());
+
             try {
                 if (isJenkins() && DisguiseConfig.isAutoUpdate()) {
                     getUpdateChecker().doUpdate();

@@ -94,6 +94,14 @@ public class ClassMappings {
         return "Built for: " + Bukkit.getVersion() + "\t" + LibsDisguises.getInstance().getDescription().getVersion();
     }
 
+    private static File getFile(File dataFolder) {
+        return new File(dataFolder, "mappings_cache");
+    }
+
+    public static void deleteMappingsCache(File folder) {
+        getFile(folder).delete();
+    }
+
     public static void saveMappingsCache(File dataFolder) {
         synchronized (classLocations) {
             if (!updatingCache) {
@@ -103,7 +111,7 @@ public class ClassMappings {
             updatingCache = false;
         }
 
-        File mappingsCache = new File(dataFolder, "mappings_cache");
+        File mappingsCache = getFile(dataFolder);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(mappingsCache))) {
             writer.write(getVersion() + "\n");
 
@@ -116,7 +124,8 @@ public class ClassMappings {
     }
 
     public static void loadMappingsCache(File dataFolder) {
-        File mappingsCache = new File(dataFolder, "mappings_cache");
+        File mappingsCache = getFile(dataFolder);
+
         if (!mappingsCache.exists()) {
             return;
         }
