@@ -1,6 +1,8 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
+import io.papermc.paper.ServerBuildInfo;
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -91,7 +93,17 @@ public class ClassMappings {
     }
 
     private static String getVersion() {
-        return "Built for: " + Bukkit.getVersion() + "\t" + LibsDisguises.getInstance().getDescription().getVersion();
+        String version = Bukkit.getVersion() + "\t" + LibsDisguises.getInstance().getDescription().getVersion();
+
+        if (DisguiseUtilities.isRunningPaper() && NmsVersion.v1_21_R2.isSupported()) {
+            ServerBuildInfo buildInfo = ServerBuildInfo.buildInfo();
+
+            if (buildInfo != null && buildInfo.buildTime() != null) {
+                version += "\t" + buildInfo.buildTime();
+            }
+        }
+
+        return "Built for: " + version;
     }
 
     private static File getFile(File dataFolder) {
