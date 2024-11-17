@@ -116,7 +116,7 @@ public class SoundManager {
 
                     for (String sound : sounds) {
                         try {
-                            Sound actualSound = ReflectionManager.fromEnum(Sound.class,sound);
+                            Sound actualSound = ReflectionManager.fromEnum(Sound.class, sound);
 
                             group.addSound(actualSound, type);
                         } catch (Exception ignored) {

@@ -95,6 +95,7 @@ public class ClassMappings {
     private static String getVersion() {
         String version = Bukkit.getVersion() + "\t" + LibsDisguises.getInstance().getDescription().getVersion();
 
+        // 1.21.3 has every build with this
         if (DisguiseUtilities.isRunningPaper() && NmsVersion.v1_21_R2.isSupported()) {
             ServerBuildInfo buildInfo = ServerBuildInfo.buildInfo();
 

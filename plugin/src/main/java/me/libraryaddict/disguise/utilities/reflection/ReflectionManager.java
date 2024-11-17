@@ -2683,6 +2683,8 @@ public class ReflectionManager {
 
                 return e;
             }
+
+            return null;
         }
 
         return (T) Bukkit.getRegistry((Class<Keyed>) clss).get(new NamespacedKey(split[0], split[1]));
