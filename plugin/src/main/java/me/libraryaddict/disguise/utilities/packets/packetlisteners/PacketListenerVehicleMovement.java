@@ -7,6 +7,7 @@ import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityPositionSync;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMove;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMoveAndRotation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Server.ENTITY_POSITION_SYNC;
 import static com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Server.ENTITY_RELATIVE_MOVE;
 import static com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Server.ENTITY_RELATIVE_MOVE_AND_ROTATION;
 import static com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Server.ENTITY_TELEPORT;
@@ -250,7 +252,7 @@ public class PacketListenerVehicleMovement extends SimplePacketListenerAbstract 
                 refreshPosition(player, entry.getKey());
             }
         } else if (event.getPacketType() == ENTITY_TELEPORT || event.getPacketType() == ENTITY_RELATIVE_MOVE ||
-            event.getPacketType() == ENTITY_RELATIVE_MOVE_AND_ROTATION) {
+            event.getPacketType() == ENTITY_RELATIVE_MOVE_AND_ROTATION || event.getPacketType() == ENTITY_POSITION_SYNC) {
             PlayerTracker tracker = trackerMap.get(player.getUniqueId());
 
             if (tracker == null || tracker.vehicleAndPassengersId.isEmpty()) {
@@ -267,9 +269,12 @@ public class PacketListenerVehicleMovement extends SimplePacketListenerAbstract 
                 } else if (event.getPacketType() == ENTITY_RELATIVE_MOVE) {
                     wrapper = new WrapperPlayServerEntityRelativeMove(event);
                     entityId = ((WrapperPlayServerEntityRelativeMove) wrapper).getEntityId();
-                } else {
+                } else if (event.getPacketType() == ENTITY_RELATIVE_MOVE_AND_ROTATION) {
                     wrapper = new WrapperPlayServerEntityRelativeMoveAndRotation(event);
                     entityId = ((WrapperPlayServerEntityRelativeMoveAndRotation) wrapper).getEntityId();
+                } else {
+                    wrapper = new WrapperPlayServerEntityPositionSync(event);
+                    entityId = ((WrapperPlayServerEntityPositionSync) wrapper).getId();
                 }
             } else {
                 entityId = DisguiseUtilities.getEntityId(wrapper);

@@ -34,7 +34,8 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
         for (Server packet : new Server[]{NmsVersion.v1_20_R2.isSupported() ? Server.SPAWN_ENTITY : Server.SPAWN_PLAYER,
             Server.ATTACH_ENTITY, Server.ENTITY_RELATIVE_MOVE_AND_ROTATION, Server.ENTITY_RELATIVE_MOVE, Server.ENTITY_HEAD_LOOK,
             Server.ENTITY_ROTATION, Server.ENTITY_TELEPORT, Server.ENTITY_MOVEMENT, Server.ENTITY_METADATA, Server.ENTITY_EQUIPMENT,
-            Server.ENTITY_ANIMATION, Server.ENTITY_EFFECT, Server.ENTITY_VELOCITY, Server.UPDATE_ATTRIBUTES, Server.ENTITY_STATUS}) {
+            Server.ENTITY_ANIMATION, Server.ENTITY_EFFECT, Server.ENTITY_VELOCITY, Server.UPDATE_ATTRIBUTES, Server.ENTITY_STATUS,
+            Server.ENTITY_POSITION_SYNC}) {
             listenedPackets[packet.ordinal()] = true;
         }
     }
@@ -177,8 +178,8 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
                 }
             } else if (event.getPacketType() == Server.ATTACH_ENTITY || event.getPacketType() == Server.ENTITY_RELATIVE_MOVE ||
                 event.getPacketType() == Server.ENTITY_RELATIVE_MOVE_AND_ROTATION || event.getPacketType() == Server.ENTITY_HEAD_LOOK ||
-                event.getPacketType() == Server.ENTITY_TELEPORT || event.getPacketType() == Server.ENTITY_ROTATION ||
-                event.getPacketType() == Server.ENTITY_EQUIPMENT) {
+                event.getPacketType() == Server.ENTITY_POSITION_SYNC || event.getPacketType() == Server.ENTITY_TELEPORT ||
+                event.getPacketType() == Server.ENTITY_ROTATION || event.getPacketType() == Server.ENTITY_EQUIPMENT) {
                 event.setCancelled(true);
             } else if (event.getPacketType() == Server.ENTITY_STATUS) {
                 if (disguise.isSelfDisguiseSoundsReplaced() && !disguise.getType().isPlayer() &&

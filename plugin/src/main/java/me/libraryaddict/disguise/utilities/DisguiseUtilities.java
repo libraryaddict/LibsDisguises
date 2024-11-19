@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
+import com.github.retrooper.packetevents.protocol.entity.EntityPositionData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentType;
@@ -27,6 +28,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityHeadLook;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMovement;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityPositionSync;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMove;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMoveAndRotation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
@@ -528,6 +530,14 @@ public class DisguiseUtilities {
         packets.getPackets().addAll(newPackets);
     }
 
+    public static EntityPositionData clone(EntityPositionData data) {
+        return new EntityPositionData(clone(data.getPosition()), clone(data.getDeltaMovement()), data.getYaw(), data.getPitch());
+    }
+
+    private static Vector3d clone(Vector3d vec) {
+        return new Vector3d(vec.getX(), vec.getY(), vec.getZ());
+    }
+
     public static @Nullable List<PacketWrapper> adjustNamePositions(Disguise disguise, List<PacketWrapper> packets) {
         int len = disguise.getMultiNameLength();
 
@@ -551,7 +561,6 @@ public class DisguiseUtilities {
                 PacketWrapper cloned;
 
                 if (packet instanceof WrapperPlayServerEntityTeleport) {
-                    // TODO Handle if this is a vehicle movement
                     WrapperPlayServerEntityTeleport tele = (WrapperPlayServerEntityTeleport) packet;
 
                     cloned = new WrapperPlayServerEntityTeleport(standId,
@@ -565,6 +574,11 @@ public class DisguiseUtilities {
                     WrapperPlayServerEntityRelativeMove rot = (WrapperPlayServerEntityRelativeMove) packet;
                     cloned = new WrapperPlayServerEntityRelativeMove(standId, rot.getDeltaX(), rot.getDeltaY(), rot.getDeltaZ(),
                         rot.isOnGround());
+                } else if (packet instanceof WrapperPlayServerEntityPositionSync) {
+                    WrapperPlayServerEntityPositionSync sync = (WrapperPlayServerEntityPositionSync) packet;
+                    EntityPositionData data = clone(sync.getValues());
+                    data.setPosition(data.getPosition().add(0, height + (DisguiseUtilities.getNameSpacing() * i), 0));
+                    cloned = new WrapperPlayServerEntityPositionSync(standId, data, sync.isOnGround());
                 } else {
                     // It seems that EntityStatus packet was being added at some point, probably in some other transformation
                     continue; //   throw new IllegalStateException("Unknown packet " + packet.getClass());
@@ -3063,6 +3077,8 @@ public class DisguiseUtilities {
                 return new WrapperPlayServerCollectItem(event);
             case DESTROY_ENTITIES:
                 return new WrapperPlayServerDestroyEntities(event);
+            case ENTITY_POSITION_SYNC:
+                return new WrapperPlayServerEntityPositionSync(event);
             default:
                 throw new IllegalStateException(event.getPacketType() + " wasn't in the enums");
         }
@@ -3113,6 +3129,8 @@ public class DisguiseUtilities {
             return ((WrapperPlayServerAttachEntity) wrapper).getAttachedId();
         } else if (wrapper instanceof WrapperPlayServerCollectItem) {
             return ((WrapperPlayServerCollectItem) wrapper).getCollectorEntityId();
+        } else if (wrapper instanceof WrapperPlayServerEntityPositionSync) {
+            return ((WrapperPlayServerEntityPositionSync) wrapper).getId();
         } else {
             throw new IllegalStateException("The packet " + wrapper.getClass() + " has no entity ID");
         }
@@ -3198,6 +3216,10 @@ public class DisguiseUtilities {
         } else if (wrapper instanceof WrapperPlayServerEntityEffect) {
             if (((WrapperPlayServerEntityEffect) wrapper).getEntityId() == playerId) {
                 ((WrapperPlayServerEntityEffect) wrapper).setEntityId(DisguiseAPI.getSelfDisguiseId());
+            }
+        } else if (wrapper instanceof WrapperPlayServerEntityPositionSync) {
+            if (((WrapperPlayServerEntityPositionSync) wrapper).getId() == playerId) {
+                ((WrapperPlayServerEntityPositionSync) wrapper).setId(DisguiseAPI.getSelfDisguiseId());
             }
         }
     }
