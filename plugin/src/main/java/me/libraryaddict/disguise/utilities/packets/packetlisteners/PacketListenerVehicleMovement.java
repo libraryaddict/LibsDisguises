@@ -133,6 +133,10 @@ public class PacketListenerVehicleMovement extends SimplePacketListenerAbstract 
     public void onPacketPlaySend(PacketPlaySendEvent event) {
         Player player = event.getPlayer();
 
+        if (player == null) {
+            return;
+        }
+
         if (event.getPacketType() == PacketType.Play.Server.SET_PASSENGERS) {
             WrapperPlayServerSetPassengers packet;
 
