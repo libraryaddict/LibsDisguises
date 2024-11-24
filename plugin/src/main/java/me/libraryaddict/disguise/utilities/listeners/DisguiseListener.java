@@ -344,7 +344,7 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onChunkLoad(ChunkLoadEvent event) {
         if (!DisguiseConfig.isSaveEntityDisguises() || NmsVersion.v1_18.isSupported()) {
             return;
@@ -366,7 +366,7 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onWorldLoad(WorldLoadEvent event) {
         if (!DisguiseConfig.isSaveEntityDisguises()) {
             return;

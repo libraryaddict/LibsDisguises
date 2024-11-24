@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -21,7 +22,7 @@ public class PaperDisguiseListener implements Listener {
     private Boolean isWeird;
     private int count;
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onEntityLoad(EntityAddToWorldEvent event) {
         if (!DisguiseConfig.isSaveEntityDisguises()) {
             return;
