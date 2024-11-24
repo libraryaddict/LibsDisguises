@@ -282,8 +282,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     public void setBoundingBox(Entity entity, double x, double y, double z) {
         Location loc = entity.getLocation();
         ((CraftEntity) entity).getHandle().setBoundingBox(
-            new AABB(loc.getX() - x / 2, loc.getY() - y / 2, loc.getZ() - z / 2, loc.getX() + x / 2, loc.getY() + y / 2,
-                loc.getZ() + z / 2));
+            new AABB(loc.getX() - x / 2, loc.getY(), loc.getZ() - z / 2, loc.getX() + x / 2, loc.getY() + y, loc.getZ() + z / 2));
     }
 
     @Override

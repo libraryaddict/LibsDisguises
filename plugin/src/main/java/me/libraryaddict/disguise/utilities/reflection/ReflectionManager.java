@@ -1382,6 +1382,12 @@ public class ReflectionManager {
         double y = newBox.getY();
         double z = newBox.getZ();
 
+        if (NmsVersion.v1_20_R4.isSupported()) {
+            x *= scale;
+            y *= scale;
+            z *= scale;
+        }
+
         if (nmsReflection != null) {
             nmsReflection.setBoundingBox(entity, x, y, z);
             return;

@@ -1,10 +1,12 @@
 package me.libraryaddict.disguise.utilities;
 
+import lombok.Setter;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 
 import java.util.HashMap;
 
+@Setter
 public class DisguiseValues {
     private static final HashMap<DisguiseType, DisguiseValues> values = new HashMap<>();
 
@@ -25,16 +27,8 @@ public class DisguiseValues {
         return adultBox;
     }
 
-    public void setAdultBox(FakeBoundingBox newBox) {
-        adultBox = newBox;
-    }
-
     public FakeBoundingBox getBabyBox() {
         return babyBox;
-    }
-
-    public void setBabyBox(FakeBoundingBox newBox) {
-        babyBox = newBox;
     }
 
     public double getMaxHealth() {
