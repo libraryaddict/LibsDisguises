@@ -62,7 +62,7 @@ public class PacketEventsUpdater {
         // This means we'll always fail a release check!
         // But now that 2.5.0 has released, it'll update to the release build
         // Then I changed this once again!
-        return "2.6.0";
+        return "2.6.1";
     }
 
     /**
@@ -70,7 +70,7 @@ public class PacketEventsUpdater {
      */
     public static Instant getMinimumPacketEventsBuildTimestamp() {
         // As taken from the most recent packetevents compiled jar
-        return Instant.ofEpochMilli(1730661163638L);
+        return Instant.ofEpochMilli(1731857858229L);
     }
 
     public static boolean isPacketEventsOutdated(Instant requiredTime) {
