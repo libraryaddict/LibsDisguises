@@ -360,7 +360,7 @@ public class LivingWatcher extends FlagWatcher {
     @NmsRemovedIn(NmsVersion.v1_20_R4)
     public void removePotionEffect(PotionEffectType potionEffect) {
         if (hasPotionEffect(potionEffect)) {
-            potionEffects.remove(potionEffect.getId());
+            potionEffects.remove(potionEffect.getName());
         }
 
         sendPotionEffects();
