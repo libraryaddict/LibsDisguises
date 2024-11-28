@@ -1,11 +1,10 @@
 package me.libraryaddict.disguise.utilities.sounds;
 
+import com.github.retrooper.packetevents.resources.ResourceLocation;
 import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.apache.commons.lang.math.RandomUtils;
-import org.bukkit.Sound;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -23,9 +22,9 @@ public class SoundGroup {
     private final static LinkedHashMap<String, SoundGroup> groups = new LinkedHashMap<>();
     private float damageSoundVolume = 1F;
     @Getter
-    private final LinkedHashMap<String, SoundType> disguiseSoundTypes = new LinkedHashMap<>();
+    private final LinkedHashMap<ResourceLocation, SoundType> disguiseSoundTypes = new LinkedHashMap<>();
     @Getter
-    private final LinkedHashMap<SoundType, String[]> disguiseSounds = new LinkedHashMap<>();
+    private final LinkedHashMap<SoundType, ResourceLocation[]> disguiseSounds = new LinkedHashMap<>();
     private boolean customSounds;
 
     public SoundGroup(String name) {
@@ -38,18 +37,7 @@ public class SoundGroup {
         }
     }
 
-    public void addSound(Object sound, SoundType type) {
-        String soundString = null;
-
-        if (sound instanceof Sound) {
-            soundString = ReflectionManager.getSoundString((Sound) sound);
-        } else if (sound instanceof String) {
-            soundString = (String) sound;
-        } else if (sound != null) {
-            //if (!sound.getClass().getSimpleName().equals("SoundEffect") && !sound.getClass().getSimpleName().equals("Holder")) {
-            throw new IllegalArgumentException("Unexpected " + sound.getClass());
-        }
-
+    public void addSound(ResourceLocation soundString, SoundType type) {
         if (soundString == null) {
             return;
         }
@@ -57,14 +45,14 @@ public class SoundGroup {
         disguiseSoundTypes.putIfAbsent(soundString, type);
 
         if (disguiseSounds.containsKey(type)) {
-            String[] array = disguiseSounds.get(type);
+            ResourceLocation[] array = disguiseSounds.get(type);
 
             array = Arrays.copyOf(array, array.length + 1);
             array[array.length - 1] = soundString;
 
             disguiseSounds.put(type, array);
         } else {
-            disguiseSounds.put(type, new String[]{soundString});
+            disguiseSounds.put(type, new ResourceLocation[]{soundString});
         }
     }
 
@@ -76,7 +64,7 @@ public class SoundGroup {
         this.damageSoundVolume = strength;
     }
 
-    public String getSound(SoundType type) {
+    public ResourceLocation getSound(SoundType type) {
         if (type == null) {
             return null;
         }
@@ -85,7 +73,7 @@ public class SoundGroup {
             return getRandomSound(type);
         }
 
-        String[] sounds = disguiseSounds.get(type);
+        ResourceLocation[] sounds = disguiseSounds.get(type);
 
         if (sounds == null) {
             return null;
@@ -94,12 +82,12 @@ public class SoundGroup {
         return sounds[0];
     }
 
-    private String getRandomSound(SoundType type) {
+    private ResourceLocation getRandomSound(SoundType type) {
         if (type == null) {
             return null;
         }
 
-        String[] sounds = disguiseSounds.get(type);
+        ResourceLocation[] sounds = disguiseSounds.get(type);
 
         if (sounds == null) {
             return null;
@@ -108,7 +96,7 @@ public class SoundGroup {
         return sounds[RandomUtils.nextInt(sounds.length)];
     }
 
-    public SoundType getSound(String sound) {
+    public SoundType getSound(ResourceLocation sound) {
         if (sound == null) {
             return null;
         }
@@ -119,7 +107,7 @@ public class SoundGroup {
     /**
      * Used to check if this sound name is owned by this disguise sound.
      */
-    public SoundType getType(String sound) {
+    public SoundType getType(ResourceLocation sound) {
         if (sound == null) {
             return SoundType.CANCEL;
         }

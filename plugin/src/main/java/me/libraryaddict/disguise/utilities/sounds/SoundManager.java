@@ -1,8 +1,11 @@
 package me.libraryaddict.disguise.utilities.sounds;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import com.github.retrooper.packetevents.protocol.sound.Sounds;
+import com.github.retrooper.packetevents.resources.ResourceLocation;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
-import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -12,6 +15,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 public class SoundManager {
     public void load() {
@@ -72,7 +76,7 @@ public class SoundManager {
                             continue;
                         }
 
-                        Object[] sounds = subGroup.getDisguiseSounds().get(type);
+                        ResourceLocation[] sounds = subGroup.getDisguiseSounds().get(type);
 
                         if (sounds == null) {
                             LibsDisguises.getInstance().getLogger().warning(
@@ -80,14 +84,14 @@ public class SoundManager {
                             continue;
                         }
 
-                        for (Object obj : sounds) {
+                        for (ResourceLocation obj : sounds) {
                             group.addSound(obj, type);
                         }
 
                         continue;
                     }
 
-                    group.addSound(sound, type);
+                    group.addSound(new ResourceLocation(sound), type);
                 }
             }
 
@@ -96,6 +100,8 @@ public class SoundManager {
     }
 
     private void loadSounds() {
+        ClientVersion serverVersion = PacketEvents.getAPI().getServerManager().getVersion().toClientVersion();
+
         try (InputStream stream = LibsDisguises.getInstance().getResource("SOUND_MAPPINGS.txt")) {
             String[] lines = new String(ReflectionManager.readFuzzyFully(stream), StandardCharsets.UTF_8).split("\n");
 
@@ -114,18 +120,21 @@ public class SoundManager {
 
                     String[] sounds = s.split(",", -1);
 
-                    // TODO Change sounds to attempt MC name, then fallback to bukkit enum
-                    for (String sound : sounds) {
-                        try {
-                            Sound actualSound;
-                            try {
-                                actualSound = Sound.valueOf(sound);
-                            } catch (Exception ignored) {
-                                actualSound = ReflectionManager.fromEnum(Sound.class, sound);
-                            }
+                    for (String soundStr : sounds) {
+                        // If sound is using regex, then try resolve via PE
+                        if (soundStr.startsWith("^")) {
+                            Pattern pattern = Pattern.compile(soundStr);
 
-                            group.addSound(actualSound, type);
-                        } catch (Exception ignored) {
+                            for (com.github.retrooper.packetevents.protocol.sound.Sound s1 : Sounds.values()) {
+                                // If not registered for this server version, or regex does not match
+                                if (s1.getId(serverVersion) < 0 || !s1.getSoundId().getKey().matches(soundStr)) {
+                                    continue;
+                                }
+
+                                group.addSound(s1.getSoundId(), type);
+                            }
+                        } else {
+                            group.addSound(new ResourceLocation(soundStr), type);
                         }
                     }
                 }

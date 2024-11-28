@@ -6,311 +6,306 @@ import me.libraryaddict.disguise.utilities.sounds.SoundGroup.SoundType;
 
 import java.util.HashMap;
 
-/**
- * Only living disguises go in here!
- */
 @Getter
 public enum DisguiseSoundEnums {
-    ALLAY("ENTITY_ALLAY_HURT", null, "ENTITY_ALLAY_DEATH",
-        new String[]{"ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM", "ENTITY_ALLAY_AMBIENT_WITH_ITEM"}, "ENTITY_ALLAY_ITEM_GIVEN",
-        "ENTITY_ALLAY_ITEM_TAKEN", "ENTITY_ALLAY_ITEM_THROWN"),
+    ALLAY("entity.allay.hurt", null, "entity.allay.death",
+        new String[]{"entity.allay.ambient_without_item", "entity.allay.ambient_with_item"}, "entity.allay.item_given",
+        "entity.allay.item_taken", "entity.allay.item_thrown"),
 
-    ARMADILLO(new String[]{"ENTITY_ARMADILLO_HURT", "ENTITY_ARMADILLO_HURT_REDUCED"}, "ENTITY_ARMADILLO_STEP", "ENTITY_ARMADILLO_DEATH",
-        "ENTITY_ARMADILLO_AMBIENT", "ENTITY_ARMADILLO_BRUSH", "ENTITY_ARMADILLO_PEEK", "ENTITY_ARMADILLO_ROLL", "ENTITY_ARMADILLO_LAND",
-        "ENTITY_ARMADILLO_SCUTE_DROP", "ENTITY_ARMADILLO_UNROLL_FINISH", "ENTITY_ARMADILLO_UNROLL_START"),
+    ARMADILLO(new String[]{"entity.armadillo.hurt", "entity.armadillo.hurt_reduced"}, "entity.armadillo.step", "entity.armadillo.death",
+        "entity.armadillo.ambient", "entity.armadillo.brush", "entity.armadillo.peek", "entity.armadillo.roll", "entity.armadillo.land",
+        "entity.armadillo.scute_drop", "entity.armadillo.unroll_finish", "entity.armadillo.unroll_start"),
 
-    ARMOR_STAND("ENTITY_ARMOR_STAND_HIT", null, "ENTITY_ARMOR_STAND_BREAK", "ENTITY_ARMOR_STAND_FALL", "ENTITY_ARMOR_STAND_PLACE"),
+    ARMOR_STAND("entity.armor_stand.hit", null, "entity.armor_stand.break", "entity.armor_stand.fall", "entity.armor_stand.place"),
 
-    ARROW(null, null, null, null, "ENTITY_ARROW_HIT", "ENTITY_ARROW_SHOOT"),
+    ARROW(null, null, null, null, "entity.arrow.hit", "entity.arrow.shoot"),
 
-    AXOLOTL("ENTITY_AXOLOTL_HURT", "ENTITY_AXOLOTL_SWIM", "ENTITY_AXOLOTL_DEATH",
-        new String[]{"ENTITY_AXOLOTL_IDLE_WATER", "ENTITY_AXOLOTL_IDLE_AIR"}, "ENTITY_AXOLOTL_ATTACK", "ENTITY_AXOLOTL_SPLASH"),
+    AXOLOTL("entity.axolotl.hurt", "entity.axolotl.swim", "entity.axolotl.death",
+        new String[]{"entity.axolotl.idle_water", "entity.axolotl.idle_air"}, "entity.axolotl.attack", "entity.axolotl.splash"),
 
-    BAT("ENTITY_BAT_HURT", null, "ENTITY_BAT_DEATH", "ENTITY_BAT_AMBIENT", "ENTITY_PLAYER_SMALL_FALL", "ENTITY_BAT_LOOP",
-        "ENTITY_PLAYER_BIG_FALL", "ENTITY_BAT_TAKEOFF"),
+    BAT("entity.bat.hurt", null, "entity.bat.death", "entity.bat.ambient", "entity.player.small_fall", "entity.bat.loop",
+        "entity.player.big_fall", "entity.bat.takeoff"),
 
-    BEE("ENTITY_BEE_HURT", null, "ENTITY_BEE_DEATH", null, "ENTITY_BEE_LOOP", "ENTITY_BEE_LOOP_AGGRESSIVE", "ENTITY_BEE_POLLINATE",
-        "ENTITY_BEE_STING"),
+    BEE("entity.bee.hurt", null, "entity.bee.death", null, "entity.bee.loop", "entity.bee.loop_aggressive", "entity.bee.pollinate",
+        "entity.bee.sting"),
 
-    BLAZE("ENTITY_BLAZE_HURT", null, "ENTITY_BLAZE_DEATH", "ENTITY_BLAZE_AMBIENT", "ENTITY_PLAYER_SMALL_FALL", "ENTITY_PLAYER_BIG_FALL",
-        "ENTITY_BLAZE_BURN", "ENTITY_BLAZE_SHOOT"),
+    BLAZE("entity.blaze.hurt", null, "entity.blaze.death", "entity.blaze.ambient", "entity.player.small_fall", "entity.player.big_fall",
+        "entity.blaze.burn", "entity.blaze.shoot"),
 
     BLOCK_DISPLAY(null, null, null, null),
 
-    BOAT(null, "ENTITY_BOAT_PADDLE_WATER", null, null, "ENTITY_BOAT_PADDLE_LAND"),
+    BOAT(null, "entity.boat.paddle_water", null, null, "entity.boat.paddle_land"),
 
-    BOGGED("ENTITY_BOGGED_HURT", "ENTITY_BOGGED_STEP", "ENTITY_BOGGED_DEATH", "ENTITY_BOGGED_AMBIENT", "ENTITY_BOGGED_SHEAR"),
+    BOGGED("entity.bogged.hurt", "entity.bogged.step", "entity.bogged.death", "entity.bogged.ambient", "entity.bogged.shear"),
 
-    BREEZE("ENTITY_BREEZE_HURT", null, "ENTITY_BREEZE_DEATH", new String[]{"ENTITY_BREEZE_IDLE_AIR", "ENTITY_BREEZE_IDLE_GROUND"},
-        "ENTITY_BREEZE_LAND", "ENTITY_BREEZE_JUMP", "ENTITY_BREEZE_INHALE", "ENTITY_BREEZE_SHOOT", "ENTITY_BREEZE_SLIDE",
-        "ENTITY_BREEZE_WIND_BURST"),
+    BREEZE("entity.breeze.hurt", null, "entity.breeze.death", new String[]{"entity.breeze.idle_air", "entity.breeze.idle_ground"},
+        "entity.breeze.land", "entity.breeze.jump", "entity.breeze.inhale", "entity.breeze.shoot", "entity.breeze.slide",
+        "entity.breeze.wind_burst"),
 
-    BREEZE_WIND_CHARGE(null, null, "ENTITY_WIND_CHARGE_WIND_BURST", null, "ENTITY_WIND_CHARGE_THROW"),
+    BREEZE_WIND_CHARGE(null, null, "entity.wind_charge.wind_burst", null, "entity.wind_charge.throw"),
 
-    CAMEL("ENTITY_CAMEL_HURT", new String[]{"ENTITY_CAMEL_STEP", "ENTITY_CAMEL_STEP_SAND"}, "ENTITY_CAMEL_DEATH", "ENTITY_CAMEL_AMBIENT",
-        "ENTITY_CAMEL_DASH", "ENTITY_CAMEL_DASH_READY", "ENTITY_CAMEL_EAT", "ENTITY_CAMEL_SADDLE", "ENTITY_CAMEL_SIT",
-        "ENTITY_CAMEL_STAND"),
+    CAMEL("entity.camel.hurt", new String[]{"entity.camel.step", "entity.camel.step_sand"}, "entity.camel.death", "entity.camel.ambient",
+        "entity.camel.dash", "entity.camel.dash_ready", "entity.camel.eat", "entity.camel.saddle", "entity.camel.sit",
+        "entity.camel.stand"),
 
-    CAT("ENTITY_CAT_HURT", null, "ENTITY_CAT_DEATH", "ENTITY_CAT_AMBIENT", "ENTITY_CAT_PURR", "ENTITY_CAT_PURREOW", "ENTITY_CAT_HISS"),
+    CAT("entity.cat.hurt", null, "entity.cat.death", "entity.cat.ambient", "entity.cat.purr", "entity.cat.purreow", "entity.cat.hiss"),
 
-    CAVE_SPIDER("ENTITY_SPIDER_HURT", "ENTITY_SPIDER_STEP", "ENTITY_SPIDER_DEATH", "ENTITY_SPIDER_AMBIENT"),
+    CAVE_SPIDER("entity.spider.hurt", "entity.spider.step", "entity.spider.death", "entity.spider.ambient"),
 
-    CHEST_BOAT(null, "ENTITY_BOAT_PADDLE_WATER", null, null, "ENTITY_BOAT_PADDLE_LAND"),
+    CHEST_BOAT(null, "entity.boat.paddle_water", null, null, "entity.boat.paddle_land"),
 
-    CHICKEN("ENTITY_CHICKEN_HURT", "ENTITY_CHICKEN_STEP", "ENTITY_CHICKEN_DEATH", "ENTITY_CHICKEN_AMBIENT", "ENTITY_PLAYER_SMALL_FALL",
-        "ENTITY_CHICKEN_EGG", "ENTITY_PLAYER_BIG_FALL"),
+    CHICKEN("entity.chicken.hurt", "entity.chicken.step", "entity.chicken.death", "entity.chicken.ambient", "entity.player.small_fall",
+        "entity.chicken.egg", "entity.player.big_fall"),
 
-    COD("ENTITY_COD_HURT", null, "ENTITY_COD_DEATH", "ENTITY_COD_AMBIENT", "ENTITY_COD_FLOP", "ENTITY_FISH_SWIM"),
+    COD("entity.cod.hurt", null, "entity.cod.death", "entity.cod.ambient", "entity.cod.flop", "entity.fish.swim"),
 
-    COW("ENTITY_COW_HURT", "ENTITY_COW_STEP", "ENTITY_COW_DEATH", "ENTITY_COW_AMBIENT"),
+    COW("entity.cow.hurt", "entity.cow.step", "entity.cow.death", "entity.cow.ambient"),
 
-    CREAKING(null, "ENTITY_CREAKING_STEP", "ENTITY_CREAKING_DEATH", "ENTITY_CREAKING_AMBIENT", "ENTITY_CREAKING_SWAY",
-        "ENTITY_CREAKING_ACTIVATE", "ENTITY_CREAKING_DEACTIVATE", "ENTITY_CREAKING_SPAWN", "ENTITY_CREAKING_FREEZE",
-        "ENTITY_CREAKING_UNFREEZE", "ENTITY_CREAKING_ATTACK"),
+    CREAKING(null, "entity.creaking.step", "entity.creaking.death", "entity.creaking.ambient", "entity.creaking.sway",
+        "entity.creaking.activate", "entity.creaking.deactivate", "entity.creaking.spawn", "entity.creaking.freeze",
+        "entity.creaking.unfreeze", "entity.creaking.attack"),
 
-    // They're the same as CREAKING, just different rules
-    CREAKING_TRANSIENT(null, "ENTITY_CREAKING_STEP", "ENTITY_CREAKING_DEATH", "ENTITY_CREAKING_AMBIENT", "ENTITY_CREAKING_SWAY",
-        "ENTITY_CREAKING_ACTIVATE", "ENTITY_CREAKING_DEACTIVATE", "ENTITY_CREAKING_SPAWN", "ENTITY_CREAKING_FREEZE",
-        "ENTITY_CREAKING_UNFREEZE", "ENTITY_CREAKING_ATTACK"),
+    // Same sounds as CREAKING, just different AI behavior
+    CREAKING_TRANSIENT(null, "entity.creaking.step", "entity.creaking.death", "entity.creaking.ambient", "entity.creaking.sway",
+        "entity.creaking.activate", "entity.creaking.deactivate", "entity.creaking.spawn", "entity.creaking.freeze",
+        "entity.creaking.unfreeze", "entity.creaking.attack"),
 
-    CREEPER("ENTITY_CREEPER_HURT", "BLOCK_GRASS_STEP", "ENTITY_CREEPER_DEATH", null, "ENTITY_CREEPER_PRIMED"),
+    CREEPER("entity.creeper.hurt", "block.grass.step", "entity.creeper.death", null, "entity.creeper.primed"),
 
-    DOLPHIN("ENTITY_DOLPHIN_HURT", "ENTITY_DOLPHIN_SWIM", "ENTITY_DOLPHIN_DEATH",
-        new String[]{"ENTITY_DOLPHIN_AMBIENT", "ENTITY_DOLPHIN_AMBIENT_WATER"}, "ENTITY_DOLPHIN_ATTACK", "ENTITY_DOLPHIN_EAT",
-        "ENTITY_DOLPHIN_SPLASH", "ENTITY_DOLPHIN_PLAY", "ENTITY_DOLPHIN_JUMP", "ENTITY_FISH_SWIM"),
+    DOLPHIN("entity.dolphin.hurt", "entity.dolphin.swim", "entity.dolphin.death",
+        new String[]{"entity.dolphin.ambient", "entity.dolphin.ambient_water"}, "entity.dolphin.attack", "entity.dolphin.eat",
+        "entity.dolphin.splash", "entity.dolphin.play", "entity.dolphin.jump", "entity.fish.swim"),
 
-    DONKEY("ENTITY_DONKEY_HURT", new String[]{"BLOCK_GRASS_STEP", "ENTITY_HORSE_STEP_WOOD"}, "ENTITY_DONKEY_DEATH", "ENTITY_DONKEY_AMBIENT",
-        "ENTITY_HORSE_GALLOP", "ENTITY_HORSE_SADDLE", "ENTITY_DONKEY_ANGRY", "ENTITY_HORSE_ARMOR", "ENTITY_HORSE_LAND", "ENTITY_HORSE_JUMP",
-        "ENTITY_HORSE_ANGRY", "ENTITY_DONKEY_CHEST"),
+    DONKEY("entity.donkey.hurt", new String[]{"block.grass.step", "entity.horse.step_wood"}, "entity.donkey.death", "entity.donkey.ambient",
+        "entity.horse.gallop", "entity.horse.saddle", "entity.donkey.angry", "entity.horse.armor", "entity.horse.land", "entity.horse.jump",
+        "entity.horse.angry", "entity.donkey.chest"),
 
-    DROWNED(new String[]{"ENTITY_DROWNED_HURT", "ENTITY_DROWNED_HURT_WATER"}, new String[]{"ENTITY_DROWNED_STEP", "ENTITY_DROWNED_SWIM"},
-        new String[]{"ENTITY_DROWNED_DEATH", "ENTITY_DROWNED_DEATH_WATER"},
-        new String[]{"ENTITY_DROWNED_AMBIENT", "ENTITY_DROWNED_AMBIENT_WATER"}, "ENTITY_DROWNED_SHOOT"),
+    DROWNED(new String[]{"entity.drowned.hurt", "entity.drowned.hurt_water"}, new String[]{"entity.drowned.step", "entity.drowned.swim"},
+        new String[]{"entity.drowned.death", "entity.drowned.death_water"},
+        new String[]{"entity.drowned.ambient", "entity.drowned.ambient_water"}, "entity.drowned.shoot"),
 
-    ELDER_GUARDIAN(new String[]{"ENTITY_ELDER_GUARDIAN_HURT", "ENTITY_ELDER_GUARDIAN_HURT_LAND"}, null,
-        new String[]{"ENTITY_ELDER_GUARDIAN_DEATH", "ENTITY_ELDER_GUARDIAN_DEATH_LAND"},
-        new String[]{"ENTITY_ELDER_GUARDIAN_AMBIENT", "ENTITY_ELDER_GUARDIAN_AMBIENT_LAND"}, "ENTITY_ELDER_GUARDIAN_FLOP"),
+    ELDER_GUARDIAN(new String[]{"entity.elder_guardian.hurt", "entity.elder_guardian.hurt_land"}, null,
+        new String[]{"entity.elder_guardian.death", "entity.elder_guardian.death_land"},
+        new String[]{"entity.elder_guardian.ambient", "entity.elder_guardian.ambient_land"}, "entity.elder_guardian.flop"),
 
-    ENDER_DRAGON("ENTITY_ENDER_DRAGON_HURT", null, "ENTITY_ENDER_DRAGON_DEATH", "ENTITY_ENDER_DRAGON_AMBIENT", "ENTITY_GENERIC_SMALL_FALL",
-        "ENTITY_GENERIC_BIG_FALL", "ENTITY_ENDER_DRAGON_FLAP", "ENTITY_ENDER_DRAGON_GROWL"),
+    ENDER_DRAGON("entity.ender_dragon.hurt", null, "entity.ender_dragon.death", "entity.ender_dragon.ambient", "entity.generic.small_fall",
+        "entity.generic.big_fall", "entity.ender_dragon.flap", "entity.ender_dragon.growl"),
 
-    ENDERMAN("ENTITY_ENDERMAN_HURT", "BLOCK_GRASS_STEP", "ENTITY_ENDERMAN_DEATH", "ENTITY_ENDERMAN_AMBIENT", "ENTITY_ENDERMAN_SCREAM",
-        "ENTITY_ENDERMAN_TELEPORT", "ENTITY_ENDERMAN_STARE"),
+    ENDERMAN("entity.enderman.hurt", "block.grass.step", "entity.enderman.death", "entity.enderman.ambient", "entity.enderman.scream",
+        "entity.enderman.teleport", "entity.enderman.stare"),
 
-    ENDERMITE("ENTITY_ENDERMITE_HURT", "ENTITY_ENDERMITE_STEP", "ENTITY_ENDERMITE_DEATH", "ENTITY_ENDERMITE_AMBIENT"),
+    ENDERMITE("entity.endermite.hurt", "entity.endermite.step", "entity.endermite.death", "entity.endermite.ambient"),
 
-    EVOKER("ENTITY_EVOKER_HURT", null, "ENTITY_EVOKER_DEATH", "ENTITY_EVOKER_AMBIENT", "ENTITY_EVOKER_CAST_SPELL",
-        "ENTITY_EVOKER_PREPARE_ATTACK", "ENTITY_EVOKER_PREPARE_SUMMON", "ENTITY_EVOKER_PREPARE_WOLOLO"),
+    EVOKER("entity.evoker.hurt", null, "entity.evoker.death", "entity.evoker.ambient", "entity.evoker.cast_spell",
+        "entity.evoker.prepare_attack", "entity.evoker.prepare_summon", "entity.evoker.prepare_wololo"),
 
-    EVOKER_FANGS(null, null, null, null, "ENTITY_EVOKER_FANGS_ATTACK"),
+    EVOKER_FANGS(null, null, null, null, "entity.evoker_fangs.attack"),
 
-    FOX("ENTITY_FOX_HURT", null, "ENTITY_FOX_DEATH", "ENTITY_FOX_AMBIENT", "ENTITY_FOX_AGGRO", "ENTITY_FOX_BITE", "ENTITY_FOX_EAT",
-        "ENTITY_FOX_SCREECH", "ENTITY_FOX_SLEEP", "ENTITY_FOX_SPIT", "ENTITY_FOX_SNIFF", "ENTITY_FOX_TELEPORT"),
+    FOX("entity.fox.hurt", null, "entity.fox.death", "entity.fox.ambient", "entity.fox.aggro", "entity.fox.bite", "entity.fox.eat",
+        "entity.fox.screech", "entity.fox.sleep", "entity.fox.spit", "entity.fox.sniff", "entity.fox.teleport"),
 
-    FROG("ENTITY_FROG_HURT", "ENTITY_FROG_STEP", "ENTITY_FROG_DEATH", "ENTITY_FROG_AMBIENT", "ENTITY_FROG_EAT", "ENTITY_FROG_LAY_SPAWN",
-        "ENTITY_FROG_LONG_JUMP", "ENTITY_FROG_TONGUE"),
+    FROG("entity.frog.hurt", "entity.frog.step", "entity.frog.death", "entity.frog.ambient", "entity.frog.eat", "entity.frog.lay_spawn",
+        "entity.frog.long_jump", "entity.frog.tongue"),
 
-    GHAST("ENTITY_GHAST_HURT", null, "ENTITY_GHAST_DEATH", "ENTITY_GHAST_AMBIENT", "ENTITY_PLAYER_SMALL_FALL", "ENTITY_GHAST_SHOOT",
-        "ENTITY_PLAYER_BIG_FALL", "ENTITY_GHAST_SCREAM", "ENTITY_GHAST_WARN"),
+    GHAST("entity.ghast.hurt", null, "entity.ghast.death", "entity.ghast.ambient", "entity.player.small_fall", "entity.ghast.shoot",
+        "entity.player.big_fall", "entity.ghast.scream", "entity.ghast.warn"),
 
-    GIANT("ENTITY_PLAYER_HURT", "BLOCK_GRASS_STEP", null, null),
+    GIANT("entity.player.hurt", "block.grass.step", null, null),
 
-    GLOW_SQUID("ENTITY_GLOW_SQUID_HURT", null, "ENTITY_GLOW_SQUID_DEATH", "ENTITY_GLOW_SQUID_AMBIENT", "ENTITY_GLOW_SQUID_SQUIRT",
-        "ENTITY_FISH_SWIM"),
+    GLOW_SQUID("entity.glow_squid.hurt", null, "entity.glow_squid.death", "entity.glow_squid.ambient", "entity.glow_squid.squirt",
+        "entity.fish.swim"),
 
-    GOAT("ENTITY_GOAT_HURT", "ENTITY_GOAT_STEP", "ENTITY_GOAT_DEATH", "ENTITY_GOAT_AMBIENT", "ENTITY_GOAT_MILK", "ENTITY_GOAT_EAT",
-        "ENTITY_GOAT_LONG_JUMP", "ENTITY_GOAT_PREPARE_RAM", "ENTITY_GOAT_PREPARE_RAM", "ENTITY_GOAT_RAM_IMPACT",
-        "ENTITY_GOAT_SCREAMING_AMBIENT", "ENTITY_GOAT_SCREAMING_DEATH", "ENTITY_GOAT_SCREAMING_EAT", "ENTITY_GOAT_SCREAMING_MILK",
-        "ENTITY_GOAT_SCREAMING_RAM_IMPACT", "ENTITY_GOAT_SCREAMING_PREPARE_RAM", "ENTITY_GOAT_SCREAMING_LONG_JUMP",
-        "ENTITY_GOAT_SCREAMING_HURT"),
+    GOAT("entity.goat.hurt", "entity.goat.step", "entity.goat.death", "entity.goat.ambient", "entity.goat.milk", "entity.goat.eat",
+        "entity.goat.long_jump", "entity.goat.prepare_ram", "entity.goat.prepare_ram", "entity.goat.ram_impact",
+        "entity.goat.screaming.ambient", "entity.goat.screaming.death", "entity.goat.screaming.eat", "entity.goat.screaming.milk",
+        "entity.goat.screaming.ram_impact", "entity.goat.screaming.prepare_ram", "entity.goat.screaming.long_jump",
+        "entity.goat.screaming.hurt"),
 
-    GUARDIAN(new String[]{"ENTITY_GUARDIAN_HURT", "ENTITY_GUARDIAN_HURT_LAND"}, null,
-        new String[]{"ENTITY_GUARDIAN_DEATH", "ENTITY_GUARDIAN_DEATH_LAND"},
-        new String[]{"ENTITY_GUARDIAN_AMBIENT", "ENTITY_GUARDIAN_AMBIENT_LAND"}, "ENTITY_GUARDIAN_FLOP"),
+    GUARDIAN(new String[]{"entity.guardian.hurt", "entity.guardian.hurt_land"}, null,
+        new String[]{"entity.guardian.death", "entity.guardian.death_land"},
+        new String[]{"entity.guardian.ambient", "entity.guardian.ambient_land"}, "entity.guardian.flop"),
 
-    HOGLIN("ENTITY_HOGLIN_HURT", "ENTITY_HOGLIN_STEP", "ENTITY_HOGLIN_DEATH", "ENTITY_HOGLIN_AMBIENT",
-        "ENTITY_HOGLIN_CONVERTED_TO_ZOMBIFIED", "ENTITY_HOGLIN_ANGRY", "ENTITY_HOGLIN_RETREAT"),
+    HOGLIN("entity.hoglin.hurt", "entity.hoglin.step", "entity.hoglin.death", "entity.hoglin.ambient",
+        "entity.hoglin.converted_to_zombified", "entity.hoglin.angry", "entity.hoglin.retreat"),
 
-    HORSE("ENTITY_HORSE_HURT", new String[]{"ENTITY_HORSE_STEP", "ENTITY_HORSE_STEP_WOOD"}, "ENTITY_HORSE_DEATH", "ENTITY_HORSE_AMBIENT",
-        "ENTITY_HORSE_GALLOP", "ENTITY_HORSE_SADDLE", "ENTITY_DONKEY_ANGRY", "ENTITY_HORSE_ARMOR", "ENTITY_HORSE_LAND", "ENTITY_HORSE_JUMP",
-        "ENTITY_HORSE_ANGRY", "ENTITY_HORSE_EAT", "ENTITY_HORSE_BREATHE"),
+    HORSE("entity.horse.hurt", new String[]{"entity.horse.step", "entity.horse.step_wood"}, "entity.horse.death", "entity.horse.ambient",
+        "entity.horse.gallop", "entity.horse.saddle", "entity.donkey.angry", "entity.horse.armor", "entity.horse.land", "entity.horse.jump",
+        "entity.horse.angry", "entity.horse.eat", "entity.horse.breathe"),
 
-    HUSK("ENTITY_HUSK_HURT", "ENTITY_HUSK_STEP", "ENTITY_HUSK_DEATH", "ENTITY_HUSK_AMBIENT", "ENTITY_HUSK_CONVERTED_TO_ZOMBIE"),
+    HUSK("entity.husk.hurt", "entity.husk.step", "entity.husk.death", "entity.husk.ambient", "entity.husk.converted_to_zombie"),
 
-    ILLUSIONER("ENTITY_ILLUSIONER_HURT", null, "ENTITY_ILLUSIONER_DEATH", "ENTITY_ILLUSIONER_AMBIENT", "ENTITY_ILLUSIONER_CAST_SPELL",
-        "ENTITY_ILLUSIONER_PREPARE_BLINDNESS", "ENTITY_ILLUSIONER_PREPARE_MIRROR", "ENTITY_ILLUSIONER_MIRROR_MOVE"),
+    ILLUSIONER("entity.illusioner.hurt", null, "entity.illusioner.death", "entity.illusioner.ambient", "entity.illusioner.cast_spell",
+        "entity.illusioner.prepare_blindness", "entity.illusioner.prepare_mirror", "entity.illusioner.mirror_move"),
 
     INTERACTION(null, null, null, null),
 
-    IRON_GOLEM("ENTITY_IRON_GOLEM_HURT", "ENTITY_IRON_GOLEM_STEP", "ENTITY_IRON_GOLEM_DEATH", "ENTITY_IRON_GOLEM_ATTACK"),
+    IRON_GOLEM("entity.iron_golem.hurt", "entity.iron_golem.step", "entity.iron_golem.death", "entity.iron_golem.attack"),
 
     ITEM_DISPLAY(null, null, null, null),
 
-    LLAMA("ENTITY_LLAMA_HURT", "ENTITY_LLAMA_STEP", "ENTITY_LLAMA_DEATH", "ENTITY_LLAMA_AMBIENT", "ENTITY_LLAMA_ANGRY",
-        "ENTITY_LLAMA_CHEST", "ENTITY_LLAMA_EAT", "ENTITY_LLAMA_SWAG"),
+    LLAMA("entity.llama.hurt", "entity.llama.step", "entity.llama.death", "entity.llama.ambient", "entity.llama.angry",
+        "entity.llama.chest", "entity.llama.eat", "entity.llama.swag"),
 
-    MAGMA_CUBE("ENTITY_MAGMA_CUBE_HURT", "ENTITY_MAGMA_CUBE_JUMP", new String[]{"ENTITY_MAGMA_CUBE_DEATH", "ENTITY_MAGMA_CUBE_DEATH_SMALL"},
-        null, "ENTITY_MAGMA_CUBE_SQUISH", "ENTITY_MAGMA_CUBE_SQUISH_SMALL"),
+    MAGMA_CUBE("entity.magma_cube.hurt", "entity.magma_cube.jump", new String[]{"entity.magma_cube.death", "entity.magma_cube.death_small"},
+        null, "entity.magma_cube.squish", "entity.magma_cube.squish_small"),
 
-    MINECART(null, "ENTITY_MINECART_RIDING", null, null, "ENTITY_MINECART_INSIDE", "ENTITY_MINECART_INSIDE_UNDERWATER"),
+    MINECART(null, "entity.minecart.riding", null, null, "entity.minecart.inside", "entity.minecart.inside.underwater"),
 
-    MINECART_CHEST(null, "ENTITY_MINECART_RIDING", null, null, "ENTITY_MINECART_INSIDE", "ENTITY_MINECART_INSIDE_UNDERWATER"),
+    MINECART_CHEST(null, "entity.minecart.riding", null, null, "entity.minecart.inside", "entity.minecart.inside.underwater"),
 
-    MINECART_COMMAND(null, "ENTITY_MINECART_RIDING", null, null, "ENTITY_MINECART_INSIDE", "ENTITY_MINECART_INSIDE_UNDERWATER"),
+    MINECART_COMMAND(null, "entity.minecart.riding", null, null, "entity.minecart.inside", "entity.minecart.inside.underwater"),
 
-    MINECART_FURNACE(null, "ENTITY_MINECART_RIDING", null, null, "ENTITY_MINECART_INSIDE", "ENTITY_MINECART_INSIDE_UNDERWATER"),
+    MINECART_FURNACE(null, "entity.minecart.riding", null, null, "entity.minecart.inside", "entity.minecart.inside.underwater"),
 
-    MINECART_HOPPER(null, "ENTITY_MINECART_RIDING", null, null, "ENTITY_MINECART_INSIDE", "ENTITY_MINECART_INSIDE_UNDERWATER"),
+    MINECART_HOPPER(null, "entity.minecart.riding", null, null, "entity.minecart.inside", "entity.minecart.inside.underwater"),
 
-    MINECART_MOB_SPAWNER(null, "ENTITY_MINECART_RIDING", null, null, "ENTITY_MINECART_INSIDE", "ENTITY_MINECART_INSIDE_UNDERWATER"),
+    MINECART_MOB_SPAWNER(null, "entity.minecart.riding", null, null, "entity.minecart.inside", "entity.minecart.inside.underwater"),
 
-    MINECART_TNT(null, "ENTITY_MINECART_RIDING", null, null, "ENTITY_MINECART_INSIDE", "ENTITY_MINECART_INSIDE_UNDERWATER"),
+    MINECART_TNT(null, "entity.minecart.riding", null, null, "entity.minecart.inside", "entity.minecart.inside.underwater"),
 
-    MULE("ENTITY_MULE_HURT", "BLOCK_GRASS_STEP", "ENTITY_MULE_DEATH", "ENTITY_MULE_AMBIENT", "ENTITY_MULE_CHEST"),
+    MULE("entity.mule.hurt", "block.grass.step", "entity.mule.death", "entity.mule.ambient", "entity.mule.chest"),
 
-    MUSHROOM_COW("ENTITY_COW_HURT", "ENTITY_COW_STEP", "ENTITY_COW_DEATH", "ENTITY_COW_AMBIENT"),
+    MUSHROOM_COW("entity.cow.hurt", "entity.cow.step", "entity.cow.death", "entity.cow.ambient"),
 
-    OCELOT("ENTITY_CAT_HURT", "BLOCK_GRASS_STEP", "ENTITY_CAT_DEATH",
-        new String[]{"ENTITY_CAT_AMBIENT", "ENTITY_CAT_PURR", "ENTITY_CAT_PURREOW"}, "ENTITY_CAT_HISS"),
+    OCELOT("entity.cat.hurt", "block.grass.step", "entity.cat.death",
+        new String[]{"entity.cat.ambient", "entity.cat.purr", "entity.cat.purreow"}, "entity.cat.hiss"),
 
-    PANDA("ENTITY_PANDA_HURT", "ENTITY_PANDA_STEP", "ENTITY_PANDA_DEATH",
-        new String[]{"ENTITY_PANDA_AMBIENT", "ENTITY_PANDA_AGGRESSIVE_AMBIENT", "ENTITY_PANDA_WORRIED_AMBIENT"}, "ENTITY_PANDA_BITE",
-        "ENTITY_PANDA_CANT_BREED", "ENTITY_PANDA_EAT", "ENTITY_PANDA_PRE_SNEEZE", "ENTITY_PANDA_SNEEZE"),
+    PANDA("entity.panda.hurt", "entity.panda.step", "entity.panda.death",
+        new String[]{"entity.panda.ambient", "entity.panda.aggressive_ambient", "entity.panda.worried_ambient"}, "entity.panda.bite",
+        "entity.panda.cant_breed", "entity.panda.eat", "entity.panda.pre_sneeze", "entity.panda.sneeze"),
 
-    PARROT("ENTITY_PARROT_HURT", "ENTITY_PARROT_STEP", "ENTITY_PARROT_DEATH", "ENTITY_PARROT_AMBIENT",
-        (Object[]) new String[]{"ENTITY_PARROT_EAT", "ENTITY_PARROT_FLY", ".*PARROT_IMITATE.*"}),
+    PARROT("entity.parrot.hurt", "entity.parrot.step", "entity.parrot.death", "entity.parrot.ambient",
+        (Object[]) new String[]{"entity.parrot.eat", "entity.parrot.fly", "^entity\\.parrot\\.imitate\\..+"}),
 
-    PIG("ENTITY_PIG_HURT", "ENTITY_PIG_STEP", "ENTITY_PIG_DEATH", "ENTITY_PIG_AMBIENT"),
+    PIG("entity.pig.hurt", "entity.pig.step", "entity.pig.death", "entity.pig.ambient"),
 
-    PIGLIN("ENTITY_PIGLIN_HURT", "ENTITY_PIGLIN_STEP", "ENTITY_PIGLIN_DEATH", "ENTITY_PIGLIN_AMBIENT", "ENTITY_PIGLIN_RETREAT",
-        "ENTITY_PIGLIN_JEALOUS", "ENTITY_PIGLIN_ADMIRING_ITEM", "ENTITY_PIGLIN_CELEBRATE", "ENTITY_PIGLIN_ANGRY"),
+    PIGLIN("entity.piglin.hurt", "entity.piglin.step", "entity.piglin.death", "entity.piglin.ambient", "entity.piglin.retreat",
+        "entity.piglin.jealous", "entity.piglin.admiring_item", "entity.piglin.celebrate", "entity.piglin.angry"),
 
-    PIGLIN_BRUTE("ENTITY_PIGLIN_BRUTE_HURT", "ENTITY_PIGLIN_BRUTE_STEP", "ENTITY_PIGLIN_BRUTE_DEATH", "ENTITY_PIGLIN_BRUTE_AMBIENT",
-        "ENTITY_PIGLIN_BRUTE_CONVERTED_TO_ZOMBIFIED", "ENTITY_PIGLIN_BRUTE_ANGRY"),
+    PIGLIN_BRUTE("entity.piglin_brute.hurt", "entity.piglin_brute.step", "entity.piglin_brute.death", "entity.piglin_brute.ambient",
+        "entity.piglin_brute.converted_to_zombified", "entity.piglin_brute.angry"),
 
-    PIG_ZOMBIE("ENTITY_ZOMBIE_PIGMAN_HURT", null, "ENTITY_ZOMBIE_PIGMAN_DEATH", "ENTITY_ZOMBIE_PIGMAN_AMBIENT",
-        "ENTITY_ZOMBIE_PIGMAN_ANGRY"),
+    PIG_ZOMBIE("entity.zombie_pigman.hurt", null, "entity.zombie_pigman.death", "entity.zombie_pigman.ambient",
+        "entity.zombie_pigman.angry"),
 
-    PILLAGER("ENTITY_PILLAGER_HURT", "BLOCK_GRASS_STEP", "ENTITY_PILLAGER_DEATH", "ENTITY_PILLAGER_AMBIENT", "ENTITY_PILLAGER_CELEBRATE"),
+    PILLAGER("entity.pillager.hurt", "block.grass.step", "entity.pillager.death", "entity.pillager.ambient", "entity.pillager.celebrate"),
 
-    PLAYER("ENTITY_PLAYER_HURT", new String[]{"BLOCK_.*_STEP"}, "ENTITY_PLAYER_DEATH", null),
+    PLAYER("entity.player.hurt", new String[]{"^block\\.[a-z_]+\\.step"}, "entity.player.death", null),
 
-    PHANTOM("ENTITY_PHANTOM_HURT", new String[]{"ENTITY_PHANTOM_FLAP", "ENTITY_PHANTOM_SWOOP"}, "ENTITY_PHANTOM_DEATH",
-        "ENTITY_PHANTOM_AMBIENT", "ENTITY_PHANTOM_BITE"),
+    PHANTOM("entity.phantom.hurt", new String[]{"entity.phantom.flap", "entity.phantom.swoop"}, "entity.phantom.death",
+        "entity.phantom.ambient", "entity.phantom.bite"),
 
-    POLAR_BEAR("ENTITY_POLAR_BEAR_HURT", "ENTITY_POLAR_BEAR_STEP", "ENTITY_POLAR_BEAR_DEATH",
-        new String[]{"ENTITY_POLAR_BEAR_AMBIENT", "ENTITY_POLAR_BEAR_AMBIENT_BABY"}, "ENTITY_POLAR_BEAR_WARNING"),
+    POLAR_BEAR("entity.polar_bear.hurt", "entity.polar_bear.step", "entity.polar_bear.death",
+        new String[]{"entity.polar_bear.ambient", "entity.polar_bear.ambient_baby"}, "entity.polar_bear.warning"),
 
-    PUFFERFISH("ENTITY_PUFFER_FISH_HURT", null, "ENTITY_PUFFER_FISH_DEATH", "ENTITY_PUFFER_FISH_AMBIENT", "ENTITY_PUFFER_FISH_BLOW_OUT",
-        "ENTITY_PUFFER_FISH_BLOW_UP", "ENTITY_PUFFER_FISH_FLOP", "ENTITY_PUFFER_FISH_STING", "ENTITY_FISH_SWIM"),
+    PUFFERFISH("entity.puffer_fish.hurt", null, "entity.puffer_fish.death", "entity.puffer_fish.ambient", "entity.puffer_fish.blow_out",
+        "entity.puffer_fish.blow_up", "entity.puffer_fish.flop", "entity.puffer_fish.sting", "entity.fish.swim"),
 
-    RABBIT("ENTITY_RABBIT_HURT", "ENTITY_RABBIT_JUMP", "ENTITY_RABBIT_DEATH", "ENTITY_RABBIT_AMBIENT", "ENTITY_RABBIT_ATTACK"),
+    RABBIT("entity.rabbit.hurt", "entity.rabbit.jump", "entity.rabbit.death", "entity.rabbit.ambient", "entity.rabbit.attack"),
 
-    RAVAGER("ENTITY_RAVAGER_HURT", "ENTITY_RAVAGER_STEP", "ENTITY_RAVAGER_DEATH", "ENTITY_RAVAGER_AMBIENT", "ENTITY_RAVAGER_ATTACK",
-        "ENTITY_RAVAGER_CELEBRATE", "ENTITY_RAVAGER_ROAR", "ENTITY_RAVAGER_STUNNED"),
+    RAVAGER("entity.ravager.hurt", "entity.ravager.step", "entity.ravager.death", "entity.ravager.ambient", "entity.ravager.attack",
+        "entity.ravager.celebrate", "entity.ravager.roar", "entity.ravager.stunned"),
 
-    SALMON("ENTITY_SALMON_HURT", null, "ENTITY_SALMON_DEATH", "ENTITY_SALMON_AMBIENT", "ENTITY_SALMON_FLOP", "ENTITY_FISH_SWIM"),
+    SALMON("entity.salmon.hurt", null, "entity.salmon.death", "entity.salmon.ambient", "entity.salmon.flop", "entity.fish.swim"),
 
-    SHEEP("ENTITY_SHEEP_HURT", "ENTITY_SHEEP_STEP", "ENTITY_SHEEP_DEATH", "ENTITY_SHEEP_AMBIENT", "ENTITY_SHEEP_SHEAR"),
+    SHEEP("entity.sheep.hurt", "entity.sheep.step", "entity.sheep.death", "entity.sheep.ambient", "entity.sheep.shear"),
 
-    SHULKER(new String[]{"ENTITY_SHULKER_HURT", "ENTITY_SHULKER_HURT_CLOSED"}, null, "ENTITY_SHULKER_DEATH", "ENTITY_SHULKER_AMBIENT",
-        "ENTITY_SHULKER_OPEN", "ENTITY_SHULKER_CLOSE", "ENTITY_SHULKER_TELEPORT"),
+    SHULKER(new String[]{"entity.shulker.hurt", "entity.shulker.hurt_closed"}, null, "entity.shulker.death", "entity.shulker.ambient",
+        "entity.shulker.open", "entity.shulker.close", "entity.shulker.teleport"),
 
-    SILVERFISH("ENTITY_SILVERFISH_HURT", "ENTITY_SILVERFISH_STEP", "ENTITY_SILVERFISH_DEATH", "ENTITY_SILVERFISH_AMBIENT"),
+    SILVERFISH("entity.silverfish.hurt", "entity.silverfish.step", "entity.silverfish.death", "entity.silverfish.ambient"),
 
-    SKELETON("ENTITY_SKELETON_HURT", "ENTITY_SKELETON_STEP", "ENTITY_SKELETON_DEATH", "ENTITY_SKELETON_AMBIENT"),
+    SKELETON("entity.skeleton.hurt", "entity.skeleton.step", "entity.skeleton.death", "entity.skeleton.ambient"),
 
-    SKELETON_HORSE("ENTITY_SKELETON_HORSE_HURT", new String[]{"BLOCK_GRASS_STEP", "ENTITY_HORSE_STEP_WOOD"}, "ENTITY_SKELETON_HORSE_DEATH",
+    SKELETON_HORSE("entity.skeleton_horse.hurt", new String[]{"block.grass.step", "entity.horse.step_wood"}, "entity.skeleton_horse.death",
         new String[]
 
-            {"ENTITY_SKELETON_HORSE_AMBIENT", "ENTITY_SKELETON_HORSE_AMBIENT_WATER"}, "ENTITY_HORSE_GALLOP", "ENTITY_HORSE_SADDLE",
-        "ENTITY_HORSE_ARMOR", "ENTITY_HORSE_LAND", "ENTITY_HORSE_JUMP", "ENTITY_SKELETON_HORSE_GALLOP_WATER",
-        "ENTITY_SKELETON_HORSE_JUMP_WATER", "ENTITY_SKELETON_HORSE_SWIM", "ENTITY_SKELETON_HORSE_STEP_WATER"),
+            {"entity.skeleton_horse.ambient", "entity.skeleton_horse.ambient_water"}, "entity.horse.gallop", "entity.horse.saddle",
+        "entity.horse.armor", "entity.horse.land", "entity.horse.jump", "entity.skeleton_horse.gallop_water",
+        "entity.skeleton_horse.jump_water", "entity.skeleton_horse.swim", "entity.skeleton_horse.step_water"),
 
-    SLIME(new String[]{"ENTITY_SLIME_HURT", "ENTITY_SLIME_HURT_SMALL"}, new String[]
+    SLIME(new String[]{"entity.slime.hurt", "entity.slime.hurt_small"}, new String[]
 
-        {"ENTITY_SLIME_JUMP", "ENTITY_SLIME_JUMP_SMALL"}, new String[]
+        {"entity.slime.jump", "entity.slime.jump_small"}, new String[]
 
-        {"ENTITY_SLIME_DEATH", "ENTITY_SLIME_DEATH_SMALL"}, null, "ENTITY_SLIME_ATTACK", "ENTITY_SLIME_SQUISH",
-        "ENTITY_SLIME_SQUISH_SMALL"),
+        {"entity.slime.death", "entity.slime.death_small"}, null, "entity.slime.attack", "entity.slime.squish",
+        "entity.slime.squish_small"),
 
-    SNIFFER("ENTITY_SNIFFER_HURT", "ENTITY_SNIFFER_STEP", "ENTITY_SNIFFER_DEATH", "ENTITY_SNIFFER_IDLE", "ENTITY_SNIFFER_DIGGING",
-        "ENTITY_SNIFFER_DIGGING_STOP", "ENTITY_SNIFFER_DROP_SEED", "ENTITY_SNIFFER_EAT", "ENTITY_SNIFFER_SEARCHING",
-        "ENTITY_SNIFFER_SCENTING", "ENTITY_SNIFFER_HAPPY", "ENTITY_SNIFFER_SNIFFING"),
+    SNIFFER("entity.sniffer.hurt", "entity.sniffer.step", "entity.sniffer.death", "entity.sniffer.idle", "entity.sniffer.digging",
+        "entity.sniffer.digging_stop", "entity.sniffer.drop_seed", "entity.sniffer.eat", "entity.sniffer.searching",
+        "entity.sniffer.scenting", "entity.sniffer.happy", "entity.sniffer.sniffing"),
 
-    SNOWMAN("ENTITY_SNOW_GOLEM_HURT", null, "ENTITY_SNOW_GOLEM_DEATH", "ENTITY_SNOW_GOLEM_AMBIENT", "ENTITY_SNOW_GOLEM_SHOOT"),
+    SNOWMAN("entity.snow_golem.hurt", null, "entity.snow_golem.death", "entity.snow_golem.ambient", "entity.snow_golem.shoot"),
 
-    SPIDER("ENTITY_SPIDER_HURT", "ENTITY_SPIDER_STEP", "ENTITY_SPIDER_DEATH", "ENTITY_SPIDER_AMBIENT"),
+    SPIDER("entity.spider.hurt", "entity.spider.step", "entity.spider.death", "entity.spider.ambient"),
 
-    STRAY("ENTITY_STRAY_HURT", "ENTITY_STRAY_STEP", "ENTITY_STRAY_DEATH", "ENTITY_STRAY_AMBIENT"),
+    STRAY("entity.stray.hurt", "entity.stray.step", "entity.stray.death", "entity.stray.ambient"),
 
-    STRIDER("ENTITY_STRIDER_HURT", new String[]{"ENTITY_STRIDER_STEP", "ENTITY_STRIDER_STEP_LAVA"}, "ENTITY_STRIDER_DEATH",
-        "ENTITY_STRIDER_AMBIENT", "ENTITY_STRIDER_EAT", "ENTITY_STRIDER_HAPPY", "ENTITY_STRIDER_RETREAT", "ENTITY_STRIDER_SADDLE"),
+    STRIDER("entity.strider.hurt", new String[]{"entity.strider.step", "entity.strider.step_lava"}, "entity.strider.death",
+        "entity.strider.ambient", "entity.strider.eat", "entity.strider.happy", "entity.strider.retreat", "entity.strider.saddle"),
 
-    SQUID("ENTITY_SQUID_HURT", null, "ENTITY_SQUID_DEATH", "ENTITY_SQUID_AMBIENT", "ENTITY_SQUID_SQUIRT", "ENTITY_FISH_SWIM"),
+    SQUID("entity.squid.hurt", null, "entity.squid.death", "entity.squid.ambient", "entity.squid.squirt", "entity.fish.swim"),
 
-    TADPOLE("ENTITY_TADPOLE_HURT", null, "ENTITY_TADPOLE_DEATH", null, "ENTITY_TADPOLE_FLOP", "ITEM_BUCKET_EMPTY_TADPOLE",
-        "ITEM_BUCKET_FILL_TADPOLE"),
+    TADPOLE("entity.tadpole.hurt", null, "entity.tadpole.death", null, "entity.tadpole.flop", "item.bucket.empty_tadpole",
+        "item.bucket.fill_tadpole"),
 
     TEXT_DISPLAY(null, null, null, null),
 
-    TRADER_LLAMA("ENTITY_LLAMA_HURT", "ENTITY_LLAMA_STEP", "ENTITY_LLAMA_DEATH", "ENTITY_LLAMA_AMBIENT", "ENTITY_LLAMA_ANGRY",
-        "ENTITY_LLAMA_CHEST", "ENTITY_LLAMA_EAT", "ENTITY_LLAMA_SWAG"),
+    TRADER_LLAMA("entity.llama.hurt", "entity.llama.step", "entity.llama.death", "entity.llama.ambient", "entity.llama.angry",
+        "entity.llama.chest", "entity.llama.eat", "entity.llama.swag"),
 
-    TROPICAL_FISH("ENTITY_TROPICAL_FISH_HURT", null, "ENTITY_TROPICAL_FISH_DEATH", "ENTITY_TROPICAL_FISH_AMBIENT",
-        "ENTITY_TROPICAL_FISH_FLOP", "ENTITY_FISH_SWIM"),
+    TROPICAL_FISH("entity.tropical_fish.hurt", null, "entity.tropical_fish.death", "entity.tropical_fish.ambient",
+        "entity.tropical_fish.flop", "entity.fish.swim"),
 
-    TURTLE(new String[]{"ENTITY_TURTLE_HURT", "ENTITY_TURTLE_HURT_BABY"}, new String[]
+    TURTLE(new String[]{"entity.turtle.hurt", "entity.turtle.hurt_baby"},
+        new String[]{"entity.turtle.shamble", "entity.turtle.shamble_baby"},
+        new String[]{"entity.turtle.death", "entity.turtle.death_baby"}, "entity.turtle.ambient_land", "entity.turtle.lay_egg"),
 
-        {"ENTITY_TURTLE_SHAMBLE", "ENTITY_TURTLE_SHAMBLE_BABY"}, new String[]
+    VEX("entity.vex.hurt", null, "entity.vex.death", "entity.vex.ambient", "entity.vex.charge"),
 
-        {"ENTITY_TURTLE_DEATH", "ENTITY_TURTLE_DEATH_BABY"}, "ENTITY_TURTLE_AMBIENT_LAND", "ENTITY_TURTLE_LAY_EGG"),
+    VILLAGER("entity.villager.hurt", null, "entity.villager.death", "entity.villager.ambient", "entity.villager.trade",
+        "entity.villager.no", "entity.villager.yes"),
 
-    VEX("ENTITY_VEX_HURT", null, "ENTITY_VEX_DEATH", "ENTITY_VEX_AMBIENT", "ENTITY_VEX_CHARGE"),
+    VINDICATOR("entity.vindicator.hurt", null, "entity.vindicator.death", "entity.vindicator.ambient"),
 
-    VILLAGER("ENTITY_VILLAGER_HURT", null, "ENTITY_VILLAGER_DEATH", "ENTITY_VILLAGER_AMBIENT", "ENTITY_VILLAGER_TRADE",
-        "ENTITY_VILLAGER_NO", "ENTITY_VILLAGER_YES"),
+    WANDERING_TRADER("entity.wandering_trader.hurt", null, "entity.wandering_trader.death", "entity.wandering_trader.ambient",
+        "entity.wandering_trader.no", "entity.wandering_trader.yes", "entity.wandering_trader.trade", "entity.wandering_trader.trade",
+        "entity.wandering_trader.reappeared", "entity.wandering_trader.drink_potion", "entity.wandering_trader.drink_milk",
+        "entity.wandering_trader.disappeared"),
 
-    VINDICATOR("ENTITY_VINDICATOR_HURT", null, "ENTITY_VINDICATOR_DEATH", "ENTITY_VINDICATOR_AMBIENT"),
+    WARDEN("entity.warden.hurt", "entity.warden.step", "entity.warden.death", "entity.warden.ambient", "entity.warden.agitated",
+        "entity.warden.angry", "entity.warden.attack_impact", "entity.warden.dig", "entity.warden.emerge", "entity.warden.heartbeat",
+        "entity.warden.tendril_clicks", "entity.warden.listening", "entity.warden.listening_angry", "entity.warden.nearby_close",
+        "entity.warden.nearby_closer", "entity.warden.nearby_closest", "entity.warden.sonic_boom", "entity.warden.sonic_charge",
+        "entity.warden.roar", "entity.warden.sniff"),
 
-    WANDERING_TRADER("ENTITY_WANDERING_TRADER_HURT", null, "ENTITY_WANDERING_TRADER_DEATH", "ENTITY_WANDERING_TRADER_AMBIENT",
-        "ENTITY_WANDERING_TRADER_NO", "ENTITY_WANDERING_TRADER_YES", "ENTITY_WANDERING_TRADER_TRADE", "ENTITY_WANDERING_TRADER_TRADE",
-        "ENTITY_WANDERING_TRADER_REAPPEARED", "ENTITY_WANDERING_TRADER_DRINK_POTION", "ENTITY_WANDERING_TRADER_DRINK_MILK",
-        "ENTITY_WANDERING_TRADER_DISAPPEARED"),
+    WITCH("entity.witch.hurt", null, "entity.witch.death", "entity.witch.ambient"),
 
-    WARDEN("ENTITY_WARDEN_HURT", "ENTITY_WARDEN_STEP", "ENTITY_WARDEN_DEATH", "ENTITY_WARDEN_AMBIENT", "ENTITY_WARDEN_AGITATED",
-        "ENTITY_WARDEN_ANGRY", "ENTITY_WARDEN_ATTACK_IMPACT", "ENTITY_WARDEN_DIG", "ENTITY_WARDEN_EMERGE", "ENTITY_WARDEN_HEARTBEAT",
-        "ENTITY_WARDEN_TENDRIL_CLICKS", "ENTITY_WARDEN_LISTENING", "ENTITY_WARDEN_LISTENING_ANGRY", "ENTITY_WARDEN_NEARBY_CLOSE",
-        "ENTITY_WARDEN_NEARBY_CLOSER", "ENTITY_WARDEN_NEARBY_CLOSEST", "ENTITY_WARDEN_SONIC_BOOM", "ENTITY_WARDEN_SONIC_CHARGE",
-        "ENTITY_WARDEN_ROAR", "ENTITY_WARDEN_SNIFF"),
+    WITHER("entity.wither.hurt", null, "entity.wither.death", "entity.wither.ambient", "entity.player.small_fall", "entity.wither.spawn",
+        "entity.player.big_fall", "entity.wither.shoot"),
 
-    WITCH("ENTITY_WITCH_HURT", null, "ENTITY_WITCH_DEATH", "ENTITY_WITCH_AMBIENT"),
+    WITHER_SKELETON("entity.wither_skeleton.hurt", "entity.wither_skeleton.step", "entity.wither_skeleton.death",
+        "entity.wither_skeleton.ambient"),
 
-    WITHER("ENTITY_WITHER_HURT", null, "ENTITY_WITHER_DEATH", "ENTITY_WITHER_AMBIENT", "ENTITY_PLAYER_SMALL_FALL", "ENTITY_WITHER_SPAWN",
-        "ENTITY_PLAYER_BIG_FALL", "ENTITY_WITHER_SHOOT"),
+    WOLF("entity.wolf.hurt", "entity.wolf.step", "entity.wolf.death", "entity.wolf.ambient", "entity.wolf.growl", "entity.wolf.pant",
+        "entity.wolf.howl", "entity.wolf.shake", "entity.wolf.whine"),
 
-    WITHER_SKELETON("ENTITY_WITHER_SKELETON_HURT", "ENTITY_WITHER_SKELETON_STEP", "ENTITY_WITHER_SKELETON_DEATH",
-        "ENTITY_WITHER_SKELETON_AMBIENT"),
+    ZOGLIN("entity.zoglin.hurt", "entity.zoglin.step", "entity.zoglin.death", "entity.zoglin.ambient", "entity.zoglin.angry",
+        "entity.zoglin.attack"),
 
-    WOLF("ENTITY_WOLF_HURT", "ENTITY_WOLF_STEP", "ENTITY_WOLF_DEATH", "ENTITY_WOLF_AMBIENT", "ENTITY_WOLF_GROWL", "ENTITY_WOLF_PANT",
-        "ENTITY_WOLF_HOWL", "ENTITY_WOLF_SHAKE", "ENTITY_WOLF_WHINE"),
+    ZOMBIE("entity.zombie.hurt", "entity.zombie.step", "entity.zombie.death", "entity.zombie.ambient", "entity.zombie.infect",
+        "entity.zombie.attack_wooden_door", "entity.zombie.break_wooden_door", "entity.zombie.attack_iron_door"),
 
-    ZOGLIN("ENTITY_ZOGLIN_HURT", "ENTITY_ZOGLIN_STEP", "ENTITY_ZOGLIN_DEATH", "ENTITY_ZOGLIN_AMBIENT", "ENTITY_ZOGLIN_ANGRY",
-        "ENTITY_ZOGLIN_ATTACK"),
+    ZOMBIE_HORSE("entity.zombie_horse.hurt", new String[]{"block.grass.step", "entity.horse.step_wood"}, "entity.zombie_horse.death",
+        "entity.zombie_horse.ambient", "entity.horse.gallop", "entity.horse.saddle", "entity.horse.armor", "entity.horse.land",
+        "entity.horse.jump", "entity.horse.angry"),
 
-    ZOMBIE("ENTITY_ZOMBIE_HURT", "ENTITY_ZOMBIE_STEP", "ENTITY_ZOMBIE_DEATH", "ENTITY_ZOMBIE_AMBIENT", "ENTITY_ZOMBIE_INFECT",
-        "ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR", "ENTITY_ZOMBIE_BREAK_WOODEN_DOOR", "ENTITY_ZOMBIE_ATTACK_IRON_DOOR"),
+    ZOMBIE_VILLAGER("entity.zombie_villager.hurt", "entity.zombie_villager.step", "entity.zombie_villager.death",
+        "entity.zombie_villager.ambient", "entity.zombie.infect", "entity.zombie.attack_wooden_door", "entity.zombie.break_wooden_door",
+        "entity.zombie.attack_iron_door"),
 
-    ZOMBIE_HORSE("ENTITY_ZOMBIE_HORSE_HURT", new String[]{"BLOCK_GRASS_STEP", "ENTITY_HORSE_STEP_WOOD"}, "ENTITY_ZOMBIE_HORSE_DEATH",
-        "ENTITY_ZOMBIE_HORSE_AMBIENT", "ENTITY_HORSE_GALLOP", "ENTITY_HORSE_SADDLE", "ENTITY_HORSE_ARMOR", "ENTITY_HORSE_LAND",
-        "ENTITY_HORSE_JUMP", "ENTITY_HORSE_ANGRY"),
-
-    ZOMBIE_VILLAGER("ENTITY_ZOMBIE_VILLAGER_HURT", "ENTITY_ZOMBIE_VILLAGER_STEP", "ENTITY_ZOMBIE_VILLAGER_DEATH",
-        "ENTITY_ZOMBIE_VILLAGER_AMBIENT", "ENTITY_ZOMBIE_INFECT", "ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR", "ENTITY_ZOMBIE_BREAK_WOODEN_DOOR",
-        "ENTITY_ZOMBIE_ATTACK_IRON_DOOR"),
-
-    ZOMBIFIED_PIGLIN("ENTITY_ZOMBIFIED_PIGLIN_HURT", null, "ENTITY_ZOMBIFIED_PIGLIN_DEATH", "ENTITY_ZOMBIFIED_PIGLIN_AMBIENT",
-        "ENTITY_ZOMBIFIED_PIGLIN_ANGRY", "ENTITY_PIGLIN_CONVERTED_TO_ZOMBIFIED");
+    ZOMBIFIED_PIGLIN("entity.zombified_piglin.hurt", null, "entity.zombified_piglin.death", "entity.zombified_piglin.ambient",
+        "entity.zombified_piglin.angry", "entity.piglin.converted_to_zombified");
 
     private final HashMap<String, SoundType> sounds = new HashMap<>();
 

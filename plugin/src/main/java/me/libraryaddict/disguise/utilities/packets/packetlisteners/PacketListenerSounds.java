@@ -6,6 +6,7 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Ser
 import com.github.retrooper.packetevents.protocol.sound.Sound;
 import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
 import com.github.retrooper.packetevents.protocol.sound.Sounds;
+import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.Vector3i;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntitySoundEffect;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSoundEffect;
@@ -64,7 +65,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
                 return;
             }
 
-            String soundKey = NmsVersion.v1_16.isSupported() ? sound.getSoundId().toString() : sound.getSoundId().getKey();
+            ResourceLocation soundKey = sound.getSoundId();
 
             Vector3i loc = soundEffect.getEffectPosition();
 
@@ -140,9 +141,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             return;
         }
 
-        // Prior to 1.16 didn't use resource key afaik
-        String asString = NmsVersion.v1_16.isSupported() ? sound.getSoundId().toString() : sound.getSoundId().getKey();
-        SoundType soundType = group.getType(asString);
+        SoundType soundType = group.getType(sound.getSoundId());
 
         if (soundType == null) {
             return;
@@ -155,7 +154,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             return;
         }
 
-        String newSound = disguiseSound.getSound(soundType);
+        ResourceLocation newSound = disguiseSound.getSound(soundType);
 
         if (newSound == null) {
             event.setCancelled(true);
@@ -175,13 +174,14 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             }
         }
 
-        Sound nSound = Sounds.getByName(newSound);
+        Sound nSound = Sounds.getByName(newSound.toString());
 
         if (nSound == null) {
             event.setCancelled(true);
             // Well then, api is lacking. May as well send via bukkit methods
             Location loc = entity.getLocation();
-            observer.playSound(loc, newSound, volume, pitch);
+            // Namespace was a 1.16 thing, so 1.16+ we will include the 'minecraft:'
+            observer.playSound(loc, NmsVersion.v1_16.isSupported() ? newSound.toString() : newSound.getKey(), volume, pitch);
             return;
         }
 

@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.event.SimplePacketListenerAbstract;
 import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Server;
+import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityAnimation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
@@ -189,10 +190,10 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
                     // As of 1.19.3, no sound is sent but instead the client is expected to play a hurt sound on entity status effect
                     if (NmsVersion.v1_19_R2.isSupported()) {
                         SoundGroup group = SoundGroup.getGroup(disguise);
-                        String sound = group.getSound(SoundGroup.SoundType.HURT);
+                        ResourceLocation sound = group.getSound(SoundGroup.SoundType.HURT);
 
                         if (sound != null) {
-                            observer.playSound(observer.getLocation(), sound, 1f, 1f);
+                            observer.playSound(observer.getLocation(), sound.toString(), 1f, 1f);
                         }
                     }
                 }
