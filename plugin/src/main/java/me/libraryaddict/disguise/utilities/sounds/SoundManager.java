@@ -114,9 +114,15 @@ public class SoundManager {
 
                     String[] sounds = s.split(",", -1);
 
+                    // TODO Change sounds to attempt MC name, then fallback to bukkit enum
                     for (String sound : sounds) {
                         try {
-                            Sound actualSound = ReflectionManager.fromEnum(Sound.class, sound);
+                            Sound actualSound;
+                            try {
+                                actualSound = Sound.valueOf(sound);
+                            } catch (Exception ignored) {
+                                actualSound = ReflectionManager.fromEnum(Sound.class, sound);
+                            }
 
                             group.addSound(actualSound, type);
                         } catch (Exception ignored) {
