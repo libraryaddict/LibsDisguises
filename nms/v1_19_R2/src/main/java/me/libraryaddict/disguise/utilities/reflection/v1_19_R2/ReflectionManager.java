@@ -108,7 +108,8 @@ public class ReflectionManager implements ReflectionManagerAbstract {
             if (increment) {
                 return atomicInteger.incrementAndGet();
             } else {
-                return atomicInteger.get();
+                // Add 1 as we didn't increment the counter and thus this is currently pointing to the last entity id used
+                return atomicInteger.get() + 1;
             }
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();

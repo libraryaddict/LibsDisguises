@@ -604,6 +604,10 @@ public class ReflectionManager {
     }
 
     public static int getNewEntityId(boolean increment) {
+        // From earlier versions up to 1.13, entityId = entityCounter++
+        // From 1.14 and onwards, entityId = entityCounter.incrementAndGet()
+        // Obviously, they are very different.
+
         if (nmsReflection != null) {
             return nmsReflection.getNewEntityId(increment);
         }
@@ -621,6 +625,10 @@ public class ReflectionManager {
 
                     return id;
                 }
+            }
+
+            if (NmsVersion.v1_14.isSupported()) {
+                return entityCount.intValue() + 1;
             }
 
             return entityCount.intValue();

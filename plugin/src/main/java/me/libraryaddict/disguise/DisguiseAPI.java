@@ -269,6 +269,7 @@ public class DisguiseAPI {
         }
 
         int id = ReflectionManager.getNewEntityId(false);
+
         DisguiseUtilities.addFutureDisguise(id, (TargetedDisguise) disguise);
 
         return id;
