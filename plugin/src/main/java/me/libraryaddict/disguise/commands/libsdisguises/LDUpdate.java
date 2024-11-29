@@ -43,8 +43,18 @@ public class LDUpdate implements LDCommand {
 
             if (args[1].equalsIgnoreCase("dev")) {
                 releaseBuilds = false;
+
+                if (DisguiseConfig.getUpdatesBranch() == DisguiseConfig.UpdatesBranch.RELEASES) {
+                    LibsMsg.LIBS_UPDATE_CANT_SWITCH_BRANCH.send(sender, DisguiseConfig.getUpdatesBranch().name());
+                    return;
+                }
             } else if (args[1].equalsIgnoreCase("release")) {
                 releaseBuilds = true;
+
+                if (DisguiseConfig.getUpdatesBranch() == DisguiseConfig.UpdatesBranch.SNAPSHOTS) {
+                    LibsMsg.LIBS_UPDATE_CANT_SWITCH_BRANCH.send(sender, DisguiseConfig.getUpdatesBranch().name());
+                    return;
+                }
             } else {
                 LibsMsg.LIBS_UPDATE_UNKNOWN_BRANCH.send(sender);
                 return;

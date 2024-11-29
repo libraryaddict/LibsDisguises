@@ -113,6 +113,9 @@ public enum LibsMsg {
     INVALID_CLONE("<dark_red>Unknown method '%s' - Valid methods are 'IgnoreEquipment' 'DoSneakSprint' 'DoSneak' 'DoSprint'"),
     LIBS_COMMAND_WRONG_ARG("<red>[LibsDisguises] Invalid argument, use /libsdisguises help"),
     LIBS_UPDATE_UNKNOWN_BRANCH("<red>[LibsDisguises] Invalid argument, use 'dev' or 'release' to switch branches"),
+    LIBS_UPDATE_CANT_SWITCH_BRANCH(
+        "<red>[LibsDisguises] Invalid argument, update branch has been set to %s in libsdisguises.yml and cannot be ignored. Change this " +
+            "to SAME_BUILDS and use /ld reload to restore normal behavior."),
     LIMITED_RADIUS("<red>Limited radius to %s! Don't want to make too much lag right?"),
     LISTEN_ENTITY_ENTITY_DISG_ENTITY("<red>Disguised %s as a %s!"),
     LISTEN_ENTITY_ENTITY_DISG_ENTITY_FAIL("<red>Failed to disguise %s as a %s!"),
@@ -176,7 +179,8 @@ public enum LibsMsg {
     PARSE_PARTICLE_SHULK_CHARGE("<red>Expected <green>%s:Roll(number.0)</green>, received <green>%s</green> instead"),
     PARSE_PARTICLE_SHRIEK("<red>Expected <green>%s:Delay(number.0)</green>, received <green>%s</green> instead"),
     PARSE_PARTICLE_TRAIL(
-        "<red>Expected <green>%s:Target(3 numbers),Color(3 numbers or red/blue/etc)</green> eg <green>X,Y,Z:RED</green>, received <green>%s</green> instead"),
+        "<red>Expected <green>%s:Target(3 numbers),Color(3 numbers or red/blue/etc)</green> eg <green>X,Y,Z:RED</green>, received " +
+            "<green>%s</green> instead"),
     PARSE_PARTICLE_DUST(
         "<red>Expected <green>%s:Size(Optional Number),Color(3 numbers or red/blue/etc)</green>, received <green>%s</green> instead"),
     PARSE_PARTICLE_DUST_TRANSITION(
