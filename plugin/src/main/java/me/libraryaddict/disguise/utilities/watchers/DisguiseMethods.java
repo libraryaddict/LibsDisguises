@@ -184,6 +184,7 @@ public class DisguiseMethods {
 
             if (NmsVersion.v1_20_R4.isSupported()) {
                 extraMethods.add("setScalePlayerToDisguise");
+                extraMethods.add("setTallSelfDisguisesScaling");
             }
 
             // Add these last as it's what we want to present to be called the least

@@ -133,6 +133,8 @@ public abstract class Disguise {
     @Getter
     private boolean scalePlayerToDisguise = DisguiseConfig.isScaleSelfDisguises();
     @Getter
+    private boolean tallSelfDisguisesScaling = DisguiseConfig.isTallSelfDisguisesScaling();
+    @Getter
     private final DisguiseInternals internals;
 
     public Disguise(DisguiseType disguiseType) {
@@ -521,7 +523,7 @@ public abstract class Disguise {
         }
 
         if (getEntity() instanceof Player && isSelfDisguiseVisible() && !isTallDisguisesVisible() && isTallDisguise()) {
-            if (DisguiseConfig.isTallSelfDisguisesScaling() && NmsVersion.v1_20_R4.isSupported() && canScaleDisguise()) {
+            if (isTallSelfDisguisesScaling() && NmsVersion.v1_20_R4.isSupported() && canScaleDisguise()) {
                 adjustTallSelfDisguiseScale();
             } else {
                 setSelfDisguiseVisible(false);
@@ -547,6 +549,15 @@ public abstract class Disguise {
         }
 
         this.scalePlayerToDisguise = scalePlayerToDisguise;
+        adjustTallSelfDisguiseScale();
+    }
+
+    public void setTallSelfDisguisesScaling(boolean tallSelfDisguisesScaling) {
+        if (!NmsVersion.v1_20_R4.isSupported()) {
+            return;
+        }
+
+        this.tallSelfDisguisesScaling = tallSelfDisguisesScaling;
         adjustTallSelfDisguiseScale();
     }
 
@@ -598,7 +609,7 @@ public abstract class Disguise {
             return;
         }
 
-        if (prevPersonalDisguiseScaleMax != newPersonalDisguiseScaleMax && isSelfDisguiseVisible()) {
+        if (prevPersonalDisguiseScaleMax != newPersonalDisguiseScaleMax && isSelfDisguiseVisible() && isTallSelfDisguisesScaling()) {
             double scaleToSend;
 
             if (((LivingWatcher) getWatcher()).getScale() != null) {
@@ -607,7 +618,9 @@ public abstract class Disguise {
                 scaleToSend = playerScaleWithoutLibsDisguises;
             }
 
-            scaleToSend = Math.min(scaleToSend, newPersonalDisguiseScaleMax);
+            if (isScalePlayerToDisguise()) {
+                scaleToSend = Math.min(scaleToSend, newPersonalDisguiseScaleMax);
+            }
 
             // The scale of the self disguise, not the player
             WrapperPlayServerUpdateAttributes.Property property =
@@ -1000,8 +1013,7 @@ public abstract class Disguise {
     @Deprecated
     public Disguise setViewSelfDisguise(boolean viewSelfDisguise) {
         if (viewSelfDisguise && !isTallDisguisesVisible() && isTallDisguise()) {
-            if (DisguiseConfig.isTallSelfDisguisesScaling() && NmsVersion.v1_20_R4.isSupported() && canScaleDisguise() &&
-                !isPlayerDisguise()) {
+            if (isTallSelfDisguisesScaling() && NmsVersion.v1_20_R4.isSupported() && canScaleDisguise() && !isPlayerDisguise()) {
                 adjustTallSelfDisguiseScale();
             } else {
                 viewSelfDisguise = false;

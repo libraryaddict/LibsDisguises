@@ -54,7 +54,7 @@ public class PacketHandlerAttributes implements IPacketHandler<WrapperPlayServer
                 Double scale = ((LivingWatcher) disguise.getWatcher()).getScale();
 
                 // If it's for the self disguise and the disguise had to be scaled down
-                if (entity == observer && DisguiseConfig.isTallSelfDisguisesScaling()) {
+                if (entity == observer && disguise.isTallSelfDisguisesScaling()) {
                     attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE,
                         Math.min(disguise.getInternals().getSelfDisguiseTallScaleMax(), scale == null ? property.getValue() : scale),
                         new ArrayList<>()));

@@ -310,7 +310,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             if (NmsVersion.v1_20_R4.isSupported()) {
                 Double scale = ((LivingWatcher) disguise.getWatcher()).getScale();
 
-                if (observer == disguisedEntity && DisguiseConfig.isTallSelfDisguisesScaling()) {
+                if (observer == disguisedEntity && disguise.isTallSelfDisguisesScaling()) {
                     if (scale == null) {
                         scale = DisguiseUtilities.getEntityScaleWithoutLibsDisguises(observer);
                     }
