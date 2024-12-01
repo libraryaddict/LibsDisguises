@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -855,7 +856,7 @@ public abstract class Disguise {
         // If this disguise hasn't a entity set
         if (getEntity() == null) {
             // Loop through the disguises because it could be used with a unknown entity id.
-            HashMap<Integer, HashSet<TargetedDisguise>> future = DisguiseUtilities.getFutureDisguises();
+            Map<Integer, HashSet<TargetedDisguise>> future = DisguiseUtilities.getFutureDisguises();
 
             DisguiseUtilities.getFutureDisguises().keySet().removeIf(id -> future.get(id).remove(this) && future.get(id).isEmpty());
 
