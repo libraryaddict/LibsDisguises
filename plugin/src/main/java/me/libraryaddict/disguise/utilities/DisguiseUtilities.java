@@ -177,6 +177,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -268,7 +269,7 @@ public class DisguiseUtilities {
      * a max of a second.
      */
     @Getter
-    private static final HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<>();
+    private static final Map<Integer, HashSet<TargetedDisguise>> futureDisguises = new ConcurrentHashMap<>();
     private static final HashSet<UUID> savedDisguiseList = new HashSet<>();
     private static final HashSet<String> cachedNames = new HashSet<>();
     private static final HashMap<String, String> sanitySkinCacheMap = new LinkedHashMap<>();
@@ -1187,11 +1188,17 @@ public class DisguiseUtilities {
     }
 
     public static void onFutureDisguise(Entity entity) {
-        if (!getFutureDisguises().containsKey(entity.getEntityId())) {
+        checkFutureDisguises(entity, false);
+    }
+
+    public static void checkFutureDisguises(Entity entity, boolean failedToSpawn) {
+        HashSet<TargetedDisguise> disguises = getFutureDisguises().remove(entity.getEntityId());
+
+        if (disguises == null || failedToSpawn) {
             return;
         }
 
-        for (TargetedDisguise disguise : getFutureDisguises().remove(entity.getEntityId())) {
+        for (TargetedDisguise disguise : disguises) {
             disguise.setEntity(entity);
             disguise.startDisguise();
         }
@@ -3687,14 +3694,50 @@ public class DisguiseUtilities {
         }
 
         if (getFutureDisguises().containsKey(entityId)) {
-            for (Entity e : observer.getWorld().getEntities()) {
-                if (e.getEntityId() != entityId) {
-                    continue;
-                }
+            boolean foundEntity = false;
+            Set<TargetedDisguise> disguises = getDisguises().get(entityId);
 
-                onFutureDisguise(e);
+            if (disguises != null && !disguises.isEmpty()) {
+                Disguise disguise = disguises.iterator().next();
+
+                if (disguise.getEntity() != null) {
+                    foundEntity = true;
+
+                    onFutureDisguise(disguise.getEntity());
+                }
             }
 
+            if (!foundEntity) {
+                if (Bukkit.isPrimaryThread()) {
+                    findEntities(observer, entityId);
+                } else {
+                    int id = entityId;
+                    CountDownLatch latch = new CountDownLatch(1);
+
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                findEntities(observer, id);
+                            } finally {
+                                latch.countDown();
+                            }
+                        }
+                    }.runTask(LibsDisguises.getInstance());
+
+                    try {
+                        boolean mainThreadSuccess = latch.await(5, TimeUnit.SECONDS);
+
+                        if (!mainThreadSuccess) {
+                            LibsDisguises.getInstance().getLogger().info(String.format(
+                                "Packet processing was paused on '%s' for a \"future\" disguise, but took too long waiting for the main " +
+                                    "thread. The disguise may not have " + "been applied properly.", observer.getName()));
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
 
         TargetedDisguise[] disguises = getDisguises(entityId);
@@ -3718,16 +3761,50 @@ public class DisguiseUtilities {
         return null;
     }
 
-    public static Entity getEntity(World world, int entityId) {
-        for (Entity e : world.getEntities()) {
+    private static void findEntities(Player observer, int entityId) {
+        for (Entity e : observer.getWorld().getEntities()) {
             if (e.getEntityId() != entityId) {
                 continue;
             }
 
-            return e;
+            onFutureDisguise(e);
+            return;
         }
 
-        return null;
+        // Don't say anything if there's no disguises, this will be our secret
+        if (!getFutureDisguises().containsKey(entityId)) {
+            return;
+        }
+
+        // Warn the console, so people know why we might be lagging
+        LibsDisguises.getInstance().getLogger().info(String.format(
+            "Failed to find the entity for %s in %s's world. Yet player is still receiving packets about said entity. Now scanning all " +
+                "worlds.", entityId, observer.getName()));
+
+        for (World world : Bukkit.getWorlds()) {
+            if (world == observer.getWorld()) {
+                continue;
+            }
+
+            for (Entity e : observer.getWorld().getEntities()) {
+                if (e.getEntityId() != entityId) {
+                    continue;
+                }
+
+                onFutureDisguise(e);
+                return;
+            }
+        }
+
+        // Warn in console that there's disguises being done weirdly
+        // It's likely that entities are being added without firing EntitySpawnEvent yet a future disguise is being requested on said
+        // entity, then said entity is being removed or hidden from entity list.
+        // Of course, it could be that a future disguise was added, then packets about said entity started being sent before
+        // said entity was even spawned.
+        LibsDisguises.getInstance().getLogger().warning(String.format(
+            "Failed to find the entity for %s in any world, removing disguises for that entity ID. If this happens often, then a plugin " +
+                "is likely sending packets about an entity that is handled weirdly.", entityId));
+        getFutureDisguises().remove(entityId);
     }
 
     /**

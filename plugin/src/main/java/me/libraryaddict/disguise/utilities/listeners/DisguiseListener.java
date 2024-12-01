@@ -39,6 +39,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -386,6 +387,11 @@ public class DisguiseListener implements Listener {
                 disguise.startDisguise();
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onSpawn(EntitySpawnEvent event) {
+        DisguiseUtilities.checkFutureDisguises(event.getEntity(), event.isCancelled());
     }
 
     @EventHandler
