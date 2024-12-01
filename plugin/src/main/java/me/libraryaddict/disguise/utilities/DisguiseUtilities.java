@@ -21,6 +21,7 @@ import com.github.retrooper.packetevents.util.adventure.AdventureSerializer;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerAttachEntity;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerCollectItem;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDamageEvent;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityAnimation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEffect;
@@ -3079,6 +3080,8 @@ public class DisguiseUtilities {
                 return new WrapperPlayServerDestroyEntities(event);
             case ENTITY_POSITION_SYNC:
                 return new WrapperPlayServerEntityPositionSync(event);
+            case DAMAGE_EVENT:
+                return new WrapperPlayServerDamageEvent(event);
             default:
                 throw new IllegalStateException(event.getPacketType() + " wasn't in the enums");
         }
@@ -3131,6 +3134,8 @@ public class DisguiseUtilities {
             return ((WrapperPlayServerCollectItem) wrapper).getCollectorEntityId();
         } else if (wrapper instanceof WrapperPlayServerEntityPositionSync) {
             return ((WrapperPlayServerEntityPositionSync) wrapper).getId();
+        } else if (wrapper instanceof WrapperPlayServerDamageEvent) {
+            return ((WrapperPlayServerDamageEvent) wrapper).getEntityId();
         } else {
             throw new IllegalStateException("The packet " + wrapper.getClass() + " has no entity ID");
         }
@@ -3220,6 +3225,10 @@ public class DisguiseUtilities {
         } else if (wrapper instanceof WrapperPlayServerEntityPositionSync) {
             if (((WrapperPlayServerEntityPositionSync) wrapper).getId() == playerId) {
                 ((WrapperPlayServerEntityPositionSync) wrapper).setId(DisguiseAPI.getSelfDisguiseId());
+            }
+        } else if (wrapper instanceof WrapperPlayServerDamageEvent) {
+            if (((WrapperPlayServerDamageEvent) wrapper).getEntityId() == playerId) {
+                ((WrapperPlayServerDamageEvent) wrapper).setEntityId(DisguiseAPI.getSelfDisguiseId());
             }
         }
     }

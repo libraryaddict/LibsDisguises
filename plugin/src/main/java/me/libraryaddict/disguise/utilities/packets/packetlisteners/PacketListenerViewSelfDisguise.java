@@ -36,7 +36,7 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
             Server.ATTACH_ENTITY, Server.ENTITY_RELATIVE_MOVE_AND_ROTATION, Server.ENTITY_RELATIVE_MOVE, Server.ENTITY_HEAD_LOOK,
             Server.ENTITY_ROTATION, Server.ENTITY_TELEPORT, Server.ENTITY_MOVEMENT, Server.ENTITY_METADATA, Server.ENTITY_EQUIPMENT,
             Server.ENTITY_ANIMATION, Server.ENTITY_EFFECT, Server.ENTITY_VELOCITY, Server.UPDATE_ATTRIBUTES, Server.ENTITY_STATUS,
-            Server.ENTITY_POSITION_SYNC}) {
+            Server.ENTITY_POSITION_SYNC, Server.DAMAGE_EVENT}) {
             listenedPackets[packet.ordinal()] = true;
         }
     }
@@ -195,6 +195,17 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
                         if (sound != null) {
                             observer.playSound(observer.getLocation(), sound.toString(), 1f, 1f);
                         }
+                    }
+                }
+            } else if (event.getPacketType() == Server.DAMAGE_EVENT) {
+                if (disguise.isSelfDisguiseSoundsReplaced()) {
+                    event.setCancelled(true);
+                    // No sound is sent but instead the client is expected to play a hurt sound on damage
+                    SoundGroup group = SoundGroup.getGroup(disguise);
+                    ResourceLocation sound = group.getSound(SoundGroup.SoundType.HURT);
+
+                    if (sound != null) {
+                        observer.playSound(observer.getLocation(), sound.toString(), 1f, 1f);
                     }
                 }
             } else if (event.getPacketType() == Server.ENTITY_VELOCITY && !DisguiseUtilities.isPlayerVelocity(observer)) {
