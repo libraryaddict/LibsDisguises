@@ -8,10 +8,10 @@ import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public class PacketHandlerAnimationCollect implements IPacketHandler {
+public class PacketHandlerCollectItem implements IPacketHandler {
     @Override
     public PacketTypeCommon[] getHandledPackets() {
-        return new PacketTypeCommon[]{PacketType.Play.Server.COLLECT_ITEM, PacketType.Play.Server.ENTITY_ANIMATION};
+        return new PacketTypeCommon[]{PacketType.Play.Server.COLLECT_ITEM};
     }
 
     @Override

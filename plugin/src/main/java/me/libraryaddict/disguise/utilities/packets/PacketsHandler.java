@@ -10,9 +10,10 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
-import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerAnimationCollect;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerAttachEntity;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerAttributes;
+import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerCollectItem;
+import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerEntityAnimation;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerEntityStatus;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerEquipment;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerHeadLook;
@@ -40,8 +41,9 @@ public class PacketsHandler {
         List<IPacketHandler> packetHandlers = new ArrayList<>();
 
         packetHandlers.add(new PacketHandlerAttributes());
-        packetHandlers.add(new PacketHandlerAnimationCollect());
+        packetHandlers.add(new PacketHandlerCollectItem());
         packetHandlers.add(new PacketHandlerEntityStatus());
+        packetHandlers.add(new PacketHandlerEntityAnimation());
 
         if (DisguiseConfig.isEquipmentPacketsEnabled()) {
             packetHandlers.add(new PacketHandlerEquipment());
