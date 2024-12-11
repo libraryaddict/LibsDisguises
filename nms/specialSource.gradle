@@ -19,7 +19,7 @@ def findInGradleCache = { group, module, version, fileName ->
     def baseDir = new File(gradleCache, "${group}/${module}/${version}")
 
     if (!baseDir.exists()) {
-        throw new Exception("Failed to resolve ${baseDir} when trying to load ${fileName}. Cache missing");
+        throw new Exception("Failed to resolve ${baseDir} when trying to load ${fileName}. Cache missing. If resolved using local maven repo, be advised that this script expects a cache from remote, which is stored via gradle.");
     }
 
     def result = baseDir.listFiles()?.findAll { it.isDirectory() }?.collectMany({ it.listFiles().flatten() })?.find { it.name == fileName }?.path

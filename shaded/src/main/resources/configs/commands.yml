@@ -52,3 +52,9 @@ DisguiseCloneExpire: 10
 
 # Max disguises to store at a time with the DisguiseClone command
 DisguiseCloneSize: 3
+
+# The lowest value a scale is permitted to set
+# The minimum scale (per Minecraft) is 0.06
+MinScale: 0
+# The highest
+MaxScale: 50

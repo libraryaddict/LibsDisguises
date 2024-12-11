@@ -65,11 +65,6 @@ public enum DisguiseSoundEnums {
         "entity.creaking.activate", "entity.creaking.deactivate", "entity.creaking.spawn", "entity.creaking.freeze",
         "entity.creaking.unfreeze", "entity.creaking.attack"),
 
-    // Same sounds as CREAKING, just different AI behavior
-    CREAKING_TRANSIENT(null, "entity.creaking.step", "entity.creaking.death", "entity.creaking.ambient", "entity.creaking.sway",
-        "entity.creaking.activate", "entity.creaking.deactivate", "entity.creaking.spawn", "entity.creaking.freeze",
-        "entity.creaking.unfreeze", "entity.creaking.attack"),
-
     CREEPER("entity.creeper.hurt", "block.grass.step", "entity.creeper.death", null, "entity.creeper.primed"),
 
     DOLPHIN("entity.dolphin.hurt", "entity.dolphin.swim", "entity.dolphin.death",

@@ -1471,7 +1471,11 @@ public class ReflectionManager {
         } else if (index == MetaIndex.WOLF_VARIANT) {
             return (T) nmsReflection.getWolfVariantFromInt((int) value);
         } else if (index == MetaIndex.SALMON_VARIANT) {
-            return (T) Salmon.Variant.valueOf(((String) value).toUpperCase(Locale.ENGLISH));
+            if (NmsVersion.v1_21_R3.isSupported()) {
+                return (T) Salmon.Variant.values()[(int) value];
+            } else {
+                return (T) Salmon.Variant.valueOf(((String) value).toUpperCase(Locale.ENGLISH));
+            }
         } else if (index == MetaIndex.CAT_COLLAR || index == MetaIndex.WOLF_COLLAR) {
             return (T) AnimalColor.getColorByWool((int) value);
         } else if (index.isItemStack()) {
@@ -1566,7 +1570,12 @@ public class ReflectionManager {
 
                     if (NmsVersion.v1_21_R2.isSupported()) {
                         if (value instanceof Salmon.Variant) {
-                            return ((Salmon.Variant) value).name().toLowerCase(Locale.ENGLISH);
+                            // Changed from string to int in 1.21.4
+                            if (NmsVersion.v1_21_R3.isSupported()) {
+                                return ((Salmon.Variant) value).ordinal();
+                            } else {
+                                return ((Salmon.Variant) value).name().toLowerCase(Locale.ENGLISH);
+                            }
                         }
                     }
                 }
@@ -2202,6 +2211,7 @@ public class ReflectionManager {
                 case ARMADILLO:
                 case BREEZE_WIND_CHARGE:
                 case OMINOUS_ITEM_SPAWNER:
+                case CREAKING:
                     nmsEntityName = disguiseType.toReadable().replace(" ", "");
                     break;
                 case DONKEY:
@@ -2570,7 +2580,11 @@ public class ReflectionManager {
                 // TODO PacketEvents may add Salmon variant at a future date, also could be doing something redundant here
                 // Such as could be mapping the variant to what we serialize
                 // Doubt it though
-                return EntityDataTypes.STRING;
+                if (NmsVersion.v1_21_R3.isSupported()) {
+                    return EntityDataTypes.INT;
+                } else {
+                    return EntityDataTypes.STRING;
+                }
             }
 
             Type type1 = ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];

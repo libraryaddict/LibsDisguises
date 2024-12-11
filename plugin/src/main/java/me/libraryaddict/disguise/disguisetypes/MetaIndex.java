@@ -38,6 +38,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.BoggedWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CamelWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ChestedHorseWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.CreakingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CreeperWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.DisplayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.DolphinWatcher;
@@ -330,6 +331,18 @@ public class MetaIndex<Y> {
 
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<AnimalColor> CAT_COLLAR = new MetaIndex<>(CatWatcher.class, 3, AnimalColor.RED);
+
+    @NmsAddedIn(NmsVersion.v1_21_R3)
+    public static MetaIndex<Boolean> CREAKING_CAN_MOVE = new MetaIndex<>(CreakingWatcher.class, 0, true);
+    
+    @NmsAddedIn(NmsVersion.v1_21_R3)
+    public static MetaIndex<Boolean> CREAKING_IS_ACTIVE = new MetaIndex<>(CreakingWatcher.class, 0, false);
+
+    @NmsAddedIn(NmsVersion.v1_21_R3)
+    public static MetaIndex<Boolean> CREAKING_IS_TEARING_DOWN = new MetaIndex<>(CreakingWatcher.class, 0, false);
+
+    @NmsAddedIn(NmsVersion.v1_21_R3)
+    public static MetaIndex<Optional<Vector3i>> CREAKING_HOME_POS = new MetaIndex<>(CreakingWatcher.class, 0, Optional.empty());
 
     /**
      * If creeper is ignited, about to blow up

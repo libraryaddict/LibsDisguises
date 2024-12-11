@@ -19,6 +19,7 @@ public enum NmsVersion {
     v1_20_R4("1.20.5", "1.20.6"),
     v1_21_R1("1.21", "1.21.1"),
     v1_21_R2("1.21.3"), // 1.21.2 was hotfixed by 1.21.3
+    v1_21_R3("1.21.4"),
     UNSUPPORTED("N/A");
 
     @Getter
@@ -26,6 +27,10 @@ public enum NmsVersion {
 
     NmsVersion(String... minecraftVersions) {
         this.supportedVersions = minecraftVersions;
+
+        if (name().startsWith("V")) {
+            throw new IllegalArgumentException("Enum " + name() + " starts with a capital V, should be lowercase");
+        }
     }
 
     public boolean isMinecraftVersion(String minecraftVersion) {

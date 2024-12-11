@@ -17,9 +17,8 @@ net-kyori-adventure-api = "4.17.0"
 com-retro-packetevents = "2.6.0"
 placeholder-api = "2.11.6"
 
-bungeecord-chat = "1.16-R0.4"
-org-spigotmc-spigot = "1.21.3-R0.1-SNAPSHOT"
-io-papermc-paper-api = "1.21.3-R0.1-SNAPSHOT"
+org-spigotmc-spigot = "1.21.4-R0.1-SNAPSHOT"
+io-papermc-paper-api = "1.21.4-R0.1-SNAPSHOT"
 
 
 [libraries]
@@ -35,7 +34,6 @@ net-kyori-adventure-api = { module = "net.kyori:adventure-api", version.ref = "n
 net-kyori-adventure-text-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "net-kyori-adventure-api" }
 net-kyori-adventure-text-serializer-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "net-kyori-adventure-api" }
 net-kyori-adventure-text-serializer-json = { module = "net.kyori:adventure-text-serializer-json", version.ref = "net-kyori-adventure-api" }
-net-md-v5-bungeecord-chat = { module = "net.md-5:bungeecord-chat", version.ref = "bungeecord-chat" }
 org-spigotmc-spigot = { module = "org.spigotmc:spigot", version.ref = "org-spigotmc-spigot" }
 org-spigotmc-spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "org-spigotmc-spigot" }
 com-retro-packetevents = { module = "com.github.retrooper:packetevents-spigot", version.ref = "com-retro-packetevents" }

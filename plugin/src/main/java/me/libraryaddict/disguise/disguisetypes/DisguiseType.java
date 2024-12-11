@@ -76,9 +76,10 @@ public enum DisguiseType {
 
     COW,
 
-    @NmsAddedIn(NmsVersion.UNSUPPORTED) CREAKING,
+    @NmsAddedIn(NmsVersion.v1_21_R3) CREAKING,
 
-    @NmsAddedIn(NmsVersion.UNSUPPORTED) CREAKING_TRANSIENT,
+    // Briefly in experimental features but never made it to a release
+    @Deprecated @NmsAddedIn(NmsVersion.UNSUPPORTED) CREAKING_TRANSIENT,
 
     CREEPER,
 
@@ -208,9 +209,9 @@ public enum DisguiseType {
 
     PAINTING,
 
-    @NmsAddedIn(NmsVersion.UNSUPPORTED) PALE_OAK_BOAT,
+    @NmsAddedIn(NmsVersion.v1_21_R3) PALE_OAK_BOAT,
 
-    @NmsAddedIn(NmsVersion.UNSUPPORTED) PALE_OAK_CHEST_BOAT,
+    @NmsAddedIn(NmsVersion.v1_21_R3) PALE_OAK_CHEST_BOAT,
 
     @NmsAddedIn(NmsVersion.v1_14) PANDA,
 
