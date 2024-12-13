@@ -1,5 +1,5 @@
 Libs Disguises
-=============
+==============
 
 One of the best disguise plugins available, this plugin offers an astounding amount of features due to the unique way it implements its use of disguises!
 
