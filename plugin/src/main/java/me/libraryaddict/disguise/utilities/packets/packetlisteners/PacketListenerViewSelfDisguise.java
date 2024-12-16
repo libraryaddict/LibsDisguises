@@ -36,7 +36,7 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
             Server.ATTACH_ENTITY, Server.ENTITY_RELATIVE_MOVE_AND_ROTATION, Server.ENTITY_RELATIVE_MOVE, Server.ENTITY_HEAD_LOOK,
             Server.ENTITY_ROTATION, Server.ENTITY_TELEPORT, Server.ENTITY_MOVEMENT, Server.ENTITY_METADATA, Server.ENTITY_EQUIPMENT,
             Server.ENTITY_ANIMATION, Server.ENTITY_EFFECT, Server.ENTITY_VELOCITY, Server.UPDATE_ATTRIBUTES, Server.ENTITY_STATUS,
-            Server.ENTITY_POSITION_SYNC, Server.DAMAGE_EVENT}) {
+            Server.ENTITY_POSITION_SYNC/*, Server.DAMAGE_EVENT*/}) { // Damage event disabled for now, PE seems to be kicking players for null damage type
             listenedPackets[packet.ordinal()] = true;
         }
     }
