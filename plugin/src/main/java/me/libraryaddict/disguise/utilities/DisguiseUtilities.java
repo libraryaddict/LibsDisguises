@@ -9,6 +9,7 @@ import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentType;
 import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentTypes;
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
+import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.particle.Particle;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
@@ -3238,6 +3239,10 @@ public class DisguiseUtilities {
                 ((WrapperPlayServerDamageEvent) wrapper).setEntityId(DisguiseAPI.getSelfDisguiseId());
             }
         }
+    }
+
+    public static boolean isRegistered(MappedEntity mappedEntity) {
+        return mappedEntity.getId(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion()) >= 0;
     }
 
     /**

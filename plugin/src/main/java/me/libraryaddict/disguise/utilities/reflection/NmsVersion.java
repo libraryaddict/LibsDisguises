@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities.reflection;
 
 import lombok.Getter;
 
+@Getter
 public enum NmsVersion {
     v1_12("1.12", "1.12.1", "1.12.2"),
     v1_13("1.13", "1.13.1", "1.13.2"),
@@ -22,7 +23,6 @@ public enum NmsVersion {
     v1_21_R3("1.21.4"),
     UNSUPPORTED("N/A");
 
-    @Getter
     private final String[] supportedVersions;
 
     NmsVersion(String... minecraftVersions) {
@@ -50,5 +50,9 @@ public enum NmsVersion {
      */
     public boolean isSupported() {
         return ReflectionManager.getVersion() != null && ReflectionManager.getVersion().ordinal() >= ordinal();
+    }
+
+    public boolean isVersion() {
+        return ReflectionManager.getVersion() == this;
     }
 }
