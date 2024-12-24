@@ -18,7 +18,7 @@ com-retro-packetevents = "2.6.0"
 placeholder-api = "2.11.6"
 
 org-spigotmc-spigot = "1.21.4-R0.1-SNAPSHOT"
-io-papermc-paper-api = "1.21.4-R0.1-SNAPSHOT"
+io-papermc-paper-api = "1.21.3-R0.1-SNAPSHOT"
 
 
 [libraries]
