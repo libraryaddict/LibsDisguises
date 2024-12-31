@@ -396,15 +396,16 @@ public class PacketHandlerSpawn implements IPacketHandler {
         com.github.retrooper.packetevents.protocol.entity.type.EntityType entityType = getEntityType(disguise);
         PacketWrapper spawnEntity;
         int entityId = observer == disguisedEntity ? DisguiseAPI.getSelfDisguiseId() : disguisedEntity.getEntityId();
+        com.github.retrooper.packetevents.protocol.world.Location location =
+            new com.github.retrooper.packetevents.protocol.world.Location(loc.getX(), loc.getY(), loc.getZ(), pitch, yaw);
 
         if (NmsVersion.v1_19_R1.isSupported()) {
             spawnEntity =
                 new WrapperPlayServerSpawnEntity(entityId, disguise.getUUID(), entityType, SpigotConversionUtil.fromBukkitLocation(loc),
-                    loc.getYaw(), 0, new Vector3d(vec.getX(), vec.getY(), vec.getZ()));
+                    yaw, 0, new Vector3d(vec.getX(), vec.getY(), vec.getZ()));
         } else {
             spawnEntity = new WrapperPlayServerSpawnLivingEntity(entityId, disguise.getUUID(), entityType,
-                SpigotConversionUtil.fromBukkitLocation(loc), loc.getPitch(), new Vector3d(vec.getX(), vec.getY(), vec.getZ()),
-                new ArrayList<>());
+                SpigotConversionUtil.fromBukkitLocation(loc), pitch, new Vector3d(vec.getX(), vec.getY(), vec.getZ()), new ArrayList<>());
         }
 
         packets.addPacket(spawnEntity);
