@@ -107,16 +107,17 @@ public class PacketHandlerSpawn implements IPacketHandler {
         float pitch = (pitchLock == null ? disguisedEntity.getLocation().getPitch() : pitchLock);
 
         if (DisguiseConfig.isMovementPacketsEnabled()) {
-            if (yawLock == null) {
-                yaw = DisguiseUtilities.getYaw(DisguiseType.getType(disguisedEntity.getType()), yaw);
+            if (yawLock != null) {
+                yaw = DisguiseUtilities.getYaw(disguise.getType(), yaw);
+            } else {
+                yaw = DisguiseUtilities.getYaw(disguise.getType(), DisguiseType.getType(disguisedEntity.getType()), yaw);
             }
 
-            if (pitchLock == null) {
-                pitch = DisguiseUtilities.getPitch(DisguiseType.getType(disguisedEntity.getType()), pitch);
+            if (pitchLock != null) {
+                pitch = DisguiseUtilities.getPitch(disguise.getType(), pitch);
+            } else {
+                pitch = DisguiseUtilities.getPitch(disguise.getType(), DisguiseType.getType(disguisedEntity.getType()), pitch);
             }
-
-            yaw = DisguiseUtilities.getYaw(disguise.getType(), yaw);
-            pitch = DisguiseUtilities.getPitch(disguise.getType(), pitch);
         }
 
         com.github.retrooper.packetevents.protocol.world.Location pLoc =
@@ -397,7 +398,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
         PacketWrapper spawnEntity;
         int entityId = observer == disguisedEntity ? DisguiseAPI.getSelfDisguiseId() : disguisedEntity.getEntityId();
         com.github.retrooper.packetevents.protocol.world.Location location =
-            new com.github.retrooper.packetevents.protocol.world.Location(loc.getX(), loc.getY(), loc.getZ(), pitch, yaw);
+            new com.github.retrooper.packetevents.protocol.world.Location(loc.getX(), loc.getY(), loc.getZ(), yaw, pitch);
 
         if (NmsVersion.v1_19_R1.isSupported()) {
             spawnEntity = new WrapperPlayServerSpawnEntity(entityId, disguise.getUUID(), entityType, location, yaw, 0,
