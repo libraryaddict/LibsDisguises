@@ -431,7 +431,7 @@ public class DisguiseUtilities {
             return modifier.getKey().equals(getSelfDisguiseScaleNamespace());
         }
 
-        return modifier.getName().equals(getSelfDisguiseScaleNamespace().asString());
+        return modifier.getName().equals(getSelfDisguiseScaleNamespace().toString());
     }
 
     public static void removeSelfDisguiseScale(Entity entity) {

@@ -659,7 +659,7 @@ public abstract class Disguise {
                     AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.ANY);
             } else {
                 newModifier = new AttributeModifier(DisguiseUtilities.getSelfDisguiseScaleUUID(),
-                    DisguiseUtilities.getSelfDisguiseScaleNamespace().asString(), personalPlayerScaleAttribute,
+                    DisguiseUtilities.getSelfDisguiseScaleNamespace().toString(), personalPlayerScaleAttribute,
                     AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.ANY);
             }
 
