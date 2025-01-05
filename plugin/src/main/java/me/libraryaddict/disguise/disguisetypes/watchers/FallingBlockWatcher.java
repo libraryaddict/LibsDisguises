@@ -98,12 +98,12 @@ public class FallingBlockWatcher extends FlagWatcher {
 
     @MethodMappedAs("getBlock")
     public WrappedBlockState getBlockState() {
-        return WrappedBlockState.getByGlobalId(getBlockCombinedId());
+        return ReflectionManager.getWrapepdBlockStateByCombinedId(getBlockCombinedId());
     }
 
     @MethodMappedAs("setBlock")
     public void setBlockState(WrappedBlockState state) {
-        setBlockCombinedId(state.getType().getName(), state.getGlobalId());
+        setBlockCombinedId(state.getType().getName(), ReflectionManager.getCombinedIdByWrappedBlockState(state));
     }
 
     @NmsAddedIn(NmsVersion.v1_13)

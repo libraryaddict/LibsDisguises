@@ -12,6 +12,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 
 import java.lang.reflect.Type;
 
@@ -40,6 +41,6 @@ public class SerializerWrappedBlockData implements JsonSerializer<WrappedBlockSt
 
         int combinedID = stateType.getId(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion()) << 4 | data;
 
-        return WrappedBlockState.getByGlobalId(combinedID);
+        return ReflectionManager.getWrapepdBlockStateByCombinedId(combinedID);
     }
 }

@@ -36,11 +36,12 @@ public class MinecartWatcher extends FlagWatcher {
     }
 
     public WrappedBlockState getBlock() {
-        return WrappedBlockState.getByGlobalId(getData(MetaIndex.MINECART_BLOCK));
+        return ReflectionManager.getWrapepdBlockStateByCombinedId(getData(MetaIndex.MINECART_BLOCK));
     }
 
     public void setBlock(WrappedBlockState state) {
-        setData(MetaIndex.MINECART_BLOCK, state == null || state.getType() == StateTypes.AIR ? 0 : state.getGlobalId());
+        setData(MetaIndex.MINECART_BLOCK,
+            state == null || state.getType() == StateTypes.AIR ? 0 : ReflectionManager.getCombinedIdByWrappedBlockState(state));
         setData(MetaIndex.MINECART_BLOCK_VISIBLE, state != null && state.getType() != StateTypes.AIR);
 
         sendData(MetaIndex.MINECART_BLOCK, MetaIndex.MINECART_BLOCK_VISIBLE);

@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
+import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
 import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloState;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
@@ -12,6 +13,7 @@ import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
+import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.util.Vector3f;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
@@ -1481,7 +1483,7 @@ public class ReflectionManager {
         } else if (index.isItemStack()) {
             return (T) DisguiseUtilities.toBukkitItemStack((com.github.retrooper.packetevents.protocol.item.ItemStack) value);
         } else if (index.isBlock() || index.isBlockOpt()) {
-            return (T) WrappedBlockState.getByGlobalId((int) value);
+            return (T) ReflectionManager.getWrapepdBlockStateByCombinedId((int) value);
            /* BlockData data = getBlockDataByCombinedId((int) value);
 
             return (T) SpigotConversionUtil.fromBukkitBlockData(data);*/
@@ -1542,7 +1544,7 @@ public class ReflectionManager {
         }
 
         if (value instanceof WrappedBlockState) {
-            return ((WrappedBlockState) value).getGlobalId();
+            return ReflectionManager.getCombinedIdByWrappedBlockState((WrappedBlockState) value);
         }
 
         if (NmsVersion.v1_14.isSupported()) {
@@ -1880,6 +1882,23 @@ public class ReflectionManager {
         }
 
         return 0;
+    }
+
+    public static int getCombinedIdByWrappedBlockState(WrappedBlockState state) {
+        if (NmsVersion.v1_13.isSupported()) {
+            return state.getType().getMapped().getId(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
+        }
+
+        return state.getGlobalId();
+    }
+
+    public static WrappedBlockState getWrapepdBlockStateByCombinedId(int combinedId) {
+        if (NmsVersion.v1_13.isSupported()) {
+            return WrappedBlockState.getByGlobalId(combinedId);
+        }
+
+        return StateTypes.getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(), combinedId)
+            .createBlockState(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
     }
 
     public static int getCombinedIdByItemStack(ItemStack itemStack) {

@@ -26,7 +26,7 @@ public class EndermanWatcher extends InsentientWatcher {
         }
 
         if (!NmsVersion.v1_13.isSupported()) {
-            return ReflectionManager.getItemStackByCombinedId(value.getGlobalId());
+            return ReflectionManager.getItemStackByCombinedId(ReflectionManager.getCombinedIdByWrappedBlockState(value));
         }
 
         MaterialData pair = SpigotConversionUtil.toBukkitMaterialData(value);
