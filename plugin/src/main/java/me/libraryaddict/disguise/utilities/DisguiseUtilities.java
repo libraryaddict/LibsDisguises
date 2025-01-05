@@ -335,6 +335,11 @@ public class DisguiseUtilities {
         io.github.retrooper.packetevents.adventure.serializer.gson.GsonComponentSerializer.gson();
     @Getter
     private static NamespacedKey selfDisguiseScaleNamespace;
+    /**
+     * This is for 1.20.6 only, 1.21 introduces a NamespaceKey
+     */
+    @Getter
+    private static UUID selfDisguiseScaleUUID = UUID.randomUUID();
     @Getter
     private static Attribute scaleAttribute;
     @Getter
@@ -421,14 +426,21 @@ public class DisguiseUtilities {
         return true;
     }
 
+    public static boolean isDisguisesSelfScalingAttribute(AttributeModifier modifier) {
+        if (NmsVersion.v1_21_R1.isSupported()) {
+            return modifier.getKey().equals(getSelfDisguiseScaleNamespace());
+        }
+
+        return modifier.getName().equals(getSelfDisguiseScaleNamespace().asString());
+    }
+
     public static void removeSelfDisguiseScale(Entity entity) {
         if (!NmsVersion.v1_20_R4.isSupported() || isInvalidFile() || !(entity instanceof LivingEntity)) {
             return;
         }
 
         AttributeInstance attribute = ((LivingEntity) entity).getAttribute(getScaleAttribute());
-        attribute.getModifiers().stream().filter(a -> a.getKey().equals(DisguiseUtilities.getSelfDisguiseScaleNamespace()))
-            .forEach(attribute::removeModifier);
+        attribute.getModifiers().stream().filter(DisguiseUtilities::isDisguisesSelfScalingAttribute).forEach(attribute::removeModifier);
     }
 
     public static double getNameSpacing() {
@@ -552,7 +564,7 @@ public class DisguiseUtilities {
         double height = (disguise.getHeight() + disguise.getWatcher().getNameYModifier());
         double heightScale = disguise.getNameHeightScale();
         height *= heightScale;
-        height += (DisguiseUtilities.getNameSpacing() * (heightScale - 1)) * 0.35;
+        height += (getNameSpacing() * (heightScale - 1)) * 0.35;
 
         for (PacketWrapper packet : packets) {
             if (packet instanceof WrapperPlayServerEntityRotation) {
@@ -566,9 +578,8 @@ public class DisguiseUtilities {
                 if (packet instanceof WrapperPlayServerEntityTeleport) {
                     WrapperPlayServerEntityTeleport tele = (WrapperPlayServerEntityTeleport) packet;
 
-                    cloned = new WrapperPlayServerEntityTeleport(standId,
-                        tele.getPosition().add(0, height + (DisguiseUtilities.getNameSpacing() * i), 0), tele.getYaw(), tele.getPitch(),
-                        tele.isOnGround());
+                    cloned = new WrapperPlayServerEntityTeleport(standId, tele.getPosition().add(0, height + (getNameSpacing() * i), 0),
+                        tele.getYaw(), tele.getPitch(), tele.isOnGround());
                 } else if (packet instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
                     WrapperPlayServerEntityRelativeMoveAndRotation rot = (WrapperPlayServerEntityRelativeMoveAndRotation) packet;
                     cloned = new WrapperPlayServerEntityRelativeMoveAndRotation(standId, rot.getDeltaX(), rot.getDeltaY(), rot.getDeltaZ(),
@@ -580,7 +591,7 @@ public class DisguiseUtilities {
                 } else if (packet instanceof WrapperPlayServerEntityPositionSync) {
                     WrapperPlayServerEntityPositionSync sync = (WrapperPlayServerEntityPositionSync) packet;
                     EntityPositionData data = clone(sync.getValues());
-                    data.setPosition(data.getPosition().add(0, height + (DisguiseUtilities.getNameSpacing() * i), 0));
+                    data.setPosition(data.getPosition().add(0, height + (getNameSpacing() * i), 0));
                     cloned = new WrapperPlayServerEntityPositionSync(standId, data, sync.isOnGround());
                 } else {
                     // It seems that EntityStatus packet was being added at some point, probably in some other transformation
@@ -888,15 +899,15 @@ public class DisguiseUtilities {
             reference = new StringBuilder("@");
 
             for (int i = 0; i < referenceLength; i++) {
-                reference.append(alphabet[DisguiseUtilities.random.nextInt(alphabet.length)]);
+                reference.append(alphabet[random.nextInt(alphabet.length)]);
             }
 
-            if (DisguiseUtilities.getClonedDisguise(reference.toString()) != null) {
+            if (getClonedDisguise(reference.toString()) != null) {
                 reference = null;
             }
         }
 
-        if (reference != null && DisguiseUtilities.addClonedDisguise(reference.toString(), disguise)) {
+        if (reference != null && addClonedDisguise(reference.toString(), disguise)) {
             String entityName = DisguiseType.getType(toClone).toReadable();
 
             LibsMsg.MADE_REF.send(player, entityName, reference.toString());
@@ -1425,7 +1436,7 @@ public class DisguiseUtilities {
                 if (disguiseScale != null) {
                     scale = disguiseScale;
                 } else {
-                    scale = DisguiseUtilities.getEntityScaleWithoutLibsDisguises(disguise.getEntity());
+                    scale = getEntityScaleWithoutLibsDisguises(disguise.getEntity());
                 }
             }
 
@@ -1442,7 +1453,7 @@ public class DisguiseUtilities {
                 }
             }
 
-            ReflectionManager.setBoundingBox(entity, entityBox, DisguiseUtilities.getEntityScaleWithoutLibsDisguises(disguise.getEntity()));
+            ReflectionManager.setBoundingBox(entity, entityBox, getEntityScaleWithoutLibsDisguises(disguise.getEntity()));
         }
     }
 
@@ -1612,7 +1623,7 @@ public class DisguiseUtilities {
             }
 
             disguise.setUserProfile(userProfile);
-            DisguiseUtilities.refreshTrackers(disguise);
+            refreshTrackers(disguise);
         }, DisguiseConfig.isContactMojangServers());
     }
 
@@ -2008,7 +2019,7 @@ public class DisguiseUtilities {
 
                 Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
                     try {
-                        DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
+                        sendSelfDisguise((Player) disguise.getEntity(), disguise);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -2122,7 +2133,7 @@ public class DisguiseUtilities {
 
                 Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
                     try {
-                        DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
+                        sendSelfDisguise((Player) disguise.getEntity(), disguise);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -2813,7 +2824,7 @@ public class DisguiseUtilities {
                         continue;
                     }
 
-                    list.add(new Equipment(slot, DisguiseUtilities.fromBukkitItemStack(getSlot(player.getInventory(), getSlot(slot)))));
+                    list.add(new Equipment(slot, fromBukkitItemStack(getSlot(player.getInventory(), getSlot(slot)))));
                 }
 
                 sendSelfPacket(player, new WrapperPlayServerEntityEquipment(player.getEntityId(), list));
@@ -3317,7 +3328,7 @@ public class DisguiseUtilities {
         }
 
         // Remove the old disguise, else we have weird disguises around the place
-        DisguiseUtilities.removeSelfDisguise(disguise);
+        removeSelfDisguise(disguise);
 
         // If the disguised player can't see themselves. Return
         if (!disguise.isSelfDisguiseVisible() || !PacketsManager.isViewDisguisesListenerEnabled() || player.getVehicle() != null) {
@@ -3454,25 +3465,22 @@ public class DisguiseUtilities {
     public static PacketWrapper<?> updateTablistVisibility(Player player, boolean visible) {
         if (NmsVersion.v1_19_R2.isSupported()) {
             // If visibility is false, and we can't just tell the client to hide it
-            if (!visible && !DisguiseUtilities.isFancyHiddenTabs()) {
+            if (!visible && !isFancyHiddenTabs()) {
                 return new WrapperPlayServerPlayerInfoRemove(player.getUniqueId());
             }
 
             WrapperPlayServerPlayerInfoUpdate.PlayerInfo info =
                 new WrapperPlayServerPlayerInfoUpdate.PlayerInfo(ReflectionManager.getUserProfile(player), visible, player.getPing(),
-                    SpigotConversionUtil.fromBukkitGameMode(player.getGameMode()),
-                    Component.text(DisguiseUtilities.getPlayerListName(player)), null);
+                    SpigotConversionUtil.fromBukkitGameMode(player.getGameMode()), Component.text(getPlayerListName(player)), null);
 
-            return new WrapperPlayServerPlayerInfoUpdate(
-                DisguiseUtilities.isFancyHiddenTabs() ? WrapperPlayServerPlayerInfoUpdate.Action.UPDATE_LISTED :
-                    WrapperPlayServerPlayerInfoUpdate.Action.ADD_PLAYER, info);
+            return new WrapperPlayServerPlayerInfoUpdate(isFancyHiddenTabs() ? WrapperPlayServerPlayerInfoUpdate.Action.UPDATE_LISTED :
+                WrapperPlayServerPlayerInfoUpdate.Action.ADD_PLAYER, info);
         }
 
         // WrapperPlayServerPlayerInfo is for older than 1.19.3
         WrapperPlayServerPlayerInfo.PlayerData playerInfo =
-            new WrapperPlayServerPlayerInfo.PlayerData(Component.text(DisguiseUtilities.getPlayerListName(player)),
-                ReflectionManager.getUserProfile(player), SpigotConversionUtil.fromBukkitGameMode(player.getGameMode()),
-                NmsVersion.v1_17.isSupported() ? player.getPing() : 0);
+            new WrapperPlayServerPlayerInfo.PlayerData(Component.text(getPlayerListName(player)), ReflectionManager.getUserProfile(player),
+                SpigotConversionUtil.fromBukkitGameMode(player.getGameMode()), NmsVersion.v1_17.isSupported() ? player.getPing() : 0);
 
         return new WrapperPlayServerPlayerInfo(
             visible ? WrapperPlayServerPlayerInfo.Action.ADD_PLAYER : WrapperPlayServerPlayerInfo.Action.REMOVE_PLAYER, playerInfo);
@@ -3552,11 +3560,11 @@ public class DisguiseUtilities {
         }
 
         Location loc = disguise.getEntity().getLocation();
-        // Don't need to offset with DisguiseUtilities.getYModifier, because that's a visual offset and not an actual location offset
+        // Don't need to offset with getYModifier, because that's a visual offset and not an actual location offset
         double height = disguise.getHeight() + disguise.getWatcher().getYModifier() + disguise.getWatcher().getNameYModifier();
         double heightScale = disguise.getNameHeightScale();
         double startingY = loc.getY() + (height * heightScale);
-        startingY += (DisguiseUtilities.getNameSpacing() * (heightScale - 1)) * 0.35;
+        startingY += (getNameSpacing() * (heightScale - 1)) * 0.35;
         // TODO If we support text display, there will not be any real features unfortunately
         // Text Display is too "jumpy" so it'd require the display to be mounted on another entity, which probably means more packets
         // than before
@@ -3675,7 +3683,7 @@ public class DisguiseUtilities {
             }
 
             for (AttributeModifier modifier : attribute.getModifiers()) {
-                if (modifier.getKey().equals(getSelfDisguiseScaleNamespace())) {
+                if (isDisguisesSelfScalingAttribute(modifier)) {
                     continue;
                 }
 

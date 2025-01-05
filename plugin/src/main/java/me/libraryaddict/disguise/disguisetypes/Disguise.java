@@ -651,9 +651,19 @@ public abstract class Disguise {
                 attribute.removeModifier(modifier);
             }
 
+            AttributeModifier newModifier;
+
             // Subtract 1, as 1 is added internally
-            attribute.addModifier(new AttributeModifier(DisguiseUtilities.getSelfDisguiseScaleNamespace(), personalPlayerScaleAttribute,
-                AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.ANY));
+            if (NmsVersion.v1_21_R1.isSupported()) {
+                newModifier = new AttributeModifier(DisguiseUtilities.getSelfDisguiseScaleNamespace(), personalPlayerScaleAttribute,
+                    AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.ANY);
+            } else {
+                newModifier = new AttributeModifier(DisguiseUtilities.getSelfDisguiseScaleUUID(),
+                    DisguiseUtilities.getSelfDisguiseScaleNamespace().asString(), personalPlayerScaleAttribute,
+                    AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.ANY);
+            }
+
+            attribute.addModifier(newModifier);
         }
     }
 
