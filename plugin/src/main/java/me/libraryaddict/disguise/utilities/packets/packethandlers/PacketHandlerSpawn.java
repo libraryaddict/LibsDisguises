@@ -6,6 +6,7 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.protocol.world.Direction;
+import com.github.retrooper.packetevents.protocol.world.Location;
 import com.github.retrooper.packetevents.protocol.world.PaintingType;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.util.Vector3i;
@@ -24,6 +25,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSp
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnPainting;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnPlayer;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateAttributes;
+import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -44,7 +46,6 @@ import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -95,15 +96,15 @@ public class PacketHandlerSpawn implements IPacketHandler {
     private void constructSpawnPackets(final Player observer, LibsPackets packets, Entity disguisedEntity) {
         Disguise disguise = packets.getDisguise();
 
-        Location loc = disguisedEntity.getLocation().clone()
-            .add(0, DisguiseUtilities.getYModifier(disguise) + disguise.getWatcher().getYModifier(), 0);
+        Vector loc = disguisedEntity.getLocation().toVector();
+        loc.setY(loc.getY() + DisguiseUtilities.getYModifier(disguise) + disguise.getWatcher().getYModifier());
 
         Float pitchLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getPitchLock() : null;
         Float yawLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getYawLock() : null;
         int entityId = observer == disguisedEntity ? DisguiseAPI.getSelfDisguiseId() : disguisedEntity.getEntityId();
 
-        float yaw = (yawLock == null ? loc.getYaw() : yawLock);
-        float pitch = (pitchLock == null ? loc.getPitch() : pitchLock);
+        float yaw = (yawLock == null ? disguisedEntity.getLocation().getYaw() : yawLock);
+        float pitch = (pitchLock == null ? disguisedEntity.getLocation().getPitch() : pitchLock);
 
         if (DisguiseConfig.isMovementPacketsEnabled()) {
             if (yawLock == null) {
@@ -179,11 +180,11 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     spawnPlayer = constructLivingPacket(observer, packets, disguisedEntity, loc, pitch, yaw);
                 } else {
                     // Spawn them in front of the observer
-                    Location spawnAt =
-                        inLineOfSight ? loc : observer.getLocation().add(observer.getLocation().getDirection().normalize().multiply(10));
+                    Location spawnAt = inLineOfSight ? pLoc : SpigotConversionUtil.fromBukkitLocation(
+                        observer.getLocation().add(observer.getLocation().getDirection().normalize().multiply(10)));
 
                     // Spawn the player
-                    spawnPlayer = new WrapperPlayServerSpawnPlayer(entityId, playerDisguise.getUUID(), pLoc, new ArrayList<>());
+                    spawnPlayer = new WrapperPlayServerSpawnPlayer(entityId, playerDisguise.getUUID(), spawnAt, new ArrayList<>());
 
                     packets.addPacket(spawnPlayer);
                 }
@@ -383,7 +384,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
         }
     }
 
-    private PacketWrapper constructLivingPacket(Player observer, LibsPackets packets, Entity disguisedEntity, Location loc, float pitch,
+    private PacketWrapper constructLivingPacket(Player observer, LibsPackets packets, Entity disguisedEntity, Vector loc, float pitch,
                                                 float yaw) {
         Disguise disguise = packets.getDisguise();
         Vector vec = disguisedEntity.getVelocity();
