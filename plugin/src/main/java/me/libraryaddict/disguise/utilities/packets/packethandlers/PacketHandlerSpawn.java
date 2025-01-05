@@ -24,7 +24,6 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSp
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnPainting;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnPlayer;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateAttributes;
-import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -400,12 +399,11 @@ public class PacketHandlerSpawn implements IPacketHandler {
             new com.github.retrooper.packetevents.protocol.world.Location(loc.getX(), loc.getY(), loc.getZ(), pitch, yaw);
 
         if (NmsVersion.v1_19_R1.isSupported()) {
-            spawnEntity =
-                new WrapperPlayServerSpawnEntity(entityId, disguise.getUUID(), entityType, SpigotConversionUtil.fromBukkitLocation(loc),
-                    yaw, 0, new Vector3d(vec.getX(), vec.getY(), vec.getZ()));
+            spawnEntity = new WrapperPlayServerSpawnEntity(entityId, disguise.getUUID(), entityType, location, yaw, 0,
+                new Vector3d(vec.getX(), vec.getY(), vec.getZ()));
         } else {
-            spawnEntity = new WrapperPlayServerSpawnLivingEntity(entityId, disguise.getUUID(), entityType,
-                SpigotConversionUtil.fromBukkitLocation(loc), pitch, new Vector3d(vec.getX(), vec.getY(), vec.getZ()), new ArrayList<>());
+            spawnEntity = new WrapperPlayServerSpawnLivingEntity(entityId, disguise.getUUID(), entityType, location, pitch,
+                new Vector3d(vec.getX(), vec.getY(), vec.getZ()), new ArrayList<>());
         }
 
         packets.addPacket(spawnEntity);
