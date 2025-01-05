@@ -543,7 +543,7 @@ public abstract class Disguise {
     }
 
     public void setScalePlayerToDisguise(boolean scalePlayerToDisguise) {
-        if (!LibsPremium.isPremium() && !DisguiseConfig.isScaleSelfDisguises() && scalePlayerToDisguise) {
+        if (!LibsPremium.isPremium() && scalePlayerToDisguise) {
             scalePlayerToDisguise = false;
             LibsDisguises.getInstance().getLogger()
                 .info("You cannot use setScalePlayerToDisguise if it's disabled in the config without the Premium Plugin");
@@ -640,12 +640,11 @@ public abstract class Disguise {
                 .orElse(null);
 
         // Disabled or not allowed or doesn't need to scale up
-        if (!isScalePlayerToDisguise() || !LibsPremium.isPremium() || !DisguiseConfig.isScaleSelfDisguises() ||
-            personalPlayerScaleAttribute == 1 || isPlayerDisguise()) {
+        if (!isScalePlayerToDisguise() || !LibsPremium.isPremium() || personalPlayerScaleAttribute == 1 || isPlayerDisguise()) {
             if (modifier != null) {
                 attribute.removeModifier(modifier);
             }
-        } else if (isScalePlayerToDisguise() && DisguiseConfig.isScaleSelfDisguises()) {
+        } else if (isScalePlayerToDisguise()) {
             personalPlayerScaleAttribute -= 1;
 
             if (modifier != null) {
