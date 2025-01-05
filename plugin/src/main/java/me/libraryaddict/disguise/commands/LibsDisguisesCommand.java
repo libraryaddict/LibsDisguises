@@ -119,7 +119,8 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
             if (sender.hasPermission("libsdisguises.reload")) {
                 sender.sendMessage(ChatColor.DARK_GREEN + "Use " + ChatColor.GREEN + "/libsdisguises " + "reload" + ChatColor.DARK_GREEN +
                     " to reload the config. All disguises will be blown by doing this" + ".");
-                sender.sendMessage(ChatColor.DARK_GREEN + "Use /libsdisguises help to see more help");
+                sender.sendMessage(
+                    ChatColor.DARK_GREEN + "Use " + ChatColor.GREEN + "/libsdisguises help" + ChatColor.DARK_GREEN + " to see more help");
             }
 
             if (LibsPremium.isPremium()) {

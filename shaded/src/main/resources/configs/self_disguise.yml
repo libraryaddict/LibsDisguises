@@ -14,7 +14,7 @@ ViewSelfDisguises: true
 # Default is true
 ViewSelfDisguisesDefault: true
 
-# If this is enabled and the server is 1.21+, players will be given the scale attribute to scale them up/down to the disguise's size
+# If this is enabled and the server is 1.20.6+, players will be given the scale attribute to scale them up/down to the disguise's size
 # This will only work on living disguises, and is false by default due to the possibility of abuse as it'd shrink hitboxes and the like
 # This may behave unexpectably if you're playing with other scaling modifiers outside of this plugin!
 # An example of what this setting does, is if you disguise as a cat you will be scaled down so your viewpoint is at the same height of an actual cat
@@ -39,7 +39,7 @@ HearSelfDisguise: true
 # false = hidden, true = shown
 TallSelfDisguises: false
 
-# This setting which is for servers that are 1.21+, allows the server to scale down the self disguise instead of hiding it completely
+# This setting which is for servers that are 1.20.6+, allows the server to scale down the self disguise instead of hiding it completely
 # If a player looks down, they'll see a mini figure of the previously large disguise
 # This setting only works if the disguise wouldn't be shown as it's too tall, aka the above setting is false
 # This will only work on living disguises!
