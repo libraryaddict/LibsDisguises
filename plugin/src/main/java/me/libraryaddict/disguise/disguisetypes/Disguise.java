@@ -543,16 +543,6 @@ public abstract class Disguise {
     }
 
     public void setScalePlayerToDisguise(boolean scalePlayerToDisguise) {
-        if (isScalePlayerToDisguise() == scalePlayerToDisguise) {
-            return;
-        }
-
-        if (!LibsPremium.isPremium() && !DisguiseConfig.isScaleSelfDisguises() && scalePlayerToDisguise) {
-            scalePlayerToDisguise = false;
-            LibsDisguises.getInstance().getLogger()
-                .info("You cannot use setScalePlayerToDisguise if it's disabled in the config without the Premium Plugin");
-        }
-
         this.scalePlayerToDisguise = scalePlayerToDisguise;
         adjustTallSelfDisguiseScale();
     }
