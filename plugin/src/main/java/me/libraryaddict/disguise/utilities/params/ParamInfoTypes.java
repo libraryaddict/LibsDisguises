@@ -117,6 +117,9 @@ public class ParamInfoTypes {
 
         Material[] materials = getMaterials();
 
+        paramInfos.add(new ParamInfoWrappedBlockData(WrappedBlockState.class, "BlockData",
+            "The block data states, barrel[facing=north,open=false] as example"));
+
         if (NmsVersion.v1_13.isSupported()) {
             paramInfos.add(new ParamInfoParticle("Particle", "The different particles of Minecraft", materials));
             paramInfos.add(new ParamInfoEnum(Particle.class, "ParticleType", "The different particles of Minecraft"));
@@ -125,8 +128,6 @@ public class ParamInfoTypes {
             //      new ParamInfoBlockData(BlockData.class, "BlockData", "The block data states, barrel[facing=north,open=false] as
             //      example",
             //         getMaterials()));
-            paramInfos.add(new ParamInfoWrappedBlockData(WrappedBlockState.class, "BlockData",
-                "The block data states, barrel[facing=north,open=false] as example"));
         } else {
             paramInfos.add(new ParamInfoEnum(Particle.class, "Particle", "The different particles of Minecraft"));
         }
