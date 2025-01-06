@@ -32,11 +32,7 @@ public class FallingBlockWatcher extends FlagWatcher {
     public FallingBlockWatcher clone(Disguise disguise) {
         FallingBlockWatcher watcher = (FallingBlockWatcher) super.clone(disguise);
 
-        if (NmsVersion.v1_13.isSupported()) {
-            watcher.setBlockData(getBlockData().clone());
-        } else {
-            watcher.setBlock(getBlock().clone());
-        }
+        watcher.setBlockState(getBlockState().clone());
 
         return watcher;
     }
