@@ -98,7 +98,7 @@ public class FallingBlockWatcher extends FlagWatcher {
 
     @MethodMappedAs("getBlock")
     public WrappedBlockState getBlockState() {
-        return ReflectionManager.getWrapepdBlockStateByCombinedId(getBlockCombinedId());
+        return ReflectionManager.getWrappedBlockStateByCombinedId(getBlockCombinedId());
     }
 
     @MethodMappedAs("setBlock")

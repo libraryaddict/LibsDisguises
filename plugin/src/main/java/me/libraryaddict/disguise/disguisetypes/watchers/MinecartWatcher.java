@@ -36,7 +36,7 @@ public class MinecartWatcher extends FlagWatcher {
     }
 
     public WrappedBlockState getBlock() {
-        return ReflectionManager.getWrapepdBlockStateByCombinedId(getData(MetaIndex.MINECART_BLOCK));
+        return ReflectionManager.getWrappedBlockStateByCombinedId(getData(MetaIndex.MINECART_BLOCK));
     }
 
     public void setBlock(WrappedBlockState state) {

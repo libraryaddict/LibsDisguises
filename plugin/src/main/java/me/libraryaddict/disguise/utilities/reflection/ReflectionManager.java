@@ -1483,7 +1483,7 @@ public class ReflectionManager {
         } else if (index.isItemStack()) {
             return (T) DisguiseUtilities.toBukkitItemStack((com.github.retrooper.packetevents.protocol.item.ItemStack) value);
         } else if (index.isBlock() || index.isBlockOpt()) {
-            return (T) ReflectionManager.getWrapepdBlockStateByCombinedId((int) value);
+            return (T) ReflectionManager.getWrappedBlockStateByCombinedId((int) value);
            /* BlockData data = getBlockDataByCombinedId((int) value);
 
             return (T) SpigotConversionUtil.fromBukkitBlockData(data);*/
@@ -1886,13 +1886,13 @@ public class ReflectionManager {
 
     public static int getCombinedIdByWrappedBlockState(WrappedBlockState state) {
         if (NmsVersion.v1_13.isSupported()) {
-            return state.getType().getMapped().getId(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
+            return state.getGlobalId();
         }
 
-        return state.getGlobalId();
+        return state.getType().getMapped().getId(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
     }
 
-    public static WrappedBlockState getWrapepdBlockStateByCombinedId(int combinedId) {
+    public static WrappedBlockState getWrappedBlockStateByCombinedId(int combinedId) {
         if (NmsVersion.v1_13.isSupported()) {
             return WrappedBlockState.getByGlobalId(combinedId);
         }

@@ -41,6 +41,6 @@ public class SerializerWrappedBlockData implements JsonSerializer<WrappedBlockSt
 
         int combinedID = stateType.getId(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion()) << 4 | data;
 
-        return ReflectionManager.getWrapepdBlockStateByCombinedId(combinedID);
+        return ReflectionManager.getWrappedBlockStateByCombinedId(combinedID);
     }
 }
