@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.NamespacedKey;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.UUID;
@@ -37,7 +36,8 @@ import java.util.UUID;
     private final NamespacedKey bossBar = new NamespacedKey("libsdisguises", UUID.randomUUID().toString());
 
     protected double getActualEntityScale() {
-        return ((LivingEntity) disguise.getEntity()).getAttribute(DisguiseUtilities.getScaleAttribute()).getValue();
+        return disguise.getEntity() instanceof LivingEntity ?
+            ((LivingEntity) disguise.getEntity()).getAttribute(DisguiseUtilities.getScaleAttribute()).getValue() : 1;
     }
 
     protected double getRawEntityScaleWithoutLibsDisguises() {
