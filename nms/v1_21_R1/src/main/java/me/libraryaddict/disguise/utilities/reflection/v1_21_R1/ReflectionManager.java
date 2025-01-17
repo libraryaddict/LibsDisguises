@@ -3,15 +3,12 @@ package me.libraryaddict.disguise.utilities.reflection.v1_21_R1;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JavaOps;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.SneakyThrows;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
 import net.minecraft.core.Registry;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -465,20 +462,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     @Override
-    public Object serializeComponents(ItemStack itemStack) {
-        if (itemStack == null) {
-            return null;
-        }
-
-        net.minecraft.world.item.ItemStack item = CraftItemStack.asNMSCopy(itemStack);
-        DataComponentPatch comps = item.getComponentsPatch();
-
-        if (comps == null) {
-            return null;
-        }
-
-        DataResult<Object> cond = DataComponentPatch.CODEC.encodeStart(JavaOps.INSTANCE, comps);
-
-        return cond.result().orElse(null);
+    public String getDataAsString(ItemStack itemStack) {
+        return itemStack.hasItemMeta() ? itemStack.getItemMeta().getAsComponentString() : null;
     }
 }

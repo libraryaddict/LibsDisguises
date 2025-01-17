@@ -154,7 +154,7 @@ public interface ReflectionManagerAbstract {
         throw new IllegalStateException("Not implemented");
     }
 
-    default Object serializeComponents(ItemStack itemStack) {
-        throw new IllegalStateException("Not implemented");
+    default String getDataAsString(ItemStack itemStack) {
+        return itemStack.hasItemMeta() ? itemStack.getItemMeta().getAsString() : null;
     }
 }

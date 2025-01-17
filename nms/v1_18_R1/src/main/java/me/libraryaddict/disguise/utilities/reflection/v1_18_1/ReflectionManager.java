@@ -10,6 +10,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.SneakyThrows;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
 import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
@@ -382,5 +383,13 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         Registry<Motive> registry = Registry.MOTIVE;
 
         return registry.getId(CraftArt.BukkitToNotch(type));
+    }
+
+    @Override
+    public String getDataAsString(ItemStack itemStack) {
+        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(itemStack);
+        CompoundTag compoundTag = nmsItem.save(new CompoundTag());
+
+        return compoundTag.getAsString();
     }
 }

@@ -436,7 +436,6 @@ public class DisguiseParser {
         }
 
         return TranslateType.DISGUISE_OPTIONS_PARAMETERS.reverseGet("null");
-
     }
 
     /**
