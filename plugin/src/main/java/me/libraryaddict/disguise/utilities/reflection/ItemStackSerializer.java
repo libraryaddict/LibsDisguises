@@ -35,9 +35,7 @@ public class ItemStackSerializer {
                     // Vanilla seems to turn this into a string that contains for UUID
                     // : [I; 772059800,
                     // And there should be no space, so we must strip all spaces that are unneeded.
-                    asString = stripSpacesFromString(asString);
-
-                    type += "[" + asString.substring(1, asString.length() - 1) + "]";
+                    type += stripSpacesFromString(asString);
                 }
             } else {
                 NBT nbt = DisguiseUtilities.fromBukkitItemStack(item).getNBT();
