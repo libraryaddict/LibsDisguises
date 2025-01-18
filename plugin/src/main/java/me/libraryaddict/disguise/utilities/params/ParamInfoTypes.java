@@ -214,7 +214,8 @@ public class ParamInfoTypes {
             new ParamInfoEulerAngle(EulerAngle.class, "Euler Angle", "Euler Angle (X,Y,Z)", "Set the X,Y,Z directions on an armorstand"));
         paramInfos.add(new ParamInfoColor(Color.class, "Color", "Colors that can also be defined through RGB", getColors()));
         paramInfos.add(new ParamInfoEnum(Material.class, "Material", "A material used for blocks and items", materials));
-        paramInfos.add(new ParamInfoItemStack(ItemStack.class, "ItemStack", "ItemStack (Material,Amount?,Glow?)",
+        paramInfos.add(new ParamInfoItemStack(ItemStack.class, "ItemStack",
+            "ItemStack (Material,Amount?,Glow?) or ItemStack[data=data] (valid via /give)",
             "An ItemStack compromised of Material,Amount,Glow. Only requires Material", materials));
         paramInfos.add(new ParamInfoItemStackArray(ItemStack[].class, "ItemStack[]",
             "Four ItemStacks (Material:Amount?:Glow?,Material:Amount?:Glow?..)", "Four ItemStacks separated by a comma", materials));
