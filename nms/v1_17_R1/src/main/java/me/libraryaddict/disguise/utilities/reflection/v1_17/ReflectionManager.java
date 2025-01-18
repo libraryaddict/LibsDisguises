@@ -9,7 +9,6 @@ import io.netty.buffer.PooledByteBufAllocator;
 import lombok.SneakyThrows;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
 import net.minecraft.core.Registry;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
@@ -388,8 +387,11 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     @Override
     public String getDataAsString(ItemStack itemStack) {
         net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(itemStack);
-        CompoundTag compoundTag = nmsItem.save(new CompoundTag());
 
-        return compoundTag.getAsString();
+        if (nmsItem.getTag() == null) {
+            return null;
+        }
+
+        return nmsItem.getTag().getAsString();
     }
 }
