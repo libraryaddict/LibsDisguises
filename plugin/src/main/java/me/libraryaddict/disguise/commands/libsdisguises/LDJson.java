@@ -79,7 +79,7 @@ public class LDJson implements LDCommand {
     }
 
     private void sendMessage(CommandSender sender, LibsMsg msg, LibsMsg oldVer, String string, boolean forceAbbrev) {
-        TextComponent.Builder builder = Component.text().append(msg.getAdv()).appendSpace();
+        TextComponent.Builder builder = Component.text().append(msg.getAdv()).append(Component.text(" "));
 
         if (string.length() > 256 || forceAbbrev) {
             String[] split = DisguiseUtilities.split(string);
@@ -130,7 +130,7 @@ public class LDJson implements LDCommand {
 
             for (int i = 0; i < sections.size(); i++) {
                 if (i > 0) {
-                    builder.appendSpace();
+                    builder.append(Component.text(" "));
                 }
 
                 builder.append(createComponent(sections.get(i), i + 1, sections.size()));
