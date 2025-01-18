@@ -372,8 +372,28 @@ public class DisguiseUtilities {
         entityItem = EntityType.fromName("item");
 
         if (Bukkit.getServer() != null) {
-            durabilityEnchantment = Enchantment.getByName("unbreaking");
-            waterbreathingEnchantment = Enchantment.getByName("respiration");
+            for (String name : new String[]{"unbreaking", "DURABILITY"}) {
+                durabilityEnchantment = Enchantment.getByName(name);
+
+                if (durabilityEnchantment != null) {
+                    break;
+                }
+            }
+
+            for (String name : new String[]{"respiration", "OXYGEN"}) {
+                waterbreathingEnchantment = Enchantment.getByName(name);
+
+                if (waterbreathingEnchantment != null) {
+                    break;
+                }
+            }
+
+            if (getDurabilityEnchantment() == null) {
+                throw new IllegalArgumentException("Unable to load durability enchantment");
+            }
+            if (getWaterbreathingEnchantment() == null) {
+                throw new IllegalArgumentException("Unable to load water breathing enchantment");
+            }
 
             whitelistedEnchantments.put(Enchantment.DEPTH_STRIDER, EnchantmentTypes.DEPTH_STRIDER);
             whitelistedEnchantments.put(getWaterbreathingEnchantment(), EnchantmentTypes.RESPIRATION);
