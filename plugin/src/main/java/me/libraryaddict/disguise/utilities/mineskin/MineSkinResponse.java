@@ -50,7 +50,7 @@ public class MineSkinResponse {
     private double timestamp;
     private int duration;
     @SerializedName("account")
-    private int accountId;
+    private String accountId;
     private String server;
     @SerializedName("private")
     private boolean privateSkin;

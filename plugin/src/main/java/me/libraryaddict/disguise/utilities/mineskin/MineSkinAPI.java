@@ -266,51 +266,55 @@ public class MineSkinAPI {
             callback.onError(skinUrl == null ? LibsMsg.SKIN_API_TIMEOUT_ERROR : LibsMsg.SKIN_API_IMAGE_TIMEOUT);
             return null;
         } catch (Exception ex) {
-            if (connection != null) {
+            try {
+                if (connection != null) {
+                    try {
+                        int code = connection.getResponseCode();
 
-                try {
-                    int code = connection.getResponseCode();
+                        if (connection.getResponseCode() == 524 || connection.getResponseCode() == 408 ||
+                            connection.getResponseCode() == 504 || connection.getResponseCode() == 599) {
+                            if (getApiKey() != null && connection.getResponseCode() == 504) {
+                                callback.onError(LibsMsg.SKIN_API_TIMEOUT_API_KEY_ERROR);
+                            } else {
+                                callback.onError(LibsMsg.SKIN_API_TIMEOUT_ERROR);
+                            }
 
-                    if (connection.getResponseCode() == 524 || connection.getResponseCode() == 408 || connection.getResponseCode() == 504 ||
-                        connection.getResponseCode() == 599) {
-                        if (getApiKey() != null && connection.getResponseCode() == 504) {
-                            callback.onError(LibsMsg.SKIN_API_TIMEOUT_API_KEY_ERROR);
-                        } else {
-                            callback.onError(LibsMsg.SKIN_API_TIMEOUT_ERROR);
-                        }
-
-                        return null;
-                    }
-                } catch (IOException ignored) {
-                }
-
-                if (LibsDisguises.getInstance().getLogger() != null) {
-                    // Get the input stream, what we receive
-                    try (InputStream errorStream = connection.getErrorStream()) {
-                        // Read it to string
-                        String response = new BufferedReader(new InputStreamReader(errorStream, StandardCharsets.UTF_8)).lines()
-                            .collect(Collectors.joining("\n"));
-
-                        // I don't think there's a reliable way to detect the page.
-                        // They change the page layout, text and don't identify themselves clearly as this is not meant to be bottable
-                        if (response.toLowerCase(Locale.ENGLISH).contains("challenge") &&
-                            response.toLowerCase(Locale.ENGLISH).contains("javascript")) {
-                            LibsDisguises.getInstance().getLogger().warning(
-                                "We may have encountered a Cloudflare challenge page while connecting to MineSkin, unfortunately this " +
-                                    "could be of several reasons. Foremost is the site suffering a bot attack, your IP could be " +
-                                    "blacklisted, there could be a Cloudflare misconfiguration.");
-                        }
-
-                        if (response.length() < 10_000 || lastErrorPage + TimeUnit.HOURS.toMillis(12) < System.currentTimeMillis()) {
-                            LibsDisguises.getInstance().getLogger().warning("MineSkin error: " + response);
-                            lastErrorPage = System.currentTimeMillis();
-                        } else {
-                            LibsDisguises.getInstance().getLogger()
-                                .warning("MineSkin error logging skipped as it has been printed in the last 12h and is spammy");
+                            return null;
                         }
                     } catch (IOException ignored) {
                     }
+
+                    if (LibsDisguises.getInstance().getLogger() != null) {
+                        // Get the input stream, what we receive
+                        try (InputStream errorStream = connection.getErrorStream()) {
+                            // Read it to string
+                            String response = new BufferedReader(new InputStreamReader(errorStream, StandardCharsets.UTF_8)).lines()
+                                .collect(Collectors.joining("\n"));
+
+                            // I don't think there's a reliable way to detect the page.
+                            // They change the page layout, text and don't identify themselves clearly as this is not meant to be bottable
+                            if (response.toLowerCase(Locale.ENGLISH).contains("challenge") &&
+                                response.toLowerCase(Locale.ENGLISH).contains("javascript")) {
+                                LibsDisguises.getInstance().getLogger().warning(
+                                    "We may have encountered a Cloudflare challenge page while connecting to MineSkin, unfortunately this" +
+                                        " " +
+                                        "could be of several reasons. Foremost is the site suffering a bot attack, your IP could be " +
+                                        "blacklisted, there could be a Cloudflare misconfiguration.");
+                            }
+
+                            if (response.length() < 10_000 || lastErrorPage + TimeUnit.HOURS.toMillis(12) < System.currentTimeMillis()) {
+                                LibsDisguises.getInstance().getLogger().warning("MineSkin error: " + response);
+                                lastErrorPage = System.currentTimeMillis();
+                            } else {
+                                LibsDisguises.getInstance().getLogger()
+                                    .warning("MineSkin error logging skipped as it has been printed in the last 12h and is spammy");
+                            }
+                        } catch (IOException ignored) {
+                        }
+                    }
                 }
+            } catch (Exception ex2) {
+                ex2.printStackTrace();
             }
 
             if (LibsDisguises.getInstance().getLogger() != null) {
