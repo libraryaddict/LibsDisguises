@@ -80,7 +80,7 @@ public class SkinUtils {
                             handleProfile(response.getGameProfile(), modelType, callback);
                         }
                     }.runTask(LibsDisguises.getInstance());
-                } catch (IllegalArgumentException e) {
+                } catch (Throwable e) {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
