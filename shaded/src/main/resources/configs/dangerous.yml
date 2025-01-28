@@ -36,3 +36,4 @@ DisabledMethods:
   - setYModifier
   - setNameYModifier
   - setInvisible
+  - setUnsafeSize
