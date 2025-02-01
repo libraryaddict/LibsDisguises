@@ -2188,135 +2188,100 @@ public class ReflectionManager {
     }
 
     private static void createNMSValues(DisguiseType disguiseType) {
-        String nmsEntityName = toReadable(disguiseType.name());
+        String nmsEntityName;
 
-        Class nmsClass = getNmsClassIgnoreErrors("Entity" + nmsEntityName);
+        if (getNmsReflection() != null) {
+            nmsEntityName = disguiseType.getEntityType().getKey().getKey();
+        } else {
+            nmsEntityName = toReadable(disguiseType.name());
 
-        if (nmsClass == null || Modifier.isAbstract(nmsClass.getModifiers())) {
-            String[] split = splitReadable(disguiseType.name());
-            ArrayUtils.reverse(split);
-
-            nmsEntityName = StringUtils.join(split);
-            nmsClass = getNmsClassIgnoreErrors("Entity" + nmsEntityName);
+            Class nmsClass = getNmsClassIgnoreErrors("Entity" + nmsEntityName);
 
             if (nmsClass == null || Modifier.isAbstract(nmsClass.getModifiers())) {
-                nmsEntityName = null;
-            }
-        }
+                String[] split = splitReadable(disguiseType.name());
+                ArrayUtils.reverse(split);
 
-        if (nmsEntityName == null) {
-            switch (disguiseType) {
-                case BOAT:
-                case ACACIA_BOAT:
-                case BIRCH_BOAT:
-                case CHERRY_BOAT:
-                case DARK_OAK_BOAT:
-                case JUNGLE_BOAT:
-                case MANGROVE_BOAT:
-                case OAK_BOAT:
-                case PALE_OAK_BOAT:
-                case SPRUCE_BOAT:
-                case BAMBOO_RAFT:
-                case BAMBOO_CHEST_RAFT:
-                case ACACIA_CHEST_BOAT:
-                case BIRCH_CHEST_BOAT:
-                case CHERRY_CHEST_BOAT:
-                case DARK_OAK_CHEST_BOAT:
-                case JUNGLE_CHEST_BOAT:
-                case MANGROVE_CHEST_BOAT:
-                case OAK_CHEST_BOAT:
-                case PALE_OAK_CHEST_BOAT:
-                case SPRUCE_CHEST_BOAT:
-                case ALLAY:
-                case AXOLOTL:
-                case BLOCK_DISPLAY:
-                case INTERACTION:
-                case ITEM_DISPLAY:
-                case TEXT_DISPLAY:
-                case CHEST_BOAT:
-                case FROG:
-                case GLOW_ITEM_FRAME:
-                case GLOW_SQUID:
-                case GOAT:
-                case MARKER:
-                case TADPOLE:
-                case WARDEN:
-                case CAMEL:
-                case SNIFFER:
-                case BREEZE:
-                case WIND_CHARGE:
-                case BOGGED:
-                case ARMADILLO:
-                case BREEZE_WIND_CHARGE:
-                case OMINOUS_ITEM_SPAWNER:
-                case CREAKING:
-                    nmsEntityName = disguiseType.toReadable().replace(" ", "");
-                    break;
-                case DONKEY:
-                    nmsEntityName = "HorseDonkey";
-                    break;
-                case ARROW:
-                    nmsEntityName = "TippedArrow";
-                    break;
-                case DROPPED_ITEM:
-                    nmsEntityName = "Item";
-                    break;
-                case FIREBALL:
-                    nmsEntityName = "LargeFireball";
-                    break;
-                case FIREWORK:
-                    nmsEntityName = "Fireworks";
-                    break;
-                case GIANT:
-                    nmsEntityName = "GiantZombie";
-                    break;
-                case HUSK:
-                    nmsEntityName = "ZombieHusk";
-                    break;
-                case ILLUSIONER:
-                    nmsEntityName = "IllagerIllusioner";
-                    break;
-                case LEASH_HITCH:
-                    nmsEntityName = "Leash";
-                    break;
-                case MINECART:
-                    nmsEntityName = "MinecartRideable";
-                    break;
-                case MINECART_COMMAND:
-                    nmsEntityName = "MinecartCommandBlock";
-                    break;
-                case MINECART_TNT:
-                    nmsEntityName = "MinecartTNT";
-                    break;
-                case MULE:
-                    nmsEntityName = "HorseMule";
-                    break;
-                case PRIMED_TNT:
-                    nmsEntityName = "TNTPrimed";
-                    break;
-                case PUFFERFISH:
-                    nmsEntityName = "PufferFish";
-                    break;
-                case SPLASH_POTION:
-                    nmsEntityName = "Potion";
-                    break;
-                case STRAY:
-                    nmsEntityName = "SkeletonStray";
-                    break;
-                case TRADER_LLAMA:
-                    nmsEntityName = "LLamaTrader"; // Interesting capitalization
-                    break;
-                case TRIDENT:
-                    nmsEntityName = "ThrownTrident";
-                    break;
-                case WANDERING_TRADER:
-                    nmsEntityName = "VillagerTrader";
-                    break;
-                case ZOMBIFIED_PIGLIN:
-                    nmsEntityName = "PigZombie";
-                    break;
-                default:
-                    break;
+                nmsEntityName = StringUtils.join(split);
+                nmsClass = getNmsClassIgnoreErrors("Entity" + nmsEntityName);
+
+                if (nmsClass == null || Modifier.isAbstract(nmsClass.getModifiers())) {
+                    nmsEntityName = null;
+                }
+            }
+
+            if (nmsEntityName == null) {
+                switch (disguiseType) {
+                    case DONKEY:
+                        nmsEntityName = "HorseDonkey";
+                        break;
+                    case ARROW:
+                        nmsEntityName = "TippedArrow";
+                        break;
+                    case DROPPED_ITEM:
+                        nmsEntityName = "Item";
+                        break;
+                    case FIREBALL:
+                        nmsEntityName = "LargeFireball";
+                        break;
+                    case FIREWORK:
+                        nmsEntityName = "Fireworks";
+                        break;
+                    case GIANT:
+                        nmsEntityName = "GiantZombie";
+                        break;
+                    case HUSK:
+                        nmsEntityName = "ZombieHusk";
+                        break;
+                    case ILLUSIONER:
+                        nmsEntityName = "IllagerIllusioner";
+                        break;
+                    case LEASH_HITCH:
+                        nmsEntityName = "Leash";
+                        break;
+                    case MINECART:
+                        nmsEntityName = "MinecartRideable";
+                        break;
+                    case MINECART_COMMAND:
+                        nmsEntityName = "MinecartCommandBlock";
+                        break;
+                    case MINECART_TNT:
+                        nmsEntityName = "MinecartTNT";
+                        break;
+                    case MULE:
+                        nmsEntityName = "HorseMule";
+                        break;
+                    case PRIMED_TNT:
+                        nmsEntityName = "TNTPrimed";
+                        break;
+                    case PUFFERFISH:
+                        nmsEntityName = "PufferFish";
+                        break;
+                    case SPLASH_POTION:
+                        nmsEntityName = "Potion";
+                        break;
+                    case STRAY:
+                        nmsEntityName = "SkeletonStray";
+                        break;
+                    case TRADER_LLAMA:
+                        nmsEntityName = "LLamaTrader"; // Interesting capitalization
+                        break;
+                    case TRIDENT:
+                        nmsEntityName = "ThrownTrident";
+                        break;
+                    case WANDERING_TRADER:
+                        nmsEntityName = "VillagerTrader";
+                        break;
+                    case ZOMBIFIED_PIGLIN:
+                        nmsEntityName = "PigZombie";
+                        break;
+                    default:
+                        break;
+                }
+
+                if (nmsEntityName == null) {
+                    LibsDisguises.getInstance().getLogger().warning("Entity name not found! (" + disguiseType.name() + ")");
+                    return;
+                }
             }
         }
 
@@ -2335,13 +2300,7 @@ public class ReflectionManager {
                 return;
             }
 
-            if (nmsEntityName == null) {
-                LibsDisguises.getInstance().getLogger().warning("Entity name not found! (" + disguiseType.name() + ")");
-                return;
-            }
-
-            Object nmsEntity =
-                createEntityInstance(disguiseType, nmsReflection != null ? disguiseType.getEntityType().getKey().getKey() : nmsEntityName);
+            Object nmsEntity = createEntityInstance(disguiseType, nmsEntityName);
 
             if (nmsEntity == null) {
                 LibsDisguises.getInstance().getLogger().warning("Entity not found! (" + nmsEntityName + ")");
@@ -2365,9 +2324,9 @@ public class ReflectionManager {
 
                 if (metaIndex == null) {
                     // Hide purpur's decision to become a modded server
-                    if (disguiseType == DisguiseType.GLOW_SQUID && data.getValue().getClass() == String.class) {
+                    /*if (disguiseType == DisguiseType.GLOW_SQUID && data.getValue().getClass() == String.class) {
                         continue;
-                    }
+                    }*/
 
                     LibsDisguises.getInstance().getLogger().severe(StringUtils.repeat("-", 20));
                     LibsDisguises.getInstance().getLogger()
