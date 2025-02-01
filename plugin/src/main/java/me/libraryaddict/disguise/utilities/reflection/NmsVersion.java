@@ -2,6 +2,8 @@ package me.libraryaddict.disguise.utilities.reflection;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @Getter
 public enum NmsVersion {
     v1_12("1.12", "1.12.1", "1.12.2"),
@@ -54,5 +56,35 @@ public enum NmsVersion {
 
     public boolean isVersion() {
         return ReflectionManager.getVersion() == this;
+    }
+
+    /**
+     * Returns the supported versions in a compressed string. Eg, 1.21.(2,3,4)
+     *
+     * @return
+     */
+    public String getCompressedVersions() {
+        if (getSupportedVersions().length == 1) {
+            return getSupportedVersions()[0];
+        }
+        StringBuilder string = new StringBuilder();
+
+        for (String version : getSupportedVersions()) {
+            String[] split = version.split("\\.");
+
+            if (string.length() == 0) {
+                string = new StringBuilder(String.join(".", Arrays.copyOf(split, 2)) + ".[");
+            } else {
+                string.append("/");
+            }
+
+            if (split.length == 2) {
+                string.append("0");
+            } else {
+                string.append(String.join(".", Arrays.copyOfRange(split, 2, split.length)));
+            }
+        }
+
+        return string + "]";
     }
 }
