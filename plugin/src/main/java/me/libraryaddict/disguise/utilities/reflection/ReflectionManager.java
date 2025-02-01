@@ -212,23 +212,7 @@ public class ReflectionManager {
                 NmsVersion.v1_19_R1.isSupported() ? "p" :
                     NmsVersion.v1_17.isSupported() ? "r" : NmsVersion.v1_14.isSupported() ? "q" : "isMoving");
 
-            if (nmsReflection != null) {
-                sessionService = nmsReflection.getMinecraftSessionService();
-            }
-
-            // I don't think authlib is always going to be in sync enough that we can trust this to a specific nms version
-            try {
-                fillProfileProperties = sessionService.getClass().getMethod("fillProfileProperties", GameProfile.class, boolean.class);
-            } catch (Exception ignored) {
-            }
-
-            try {
-                // Authlib renamed it to "name()/value()/signature()" in later versions
-                propertyName = Property.class.getMethod("getName");
-                propertyValue = Property.class.getMethod("getValue");
-                propertySignature = Property.class.getMethod("getSignature");
-            } catch (Exception ignored) {
-            }
+            loadAuthlibStuff();
 
             if (nmsReflection == null) {
                 // I should probably seperate the code into its own reflection class
@@ -236,6 +220,26 @@ public class ReflectionManager {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    private static void loadAuthlibStuff() {
+        if (nmsReflection != null) {
+            sessionService = nmsReflection.getMinecraftSessionService();
+        }
+
+        // I don't think authlib is always going to be in sync enough that we can trust this to a specific nms version
+        try {
+            fillProfileProperties = sessionService.getClass().getMethod("fillProfileProperties", GameProfile.class, boolean.class);
+        } catch (Exception ignored) {
+        }
+
+        try {
+            // Authlib renamed it to "name()/value()/signature()" in later versions
+            propertyName = Property.class.getMethod("getName");
+            propertyValue = Property.class.getMethod("getValue");
+            propertySignature = Property.class.getMethod("getSignature");
+        } catch (Exception ignored) {
         }
     }
 
