@@ -223,110 +223,114 @@ public class ReflectionManager {
             }
 
             try {
+                // Authlib renamed it to "name()/value()/signature()" in later versions
                 propertyName = Property.class.getMethod("getName");
                 propertyValue = Property.class.getMethod("getValue");
                 propertySignature = Property.class.getMethod("getSignature");
             } catch (Exception ignored) {
             }
 
-            if (nmsReflection != null) {
-                return;
+            if (nmsReflection == null) {
+                // I should probably seperate the code into its own reflection class
+                loadLegacyReflection();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private static void loadLegacyReflection() throws InvocationTargetException, IllegalAccessException {
+        getServerMethod = getCraftMethod("CraftServer", "getServer");
+
+        Object minecraftServer = getMinecraftServer();
+
+        for (Method method : getNmsClass("MinecraftServer").getMethods()) {
+            if (!method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
+                continue;
             }
 
-            getServerMethod = getCraftMethod("CraftServer", "getServer");
+            sessionService = (MinecraftSessionService) method.invoke(minecraftServer);
+            break;
+        }
 
-            Object minecraftServer = getMinecraftServer();
+        if (DisguiseUtilities.isRunningPaper() && !NmsVersion.v1_17.isSupported()) {
+            // Uses a private field
+            trackedPlayersMap = getNmsField("EntityTrackerEntry", "trackedPlayerMap");
+        }
 
-            for (Method method : getNmsClass("MinecraftServer").getMethods()) {
-                if (!method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
-                    continue;
-                }
+        // In 1.12 to 1.13, it's all in EntityTrackerEntry
+        // In 1.14+, we have it in EntityTracker in PlayerChunkMap
+        if (NmsVersion.v1_14.isSupported()) {
+            clearEntityTracker =
+                getNmsMethod("PlayerChunkMap$EntityTracker", NmsVersion.v1_18.isSupported() ? "a" : "clear", getNmsClass("EntityPlayer"));
+            addEntityTracker = getNmsMethod("PlayerChunkMap$EntityTracker", NmsVersion.v1_18.isSupported() ? "b" : "updatePlayer",
+                getNmsClass("EntityPlayer"));
+        } else {
+            clearEntityTracker = getNmsMethod("EntityTrackerEntry", "clear", getNmsClass("EntityPlayer"));
+            addEntityTracker = getNmsMethod("EntityTrackerEntry", "updatePlayer", getNmsClass("EntityPlayer"));
+        }
 
-                sessionService = (MinecraftSessionService) method.invoke(minecraftServer);
-                break;
+        getGameProfile = getCraftMethod("CraftPlayer", "getProfile");
+        boundingBoxConstructor =
+            getNmsConstructor("AxisAlignedBB", double.class, double.class, double.class, double.class, double.class, double.class);
+
+        setBoundingBoxMethod = getNmsMethod("Entity", "a", getNmsClass("AxisAlignedBB"));
+
+        entityCountField = getNmsField("Entity", "entityCount");
+
+        boundingBoxMethod = getNmsMethod("Entity", "getBoundingBox");
+        bukkitEntityMethod = getNmsMethod("Entity", "getBukkitEntity");
+
+        Class<?> craftItemClass = getCraftClass("CraftItemStack");
+        itemAsCraftCopyMethod = getCraftMethod(craftItemClass, "asCraftCopy", ItemStack.class);
+        itemAsBukkitMethod = getCraftMethod(craftItemClass, "asBukkitCopy", getNmsClass("ItemStack"));
+
+        getNmsEntityMethod = getCraftMethod("CraftEntity", "getHandle");
+
+        Class craftSound = getCraftClass("CraftSound");
+
+        try {
+            soundGetMethod = craftSound.getMethod("getSound", Sound.class);
+        } catch (Exception ex) {
+            soundEffectGetMethod = getCraftMethod("CraftSound", "getSoundEffect", Sound.class);
+            soundEffectGetKey = getNmsField("SoundEffect", "b");
+        }
+
+        getBlockData = getNmsMethod(getNmsClass("Block"), "getBlockData");
+
+        if (NmsVersion.v1_13.isSupported()) {
+            craftBlockDataGetState = getCraftMethod("CraftBlockData", "getState");
+            magicGetBlock = getCraftMethod("CraftMagicNumbers", "getBlock", Material.class);
+            magicGetMaterial = getCraftMethod("CraftMagicNumbers", "getMaterial", getNmsClass("Block"));
+            entityTypesAMethod = getNmsMethod("EntityTypes", "a", String.class);
+        }
+
+        getBlockDataAsId = getNmsMethod("Block", "getCombinedId", getNmsClass("IBlockData"));
+
+        getNmsWorld = getCraftMethod("CraftWorld", "getHandle");
+        deserializedItemMeta = getCraftMethod(getCraftClass("CraftMetaItem$SerializableMeta"), "deserialize", Map.class);
+
+        noDamageTicks = getNmsField("Entity", "noDamageTicks");
+
+        isInvul = getNmsMethod("Entity", "isInvulnerable", getNmsClass("DamageSource"));
+
+        for (Field f : getNmsClass("DamageSource").getFields()) {
+            if (!Modifier.isStatic(f.getModifiers())) {
+                continue;
             }
 
-            if (DisguiseUtilities.isRunningPaper() && !NmsVersion.v1_17.isSupported()) {
-                // Uses a private field
-                trackedPlayersMap = getNmsField("EntityTrackerEntry", "trackedPlayerMap");
+            Object obj = f.get(null);
+
+            if (obj == null) {
+                continue;
             }
 
-            // In 1.12 to 1.13, it's all in EntityTrackerEntry
-            // In 1.14+, we have it in EntityTracker in PlayerChunkMap
-            if (NmsVersion.v1_14.isSupported()) {
-                clearEntityTracker = getNmsMethod("PlayerChunkMap$EntityTracker", NmsVersion.v1_18.isSupported() ? "a" : "clear",
-                    getNmsClass("EntityPlayer"));
-                addEntityTracker = getNmsMethod("PlayerChunkMap$EntityTracker", NmsVersion.v1_18.isSupported() ? "b" : "updatePlayer",
-                    getNmsClass("EntityPlayer"));
-            } else {
-                clearEntityTracker = getNmsMethod("EntityTrackerEntry", "clear", getNmsClass("EntityPlayer"));
-                addEntityTracker = getNmsMethod("EntityTrackerEntry", "updatePlayer", getNmsClass("EntityPlayer"));
+            if (!obj.toString().contains("(generic)")) {
+                continue;
             }
 
-            getGameProfile = getCraftMethod("CraftPlayer", "getProfile");
-            boundingBoxConstructor =
-                getNmsConstructor("AxisAlignedBB", double.class, double.class, double.class, double.class, double.class, double.class);
-
-            setBoundingBoxMethod = getNmsMethod("Entity", "a", getNmsClass("AxisAlignedBB"));
-
-            entityCountField = getNmsField("Entity", "entityCount");
-
-            boundingBoxMethod = getNmsMethod("Entity", "getBoundingBox");
-            bukkitEntityMethod = getNmsMethod("Entity", "getBukkitEntity");
-
-            Class<?> craftItemClass = getCraftClass("CraftItemStack");
-            itemAsCraftCopyMethod = getCraftMethod(craftItemClass, "asCraftCopy", ItemStack.class);
-            itemAsBukkitMethod = getCraftMethod(craftItemClass, "asBukkitCopy", getNmsClass("ItemStack"));
-
-            getNmsEntityMethod = getCraftMethod("CraftEntity", "getHandle");
-
-            Class craftSound = getCraftClass("CraftSound");
-
-            try {
-                soundGetMethod = craftSound.getMethod("getSound", Sound.class);
-            } catch (Exception ex) {
-                soundEffectGetMethod = getCraftMethod("CraftSound", "getSoundEffect", Sound.class);
-                soundEffectGetKey = getNmsField("SoundEffect", "b");
-            }
-
-            getBlockData = getNmsMethod(getNmsClass("Block"), "getBlockData");
-
-            if (NmsVersion.v1_13.isSupported()) {
-                craftBlockDataGetState = getCraftMethod("CraftBlockData", "getState");
-                magicGetBlock = getCraftMethod("CraftMagicNumbers", "getBlock", Material.class);
-                magicGetMaterial = getCraftMethod("CraftMagicNumbers", "getMaterial", getNmsClass("Block"));
-                entityTypesAMethod = getNmsMethod("EntityTypes", "a", String.class);
-            }
-
-            getBlockDataAsId = getNmsMethod("Block", "getCombinedId", getNmsClass("IBlockData"));
-
-            getNmsWorld = getCraftMethod("CraftWorld", "getHandle");
-            deserializedItemMeta = getCraftMethod(getCraftClass("CraftMetaItem$SerializableMeta"), "deserialize", Map.class);
-
-            noDamageTicks = getNmsField("Entity", "noDamageTicks");
-
-            isInvul = getNmsMethod("Entity", "isInvulnerable", getNmsClass("DamageSource"));
-
-            for (Field f : getNmsClass("DamageSource").getFields()) {
-                if (!Modifier.isStatic(f.getModifiers())) {
-                    continue;
-                }
-
-                Object obj = f.get(null);
-
-                if (obj == null) {
-                    continue;
-                }
-
-                if (!obj.toString().contains("(generic)")) {
-                    continue;
-                }
-
-                genericDamage = obj;
-                break;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            genericDamage = obj;
+            break;
         }
 
         try {

@@ -21,7 +21,7 @@ tasks {
 
     shadowJar {
         configurations = listOf(project.configurations.shadow.get())
-        exclude("**/CompileMethods.class")
+        exclude("me/libraryaddict/disguise/utilities/compiler/**")
     }
 
     getByName("run") {
@@ -57,7 +57,7 @@ tasks {
 }
 
 application {
-    mainClass = "me.libraryaddict.disguise.utilities.watchers.CompileMethods"
+    mainClass = "me.libraryaddict.disguise.utilities.compiler.CompileShadedFiles"
     applicationDefaultJvmArgs = listOf(
         "-Djar.path=" + tasks.named<ShadowJar>("shadowJar").get().archiveFile.get().asFile.absolutePath
     )

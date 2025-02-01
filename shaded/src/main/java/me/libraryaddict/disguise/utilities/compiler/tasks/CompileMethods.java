@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.utilities.watchers;
+package me.libraryaddict.disguise.utilities.compiler.tasks;
 
 import com.google.gson.Gson;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -14,148 +14,18 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.MethodMappedAs
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsedBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
-import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundEnums;
-import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
-import org.bukkit.Sound;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 public class CompileMethods {
-    public static void main(String[] args) {
-        Path zipFilePath = Paths.get(System.getProperty("jar.path"));
 
-        try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
-            Files.write(fs.getPath("/METHOD_MAPPINGS.txt"), doMethods());
-            Files.write(fs.getPath("/SOUND_MAPPINGS.txt"), doSounds());
-            // Count after we write the mappings
-            Files.write(fs.getPath("/plugin.yml"), doFileCount());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static int getJarFileCount(File file, String... skipFiles) {
-        try (JarFile jar = new JarFile(file)) {
-            int count = 0;
-
-            Enumeration<JarEntry> entries = jar.entries();
-
-            loop:
-            while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-
-                if (entry.isDirectory()) {
-                    continue;
-                }
-
-                for (String skipFile : skipFiles) {
-                    if (!skipFile.equals(entry.getName())) {
-                        continue;
-                    }
-
-                    continue loop;
-                }
-
-                count++;
-            }
-
-            return count;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static byte[] doFileCount() {
-        int totalCount = getJarFileCount(new File(System.getProperty("jar.path")), "METHOD_MAPPINGS.txt", "SOUND_MAPPINGS.txt") + 2;
-
-        try {
-            Path path = new File(new File("build/resources/main"), "plugin.yml").toPath();
-            String pluginYaml =
-                Files.readString(path, StandardCharsets.UTF_8).replaceFirst("file-count: -?\\d+", "file-count: " + totalCount);
-            return pluginYaml.getBytes(StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static byte[] doSounds() {
-        List<String> list = new ArrayList<>();
-
-        for (DisguiseSoundEnums e : DisguiseSoundEnums.values()) {
-            StringBuilder sound = getSoundAsString(e);
-
-            list.add(sound.toString());
-        }
-
-        return String.join("\n", list).getBytes(StandardCharsets.UTF_8);
-    }
-
-    private static List<String> getMatchingFields(String pattern) {
-        List<String> matches = new ArrayList<>();
-
-        for (Field field : Sound.class.getFields()) {
-            if (!Modifier.isStatic(field.getModifiers()) || field.getType() != Sound.class) {
-                continue;
-            }
-
-            if (!field.getName().matches(pattern)) {
-                continue;
-            }
-
-            matches.add(field.getName());
-        }
-
-        return matches;
-    }
-
-    private static StringBuilder getSoundAsString(DisguiseSoundEnums e) {
-        StringBuilder sound = new StringBuilder(e.name());
-
-        for (SoundGroup.SoundType type : SoundGroup.SoundType.values()) {
-            sound.append("/");
-
-            int i = 0;
-
-            for (Map.Entry<String, SoundGroup.SoundType> entry : e.getSounds().entrySet()) {
-                if (entry.getValue() != type) {
-                    continue;
-                }
-
-                String soundValue = entry.getKey();
-
-                if (soundValue.contains("*")) {
-                    soundValue = String.join(",", getMatchingFields(soundValue));
-                }
-
-                if (i++ > 0) {
-                    sound.append(",");
-                }
-
-                sound.append(soundValue);
-            }
-        }
-        return sound;
-    }
-
-    private static void addClass(ArrayList<Class> classes, Class c) {
+    private void addClass(ArrayList<Class> classes, Class c) {
         if (classes.contains(c)) {
             return;
         }
@@ -167,7 +37,7 @@ public class CompileMethods {
         classes.add(c);
     }
 
-    private static byte[] doMethods() {
+    public byte[] doMethods() {
         ArrayList<Class<?>> classes =
             ClassGetter.getClassesForPackage(FlagWatcher.class, "me.libraryaddict.disguise.disguisetypes.watchers");
 
@@ -306,7 +176,7 @@ public class CompileMethods {
         return new Gson().toJson(methods).getBytes(StandardCharsets.UTF_8);
     }
 
-    static String getDescriptorForClass(final Class c) {
+    private String getDescriptorForClass(final Class c) {
         if (c.isPrimitive()) {
             if (c == byte.class) {
                 return "B";
@@ -346,7 +216,7 @@ public class CompileMethods {
         return ('L' + c.getName() + ';').replace('.', '/');
     }
 
-    static String getMethodDescriptor(Method m) {
+    private String getMethodDescriptor(Method m) {
         StringBuilder s = new StringBuilder("(");
 
         for (final Class c : (m.getParameterTypes())) {
