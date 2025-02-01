@@ -104,7 +104,7 @@ public interface ReflectionManagerAbstract {
 
     ItemMeta getDeserializedItemMeta(Map<String, Object> meta);
 
-    GameProfile getMCGameProfile(Player player);
+    GameProfile getProfile(Player player);
 
     static UserProfile getUserProfile(UUID uuid, String playerName) {
         return new UserProfile(uuid, playerName == null || playerName.length() < 17 ? playerName : playerName.substring(0, 16));
@@ -157,4 +157,8 @@ public interface ReflectionManagerAbstract {
     default String getDataAsString(ItemStack itemStack) {
         return itemStack.hasItemMeta() ? itemStack.getItemMeta().getAsString() : null;
     }
+
+    void addEntityTracker(Object trackerEntry, Object serverPlayer);
+
+    void clearEntityTracker(Object trackerEntry, Object serverPlayer);
 }

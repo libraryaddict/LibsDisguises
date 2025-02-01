@@ -11,7 +11,6 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
@@ -397,7 +396,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     @Override
-    public GameProfile getMCGameProfile(Player player) {
+    public GameProfile getProfile(Player player) {
         return ((CraftPlayer) player).getProfile();
     }
 
@@ -447,5 +446,15 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         Registry<PaintingVariant> registry = BuiltInRegistries.PAINTING_VARIANT;
 
         return registry.getId(CraftArt.bukkitToMinecraft(type));
+    }
+
+    @Override
+    public void addEntityTracker(Object trackerEntry, Object serverPlayer) {
+        ((ChunkMap.TrackedEntity) trackerEntry).updatePlayer((ServerPlayer) serverPlayer);
+    }
+
+    @Override
+    public void clearEntityTracker(Object trackerEntry, Object serverPlayer) {
+        ((ChunkMap.TrackedEntity) trackerEntry).removePlayer((ServerPlayer) serverPlayer);
     }
 }

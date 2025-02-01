@@ -13,10 +13,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+@Getter
 public class ConfigLoader {
-    @Getter
     private final List<String> configs = new ArrayList<>();
 
     public ConfigLoader() {
@@ -30,6 +31,40 @@ public class ConfigLoader {
             }
 
             configs.add(s);
+        }
+
+        // TODO Load from legacy if new doesn't exist
+    }
+
+    /**
+     * The configs that used to exist but don't anymore.
+     */
+    private List<String> getLegacyConfigs() {
+        return Arrays.asList("combat.yml", "features.yml", "nametags.yml", "players.yml", "sanity.yml");
+    }
+
+    private void moveLegacyConfigs() {
+        File configsFolder = new File(LibsDisguises.getInstance().getDataFolder(), "configs");
+
+        for (String name : getLegacyConfigs()) {
+            File file = new File(configsFolder, name);
+
+            if (!file.exists()) {
+                continue;
+            }
+
+            File legacy = new File(configsFolder, "legacy/" + name);
+
+            if (legacy.exists()) {
+                file.delete();
+                continue;
+            }
+
+            if (!legacy.getParentFile().exists()) {
+                legacy.getParentFile().mkdirs();
+            }
+
+            file.renameTo(legacy);
         }
     }
 
@@ -54,7 +89,7 @@ public class ConfigLoader {
         }
     }
 
-    public YamlConfiguration loadDefaults() {
+    private YamlConfiguration loadDefaults(List<String> configs) {
         YamlConfiguration globalConfig = new YamlConfiguration();
 
         for (String config : configs) {
@@ -75,12 +110,21 @@ public class ConfigLoader {
         }
 
         return globalConfig;
+
+    }
+
+    public YamlConfiguration loadDefaults() {
+        return loadDefaults(configs);
     }
 
     public YamlConfiguration load() {
+        return load(configs);
+    }
+
+    public YamlConfiguration load(List<String> configNames) {
         YamlConfiguration globalConfig = new YamlConfiguration();
 
-        for (String config : configs) {
+        for (String config : configNames) {
             YamlConfiguration c = YamlConfiguration.loadConfiguration(new File(LibsDisguises.getInstance().getDataFolder(), config));
 
             for (String k : c.getKeys(true)) {

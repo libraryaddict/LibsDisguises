@@ -365,7 +365,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     @Override
-    public GameProfile getMCGameProfile(Player player) {
+    public GameProfile getProfile(Player player) {
         return ((CraftPlayer) player).getProfile();
     }
 
@@ -383,5 +383,15 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         Registry<PaintingVariant> registry = Registry.PAINTING_VARIANT;
 
         return registry.getId(CraftArt.BukkitToNotch(type).value());
+    }
+
+    @Override
+    public void addEntityTracker(Object trackerEntry, Object serverPlayer) {
+        ((ChunkMap.TrackedEntity) trackerEntry).updatePlayer((ServerPlayer) serverPlayer);
+    }
+
+    @Override
+    public void clearEntityTracker(Object trackerEntry, Object serverPlayer) {
+        ((ChunkMap.TrackedEntity) trackerEntry).removePlayer((ServerPlayer) serverPlayer);
     }
 }

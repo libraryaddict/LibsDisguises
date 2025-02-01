@@ -206,8 +206,50 @@ public class ReflectionManager {
         try {
             nmsReflection = getReflectionManager(getVersion());
 
-            getGameProfile = getCraftMethod("CraftPlayer", "getProfile");
+            // Uses a private field
             trackedPlayers = getNmsField("EntityTrackerEntry", "trackedPlayers");
+            trackerIsMoving = getNmsField("EntityTrackerEntry", NmsVersion.v1_20_R2.isSupported() ? "i" :
+                NmsVersion.v1_19_R1.isSupported() ? "p" :
+                    NmsVersion.v1_17.isSupported() ? "r" : NmsVersion.v1_14.isSupported() ? "q" : "isMoving");
+
+            if (nmsReflection != null) {
+                sessionService = nmsReflection.getMinecraftSessionService();
+            }
+
+            // I don't think authlib is always going to be in sync enough that we can trust this to a specific nms version
+            try {
+                fillProfileProperties = sessionService.getClass().getMethod("fillProfileProperties", GameProfile.class, boolean.class);
+            } catch (Exception ignored) {
+            }
+
+            try {
+                propertyName = Property.class.getMethod("getName");
+                propertyValue = Property.class.getMethod("getValue");
+                propertySignature = Property.class.getMethod("getSignature");
+            } catch (Exception ignored) {
+            }
+
+            if (nmsReflection != null) {
+                return;
+            }
+
+            getServerMethod = getCraftMethod("CraftServer", "getServer");
+
+            Object minecraftServer = getMinecraftServer();
+
+            for (Method method : getNmsClass("MinecraftServer").getMethods()) {
+                if (!method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
+                    continue;
+                }
+
+                sessionService = (MinecraftSessionService) method.invoke(minecraftServer);
+                break;
+            }
+
+            if (DisguiseUtilities.isRunningPaper() && !NmsVersion.v1_17.isSupported()) {
+                // Uses a private field
+                trackedPlayersMap = getNmsField("EntityTrackerEntry", "trackedPlayerMap");
+            }
 
             // In 1.12 to 1.13, it's all in EntityTrackerEntry
             // In 1.14+, we have it in EntityTracker in PlayerChunkMap
@@ -221,46 +263,7 @@ public class ReflectionManager {
                 addEntityTracker = getNmsMethod("EntityTrackerEntry", "updatePlayer", getNmsClass("EntityPlayer"));
             }
 
-            trackerIsMoving = getNmsField("EntityTrackerEntry", NmsVersion.v1_20_R2.isSupported() ? "i" :
-                NmsVersion.v1_19_R1.isSupported() ? "p" :
-                    NmsVersion.v1_17.isSupported() ? "r" : NmsVersion.v1_14.isSupported() ? "q" : "isMoving");
-
-            if (DisguiseUtilities.isRunningPaper() && !NmsVersion.v1_17.isSupported()) {
-                trackedPlayersMap = getNmsField("EntityTrackerEntry", "trackedPlayerMap");
-            }
-
-            if (nmsReflection != null) {
-                sessionService = nmsReflection.getMinecraftSessionService();
-            } else {
-                getServerMethod = getCraftMethod("CraftServer", "getServer");
-
-                Object minecraftServer = getMinecraftServer();
-
-                for (Method method : getNmsClass("MinecraftServer").getMethods()) {
-                    if (!method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
-                        continue;
-                    }
-
-                    sessionService = (MinecraftSessionService) method.invoke(minecraftServer);
-                    break;
-                }
-            }
-
-            try {
-                fillProfileProperties = sessionService.getClass().getMethod("fillProfileProperties", GameProfile.class, boolean.class);
-            } catch (Exception ignored) {
-            }
-            try {
-                propertyName = Property.class.getMethod("getName");
-                propertyValue = Property.class.getMethod("getValue");
-                propertySignature = Property.class.getMethod("getSignature");
-            } catch (Exception ignored) {
-            }
-
-            if (nmsReflection != null) {
-                return;
-            }
-
+            getGameProfile = getCraftMethod("CraftPlayer", "getProfile");
             boundingBoxConstructor =
                 getNmsConstructor("AxisAlignedBB", double.class, double.class, double.class, double.class, double.class, double.class);
 
@@ -1025,6 +1028,10 @@ public class ReflectionManager {
     }
 
     private static GameProfile getGameProfile(Player player) {
+        if (getNmsReflection() != null) {
+            return getNmsReflection().getProfile(player);
+        }
+
         try {
             return (GameProfile) getGameProfile.invoke(player);
 
@@ -1203,11 +1210,19 @@ public class ReflectionManager {
 
     @SneakyThrows
     public static void clearEntityTracker(Object trackerEntry, Object player) {
+        if (getNmsReflection() != null) {
+            getNmsReflection().clearEntityTracker(trackerEntry, player);
+        }
+
         clearEntityTracker.invoke(trackerEntry, player);
     }
 
     @SneakyThrows
     public static void addEntityTracker(Object trackerEntry, Object player) {
+        if (getNmsReflection() != null) {
+            getNmsReflection().addEntityTracker(trackerEntry, player);
+        }
+
         addEntityTracker.invoke(trackerEntry, player);
     }
 
