@@ -2188,6 +2188,20 @@ public class ReflectionManager {
     }
 
     private static void createNMSValues(DisguiseType disguiseType) {
+        if (disguiseType == DisguiseType.UNKNOWN || disguiseType.isCustom()) {
+            DisguiseValues disguiseValues = new DisguiseValues(disguiseType, 0);
+
+            disguiseValues.setAdultBox(new FakeBoundingBox(0, 0, 0));
+
+            SoundGroup sound = SoundGroup.getGroup(disguiseType.name());
+
+            if (sound != null) {
+                sound.setDamageAndIdleSoundVolume(1f);
+            }
+
+            return;
+        }
+
         String nmsEntityName;
 
         if (getNmsReflection() != null) {
@@ -2286,19 +2300,6 @@ public class ReflectionManager {
         }
 
         try {
-            if (disguiseType == DisguiseType.UNKNOWN || disguiseType.isCustom()) {
-                DisguiseValues disguiseValues = new DisguiseValues(disguiseType, 0);
-
-                disguiseValues.setAdultBox(new FakeBoundingBox(0, 0, 0));
-
-                SoundGroup sound = SoundGroup.getGroup(disguiseType.name());
-
-                if (sound != null) {
-                    sound.setDamageAndIdleSoundVolume(1f);
-                }
-
-                return;
-            }
 
             Object nmsEntity = createEntityInstance(disguiseType, nmsEntityName);
 
