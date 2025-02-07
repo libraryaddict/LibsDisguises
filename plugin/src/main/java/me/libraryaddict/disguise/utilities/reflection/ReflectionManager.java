@@ -201,6 +201,10 @@ public class ReflectionManager {
     private static Method propertyName, propertyValue, propertySignature;
     private static Method getDatawatcher, datawatcherSerialize;
     private static Field datawatcherData;
+    private static Field entitySize;
+    private static Field entitySizeWidth;
+    private static Field entityHeadHeight;
+    private static Method entityGetHeadHeight;
 
     public static void init() {
         try {
@@ -372,6 +376,10 @@ public class ReflectionManager {
         pingField = getNmsField("EntityPlayer", "ping");
 
         if (NmsVersion.v1_14.isSupported()) {
+            entitySize = getNmsField("Entity", "size");
+            entitySizeWidth = getNmsField("EntitySize", "width");
+            entityHeadHeight = getNmsField("Entity", "headHeight");
+
             chunkMapField = getNmsField("ChunkProviderServer", "playerChunkMap");
             trackedEntitiesField = getNmsField("PlayerChunkMap", "trackedEntities");
             entityTrackerField = getNmsField("PlayerChunkMap$EntityTracker", "trackerEntry");
@@ -386,6 +394,9 @@ public class ReflectionManager {
             entitiesField = getNmsField("EntityTracker", "trackedEntities");
 
             ihmGet = getNmsMethod("IntHashMap", "get", int.class);
+
+            entitySizeWidth = getNmsField("Entity", "width");
+            entityGetHeadHeight = getNmsMethod("Entity", "getHeadHeight");
         }
 
         Class dataClass = getNmsClass("DataWatcher");
@@ -1314,18 +1325,18 @@ public class ReflectionManager {
 
         try {
             if (NmsVersion.v1_14.isSupported()) {
-                Object size = getNmsField("Entity", "size").get(getNmsEntity(entity));
+                Object size = entitySize.get(getNmsEntity(entity));
 
                 //float length = getNmsField("EntitySize", "length").getFloat(size);
-                float width = getNmsField("EntitySize", "width").getFloat(size);
-                float height = getNmsField("Entity", "headHeight").getFloat(getNmsEntity(entity));
+                float width = entitySizeWidth.getFloat(size);
+                float height = entityHeadHeight.getFloat(getNmsEntity(entity));
 
                 return new float[]{width, height};
             } else {
 
                 //    float length = getNmsField("Entity", "length").getFloat(getNmsEntity(entity));
-                float width = getNmsField("Entity", "width").getFloat(getNmsEntity(entity));
-                float height = (Float) getNmsMethod("Entity", "getHeadHeight").invoke(getNmsEntity(entity));
+                float width = entitySizeWidth.getFloat(getNmsEntity(entity));
+                float height = (Float) entityGetHeadHeight.invoke(getNmsEntity(entity));
                 return new float[]{width, height};
             }
         } catch (Exception ex) {
