@@ -379,12 +379,22 @@ public class LibsDisguises extends JavaPlugin {
             nmsPackageName = "{Not package relocated}";
         }
 
-        getLogger().info("Discovered nms version: (Package: " + nmsPackageName + ") (LD: " + ReflectionManager.getVersion() + ") (MC: " +
-            ReflectionManager.getMinecraftVersion() + ")");
+        String minecraft = ReflectionManager.getMinecraftVersion();
+
+        getLogger().info(
+            "Discovered nms version: (Package: " + nmsPackageName + ") (LD: " + ReflectionManager.getVersion() + ") (MC: " + minecraft +
+                ")");
 
         getLogger().info("Jenkins Build: " + (isJenkins() ? "#" : "") + getBuildNo());
 
         getLogger().info("Build Date: " + buildDate);
+
+        String recommended = ReflectionManager.getVersion().getRecommendedMinorVersion();
+
+        if (!recommended.equals(minecraft)) {
+            getLogger().severe("You are running an outdated version of Minecraft, you are currently using " + minecraft +
+                ", you should update to a minimum of " + recommended);
+        }
     }
 
     private void someMoreLogging() {

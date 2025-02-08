@@ -35,6 +35,28 @@ public enum NmsVersion {
         }
     }
 
+    public String getRecommendedMinorVersion() {
+        switch (this) {
+            case v1_19_R1:
+            case v1_19_R2:
+                return v1_19_R3.getLastSupported();
+            case v1_20_R1:
+            case v1_20_R2:
+                return v1_20_R3.getLastSupported();
+            case v1_21_R1:
+            case v1_21_R2:
+                return v1_21_R3.getLastSupported();
+            default:
+                break;
+        }
+
+        return getLastSupported();
+    }
+
+    public String getLastSupported() {
+        return supportedVersions[supportedVersions.length - 1];
+    }
+
     public boolean isMinecraftVersion(String minecraftVersion) {
         for (String version : supportedVersions) {
             if (!version.equals(minecraftVersion)) {
