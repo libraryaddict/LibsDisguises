@@ -1408,13 +1408,14 @@ public class DisguiseUtilities {
         }
 
         try {
-            Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
+            Object entityTracker = ReflectionManager.getEntityTracker(disguise.getEntity());
+            Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity(), entityTracker);
 
             if (entityTrackerEntry == null) {
                 return;
             }
 
-            Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTrackerEntry);
+            Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTracker, entityTrackerEntry);
 
             for (Object p : trackedPlayers) {
                 Player player = (Player) ReflectionManager.getBukkitEntity(ReflectionManager.getPlayerFromPlayerConnection(p));
@@ -1612,10 +1613,11 @@ public class DisguiseUtilities {
         List<Player> players = new ArrayList<>();
 
         try {
-            Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
+            Object entityTracker = ReflectionManager.getEntityTracker(disguise.getEntity());
+            Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity(), entityTracker);
 
             if (entityTrackerEntry != null) {
-                for (Object p : ReflectionManager.getClonedTrackedPlayers(entityTrackerEntry)) {
+                for (Object p : ReflectionManager.getClonedTrackedPlayers(entityTracker, entityTrackerEntry)) {
                     Player player = (Player) ReflectionManager.getBukkitEntity(ReflectionManager.getPlayerFromPlayerConnection(p));
 
                     if (((TargetedDisguise) disguise).canSee(player)) {
@@ -2046,14 +2048,14 @@ public class DisguiseUtilities {
                 }, 2);
             } else {
                 final Object entityTracker = ReflectionManager.getEntityTracker(disguise.getEntity());
-                final Object entityTrackerEntry =
-                    !NmsVersion.v1_14.isSupported() ? entityTracker : ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
+                final Object entityTrackerEntry = !NmsVersion.v1_14.isSupported() ? entityTracker :
+                    ReflectionManager.getEntityTrackerEntry(disguise.getEntity(), entityTracker);
 
                 if (entityTrackerEntry == null) {
                     return;
                 }
 
-                Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTrackerEntry);
+                Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTracker, entityTrackerEntry);
 
                 for (final Object o : trackedPlayers) {
                     Object p = ReflectionManager.getPlayerFromPlayerConnection(o);
@@ -2098,10 +2100,10 @@ public class DisguiseUtilities {
             try {
                 final Object entityTracker = ReflectionManager.getEntityTracker(entity);
                 final Object entityTrackerEntry =
-                    NmsVersion.v1_14.isSupported() ? entityTracker : ReflectionManager.getEntityTrackerEntry(entity);
+                    NmsVersion.v1_14.isSupported() ? entityTracker : ReflectionManager.getEntityTrackerEntry(entity, entityTracker);
 
                 if (entityTrackerEntry != null) {
-                    Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTrackerEntry);
+                    Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTracker, entityTrackerEntry);
 
                     for (final Object o : trackedPlayers) {
                         Object p = ReflectionManager.getPlayerFromPlayerConnection(o);
@@ -2161,11 +2163,11 @@ public class DisguiseUtilities {
             }
 
             final Object entityTracker = ReflectionManager.getEntityTracker(disguise.getEntity());
-            final Object entityTrackerEntry =
-                !NmsVersion.v1_14.isSupported() ? entityTracker : ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
+            final Object entityTrackerEntry = !NmsVersion.v1_14.isSupported() ? entityTracker :
+                ReflectionManager.getEntityTrackerEntry(disguise.getEntity(), entityTracker);
 
             if (entityTrackerEntry != null) {
-                Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTrackerEntry);
+                Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTracker, entityTrackerEntry);
 
                 for (final Object o : trackedPlayers) {
                     Object p = ReflectionManager.getPlayerFromPlayerConnection(o);
@@ -2174,6 +2176,7 @@ public class DisguiseUtilities {
                     if (disguise.getEntity() == player || !disguise.canSee(player)) {
                         continue;
                     }
+
                     ReflectionManager.clearEntityTracker(entityTracker, p);
 
                     WrapperPlayServerDestroyEntities destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
@@ -2287,11 +2290,12 @@ public class DisguiseUtilities {
 
     private static void removeSelfTracker(Player player) {
         try {
-            Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(player);
+            Object entityTracker = ReflectionManager.getEntityTracker(player);
+            Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(player, entityTracker);
 
             if (entityTrackerEntry != null) {
                 // If the tracker exists. Remove the player from their tracker
-                ReflectionManager.removeEntityFromTracked(entityTrackerEntry, player);
+                ReflectionManager.removeEntityFromTracked(entityTracker, entityTrackerEntry, player);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -2785,7 +2789,8 @@ public class DisguiseUtilities {
                 return;
             }
 
-            Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(player);
+            Object entityTracker = ReflectionManager.getEntityTracker(player);
+            Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(player, entityTracker);
 
             if (entityTrackerEntry == null) {
                 // A check incase the tracker is null.
@@ -2801,7 +2806,7 @@ public class DisguiseUtilities {
                 return;
             }
 
-            ReflectionManager.addEntityToTrackedMap(entityTrackerEntry, player);
+            ReflectionManager.addEntityToTrackedMap(entityTracker, entityTrackerEntry, player);
 
             Vector vel = player.getVelocity();
             PacketWrapper spawn;
@@ -2822,10 +2827,9 @@ public class DisguiseUtilities {
                 new WrapperPlayServerEntityMetadata(DisguiseAPI.getSelfDisguiseId(), ReflectionManager.getEntityWatcher(player)));
 
             // Send the velocity packets
-            if (ReflectionManager.isEntityTrackerMoving(entityTrackerEntry)) {
-                Vector velocity = player.getVelocity();
-                sendSelfPacket(player, new WrapperPlayServerEntityVelocity(DisguiseAPI.getSelfDisguiseId(),
-                    new Vector3d(velocity.getX(), velocity.getY(), velocity.getZ())));
+            if (vel.length() > 0) {
+                sendSelfPacket(player,
+                    new WrapperPlayServerEntityVelocity(DisguiseAPI.getSelfDisguiseId(), new Vector3d(vel.getX(), vel.getY(), vel.getZ())));
             }
 
             // Why would they even need this. Meh.
