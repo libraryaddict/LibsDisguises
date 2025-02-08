@@ -61,13 +61,18 @@ import java.lang.reflect.Modifier;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ReflectionManager implements ReflectionManagerAbstract {
+public class ReflectionManager extends ReflectionManagerAbstract {
     private Field dataItemsField;
+    private final Field trackedEntityField;
+    private final AtomicInteger entityCounter;
+    private final Method entityDefaultSoundMethod;
+    private final Method itemMetaDeserialize;
 
-    public ReflectionManager() {
+    public ReflectionManager() throws Exception {
         for (Field f : SynchedEntityData.class.getDeclaredFields()) {
             if (Modifier.isStatic(f.getModifiers()) || !Int2ObjectMap.class.isAssignableFrom(f.getType())) {
                 continue;
@@ -76,8 +81,23 @@ public class ReflectionManager implements ReflectionManagerAbstract {
             f.setAccessible(true);
             dataItemsField = f;
         }
+
+        Field entityCounter = net.minecraft.world.entity.Entity.class.getDeclaredField("c");
+        entityCounter.setAccessible(true);
+        this.entityCounter = (AtomicInteger) entityCounter.get(null);
+
+        trackedEntityField = ChunkMap.TrackedEntity.class.getDeclaredField("b");
+        trackedEntityField.setAccessible(true);
+
+        // Default is protected method, 1.0F on EntityLiving.class
+        entityDefaultSoundMethod = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("eI");
+        entityDefaultSoundMethod.setAccessible(true);
+
+        Class<?> aClass = Class.forName("org.bukkit.craftbukkit.v1_19_R2.inventory.CraftMetaItem$SerializableMeta");
+        itemMetaDeserialize = aClass.getDeclaredMethod("deserialize", Map.class);
     }
 
+    @Override
     public boolean hasInvul(Entity entity) {
         net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
 
@@ -101,21 +121,12 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     @Override
     public int getNewEntityId(boolean increment) {
-        try {
-            Field entityCounter = net.minecraft.world.entity.Entity.class.getDeclaredField("c");
-            entityCounter.setAccessible(true);
-            AtomicInteger atomicInteger = (AtomicInteger) entityCounter.get(null);
-            if (increment) {
-                return atomicInteger.incrementAndGet();
-            } else {
-                // Add 1 as we didn't increment the counter and thus this is currently pointing to the last entity id used
-                return atomicInteger.get() + 1;
-            }
-        } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
+        if (increment) {
+            return entityCounter.incrementAndGet();
+        } else {
+            // Add 1 as we didn't increment the counter and thus this is currently pointing to the last entity id used
+            return entityCounter.get() + 1;
         }
-
-        return -1;
     }
 
     @Override
@@ -206,17 +217,12 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     @Override
-    public ServerEntity getEntityTrackerEntry(Entity target) throws Exception {
-        ChunkMap.TrackedEntity trackedEntity = getEntityTracker(target);
-
+    public ServerEntity getTrackerEntryFromTracker(Object trackedEntity) throws Exception {
         if (trackedEntity == null) {
             return null;
         }
 
-        Field field = ChunkMap.TrackedEntity.class.getDeclaredField("b");
-        field.setAccessible(true);
-
-        return (ServerEntity) field.get(trackedEntity);
+        return (ServerEntity) trackedEntityField.get(trackedEntity);
     }
 
     @Override
@@ -248,15 +254,13 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     @Override
     public Float getSoundModifier(Object entity) {
+        // Default is 1.0F on EntityLiving
         if (!(entity instanceof net.minecraft.world.entity.LivingEntity)) {
             return 0.0f;
         } else {
             try {
-                Method method = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("eI");
-                method.setAccessible(true);
-
-                return (Float) method.invoke(entity);
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                return (Float) entityDefaultSoundMethod.invoke(entity);
+            } catch (InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
@@ -359,11 +363,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     @Override
     public ItemMeta getDeserializedItemMeta(Map<String, Object> meta) {
         try {
-            Class<?> aClass = Class.forName("org.bukkit.craftbukkit.v1_19_R2.inventory.CraftMetaItem$SerializableMeta");
-            Method deserialize = aClass.getDeclaredMethod("deserialize", Map.class);
-            Object itemMeta = deserialize.invoke(null, meta);
-
-            return (ItemMeta) itemMeta;
+            return (ItemMeta) itemMetaDeserialize.invoke(null, meta);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -411,12 +411,17 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     @Override
-    public void addEntityTracker(Object trackerEntry, Object serverPlayer) {
-        ((ChunkMap.TrackedEntity) trackerEntry).updatePlayer((ServerPlayer) serverPlayer);
+    public void addEntityTracker(Object trackedEntity, Object serverPlayer) {
+        ((ChunkMap.TrackedEntity) trackedEntity).updatePlayer((ServerPlayer) serverPlayer);
     }
 
     @Override
-    public void clearEntityTracker(Object trackerEntry, Object serverPlayer) {
-        ((ChunkMap.TrackedEntity) trackerEntry).removePlayer((ServerPlayer) serverPlayer);
+    public void clearEntityTracker(Object trackedEntity, Object serverPlayer) {
+        ((ChunkMap.TrackedEntity) trackedEntity).removePlayer((ServerPlayer) serverPlayer);
+    }
+
+    @Override
+    public Set getTrackedEntities(Object trackedEntity) {
+        return ((ChunkMap.TrackedEntity) trackedEntity).seenBy;
     }
 }

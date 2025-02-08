@@ -21,104 +21,104 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
-public interface ReflectionManagerAbstract {
-    boolean hasInvul(Entity entity);
+public abstract class ReflectionManagerAbstract {
+    public abstract boolean hasInvul(Entity entity);
 
-    int getIncrementedStateId(Player player);
+    public abstract int getIncrementedStateId(Player player);
 
-    int getNewEntityId();
+    public abstract int getNewEntityId();
 
-    int getNewEntityId(boolean increment);
+    public abstract int getNewEntityId(boolean increment);
 
-    Object getPlayerConnectionOrPlayer(Player player);
+    public abstract Object getPlayerConnectionOrPlayer(Player player);
 
-    Object createEntityInstance(String entityName);
+    public abstract Object createEntityInstance(String entityName);
 
-    Object getBoundingBox(Entity entity);
+    public abstract Object getBoundingBox(Entity entity);
 
-    double getXBoundingBox(Entity entity);
+    public abstract double getXBoundingBox(Entity entity);
 
-    double getYBoundingBox(Entity entity);
+    public abstract double getYBoundingBox(Entity entity);
 
-    double getZBoundingBox(Entity entity);
+    public abstract double getZBoundingBox(Entity entity);
 
-    Object getPlayerFromPlayerConnection(Object nmsEntity);
+    public abstract Object getPlayerFromPlayerConnection(Object nmsEntity);
 
-    Entity getBukkitEntity(Object nmsEntity);
+    public abstract Entity getBukkitEntity(Object nmsEntity);
 
-    ItemStack getBukkitItem(Object nmsItem);
+    public abstract ItemStack getBukkitItem(Object nmsItem);
 
-    ItemStack getCraftItem(ItemStack bukkitItem);
+    public abstract ItemStack getCraftItem(ItemStack bukkitItem);
 
-    Object getEntityTracker(Entity target) throws Exception;
+    public abstract Object getEntityTracker(Entity target) throws Exception;
 
-    Object getEntityTrackerEntry(Entity target) throws Exception;
+    public abstract Object getTrackerEntryFromTracker(Object tracker) throws Exception;
 
-    Object getMinecraftServer();
+    public abstract Object getMinecraftServer();
 
-    Object getNmsEntity(Entity entity);
+    public abstract Object getNmsEntity(Entity entity);
 
-    double getPing(Player player);
+    public abstract double getPing(Player player);
 
-    float[] getSize(Entity entity);
+    public abstract float[] getSize(Entity entity);
 
-    MinecraftSessionService getMinecraftSessionService();
+    public abstract MinecraftSessionService getMinecraftSessionService();
 
-    Float getSoundModifier(Object entity);
+    public abstract Float getSoundModifier(Object entity);
 
-    void injectCallback(String playername, ProfileLookupCallback callback);
+    public abstract void injectCallback(String playername, ProfileLookupCallback callback);
 
-    void setBoundingBox(Entity entity, double x, double y, double z);
+    public abstract void setBoundingBox(Entity entity, double x, double y, double z);
 
-    String getSoundString(Sound sound);
+    public abstract String getSoundString(Sound sound);
 
-    ByteBuf getDataWatcherValues(Entity entity);
+    public abstract ByteBuf getDataWatcherValues(Entity entity);
 
-    Material getMaterial(String name);
+    public abstract Material getMaterial(String name);
 
-    String getItemName(Material material);
+    public abstract String getItemName(Material material);
 
-    Object createMinecraftKey(String name);
+    public abstract Object createMinecraftKey(String name);
 
-    Object getEntityType(EntityType entityType);
+    public abstract Object getEntityType(EntityType entityType);
 
-    Object registerEntityType(NamespacedKey key);
+    public abstract Object registerEntityType(NamespacedKey key);
 
-    int getEntityTypeId(Object entityTypes);
+    public abstract int getEntityTypeId(Object entityTypes);
 
-    int getEntityTypeId(EntityType entityType);
+    public abstract int getEntityTypeId(EntityType entityType);
 
-    Object getEntityType(NamespacedKey name);
+    public abstract Object getEntityType(NamespacedKey name);
 
-    int getCombinedIdByBlockData(BlockData data);
+    public abstract int getCombinedIdByBlockData(BlockData data);
 
-    int getCombinedIdByItemStack(ItemStack itemStack);
+    public abstract int getCombinedIdByItemStack(ItemStack itemStack);
 
-    BlockData getBlockDataByCombinedId(int id);
+    public abstract BlockData getBlockDataByCombinedId(int id);
 
-    ItemStack getItemStackByCombinedId(int id);
+    public abstract ItemStack getItemStackByCombinedId(int id);
 
-    Object getWorldServer(World w);
+    public abstract Object getWorldServer(World w);
 
-    ItemMeta getDeserializedItemMeta(Map<String, Object> meta);
+    public abstract ItemMeta getDeserializedItemMeta(Map<String, Object> meta);
 
-    GameProfile getProfile(Player player);
+    public abstract GameProfile getProfile(Player player);
 
     static UserProfile getUserProfile(UUID uuid, String playerName) {
         return new UserProfile(uuid, playerName == null || playerName.length() < 17 ? playerName : playerName.substring(0, 16));
     }
 
-    default Cat.Type getCatTypeFromInt(int catType) {
+    public Cat.Type getCatTypeFromInt(int catType) {
         if (Cat.Type.class.isEnum()) {
             return Cat.Type.class.getEnumConstants()[catType];
         }
-
         throw new IllegalStateException("This method should have been overwritten by an extending class");
     }
 
-    default int getCatVariantAsInt(Cat.Type type) {
+    public int getCatVariantAsInt(Cat.Type type) {
         if (type instanceof Enum) {
             return ((Enum) type).ordinal();
         }
@@ -126,11 +126,11 @@ public interface ReflectionManagerAbstract {
         throw new IllegalStateException("This method should have been overwritten by an extending class");
     }
 
-    Art getPaintingFromInt(int paintingId);
+    public abstract Art getPaintingFromInt(int paintingId);
 
-    int getPaintingAsInt(Art type);
+    public abstract int getPaintingAsInt(Art type);
 
-    default Frog.Variant getFrogVariantFromInt(int frogType) {
+    public Frog.Variant getFrogVariantFromInt(int frogType) {
         if (Frog.Variant.class.isEnum()) {
             return Frog.Variant.class.getEnumConstants()[frogType];
         }
@@ -138,7 +138,7 @@ public interface ReflectionManagerAbstract {
         throw new IllegalStateException("This method should have been overwritten by an extending class");
     }
 
-    default int getFrogVariantAsInt(Frog.Variant type) {
+    public int getFrogVariantAsInt(Frog.Variant type) {
         if (type instanceof Enum) {
             return ((Enum) type).ordinal();
         }
@@ -146,19 +146,21 @@ public interface ReflectionManagerAbstract {
         throw new IllegalStateException("This method should have been overwritten by an extending class");
     }
 
-    default Wolf.Variant getWolfVariantFromInt(int wolfVariant) {
+    public Wolf.Variant getWolfVariantFromInt(int wolfVariant) {
         throw new IllegalStateException("Not implemented");
     }
 
-    default int getWolfVariantAsInt(Wolf.Variant type) {
+    public int getWolfVariantAsInt(Wolf.Variant type) {
         throw new IllegalStateException("Not implemented");
     }
 
-    default String getDataAsString(ItemStack itemStack) {
+    public String getDataAsString(ItemStack itemStack) {
         return itemStack.hasItemMeta() ? itemStack.getItemMeta().getAsString() : null;
     }
 
-    void addEntityTracker(Object trackerEntry, Object serverPlayer);
+    public abstract void addEntityTracker(Object trackedEntity, Object serverPlayer);
 
-    void clearEntityTracker(Object trackerEntry, Object serverPlayer);
+    public abstract void clearEntityTracker(Object trackedEntity, Object serverPlayer);
+
+    public abstract Set getTrackedEntities(Object trackedEntity);
 }

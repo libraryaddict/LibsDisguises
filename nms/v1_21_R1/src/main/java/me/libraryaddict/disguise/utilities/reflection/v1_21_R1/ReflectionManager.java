@@ -73,12 +73,12 @@ import java.lang.reflect.Method;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ReflectionManager implements ReflectionManagerAbstract {
+public class ReflectionManager extends ReflectionManagerAbstract {
     private Field dataItemsField;
-    private final Field entityTrackerField;
     private final AtomicInteger entityCounter;
     private final Method entityDefaultSoundMethod;
     private final UnsafeValues craftMagicNumbers;
@@ -98,10 +98,6 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         entityCounter.setAccessible(true);
         this.entityCounter = (AtomicInteger) entityCounter.get(null);
 
-        // Known as PlayerChunkMap in mojang mappings
-        entityTrackerField = ChunkMap.TrackedEntity.class.getDeclaredField("b");
-        entityTrackerField.setAccessible(true);
-
         // Default is protected method, 1.0F on EntityLiving.class
         entityDefaultSoundMethod = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("fa");
         entityDefaultSoundMethod.setAccessible(true);
@@ -109,6 +105,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         craftMagicNumbers = (UnsafeValues) CraftMagicNumbers.class.getField("INSTANCE").get(null);
     }
 
+    @Override
     public boolean hasInvul(Entity entity) {
         net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
 
@@ -227,14 +224,12 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     @Override
-    public ServerEntity getEntityTrackerEntry(Entity target) throws Exception {
-        ChunkMap.TrackedEntity trackedEntity = getEntityTracker(target);
-
+    public ServerEntity getTrackerEntryFromTracker(Object trackedEntity) {
         if (trackedEntity == null) {
             return null;
         }
 
-        return (ServerEntity) entityTrackerField.get(trackedEntity);
+        return ((ChunkMap.TrackedEntity) trackedEntity).serverEntity;
     }
 
     @Override
@@ -467,12 +462,17 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     @Override
-    public void addEntityTracker(Object trackerEntry, Object serverPlayer) {
-        ((ChunkMap.TrackedEntity) trackerEntry).updatePlayer((ServerPlayer) serverPlayer);
+    public void addEntityTracker(Object trackedEntity, Object serverPlayer) {
+        ((ChunkMap.TrackedEntity) trackedEntity).updatePlayer((ServerPlayer) serverPlayer);
     }
 
     @Override
-    public void clearEntityTracker(Object trackerEntry, Object serverPlayer) {
-        ((ChunkMap.TrackedEntity) trackerEntry).removePlayer((ServerPlayer) serverPlayer);
+    public void clearEntityTracker(Object trackedEntity, Object serverPlayer) {
+        ((ChunkMap.TrackedEntity) trackedEntity).removePlayer((ServerPlayer) serverPlayer);
+    }
+
+    @Override
+    public Set getTrackedEntities(Object trackedEntity) {
+        return ((ChunkMap.TrackedEntity) trackedEntity).seenBy;
     }
 }
