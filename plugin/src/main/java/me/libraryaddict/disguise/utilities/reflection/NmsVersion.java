@@ -81,7 +81,7 @@ public enum NmsVersion {
     }
 
     /**
-     * Returns the supported versions in a compressed string. Eg, 1.21.(2,3,4)
+     * Returns the supported versions in a compressed string. Eg, 1.21.[2/3/4]
      *
      * @return
      */
@@ -89,6 +89,7 @@ public enum NmsVersion {
         if (getSupportedVersions().length == 1) {
             return getSupportedVersions()[0];
         }
+
         StringBuilder string = new StringBuilder();
 
         for (String version : getSupportedVersions()) {
