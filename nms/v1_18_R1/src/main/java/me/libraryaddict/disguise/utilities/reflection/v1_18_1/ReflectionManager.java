@@ -150,23 +150,10 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     }
 
     @Override
-    public AABB getBoundingBox(Entity entity) {
-        return ((CraftEntity) entity).getHandle().getBoundingBox();
-    }
+    public double[] getBoundingBox(Entity entity) {
+        AABB aabb = ((CraftEntity) entity).getHandle().getBoundingBox();
 
-    @Override
-    public double getXBoundingBox(Entity entity) {
-        return getBoundingBox(entity).maxX - getBoundingBox(entity).minX;
-    }
-
-    @Override
-    public double getYBoundingBox(Entity entity) {
-        return getBoundingBox(entity).maxY - getBoundingBox(entity).minY;
-    }
-
-    @Override
-    public double getZBoundingBox(Entity entity) {
-        return getBoundingBox(entity).maxZ - getBoundingBox(entity).minZ;
+        return new double[]{aabb.maxX - aabb.minX, aabb.maxY - aabb.minY, aabb.maxZ - aabb.minZ};
     }
 
     @Override

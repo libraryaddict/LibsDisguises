@@ -730,7 +730,6 @@ public class DisguiseUtilities {
             }
 
             PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
-
         }
 
         if (NmsVersion.v1_15.isSupported()) {
@@ -2048,8 +2047,7 @@ public class DisguiseUtilities {
                 }, 2);
             } else {
                 final Object entityTracker = ReflectionManager.getEntityTracker(disguise.getEntity());
-                final Object entityTrackerEntry = !NmsVersion.v1_14.isSupported() ? entityTracker :
-                    ReflectionManager.getEntityTrackerEntry(disguise.getEntity(), entityTracker);
+                final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity(), entityTracker);
 
                 if (entityTrackerEntry == null) {
                     return;
@@ -2065,7 +2063,7 @@ public class DisguiseUtilities {
                         continue;
                     }
 
-                    ReflectionManager.clearEntityTracker(entityTracker, p);
+                    ReflectionManager.clearEntityTracker(entityTracker, entityTrackerEntry, p);
 
                     WrapperPlayServerDestroyEntities destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
 
@@ -2073,7 +2071,7 @@ public class DisguiseUtilities {
 
                     Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
                         try {
-                            ReflectionManager.addEntityTracker(entityTracker, p);
+                            ReflectionManager.addEntityTracker(entityTracker, entityTrackerEntry, p);
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
@@ -2099,8 +2097,7 @@ public class DisguiseUtilities {
         if (entity.isValid()) {
             try {
                 final Object entityTracker = ReflectionManager.getEntityTracker(entity);
-                final Object entityTrackerEntry =
-                    NmsVersion.v1_14.isSupported() ? entityTracker : ReflectionManager.getEntityTrackerEntry(entity, entityTracker);
+                final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(entity, entityTracker);
 
                 if (entityTrackerEntry != null) {
                     Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTracker, entityTrackerEntry);
@@ -2113,19 +2110,18 @@ public class DisguiseUtilities {
                             continue;
                         }
 
-                        ReflectionManager.clearEntityTracker(entityTracker, p);
+                        ReflectionManager.clearEntityTracker(entityTracker, entityTrackerEntry, p);
 
                         WrapperPlayServerDestroyEntities destroyPacket = getDestroyPacket(entity.getEntityId());
                         PacketEvents.getAPI().getPlayerManager().sendPacket(player, destroyPacket);
 
                         Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
                             try {
-                                ReflectionManager.addEntityTracker(entityTracker, p);
+                                ReflectionManager.addEntityTracker(entityTracker, entityTrackerEntry, p);
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             }
                         }, 2);
-
                     }
                 }
             } catch (Exception ex) {
@@ -2177,14 +2173,14 @@ public class DisguiseUtilities {
                         continue;
                     }
 
-                    ReflectionManager.clearEntityTracker(entityTracker, p);
+                    ReflectionManager.clearEntityTracker(entityTracker, entityTrackerEntry, p);
 
                     WrapperPlayServerDestroyEntities destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
                     PacketEvents.getAPI().getPlayerManager().sendPacket(player, destroyPacket);
 
                     Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
                         try {
-                            ReflectionManager.addEntityTracker(entityTracker, p);
+                            ReflectionManager.addEntityTracker(entityTracker, entityTrackerEntry, p);
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }

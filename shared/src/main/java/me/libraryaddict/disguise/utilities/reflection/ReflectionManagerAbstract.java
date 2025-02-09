@@ -35,15 +35,13 @@ public abstract class ReflectionManagerAbstract {
 
     public abstract Object getPlayerConnectionOrPlayer(Player player);
 
-    public abstract Object createEntityInstance(String entityName);
+    public Object createEntityInstance(EntityType entityType, String entityName) {
+        return createEntityInstance(entityName);
+    }
 
-    public abstract Object getBoundingBox(Entity entity);
+    protected abstract Object createEntityInstance(String entityName);
 
-    public abstract double getXBoundingBox(Entity entity);
-
-    public abstract double getYBoundingBox(Entity entity);
-
-    public abstract double getZBoundingBox(Entity entity);
+    public abstract double[] getBoundingBox(Entity entity);
 
     public abstract Object getPlayerFromPlayerConnection(Object nmsEntity);
 
@@ -52,10 +50,6 @@ public abstract class ReflectionManagerAbstract {
     public abstract ItemStack getBukkitItem(Object nmsItem);
 
     public abstract ItemStack getCraftItem(ItemStack bukkitItem);
-
-    public abstract Object getEntityTracker(Entity target) throws Exception;
-
-    public abstract Object getTrackerEntryFromTracker(Object tracker) throws Exception;
 
     public abstract Object getMinecraftServer();
 
@@ -158,9 +152,18 @@ public abstract class ReflectionManagerAbstract {
         return itemStack.hasItemMeta() ? itemStack.getItemMeta().getAsString() : null;
     }
 
+    public abstract Object getEntityTracker(Entity target) throws Exception;
+
+    @Deprecated
+    public Object getEntityTrackerEntry(Entity target, Object entityTracker) throws Exception {
+        return getTrackerEntryFromTracker(entityTracker);
+    }
+
+    protected abstract Object getTrackerEntryFromTracker(Object tracker) throws Exception;
+
+    public abstract Set getTrackedEntities(Object trackedEntity);
+
     public abstract void addEntityTracker(Object trackedEntity, Object serverPlayer);
 
     public abstract void clearEntityTracker(Object trackedEntity, Object serverPlayer);
-
-    public abstract Set getTrackedEntities(Object trackedEntity);
 }
