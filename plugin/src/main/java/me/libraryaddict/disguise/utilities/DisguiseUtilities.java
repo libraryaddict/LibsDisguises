@@ -1297,6 +1297,10 @@ public class DisguiseUtilities {
 
     public static void addUserProfile(String string, UserProfile userProfile) {
         try {
+            if (StringUtils.isEmpty(string)) {
+                throw new IllegalArgumentException("Provided string is empty");
+            }
+
             if (userProfile == null) {
                 return;
             }

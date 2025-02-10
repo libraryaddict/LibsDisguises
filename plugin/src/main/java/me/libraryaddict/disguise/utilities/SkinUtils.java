@@ -203,7 +203,7 @@ public class SkinUtils {
                 continue;
             }
 
-            param = param.substring(0, param.length() - variant.name().length() + 1);
+            param = param.substring(0, param.length() - (variant.name().length() + 1));
             break;
         }
 

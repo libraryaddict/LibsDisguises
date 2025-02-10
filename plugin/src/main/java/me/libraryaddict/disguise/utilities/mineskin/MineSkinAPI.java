@@ -141,7 +141,6 @@ public class MineSkinAPI {
         connection.setDoOutput(true);
 
         connection.setRequestProperty("User-Agent", this.userAgent);
-        connection.setRequestProperty("Accept", "application/json");
 
         String key = getApiKey();
 

@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.SkinUtils;
+import me.libraryaddict.disguise.utilities.mineskin.models.structures.SkinVariant;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
@@ -48,7 +49,7 @@ public class GrabSkinCommand implements CommandExecutor {
         }
 
         String[] args = DisguiseUtilities.split(StringUtils.join(strings, " "));
-        String tName = args.length > 1 ? args[0] : null;
+        String tempName = args.length > 1 ? args[0] : null;
         String skin = args.length > 1 ? args[1] : args[0];
 
         String usable = SkinUtils.getUsableStatus();
@@ -58,23 +59,32 @@ public class GrabSkinCommand implements CommandExecutor {
             return true;
         }
 
-        if (tName == null && skin.matches("(.*\\/)?[a-zA-Z0-9_-]{3,20}(\\.png)?")) {
+        if (tempName == null && skin.matches("(.*/)?[a-zA-Z0-9_-]{3,20}(\\.png)?")) {
             int start = skin.lastIndexOf("/") + 1;
             int end = skin.length();
 
-            if (skin.lastIndexOf(".", start) > start) {
+            if (skin.indexOf(".", start) > start) {
                 end = skin.lastIndexOf(".", start);
             }
 
-            tName = skin.substring(start, end);
+            tempName = skin.substring(start, end);
 
-            if (DisguiseUtilities.hasUserProfile(tName)) {
-                tName = null;
+            if (DisguiseUtilities.hasUserProfile(tempName)) {
+                tempName = null;
             }
         }
 
-        String name =
-            tName != null && tName.toLowerCase(Locale.ENGLISH).endsWith(":slim") ? tName.substring(0, tName.lastIndexOf(":")) : tName;
+        // Remove skin:slim :unknown :classic, etc
+        for (SkinVariant variant : SkinVariant.values()) {
+            if (tempName == null || tempName.toLowerCase(Locale.ENGLISH).endsWith(":" + variant.name().toLowerCase(Locale.ENGLISH))) {
+                continue;
+            }
+
+            tempName = tempName.substring(0, tempName.length() - (variant.name().length() + 1));
+            break;
+        }
+
+        String name = tempName;
 
         if (name != null && name.replaceAll("[_a-zA-Z \\d-@#]", "").length() > 0) {
             LibsMsg.SKIN_API_INVALID_NAME.send(sender);
@@ -108,7 +118,7 @@ public class GrabSkinCommand implements CommandExecutor {
 
                 String nName = name;
 
-                if (nName == null) {
+                if (StringUtils.isEmpty(nName)) {
                     int i = 1;
 
                     while (DisguiseUtilities.hasUserProfile("skin" + i)) {
