@@ -152,12 +152,23 @@ public class ReflectionManager {
     private static MinecraftSessionService sessionService;
     private static String minecraftVersion;
     private static Method propertyName, propertyValue, propertySignature;
+    @Getter
+    private static boolean mojangMapped;
 
     public static void init() {
         try {
             nmsReflection = getReflectionManager(getVersion());
 
             loadAuthlibStuff();
+
+            // An alternative implemention of https://github.com/PaperMC/Paper/blob/main/paper-server/src/main/java/io/papermc/paper/util/MappingEnvironment.java#L58
+            // On versions of MC that this doesn't exist, will be false, on spigot, will be false, on paper 1.20.6+, will be true
+            try {
+                Class.forName("net.minecraft.world.entity.MobCategory");
+                mojangMapped = true;
+            } catch (ClassNotFoundException ex) {
+                mojangMapped = false;
+            }
 
             if (DisguiseUtilities.isRunningPaper() && !NmsVersion.v1_17.isSupported()) {
                 // Paper, prior to 1.17, used a map
