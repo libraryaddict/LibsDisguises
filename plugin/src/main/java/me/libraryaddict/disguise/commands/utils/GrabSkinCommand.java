@@ -63,8 +63,8 @@ public class GrabSkinCommand implements CommandExecutor {
             int start = skin.lastIndexOf("/") + 1;
             int end = skin.length();
 
-            if (skin.indexOf(".", start) > start) {
-                end = skin.indexOf(".", start);
+            if (skin.lastIndexOf(".") > start) {
+                end = skin.lastIndexOf(".");
             }
 
             tempName = skin.substring(start, end);
@@ -76,7 +76,7 @@ public class GrabSkinCommand implements CommandExecutor {
 
         // Remove skin:slim :unknown :classic, etc
         for (SkinVariant variant : SkinVariant.values()) {
-            if (tempName == null || tempName.toLowerCase(Locale.ENGLISH).endsWith(":" + variant.name().toLowerCase(Locale.ENGLISH))) {
+            if (tempName == null || !tempName.toLowerCase(Locale.ENGLISH).endsWith(":" + variant.name().toLowerCase(Locale.ENGLISH))) {
                 continue;
             }
 
