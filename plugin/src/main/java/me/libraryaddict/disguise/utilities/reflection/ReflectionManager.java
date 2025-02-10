@@ -164,6 +164,7 @@ public class ReflectionManager {
             // An alternative implemention of https://github.com/PaperMC/Paper/blob/main/paper-server/src/main/java/io/papermc/paper/util/MappingEnvironment.java#L58
             // On versions of MC that this doesn't exist, will be false, on spigot, will be false, on paper 1.20.6+, will be true
             try {
+                // On spigot, this is called 'EnumCreatureType', and will throw class not found exception.
                 Class.forName("net.minecraft.world.entity.MobCategory");
                 mojangMapped = true;
             } catch (ClassNotFoundException ex) {
