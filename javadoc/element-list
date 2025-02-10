@@ -4,6 +4,9 @@ me.libraryaddict.disguise.disguisetypes.watchers
 me.libraryaddict.disguise.events
 me.libraryaddict.disguise.utilities
 me.libraryaddict.disguise.utilities.mineskin
+me.libraryaddict.disguise.utilities.mineskin.models.requests
+me.libraryaddict.disguise.utilities.mineskin.models.responses
+me.libraryaddict.disguise.utilities.mineskin.models.structures
 me.libraryaddict.disguise.utilities.params
 me.libraryaddict.disguise.utilities.params.types
 me.libraryaddict.disguise.utilities.params.types.base
