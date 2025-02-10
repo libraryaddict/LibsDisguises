@@ -134,7 +134,7 @@ public abstract class Disguise {
     @Getter
     private boolean scalePlayerToDisguise = DisguiseConfig.isScaleSelfDisguises();
     @Getter
-    private boolean tallSelfDisguisesScaling = DisguiseConfig.isTallSelfDisguisesScaling();
+    private boolean tallSelfDisguisesScaling = DisguiseConfig.isTallSelfDisguises() && DisguiseConfig.isTallSelfDisguisesScaling();
     @Getter
     private final DisguiseInternals internals;
 
