@@ -3,7 +3,8 @@ package me.libraryaddict.disguise.utilities;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.mojang.authlib.GameProfile;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.mineskin.MineSkinResponse;
+import me.libraryaddict.disguise.utilities.mineskin.models.responses.MineSkinQueueResponse;
+import me.libraryaddict.disguise.utilities.mineskin.models.structures.SkinVariant;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.ChatColor;
@@ -23,11 +24,6 @@ public class SkinUtils {
         void onInfo(LibsMsg msg, Object... args);
 
         void onSuccess(UserProfile profile);
-    }
-
-    public enum ModelType {
-        SLIM,
-        NORMAL
     }
 
     private static int skinsSinceLastPromotion = 0;
@@ -60,12 +56,12 @@ public class SkinUtils {
         }
     }
 
-    public static void handleFile(File file, ModelType modelType, SkinCallback callback) {
+    public static void handleFile(File file, SkinVariant modelType, SkinCallback callback) {
         new BukkitRunnable() {
             @Override
             public void run() {
                 try {
-                    MineSkinResponse response = DisguiseUtilities.getMineSkinAPI().generateFromFile(callback, file, modelType);
+                    MineSkinQueueResponse response = DisguiseUtilities.getMineSkinAPI().generateFromFile(callback, file, modelType);
 
                     new BukkitRunnable() {
                         @Override
@@ -92,11 +88,11 @@ public class SkinUtils {
         }.runTaskAsynchronously(LibsDisguises.getInstance());
     }
 
-    public static void handleUrl(String url, ModelType modelType, SkinCallback callback) {
+    public static void handleUrl(String url, SkinVariant modelType, SkinCallback callback) {
         new BukkitRunnable() {
             @Override
             public void run() {
-                MineSkinResponse response = DisguiseUtilities.getMineSkinAPI().generateFromUrl(callback, url, modelType);
+                MineSkinQueueResponse response = DisguiseUtilities.getMineSkinAPI().generateFromUrl(callback, url, modelType);
 
                 new BukkitRunnable() {
                     @Override
@@ -114,7 +110,7 @@ public class SkinUtils {
         }.runTaskAsynchronously(LibsDisguises.getInstance());
     }
 
-    public static void handleName(String playerName, ModelType modelType, SkinCallback callback) {
+    public static void handleName(String playerName, SkinVariant modelType, SkinCallback callback) {
         UserProfile gameProfile = DisguiseUtilities.getProfileFromMojang(playerName, gameProfile1 -> {
             // Isn't handled by callback
             if (!Pattern.matches("\\w{1,16}", playerName)) {
@@ -142,15 +138,15 @@ public class SkinUtils {
         handleProfile(gameProfile, modelType, callback);
     }
 
-    public static void handleProfile(GameProfile profile, ModelType modelType, SkinCallback callback) {
+    public static void handleProfile(GameProfile profile, SkinVariant modelType, SkinCallback callback) {
         handleProfile(ReflectionManager.getUserProfile(profile), modelType, callback);
     }
 
-    public static void handleProfile(UserProfile profile, ModelType modelType, SkinCallback callback) {
+    public static void handleProfile(UserProfile profile, SkinVariant modelType, SkinCallback callback) {
         callback.onSuccess(profile);
     }
 
-    public static void handleUUID(UUID uuid, ModelType modelType, SkinCallback callback) {
+    public static void handleUUID(UUID uuid, SkinVariant modelType, SkinCallback callback) {
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -181,7 +177,13 @@ public class SkinUtils {
         }
 
         if (DisguiseUtilities.getMineSkinAPI().nextRequestIn() > 0) {
-            return LibsMsg.SKIN_API_TIMER.get(DisguiseUtilities.getMineSkinAPI().nextRequestIn());
+            String message = LibsMsg.SKIN_API_TIMER.get(DisguiseUtilities.getMineSkinAPI().nextRequestIn());
+
+//            if (!DisguiseUtilities.getMineSkinAPI().isMentionedApiKey()) {
+//                message += " " + LibsMsg.SKIN_API_SUGGEST_KEY.get();
+//            }
+
+            return message;
         }
 
         return null;
@@ -193,10 +195,16 @@ public class SkinUtils {
     }
 
     public static void grabSkin(CommandSender sender, String param, SkinCallback callback) {
-        ModelType modelType = param.toLowerCase(Locale.ENGLISH).endsWith(":slim") ? ModelType.SLIM : ModelType.NORMAL;
+        SkinVariant modelType = SkinVariant.UNKNOWN;
 
-        if (modelType == ModelType.SLIM) {
-            param = param.substring(0, param.length() - ":slim".length());
+        // Try to find ':slim', ':classic' and ':unknown'
+        for (SkinVariant variant : SkinVariant.values()) {
+            if (!param.toLowerCase(Locale.ENGLISH).endsWith(":" + variant.name().toLowerCase(Locale.ENGLISH))) {
+                continue;
+            }
+
+            param = param.substring(0, param.length() - variant.name().length() + 1);
+            break;
         }
 
         if (param.matches("https?://.+")) {

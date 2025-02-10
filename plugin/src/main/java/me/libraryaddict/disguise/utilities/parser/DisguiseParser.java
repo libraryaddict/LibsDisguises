@@ -334,17 +334,18 @@ public class DisguiseParser {
 
                 // On a failure where user error is likely
                 switch (msg) {
-                    case SKIN_API_403:
-                    case SKIN_API_404:
+                    case SKIN_API_IMAGE_TIMEOUT:
+                    case SKIN_API_TIMEOUT:
+                    case SKIN_API_TIMEOUT_ERROR:
+                    case SKIN_API_TIMER:
+                    case SKIN_API_TOO_MANY_FAILURES:
+                    case SKIN_API_TOO_MANY_FAILURES_NON_PLAYER:
                     case SKIN_API_FAIL:
                     case SKIN_API_BAD_FILE:
                     case SKIN_API_BAD_FILE_NAME:
-                    case SKIN_API_BAD_URL:
-                    case SKIN_API_FAILED_URL:
                     case SKIN_API_FAIL_TOO_FAST:
                     case SKIN_API_IN_USE:
-                    case SKIN_API_IMAGE_HAS_ERROR:
-                    case SKIN_API_INTERNAL_ERROR:
+                    case SKIN_API_FAIL_CODE_EXCEPTIONAL:
                     case SKIN_API_TIMEOUT_API_KEY_ERROR:
                     case SKIN_API_FAIL_CODE:
                     case SKIN_API_INVALID_NAME:
