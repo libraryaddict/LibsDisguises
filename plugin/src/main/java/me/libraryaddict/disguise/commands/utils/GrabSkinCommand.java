@@ -64,7 +64,7 @@ public class GrabSkinCommand implements CommandExecutor {
             int end = skin.length();
 
             if (skin.indexOf(".", start) > start) {
-                end = skin.lastIndexOf(".", start);
+                end = skin.indexOf(".", start);
             }
 
             tempName = skin.substring(start, end);
