@@ -254,8 +254,6 @@ public class LibsDisguises extends JavaPlugin {
     }
 
     private void runBackendStuff() {
-        ClassMappings.loadMappingsCache(getDataFolder());
-
         if (SpigotReflectionUtil.VERSION == null) {
             SpigotReflectionUtil.init();
         }

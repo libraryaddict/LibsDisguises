@@ -21,6 +21,10 @@ public class ClassMappings {
     private static final String[] packages = getPackages();
     private static boolean updatingCache = false;
 
+    static {
+        ClassMappings.loadMappingsCache();
+    }
+
     public static String getClass(String packageHint, String className) {
         String key = packageHint + "." + className;
         String location = classLocations.get(key);
@@ -125,8 +129,8 @@ public class ClassMappings {
         }
     }
 
-    public static void loadMappingsCache(File dataFolder) {
-        File mappingsCache = getFile(dataFolder);
+    public static void loadMappingsCache() {
+        File mappingsCache = getFile(LibsDisguises.getInstance().getDataFolder());
 
         if (!mappingsCache.exists()) {
             return;
