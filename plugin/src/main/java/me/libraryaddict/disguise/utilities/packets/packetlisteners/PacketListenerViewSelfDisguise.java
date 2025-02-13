@@ -40,13 +40,20 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
             Server.ENTITY_POSITION_SYNC, Server.DAMAGE_EVENT}) {
             // Packet DAMAGE_EVENT does not have all mappings added for every version of Minecraft in PacketEvents
             // https://github.com/retrooper/packetevents/blob/2.0/mappings/damage/damagetype_mappings.json
-            if (packet == Server.DAMAGE_EVENT && !DisguiseUtilities.isRegistered(DamageTypes.CRAMMING)) {
-                continue;
+            if (packet == Server.DAMAGE_EVENT) {
+                if (!DisguiseUtilities.isRegistered(DamageTypes.CRAMMING)) {
+                    continue;
+                }
+
+                // This was added because apparently in 1.21.1, a brief glance indicates that the mappings is probably incomplete
+                // A player was experiencing kicks when a wither skull attacked something
+                if (NmsVersion.v1_21_R1.isVersion()) {
+                    continue;
+                }
             }
 
             listenedPackets[packet.ordinal()] = true;
         }
-
     }
 
     @Override
