@@ -83,6 +83,17 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
                 movePacket = new WrapperPlayServerEntityTeleport(tele.getEntityId(),
                     new Vector3d(loc.getBlockX() + 0.5, y + yMod, loc.getBlockZ() + 0.5), tele.getYaw(), tele.getPitch(),
                     tele.isOnGround());
+            } else if (sentPacket instanceof WrapperPlayServerEntityPositionSync) {
+                WrapperPlayServerEntityPositionSync sync = (WrapperPlayServerEntityPositionSync) sentPacket;
+                double y = loc.getBlockY();
+
+                // Center the block
+                y += (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0);
+
+                EntityPositionData cloned = DisguiseUtilities.clone(sync.getValues());
+                cloned.setPosition(new Vector3d(loc.getBlockX() + 0.5, y + yMod, loc.getBlockZ() + 0.5));
+
+                movePacket = new WrapperPlayServerEntityPositionSync(sync.getId(), cloned, sync.isOnGround());
             } else {
                 double x;
                 double y;
@@ -125,9 +136,6 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
                                 rot.isOnGround());
                     } else if (sentPacket instanceof WrapperPlayServerEntityRelativeMove) {
                         WrapperPlayServerEntityRelativeMove rot = (WrapperPlayServerEntityRelativeMove) sentPacket;
-                        x = rot.getDeltaX();
-                        y = rot.getDeltaY();
-                        z = rot.getDeltaZ();
 
                         movePacket = new WrapperPlayServerEntityRelativeMove(rot.getEntityId(), x, y, z, rot.isOnGround());
                     } else {
