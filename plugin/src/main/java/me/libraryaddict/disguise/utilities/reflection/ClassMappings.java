@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
 import io.papermc.paper.ServerBuildInfo;
+import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.Bukkit;
@@ -20,6 +21,8 @@ public class ClassMappings {
     private static final HashMap<String, String> classLocations = new HashMap<>();
     private static final String[] packages = getPackages();
     private static boolean updatingCache = false;
+    @Getter
+    private static final File mappingsFile = new File(DisguiseUtilities.getInternalFolder(), "mappings_cache");
 
     static {
         ClassMappings.loadMappingsCache();
@@ -100,12 +103,8 @@ public class ClassMappings {
         return "Built for: " + version;
     }
 
-    private static File getFile(File dataFolder) {
-        return new File(dataFolder, "mappings_cache");
-    }
-
-    public static void deleteMappingsCache(File folder) {
-        getFile(folder).delete();
+    public static void deleteMappingsCache() {
+        getMappingsFile().delete();
     }
 
     public static void saveMappingsCache(File dataFolder) {
@@ -117,8 +116,9 @@ public class ClassMappings {
             updatingCache = false;
         }
 
-        File mappingsCache = getFile(dataFolder);
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(mappingsCache))) {
+        getMappingsFile().getParentFile().mkdirs();
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(getMappingsFile()))) {
             writer.write(getVersion() + "\n");
 
             for (Map.Entry<String, String> entry : classLocations.entrySet()) {
@@ -130,13 +130,11 @@ public class ClassMappings {
     }
 
     public static void loadMappingsCache() {
-        File mappingsCache = getFile(LibsDisguises.getInstance().getDataFolder());
-
-        if (!mappingsCache.exists()) {
+        if (!getMappingsFile().exists()) {
             return;
         }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(mappingsCache))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(getMappingsFile()))) {
             String line = reader.readLine();
 
             // Not the correct version

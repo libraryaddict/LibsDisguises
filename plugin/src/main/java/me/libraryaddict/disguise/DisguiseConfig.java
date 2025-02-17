@@ -413,7 +413,7 @@ public class DisguiseConfig {
     }
 
     public static void loadInternalConfig() {
-        File internalFile = new File(LibsDisguises.getInstance().getDataFolder(), "internal.yml");
+        File internalFile = DisguiseUtilities.getInternalFile();
 
         if (!internalFile.exists()) {
             saveInternalConfig();
@@ -436,7 +436,7 @@ public class DisguiseConfig {
     }
 
     public static void saveInternalConfig() {
-        File internalFile = new File(LibsDisguises.getInstance().getDataFolder(), "internal.yml");
+        File internalFile = DisguiseUtilities.getInternalFile();
 
         String internalConfig = ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), "internal.yml");
 

@@ -345,6 +345,8 @@ public class DisguiseUtilities {
     @Getter
     @Setter
     private static boolean debuggingMode;
+    @Getter
+    private static final File internalFolder, internalFile, preferencesFile;
 
     static {
         try {
@@ -357,11 +359,44 @@ public class DisguiseUtilities {
             profileCache = null;
             sanitySkinCacheFile = null;
             savedDisguises = null;
+            internalFolder = null;
+            internalFile = null;
+            preferencesFile = null;
         } else {
             profileCache = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins");
             sanitySkinCacheFile = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins/sanity.json");
             savedDisguises = new File(LibsDisguises.getInstance().getDataFolder(), "SavedDisguises");
             runningGeyser = Bukkit.getPluginManager().getPlugin("Geyser-Spigot") != null;
+            internalFolder = new File(LibsDisguises.getInstance().getDataFolder(), "internal");
+            internalFile = new File(getInternalFolder(), "internal.yml");
+            preferencesFile = new File(getInternalFolder(), "preferences.json");
+
+            // Ensure /internal exists
+            internalFolder.mkdirs();
+
+            // Move these files to internal/
+            for (String oldName : new String[]{"internal.yml", "preferences.json", "mappings_cache"}) {
+                File file = new File(getInternalFolder(), oldName);
+
+                // If the file already exists in /internal
+                if (file.exists()) {
+                    continue;
+                }
+
+                File previous = new File(LibsDisguises.getInstance().getDataFolder(), oldName);
+
+                // If the file doesn't exist in /LibsDisguises
+                if (!previous.exists()) {
+                    continue;
+                }
+
+                // Move, replace file even if it unexpectably appears
+                try {
+                    Files.move(previous.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
             if (NmsVersion.v1_20_R4.isSupported()) {
                 scaleAttribute =
@@ -678,8 +713,8 @@ public class DisguiseUtilities {
             return;
         }
 
-        File viewPreferences = new File(LibsDisguises.getInstance().getDataFolder(), "preferences.json");
-        File viewPreferencesTemp = new File(LibsDisguises.getInstance().getDataFolder(), "preferences-temp.json");
+        File viewPreferences = getPreferencesFile();
+        File viewPreferencesTemp = new File(getInternalFolder(), "preferences-temp.json");
 
         HashMap<String, List<UUID>> map = new HashMap<>();
         map.put("selfdisguise", getViewSelf());
@@ -748,20 +783,18 @@ public class DisguiseUtilities {
     }
 
     public static void loadViewPreferences() {
-        File viewPreferences = new File(LibsDisguises.getInstance().getDataFolder(), "preferences.json");
-
-        if (!viewPreferences.exists()) {
+        if (!getPreferencesFile().exists()) {
             return;
         }
 
         HashMap<String, Collection<String>> map;
 
         try {
-            String disguiseText = new String(Files.readAllBytes(viewPreferences.toPath()));
+            String disguiseText = new String(Files.readAllBytes(getPreferencesFile().toPath()));
             map = getGson().fromJson(disguiseText, HashMap.class);
 
             if (map == null) {
-                viewPreferences.delete();
+                getPreferencesFile().delete();
                 return;
             }
 
@@ -776,8 +809,8 @@ public class DisguiseUtilities {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            LibsDisguises.getInstance().getLogger().warning("preferences.json has been deleted as its corrupt");
-            viewPreferences.delete();
+            LibsDisguises.getInstance().getLogger().warning(getPreferencesFile().getName() + " has been deleted as its corrupt");
+            getPreferencesFile().delete();
         }
     }
 
