@@ -100,6 +100,8 @@ public class ParamInfoTypes {
 
         paramInfos.add(new ParamInfoEnum(Villager.Profession.class, "Villager Profession",
             "View all the professions you can set on a Villager and Zombie Villager"));
+        paramInfos.add(new ParamInfoEnum(DisguiseConfig.TallSelfDisguise.class, "Tall Disguise",
+            "Controls how the player will view oversized self disguises"));
 
         if (NmsVersion.v1_14.isSupported()) {
             paramInfos.add(new ParamInfoEnum(Villager.Type.class, "Villager Biome",
@@ -155,7 +157,6 @@ public class ParamInfoTypes {
 
         if (NmsVersion.v1_17.isSupported()) {
             paramInfos.add(new ParamInfoEnum(Axolotl.Variant.class, "Axolotl Variant", "The variant of Axolotl"));
-
         }
 
         if (NmsVersion.v1_19_R1.isSupported()) {

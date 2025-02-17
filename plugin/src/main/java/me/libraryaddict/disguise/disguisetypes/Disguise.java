@@ -120,8 +120,7 @@ public abstract class Disguise {
     @Setter
     private boolean customDisguiseName = false;
     @Getter
-    @Setter
-    private boolean tallDisguisesVisible = DisguiseConfig.isTallSelfDisguises();
+    private DisguiseConfig.TallSelfDisguise tallSelfDisguise = DisguiseConfig.getTallSelfDisguisesVisibility();
     private String[] multiName = new String[0];
     private transient int[] armorstandIds = new int[0];
     @Getter
@@ -131,10 +130,11 @@ public abstract class Disguise {
     @Setter
     private String soundGroup;
     private UUID uuid = ReflectionManager.getRandomUUID();
+    /*
+      If the player should see their own height grow/shrink to match the disguise
+     */
     @Getter
     private boolean scalePlayerToDisguise = DisguiseConfig.isScaleSelfDisguises();
-    @Getter
-    private boolean tallSelfDisguisesScaling = DisguiseConfig.isTallSelfDisguises() && DisguiseConfig.isTallSelfDisguisesScaling();
     @Getter
     private final DisguiseInternals internals;
 
@@ -174,7 +174,7 @@ public abstract class Disguise {
     }
 
     /**
-     * Gson why you so dumb and set it to null
+     * Gson will set the field to null which is undesired
      */
     private int[] getInternalArmorstandIds() {
         if (armorstandIds == null) {
@@ -292,7 +292,7 @@ public abstract class Disguise {
     protected void clone(Disguise disguise) {
         disguise.setDisguiseName(getDisguiseName());
         disguise.setCustomDisguiseName(isCustomDisguiseName());
-        disguise.setTallDisguisesVisible(isTallDisguisesVisible());
+        disguise.setTallSelfDisguise(getTallSelfDisguise());
 
         disguise.setReplaceSounds(isSoundsReplaced());
         disguise.setViewSelfDisguise(isSelfDisguiseVisible());
@@ -547,15 +547,6 @@ public abstract class Disguise {
         adjustTallSelfDisguiseScale();
     }
 
-    public void setTallSelfDisguisesScaling(boolean tallSelfDisguisesScaling) {
-        if (!NmsVersion.v1_20_R4.isSupported()) {
-            return;
-        }
-
-        this.tallSelfDisguisesScaling = tallSelfDisguisesScaling;
-        adjustTallSelfDisguiseScale();
-    }
-
     protected void adjustTallSelfDisguiseScale() {
         if (!canScaleDisguise() || !isDisguiseInUse() || getEntity() == null) {
             return;
@@ -638,7 +629,7 @@ public abstract class Disguise {
             if (modifier != null) {
                 attribute.removeModifier(modifier);
             }
-        } else if (isScalePlayerToDisguise() && DisguiseConfig.isScaleSelfDisguises()) {
+        } else if (isScalePlayerToDisguise()) {
             personalPlayerScaleAttribute -= 1;
 
             if (modifier != null) {
@@ -1017,7 +1008,7 @@ public abstract class Disguise {
     @Deprecated
     public Disguise setViewSelfDisguise(boolean viewSelfDisguise) {
         if (viewSelfDisguise && !isTallDisguisesVisible() && isTallDisguise()) {
-            if (isTallSelfDisguisesScaling() && NmsVersion.v1_20_R4.isSupported() && canScaleDisguise() && !isPlayerDisguise()) {
+            if (getTallSelfDisguise().isScaled() && canScaleDisguise() && !isPlayerDisguise()) {
                 adjustTallSelfDisguiseScale();
             } else {
                 viewSelfDisguise = false;
@@ -1184,5 +1175,49 @@ public abstract class Disguise {
 
     public boolean stopDisguise() {
         return removeDisguise();
+    }
+
+    public void setTallSelfDisguise(DisguiseConfig.TallSelfDisguise tallSelfDisguise) {
+        if (getTallSelfDisguise() == tallSelfDisguise) {
+            return;
+        }
+
+        this.tallSelfDisguise = tallSelfDisguise;
+        adjustTallSelfDisguiseScale();
+    }
+
+    @Deprecated
+    public void setTallSelfDisguisesScaling(boolean tallSelfDisguisesScaling) {
+        if (!NmsVersion.v1_20_R4.isSupported()) {
+            return;
+        }
+
+        if (!tallSelfDisguisesScaling) {
+            setTallSelfDisguise(DisguiseConfig.TallSelfDisguise.VISIBLE);
+        } else {
+            setTallSelfDisguise(DisguiseConfig.TallSelfDisguise.SCALED);
+        }
+    }
+
+    @Deprecated
+    public boolean isTallSelfDisguisesScaling() {
+        return getTallSelfDisguise().isScaled();
+    }
+
+    @Deprecated
+    public void setTallDisguisesVisible(boolean tallDisguisesVisible) {
+        if (tallDisguisesVisible) {
+            setTallSelfDisguise(DisguiseConfig.TallSelfDisguise.VISIBLE);
+        } else {
+            setTallSelfDisguise(DisguiseConfig.TallSelfDisguise.HIDDEN);
+        }
+    }
+
+    /**
+     * Returns true if the self disguise will never check for height before blocking the player's view
+     */
+    @Deprecated
+    public boolean isTallDisguisesVisible() {
+        return getTallSelfDisguise().isAlwaysVisible();
     }
 }

@@ -83,7 +83,6 @@ public class DisguiseMethods {
         List<String> notedSkippedParamTypes = new ArrayList<>();
 
         try (InputStream stream = LibsDisguises.getInstance().getResource("METHOD_MAPPINGS.txt")) {
-
             HashMap<String, Class<? extends FlagWatcher>> classes = new HashMap<>();
             classes.put(FlagWatcher.class.getSimpleName(), FlagWatcher.class);
 
@@ -175,91 +174,97 @@ public class DisguiseMethods {
                 watcherMethods.computeIfAbsent(watcher, (a) -> new ArrayList<>()).add(m);
             }
 
-            PlayerDisguise disguise = new PlayerDisguise("");
-
-            List<String> extraMethods = new ArrayList<>(
-                Arrays.asList("setSelfDisguiseVisible", "setHideHeldItemFromSelf", "setHideArmorFromSelf", "setHearSelfDisguise",
-                    "setHidePlayer", "setExpires", "setNotifyBar", "setBossBarColor", "setBossBarStyle", "setTallDisguisesVisible",
-                    "setDynamicName", "setSoundGroup", "setDisguiseName", "setDeadmau5Ears"));
-
-            if (NmsVersion.v1_20_R4.isSupported()) {
-                extraMethods.add("setScalePlayerToDisguise");
-                extraMethods.add("setTallSelfDisguisesScaling");
-            }
-
-            // Add these last as it's what we want to present to be called the least
-            for (String methodName : extraMethods) {
-                try {
-                    Class cl = boolean.class;
-                    Class disguiseClass = Disguise.class;
-                    boolean randomDefault = false;
-
-                    switch (methodName) {
-                        case "setExpires":
-                            cl = long.class;
-                            break;
-                        case "setNotifyBar":
-                            cl = DisguiseConfig.NotifyBar.class;
-                            break;
-                        case "setBossBarColor":
-                            cl = BarColor.class;
-                            break;
-                        case "setBossBarStyle":
-                            cl = BarStyle.class;
-                            break;
-                        case "setDisguiseName":
-                            randomDefault = true;
-                            cl = String.class;
-                            break;
-                        case "setSoundGroup":
-                            cl = String.class;
-                            break;
-                        case "setDeadmau5Ears":
-                            disguiseClass = PlayerDisguise.class;
-                            break;
-                        default:
-                            break;
-                    }
-
-                    for (Class returnType : new Class[]{Void.TYPE, disguiseClass}) {
-                        try {
-                            WatcherMethod method = new WatcherMethod(disguiseClass,
-                                MethodHandles.publicLookup().findVirtual(disguiseClass, methodName, MethodType.methodType(returnType, cl)),
-                                methodName, methodName, null, cl, randomDefault, false, new boolean[DisguiseType.values().length],
-                                new boolean[DisguiseType.values().length], null, false, 0, 0);
-
-                            methods.add(method);
-
-                            watcherMethods.computeIfAbsent(disguiseClass == Disguise.class ? FlagWatcher.class : PlayerWatcher.class,
-                                (a) -> new ArrayList<>()).add(method);
-
-                            String getName = (cl == boolean.class ? "is" : "get") + methodName.substring(3);
-                            boolean[] hiddenFor = new boolean[DisguiseType.values().length];
-
-                            // No one really cares about it but don't let players see it if they don't have premium
-                            if (methodName.equals("setScalePlayerToDisguise") && !LibsPremium.isPremium()) {
-                                Arrays.fill(hiddenFor, true);
-                            }
-
-                            WatcherMethod getMethod = new WatcherMethod(disguiseClass,
-                                MethodHandles.publicLookup().findVirtual(disguiseClass, getName, MethodType.methodType(cl)), getName,
-                                getName, cl, null, randomDefault, false, new boolean[DisguiseType.values().length], hiddenFor, null, false,
-                                0, 0);
-
-                            methods.add(getMethod);
-                            break;
-                        } catch (NoSuchMethodException ex) {
-                            if (returnType == disguiseClass) {
-                                ex.printStackTrace();
-                            }
-                        }
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
+            addExtraMethods();
         } catch (Throwable e) {
             e.printStackTrace();
+        }
+    }
+
+    private void addExtraMethods() {
+        List<String> extraMethods = new ArrayList<>(
+            Arrays.asList("setSelfDisguiseVisible", "setHideHeldItemFromSelf", "setHideArmorFromSelf", "setHearSelfDisguise",
+                "setHidePlayer", "setExpires", "setNotifyBar", "setBossBarColor", "setBossBarStyle", "setDynamicName", "setSoundGroup",
+                "setDisguiseName", "setDeadmau5Ears", "setTallSelfDisguise"));
+
+        // Methods hidden by default, mainly so it doesn't throw an exception if used
+        // This means that any options in this will be set in a disguise, but it won't be copied when a disguise is parsed to string
+        // And it won't appear in tab complete
+        List<String> hiddenAndIgnored = Arrays.asList("setTallDisguisesVisible", "setTallSelfDisguisesScaling");
+
+        if (NmsVersion.v1_20_R4.isSupported()) {
+                extraMethods.add("setScalePlayerToDisguise");
+        }
+
+        extraMethods.addAll(hiddenAndIgnored);
+
+        // Add these last as it's what we want to present to be called the least
+        for (String methodName : extraMethods) {
+            try {
+                Class cl = boolean.class;
+                Class disguiseClass = Disguise.class;
+                boolean randomDefault = false;
+
+                switch (methodName) {
+                    case "setExpires":
+                        cl = long.class;
+                        break;
+                    case "setNotifyBar":
+                        cl = DisguiseConfig.NotifyBar.class;
+                        break;
+                    case "setBossBarColor":
+                        cl = BarColor.class;
+                        break;
+                    case "setBossBarStyle":
+                        cl = BarStyle.class;
+                        break;
+                    case "setDisguiseName":
+                        randomDefault = true;
+                        cl = String.class;
+                        break;
+                    case "setSoundGroup":
+                        cl = String.class;
+                        break;
+                    case "setDeadmau5Ears":
+                        disguiseClass = PlayerDisguise.class;
+                        break;
+                    case "setTallSelfDisguise":
+                        cl = DisguiseConfig.TallSelfDisguise.class;
+                    default:
+                        break;
+                }
+
+                for (Class returnType : new Class[]{Void.TYPE, disguiseClass}) {
+                    try {
+                        boolean hidden = hiddenAndIgnored.contains(methodName);
+
+                        WatcherMethod setMethod = new WatcherMethod(disguiseClass,
+                            MethodHandles.publicLookup().findVirtual(disguiseClass, methodName, MethodType.methodType(returnType, cl)),
+                            methodName, methodName, null, cl, randomDefault, hidden, new boolean[DisguiseType.values().length],
+                            new boolean[DisguiseType.values().length], null, false, 0, 0);
+
+                        methods.add(setMethod);
+
+                        watcherMethods.computeIfAbsent(disguiseClass == Disguise.class ? FlagWatcher.class : PlayerWatcher.class,
+                            (a) -> new ArrayList<>()).add(setMethod);
+
+                        String getName = (cl == boolean.class ? "is" : "get") + methodName.substring(3);
+
+                        WatcherMethod getMethod = new WatcherMethod(disguiseClass,
+                            MethodHandles.publicLookup().findVirtual(disguiseClass, getName, MethodType.methodType(cl)), getName, getName,
+                            cl, null, randomDefault, hidden, new boolean[DisguiseType.values().length],
+                            new boolean[DisguiseType.values().length], null, false, 0, 0);
+
+                        methods.add(getMethod);
+                        break;
+                    } catch (NoSuchMethodException ex) {
+                        if (returnType == disguiseClass) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 

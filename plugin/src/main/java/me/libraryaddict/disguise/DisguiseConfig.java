@@ -227,7 +227,7 @@ public class DisguiseConfig {
     private static BukkitTask updaterTask;
     @Getter
     @Setter
-    private static boolean tallSelfDisguises, tallSelfDisguisesScaling;
+    private static TallSelfDisguise tallSelfDisguisesVisibility;
     @Getter
     @Setter
     private static PlayerNameType playerNameType = PlayerNameType.TEAMS;
@@ -605,8 +605,22 @@ public class DisguiseConfig {
         setDynamicExpiry(config.getBoolean("DynamicExpiry"));
         setHideDisguisedPlayers(config.getBoolean("HideDisguisedPlayersFromTab"));
         setPlayerHideArmor(config.getBoolean("PlayerHideArmor"));
-        setTallSelfDisguises(config.getBoolean("TallSelfDisguises"));
-        setTallSelfDisguisesScaling(config.getBoolean("TallSelfDisguisesScaling"));
+
+        try {
+            tallSelfDisguisesVisibility = TallSelfDisguise.valueOf(config.getString("TallSelfDisguises").toUpperCase(Locale.ENGLISH));
+        } catch (Exception e) {
+            // Previously, 'true' means they want tall disguises to obscure the player's view
+            if (config.getBoolean("TallSelfDisguises")) {
+                tallSelfDisguisesVisibility = TallSelfDisguise.VISIBLE;
+                // Previously, 'true' meant that if the above was false, they want the disguise to be scaled down
+            } else if (config.getBoolean("TallSelfDisguisesScaling")) {
+                tallSelfDisguisesVisibility = TallSelfDisguise.SCALED;
+                // And if tall disguises are disabled and scaling is disabled, they don't want tall disguises to show at all
+            } else {
+                tallSelfDisguisesVisibility = TallSelfDisguise.HIDDEN;
+            }
+        }
+
         setRandomDisguises(config.getBoolean("RandomDisguiseOptions"));
         setViewDisguises(config.getBoolean("ViewSelfDisguises"));
         setViewSelfDisguisesDefault(config.getBoolean("ViewSelfDisguisesDefault"));
@@ -1197,9 +1211,30 @@ public class DisguiseConfig {
 
     public enum NotifyBar {
         NONE,
-
         BOSS_BAR,
-
         ACTION_BAR
+    }
+
+    public enum TallSelfDisguise {
+        VISIBLE,
+        SCALED,
+        HIDDEN;
+
+        public boolean isAlwaysVisible() {
+            return this == VISIBLE;
+        }
+
+        public boolean isScaled() {
+            return this == SCALED && NmsVersion.v1_20_R4.isSupported();
+        }
+
+        public boolean isHidden() {
+            // On 1.20.6, 'SCALED' acts like 'HIDDEN'
+            if (this == SCALED) {
+                return !NmsVersion.v1_20_R4.isSupported();
+            }
+
+            return this == HIDDEN;
+        }
     }
 }

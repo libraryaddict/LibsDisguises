@@ -37,3 +37,4 @@ DisabledMethods:
   - setNameYModifier
   - setInvisible
   - setUnsafeSize
+  - setScalePlayerToDisguise

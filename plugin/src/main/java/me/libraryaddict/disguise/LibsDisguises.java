@@ -402,9 +402,10 @@ public class LibsDisguises extends JavaPlugin {
         }
 
         // Add a message so people are more aware
-        if (!DisguiseConfig.isTallSelfDisguises()) {
+        if (!DisguiseConfig.getTallSelfDisguisesVisibility().isAlwaysVisible()) {
             LibsDisguises.getInstance().getLogger().info(
-                "Config 'TallSelfDisguises' is set to 'false', LD will hide oversized disguises from self disguise. https://www.spigotmc" +
+                "Config 'TallSelfDisguises' is set to '" + DisguiseConfig.getTallSelfDisguisesVisibility() +
+                    "', LD will hide/scale down oversized disguises from self disguise. https://www.spigotmc" +
                     ".org/wiki/lib-s-disguises-faq/#tall-disguises-self-disguises");
         }
     }

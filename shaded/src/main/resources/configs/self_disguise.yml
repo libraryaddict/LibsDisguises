@@ -34,13 +34,14 @@ SelfDisguisesScaleMax: 1
 HearSelfDisguise: true
 
 # Some disguises are rather big and tall and block your vision
-# By default those disguises are disabled, such as zombies, players, etc.
-# The baby versions however, are normally short enough that it's a non-issue
-# false = hidden, true = shown
-TallSelfDisguises: false
+# By default those disguises are 'SCALED' down, such as zombies, players, etc.
+# Disguises such as sheep, silverfish, baby zombies, etc are normally short enough that it's a non-issue.
 
-# This setting which is for servers that are 1.20.6+, allows the server to scale down the self disguise instead of hiding it completely
-# If a player looks down, they'll see a mini figure of the previously large disguise
-# This setting only works if the disguise wouldn't be shown as it's too tall, aka the above setting is false
-# This will only work on living disguises!
-TallSelfDisguisesScaling: true
+# Scaling is a 1.20.6+ feature and can only work on living entities, if scaling cannot be used, 'HIDDEN' will be used instead.
+# These options do not change what other players see, they will see the disguise as normal size no matter what you pick.
+# This only changes the self disguise entity that the disguised player will see at their feet.
+
+# VISIBLE = Oversized self disguises will display at their full size, obscuring the player's viewpoint
+# SCALED = Oversized self disguises will be seen as a scaled down version, acts like 'HIDDEN' if scaling isn't supported
+# HIDDEN = Oversized self disgiuses will not be shown to the disguised player
+TallSelfDisguises: SCALED
