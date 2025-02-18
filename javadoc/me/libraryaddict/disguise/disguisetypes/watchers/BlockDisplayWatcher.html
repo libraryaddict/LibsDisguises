@@ -93,9 +93,14 @@ loadScripts(document, 'script');</script>
 </div>
 </div>
 <section class="class-description" id="class-description">
+<dl class="notes">
+<dt>All Implemented Interfaces:</dt>
+<dd><code><a href="GridLockedWatcher.html" title="interface in me.libraryaddict.disguise.disguisetypes.watchers">GridLockedWatcher</a></code></dd>
+</dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">BlockDisplayWatcher</span>
-<span class="extends-implements">extends <a href="DisplayWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">DisplayWatcher</a></span></div>
+<span class="extends-implements">extends <a href="DisplayWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">DisplayWatcher</a>
+implements <a href="GridLockedWatcher.html" title="interface in me.libraryaddict.disguise.disguisetypes.watchers">GridLockedWatcher</a></span></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -138,6 +143,16 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.joml.Vector3f</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTranslation()" class="member-name-link">getTranslation</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>double</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getWidthX()" class="member-name-link">getWidthX</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Get the width of the block / 2</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>double</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getWidthZ()" class="member-name-link">getWidthZ</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Get the length of the block / 2</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isAutoCentered()" class="member-name-link">isAutoCentered</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
@@ -151,11 +166,16 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setBlockState(com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState)" class="member-name-link">setBlockState</a><wbr>(com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState&nbsp;block)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setScale(org.joml.Vector3f)" class="member-name-link">setScale</a><wbr>(org.joml.Vector3f&nbsp;scale)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setGridLocked(boolean)" class="member-name-link">setGridLocked</a><wbr>(boolean&nbsp;gridLocked)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Make the plugin start centering this block</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setTranslation(org.joml.Vector3f)" class="member-name-link">setTranslation</a><wbr>(org.joml.Vector3f&nbsp;translation)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setScale(org.joml.Vector3f)" class="member-name-link">setScale</a><wbr>(org.joml.Vector3f&nbsp;scale)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setTranslation(org.joml.Vector3f)" class="member-name-link">setTranslation</a><wbr>(org.joml.Vector3f&nbsp;translation)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -168,6 +188,9 @@ loadScripts(document, 'script');</script>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
+<div class="inherited-list">
+<h3 id="methods-inherited-from-class-me.libraryaddict.disguise.disguisetypes.watchers.GridLockedWatcher">Methods inherited from interface&nbsp;me.libraryaddict.disguise.disguisetypes.watchers.<a href="GridLockedWatcher.html" title="interface in me.libraryaddict.disguise.disguisetypes.watchers">GridLockedWatcher</a></h3>
+<code><a href="GridLockedWatcher.html#isGridLocked()">isGridLocked</a></code></div>
 </section>
 </li>
 </ul>
@@ -276,6 +299,44 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code><a href="DisplayWatcher.html#setScale(org.joml.Vector3f)">setScale</a></code>&nbsp;in class&nbsp;<code><a href="DisplayWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">DisplayWatcher</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setGridLocked(boolean)">
+<h3>setGridLocked</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setGridLocked</span><wbr><span class="parameters">(boolean&nbsp;gridLocked)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="GridLockedWatcher.html#setGridLocked(boolean)">GridLockedWatcher</a></code></span></div>
+<div class="block">Make the plugin start centering this block</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="GridLockedWatcher.html#setGridLocked(boolean)">setGridLocked</a></code>&nbsp;in interface&nbsp;<code><a href="GridLockedWatcher.html" title="interface in me.libraryaddict.disguise.disguisetypes.watchers">GridLockedWatcher</a></code></dd>
+<dt>Parameters:</dt>
+<dd><code>gridLocked</code> - </dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getWidthX()">
+<h3>getWidthX</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">getWidthX</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="GridLockedWatcher.html#getWidthX()">GridLockedWatcher</a></code></span></div>
+<div class="block">Get the width of the block / 2</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="GridLockedWatcher.html#getWidthX()">getWidthX</a></code>&nbsp;in interface&nbsp;<code><a href="GridLockedWatcher.html" title="interface in me.libraryaddict.disguise.disguisetypes.watchers">GridLockedWatcher</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getWidthZ()">
+<h3>getWidthZ</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">getWidthZ</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="GridLockedWatcher.html#getWidthZ()">GridLockedWatcher</a></code></span></div>
+<div class="block">Get the length of the block / 2</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="GridLockedWatcher.html#getWidthZ()">getWidthZ</a></code>&nbsp;in interface&nbsp;<code><a href="GridLockedWatcher.html" title="interface in me.libraryaddict.disguise.disguisetypes.watchers">GridLockedWatcher</a></code></dd>
 </dl>
 </section>
 </li>
