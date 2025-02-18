@@ -217,10 +217,13 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
                     event.setCancelled(true);
                     // No sound is sent but instead the client is expected to play a hurt sound on damage
                     SoundGroup group = SoundGroup.getGroup(disguise);
-                    ResourceLocation sound = group.getSound(SoundGroup.SoundType.HURT);
 
-                    if (sound != null) {
-                        observer.playSound(observer.getLocation(), sound.toString(), 1f, 1f);
+                    if (group != null) {
+                        ResourceLocation sound = group.getSound(SoundGroup.SoundType.HURT);
+
+                        if (sound != null) {
+                            observer.playSound(observer.getLocation(), sound.toString(), 1f, 1f);
+                        }
                     }
                 }
             } else if (event.getPacketType() == Server.ENTITY_VELOCITY && !DisguiseUtilities.isPlayerVelocity(observer)) {
