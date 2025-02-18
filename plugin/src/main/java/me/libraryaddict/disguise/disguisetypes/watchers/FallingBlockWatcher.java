@@ -19,7 +19,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class FallingBlockWatcher extends FlagWatcher {
+public class FallingBlockWatcher extends FlagWatcher implements GridLockedWatcher {
     private int blockCombinedId = 1;
     @Getter
     private boolean gridLocked;
@@ -44,23 +44,28 @@ public class FallingBlockWatcher extends FlagWatcher {
 
         this.gridLocked = gridLocked;
 
-        if (getDisguise().isDisguiseInUse() && getDisguise().getEntity() != null) {
-            Location loc = getDisguise().getEntity().getLocation();
-            double x = conRel(loc.getX(), loc.getBlockX() + 0.5);
-            double y = conRel(loc.getY(), loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0));
-            double z = conRel(loc.getZ(), loc.getBlockZ() + 0.5);
+        if (!getDisguise().isDisguiseInUse() || getDisguise().getEntity() == null) {
+            return;
+        }
 
-            for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-                int entityId =
-                    getDisguise().getEntity() == player ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId();
+        Location loc = getDisguise().getEntity().getLocation();
+        double centerX = GridLockedWatcher.center(loc.getX(), getWidthX());
+        double centerY = loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0);
+        double centerZ = GridLockedWatcher.center(loc.getZ(), getWidthZ());
 
-                WrapperPlayServerEntityRelativeMove relMov = new WrapperPlayServerEntityRelativeMove(entityId, x, y, z, true);
+        double x = conRel(loc.getX(), centerX);
+        double y = conRel(loc.getY(), centerY);
+        double z = conRel(loc.getZ(), centerZ);
 
-                if (isGridLocked()) {
-                    PacketEvents.getAPI().getPlayerManager().sendPacket(player, relMov);
-                } else {
-                    PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, relMov);
-                }
+        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+            int entityId = getDisguise().getEntity() == player ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId();
+
+            WrapperPlayServerEntityRelativeMove relMov = new WrapperPlayServerEntityRelativeMove(entityId, x, y, z, true);
+
+            if (isGridLocked()) {
+                PacketEvents.getAPI().getPlayerManager().sendPacket(player, relMov);
+            } else {
+                PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, relMov);
             }
         }
     }
@@ -136,5 +141,15 @@ public class FallingBlockWatcher extends FlagWatcher {
         }
 
         return blockCombinedId;
+    }
+
+    @Override
+    public double getWidthX() {
+        return 1;
+    }
+
+    @Override
+    public double getWidthZ() {
+        return 1;
     }
 }

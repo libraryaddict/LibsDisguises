@@ -26,7 +26,7 @@ import java.util.Random;
 public class CompileMethods {
 
     private void addClass(ArrayList<Class> classes, Class c) {
-        if (classes.contains(c)) {
+        if (classes.contains(c) || c.isInterface()) {
             return;
         }
 

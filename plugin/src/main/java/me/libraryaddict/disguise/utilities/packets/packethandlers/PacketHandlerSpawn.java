@@ -36,6 +36,7 @@ import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.ModdedDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.GridLockedWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
@@ -230,22 +231,26 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
                 if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
                     data = ((FallingBlockWatcher) disguise.getWatcher()).getBlockCombinedId();
-
-                    if (((FallingBlockWatcher) disguise.getWatcher()).isGridLocked()) {
-                        double yMod = disguise.getWatcher().getYModifier();
-                        y -= yMod;
-
-                        // Center the block
-                        x = loc.getBlockX() + 0.5;
-                        y = Math.floor(y) + yMod + (y % 1 >= 0.85 ? 1 : y % 1 >= 0.35 ? .5 : 0);
-                        z = loc.getBlockZ() + 0.5;
-                    }
                 } else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == -1) {
                     // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners
                     // entity id
                     data = observer.getEntityId();
                 } else if (disguise.getType().isArtDisplay()) {
                     data = DisguiseUtilities.getHangingDirection(yaw).ordinal();
+                }
+
+                if (disguise.getWatcher() instanceof GridLockedWatcher) {
+                    GridLockedWatcher watcher = (GridLockedWatcher) disguise.getWatcher();
+
+                    if (watcher.isGridLocked()) {
+                        double yMod = disguise.getWatcher().getYModifier();
+                        y -= yMod;
+
+                        // Center the block
+                        x = GridLockedWatcher.center(loc.getX(), watcher.getWidthX());
+                        y = Math.floor(y) + yMod + (y % 1 >= 0.85 ? 1 : y % 1 >= 0.35 ? .5 : 0);
+                        z = GridLockedWatcher.center(loc.getZ(), watcher.getWidthZ());
+                    }
                 }
 
                 WrapperPlayServerSpawnEntity spawnEntity;
