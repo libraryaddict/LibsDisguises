@@ -3572,12 +3572,8 @@ public class DisguiseUtilities {
         }
 
         try {
-            // Why do we construct a new instance? Legacy code?
-            UserProfile profile =
-                ReflectionManager.getUserProfileWithThisSkin(disguise.getUserProfile().getUUID(), disguise.getProfileName(),
-                    disguise.getUserProfile());
             WrapperPlayServerPlayerInfoUpdate.PlayerInfo info =
-                new WrapperPlayServerPlayerInfoUpdate.PlayerInfo(profile, disguise.isDisplayedInTab(), 0,
+                new WrapperPlayServerPlayerInfoUpdate.PlayerInfo(disguise.getUserProfile(), disguise.isDisplayedInTab(), 0,
                     com.github.retrooper.packetevents.protocol.player.GameMode.SURVIVAL, Component.text(disguise.getTablistName()), null);
 
             return new WrapperPlayServerPlayerInfoUpdate(WrapperPlayServerPlayerInfoUpdate.Action.valueOf(action.name()), info);
