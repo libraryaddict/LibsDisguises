@@ -76,7 +76,7 @@ public class PlayerDisguise extends TargetedDisguise {
 
         setName(userProfile.getName());
 
-        this.userProfile = ReflectionManager.getUserProfileWithThisSkin(getUUID(), userProfile.getName(), userProfile);
+        this.userProfile = ReflectionManager.getUserProfileWithThisSkin(getUUID(), getProfileName(), userProfile);
 
         createDisguise();
     }
@@ -86,7 +86,7 @@ public class PlayerDisguise extends TargetedDisguise {
 
         setName(userProfile.getName());
 
-        this.userProfile = ReflectionManager.getUserProfile(getUUID(), userProfile.getName());
+        this.userProfile = ReflectionManager.getUserProfile(getUUID(), getProfileName());
 
         setSkin(skinToUse);
 
@@ -276,7 +276,7 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public void setUserProfile(UserProfile userProfile) {
-        this.userProfile = ReflectionManager.getUserProfileWithThisSkin(getUUID(), this.userProfile.getName(), this.userProfile);
+        this.userProfile = ReflectionManager.getUserProfileWithThisSkin(getUUID(), this.getUserProfile().getName(), this.userProfile);
     }
 
     public String getName() {
