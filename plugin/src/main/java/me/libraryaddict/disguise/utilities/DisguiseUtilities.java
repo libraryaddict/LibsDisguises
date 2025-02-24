@@ -3911,7 +3911,8 @@ public class DisguiseUtilities {
                     default:
                         return yMod + 0.4;
                 }
-            case ARROW:
+                // Not sure why, but tested with 1.13, 1.20 & 1.21 and the 0.7 offset just looks weird.
+/*            case ARROW:
             case SPECTRAL_ARROW:
             case BOAT:
             case EGG:
@@ -3944,7 +3945,7 @@ public class DisguiseUtilities {
             case PALE_OAK_CHEST_BOAT:
             case SPRUCE_BOAT:
             case SPRUCE_CHEST_BOAT:
-                return yMod + 0.7;
+                return yMod + 0.7;*/
             case DROPPED_ITEM:
                 return yMod + 0.13;
             default:
