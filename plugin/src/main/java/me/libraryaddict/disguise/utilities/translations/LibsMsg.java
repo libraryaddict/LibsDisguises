@@ -417,6 +417,10 @@ public enum LibsMsg {
     }
 
     public String toString() {
+        if (LibsDisguises.getInstance() == null) {
+            return name();
+        }
+
         throw new IllegalStateException("Dont call this");
     }
 }

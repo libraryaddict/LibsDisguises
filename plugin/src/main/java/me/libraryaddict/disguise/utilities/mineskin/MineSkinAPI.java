@@ -104,7 +104,7 @@ public class MineSkinAPI {
     private final ReentrantLock lock = new ReentrantLock();
     @Getter
     @Setter
-    private boolean debugging;
+    private boolean debugging = LibsDisguises.getInstance() == null;
     @Getter
     @Setter
     private String apiKey;
@@ -128,7 +128,9 @@ public class MineSkinAPI {
             }
         }
 
-        userAgent = "LibsDisguises/" + LibsDisguises.getInstance().getDescription().getVersion() + extraInfo;
+        String version = LibsDisguises.getInstance() == null ? "Not-LD-Itself" : LibsDisguises.getInstance().getDescription().getVersion();
+
+        userAgent = "LibsDisguises/" + version + extraInfo;
     }
 
     public boolean hasApiKey() {
@@ -287,7 +289,7 @@ public class MineSkinAPI {
     }
 
     private MineSkinQueueResponse getJobStatus(String jobId, SkinUtils.SkinCallback callback) throws IOException {
-        URL url = new URL("https://api.mineskin.org/v2/queue/:" + jobId);
+        URL url = new URL("https://api.mineskin.org/v2/queue/" + jobId);
         // Creating a connection
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         addConnectionHeaders(con);
@@ -414,7 +416,7 @@ public class MineSkinAPI {
                 ex2.printStackTrace();
             }
 
-            if (LibsDisguises.getInstance().getLogger() != null) {
+            if (LibsDisguises.getInstance() != null && LibsDisguises.getInstance().getLogger() != null) {
                 LibsDisguises.getInstance().getLogger().warning("Failed to access MineSkin.org");
             }
 
