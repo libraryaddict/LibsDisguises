@@ -10,7 +10,6 @@ import com.github.retrooper.packetevents.util.Vector3i;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateAttributes;
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
@@ -99,7 +98,7 @@ public class LivingWatcher extends FlagWatcher {
 
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
             double toSend = player == entity && getDisguise().isTallSelfDisguisesScaling() ?
-                Math.min(getDisguise().getInternals().getSelfDisguiseTallScaleMax(), scaleToSend) : scaleToSend;
+                Math.min(getDisguise().getInternals().getPrevSelfDisguiseTallScaleMax(), scaleToSend) : scaleToSend;
 
             WrapperPlayServerUpdateAttributes.Property property =
                 new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, toSend, new ArrayList<>());

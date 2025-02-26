@@ -322,7 +322,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     }
 
                     attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE,
-                        Math.min(disguise.getInternals().getSelfDisguiseTallScaleMax(), scale), new ArrayList<>()));
+                        Math.min(disguise.getInternals().getPrevSelfDisguiseTallScaleMax(), scale), new ArrayList<>()));
                 } else if (scale != null) {
                     attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, scale, new ArrayList<>()));
                 }

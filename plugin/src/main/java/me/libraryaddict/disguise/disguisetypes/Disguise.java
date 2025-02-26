@@ -1,10 +1,8 @@
 package me.libraryaddict.disguise.disguisetypes;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.protocol.attribute.Attributes;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfo;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateAttributes;
 import lombok.Getter;
 import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -28,8 +26,6 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -41,13 +37,11 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -215,28 +209,22 @@ public abstract class Disguise {
 
     public abstract double getHeight();
 
-    public double getNameHeightScale() {
-        if (!NmsVersion.v1_20_R4.isSupported() || isMiscDisguise()) {
+    public double getDisguiseScale() {
+        if (!NmsVersion.v1_20_R4.isSupported()) {
             return 1;
         }
 
-        double finalScale;
-        Double watcherScale = getWatcher() instanceof LivingWatcher ? ((LivingWatcher) getWatcher()).getScale() : null;
-
-        if (watcherScale != null) {
-            finalScale = watcherScale;
-        } else {
-            finalScale = getInternals().getEntityScaleWithoutLibsDisguises();
+        if (!(getWatcher() instanceof LivingWatcher)) {
+            return getInternals().getPlayerScaleWithoutLibsDisguises();
         }
 
-        // Clamp
-        if (finalScale < 0.06) {
-            finalScale = 0.06;
-        } else if (finalScale > 16) {
-            finalScale = 16;
+        Double watcherScale = ((LivingWatcher) getWatcher()).getScale();
+
+        if (watcherScale == null) {
+            return getInternals().getPlayerScaleWithoutLibsDisguises();
         }
 
-        return finalScale;
+        return DisguiseUtilities.getClampedScale(watcherScale);
     }
 
     protected void sendArmorStands(String[] oldName) {
@@ -538,7 +526,7 @@ public abstract class Disguise {
         return DisguiseUtilities.isTallDisguise(this);
     }
 
-    protected boolean canScaleDisguise() {
+    public boolean canScaleDisguise() {
         return NmsVersion.v1_20_R4.isSupported() && !isMiscDisguise() && getType() != DisguiseType.ENDER_DRAGON;
     }
 
@@ -548,114 +536,11 @@ public abstract class Disguise {
     }
 
     protected void adjustTallSelfDisguiseScale() {
-        if (!canScaleDisguise() || !isDisguiseInUse() || getEntity() == null) {
+        if (!NmsVersion.v1_20_R4.isSupported() || !isDisguiseInUse() || getEntity() == null) {
             return;
         }
 
-        // TODO Extract this into DisguiseUtilities so that junit tests can be setup
-
-        // Get the scale, default to "not scaled" if not a player
-        double playerScaleWithoutLibsDisguises = getInternals().getEntityScaleWithoutLibsDisguises();
-        // This is the height of the disguise, along with the name height
-        double naturalHeightOfDisguise = getHeight();
-        double increasedNaturalHeightOfDisguise = getHeight() * getNameHeightScale();
-
-        if (DisguiseUtilities.isTallDisguise(this)) {
-            increasedNaturalHeightOfDisguise *= 1.2;
-        }
-
-        // Here we have the scale of the player itself, where they'd be scaled up or down to match the disguise's scale
-        // So a disguise that's 0.5 blocks high, will have the player be given something like 0.33 scale
-        double scalerToMakePlayerSeePerspective = 1;
-
-        if (isScalePlayerToDisguise()) {
-            scalerToMakePlayerSeePerspective = naturalHeightOfDisguise / (1.8 * playerScaleWithoutLibsDisguises);
-
-            // Clamp the scale to the min and max
-            scalerToMakePlayerSeePerspective = Math.min(scalerToMakePlayerSeePerspective, DisguiseConfig.getScaleSelfDisguisesMax());
-            scalerToMakePlayerSeePerspective = Math.max(scalerToMakePlayerSeePerspective, DisguiseConfig.getScaleSelfDisguisesMin());
-        }
-
-        // The max size the self disguise is allowed to be, as it'd hide the player's view
-        double prevPersonalDisguiseScaleMax = getInternals().getSelfDisguiseTallScaleMax();
-        // Adjust so it's not blocking eyes. So smaller than normal
-        // And ofc, it's 1 if the disguise was not too tall to begin with
-        double newPersonalDisguiseScaleMax = (1.2 * scalerToMakePlayerSeePerspective) / increasedNaturalHeightOfDisguise;
-
-        getInternals().setSelfDisguiseTallScaleMax(newPersonalDisguiseScaleMax);
-
-        adjustSelfDisguiseScale(prevPersonalDisguiseScaleMax, newPersonalDisguiseScaleMax, playerScaleWithoutLibsDisguises,
-            scalerToMakePlayerSeePerspective);
-    }
-
-    private void adjustSelfDisguiseScale(double prevPersonalDisguiseScaleMax, double newPersonalDisguiseScaleMax,
-                                         double playerScaleWithoutLibsDisguises, double personalPlayerScaleAttribute) {
-        if (!isDisguiseInUse() || !(getEntity() instanceof Player) || !canScaleDisguise() ||
-            !((TargetedDisguise) this).canSee((Player) getEntity())) {
-            return;
-        }
-
-        if (prevPersonalDisguiseScaleMax != newPersonalDisguiseScaleMax && isSelfDisguiseVisible() && isTallSelfDisguisesScaling()) {
-            double scaleToSend;
-
-            if (((LivingWatcher) getWatcher()).getScale() != null) {
-                scaleToSend = ((LivingWatcher) getWatcher()).getScale();
-            } else {
-                scaleToSend = playerScaleWithoutLibsDisguises;
-            }
-
-            if (isScalePlayerToDisguise()) {
-                scaleToSend = Math.min(scaleToSend, newPersonalDisguiseScaleMax);
-            }
-
-            // The scale of the self disguise, not the player
-            WrapperPlayServerUpdateAttributes.Property property =
-                new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, scaleToSend, new ArrayList<>());
-
-            WrapperPlayServerUpdateAttributes packet =
-                new WrapperPlayServerUpdateAttributes(DisguiseAPI.getSelfDisguiseId(), Collections.singletonList(property));
-
-            PacketEvents.getAPI().getPlayerManager().sendPacket(getEntity(), packet);
-        }
-
-        // Now we figure out the scale we need to have the player at the same eye level of the disguise
-        AttributeInstance attribute = ((Player) getEntity()).getAttribute(DisguiseUtilities.getScaleAttribute());
-        AttributeModifier modifier =
-            attribute.getModifiers().stream().filter(a -> a.getKey().equals(DisguiseUtilities.getSelfDisguiseScaleNamespace())).findAny()
-                .orElse(null);
-
-        // Disabled or not allowed or doesn't need to scale up
-        if (!isScalePlayerToDisguise() || personalPlayerScaleAttribute == 1 || isPlayerDisguise()) {
-            if (modifier != null) {
-                attribute.removeModifier(modifier);
-            }
-        } else if (isScalePlayerToDisguise()) {
-            personalPlayerScaleAttribute -= 1;
-
-            if (modifier != null) {
-                // Nothing changed, don't change anything
-                if (modifier.getAmount() == personalPlayerScaleAttribute &&
-                    modifier.getOperation() == AttributeModifier.Operation.MULTIPLY_SCALAR_1) {
-                    return;
-                }
-
-                attribute.removeModifier(modifier);
-            }
-
-            AttributeModifier newModifier;
-
-            // Subtract 1, as 1 is added internally
-            if (NmsVersion.v1_21_R1.isSupported()) {
-                newModifier = new AttributeModifier(DisguiseUtilities.getSelfDisguiseScaleNamespace(), personalPlayerScaleAttribute,
-                    AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.ANY);
-            } else {
-                newModifier = new AttributeModifier(DisguiseUtilities.getSelfDisguiseScaleUUID(),
-                    DisguiseUtilities.getSelfDisguiseScaleNamespace().toString(), personalPlayerScaleAttribute,
-                    AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.ANY);
-            }
-
-            attribute.addModifier(newModifier);
-        }
+        getInternals().getScaling().adjustScaling();
     }
 
     /**
@@ -674,7 +559,7 @@ public abstract class Disguise {
     public Disguise setWatcher(FlagWatcher newWatcher) {
         if (!getType().getWatcherClass().isInstance(newWatcher)) {
             throw new IllegalArgumentException(
-                (newWatcher == null ? "null" : newWatcher.getClass().getSimpleName()) + " is not a instance of " +
+                (newWatcher == null ? "null" : newWatcher.getClass().getSimpleName()) + " is not an instance of " +
                     getType().getWatcherClass().getSimpleName() + " for DisguiseType " + getType().name());
         }
 

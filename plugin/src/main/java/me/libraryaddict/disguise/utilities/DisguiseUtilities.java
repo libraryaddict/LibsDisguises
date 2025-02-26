@@ -97,6 +97,7 @@ import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
+import me.libraryaddict.disguise.utilities.scaling.DisguiseScaling;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.updates.PacketEventsUpdater;
 import me.libraryaddict.disguise.utilities.watchers.CompileMethodsIntfer;
@@ -617,7 +618,7 @@ public class DisguiseUtilities {
 
         ArrayList<PacketWrapper> toAdd = new ArrayList<>();
         double height = (disguise.getHeight() + disguise.getWatcher().getNameYModifier());
-        double heightScale = disguise.getNameHeightScale();
+        double heightScale = disguise.getDisguiseScale();
         height *= heightScale;
         height += (getNameSpacing() * (heightScale - 1)) * 0.35;
 
@@ -2943,7 +2944,7 @@ public class DisguiseUtilities {
             box = values.getAdultBox();
         }
 
-        return box != null && box.getY() >= 1.7D;
+        return box != null && box.getY() >= DisguiseScaling.getTallDisguiseAtHeight();
     }
 
     public static String getPlayerListName(Player player) {
@@ -3519,6 +3520,11 @@ public class DisguiseUtilities {
         }
     }
 
+    public static double getClampedScale(double scale) {
+        // Clamps the scale to 0.06 to 16
+        return Math.max(0.06, Math.min(16, scale));
+    }
+
     public static PacketWrapper<?> updateTablistVisibility(Player player, boolean visible) {
         if (NmsVersion.v1_19_R2.isSupported()) {
             // If visibility is false, and we can't just tell the client to hide it
@@ -3615,7 +3621,7 @@ public class DisguiseUtilities {
         Location loc = disguise.getEntity().getLocation();
         // Don't need to offset with getYModifier, because that's a visual offset and not an actual location offset
         double height = disguise.getHeight() + disguise.getWatcher().getYModifier() + disguise.getWatcher().getNameYModifier();
-        double heightScale = disguise.getNameHeightScale();
+        double heightScale = disguise.getDisguiseScale();
         double startingY = loc.getY() + (height * heightScale);
         startingY += (getNameSpacing() * (heightScale - 1)) * 0.35;
         // TODO If we support text display, there will not be any real features unfortunately
@@ -3718,7 +3724,7 @@ public class DisguiseUtilities {
     }
 
     /**
-     * Grabs the scale of the entity as if the LibsDisguises: attributes did not exist
+     * Grabs the scale of the entity as if the LibsDisguises: attributes did not exist, is clamped to 0.06 to 16
      */
     public static double getEntityScaleWithoutLibsDisguises(Entity entity) {
         if (!NmsVersion.v1_20_R4.isSupported() || !(entity instanceof LivingEntity)) {
@@ -3750,7 +3756,7 @@ public class DisguiseUtilities {
             }
         }
 
-        return modifiedScale;
+        return getClampedScale(modifiedScale);
     }
 
     public static Disguise getDisguise(Player observer, int entityId) {

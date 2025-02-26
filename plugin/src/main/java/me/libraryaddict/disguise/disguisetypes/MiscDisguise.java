@@ -76,7 +76,7 @@ public class MiscDisguise extends TargetedDisguise {
     }
 
     @Override
-    public double getNameHeightScale() {
+    public double getDisguiseScale() {
         if (getWatcher() instanceof DisplayWatcher) {
             return ((DisplayWatcher) getWatcher()).getScale().y;
         }
