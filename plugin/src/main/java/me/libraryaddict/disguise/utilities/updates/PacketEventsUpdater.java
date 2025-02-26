@@ -70,7 +70,7 @@ public class PacketEventsUpdater {
      */
     public static Instant getMinimumPacketEventsBuildTimestamp() {
         // As taken from the most recent packetevents compiled jar
-        return Instant.ofEpochMilli(1731857858229L);
+        return Instant.ofEpochMilli(1739788578056L);
     }
 
     public static boolean isPacketEventsOutdated(Instant requiredTime) {
