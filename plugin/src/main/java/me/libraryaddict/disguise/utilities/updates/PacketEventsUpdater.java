@@ -62,7 +62,7 @@ public class PacketEventsUpdater {
         // This means we'll always fail a release check!
         // But now that 2.5.0 has released, it'll update to the release build
         // Then I changed this once again!
-        return "2.6.1";
+        return "2.7.0";
     }
 
     /**
@@ -227,7 +227,6 @@ public class PacketEventsUpdater {
                     downloadFile(file.url, file.filename);
                     return true;
                 }
-
             }
         }
 
