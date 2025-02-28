@@ -281,6 +281,10 @@ public class MineSkinAPI {
 
         if (mineSkinResponse.getJob() == null || (!mineSkinResponse.getJob().isJobRunning() && mineSkinResponse.getSkin() == null)) {
             // If we got an error that we don't know how to handle..
+            if (LibsDisguises.getInstance() != null) {
+                LibsDisguises.getInstance().getLogger().warning("Received an unknown response from MineSkin: " + response);
+            }
+
             callback.onError(LibsMsg.SKIN_API_FAIL);
             return null;
         }
@@ -416,7 +420,7 @@ public class MineSkinAPI {
                 ex2.printStackTrace();
             }
 
-            if (LibsDisguises.getInstance() != null && LibsDisguises.getInstance().getLogger() != null) {
+            if (LibsDisguises.getInstance() != null) {
                 LibsDisguises.getInstance().getLogger().warning("Failed to access MineSkin.org");
             }
 
