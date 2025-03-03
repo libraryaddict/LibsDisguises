@@ -1,11 +1,10 @@
 package me.libraryaddict.disguise.utilities.config.migrations;
 
+import java.util.Locale;
+
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.utilities.config.ConfigMigrator;
-import me.libraryaddict.disguise.utilities.config.SharedYamlConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-
-import java.util.Locale;
 
 public class ConfigMigration_DisguiseScaling implements ConfigMigrator.ConfigMigration {
     @Override
@@ -24,24 +23,30 @@ public class ConfigMigration_DisguiseScaling implements ConfigMigrator.ConfigMig
     }
 
     @Override
-    public void migrate(SharedYamlConfiguration migrateFrom, YamlConfiguration keptValues) {
+    public void migrate(YamlConfiguration globalConfig) {
+        // Let defaults work itself out if this wasn't set
+        if (!globalConfig.isSet("TallSelfDisguises")) {
+            return;
+        }
+
         // We only need to handle config settings that 'changed'
 
         // TallSelfDisguises
-        DisguiseConfig.TallSelfDisguise tallSelfDisguisesVisibility = getVisibility(keptValues);
+        DisguiseConfig.TallSelfDisguise tallSelfDisguisesVisibility = getVisibility(globalConfig);
 
         // If its not set in the new config
         if (tallSelfDisguisesVisibility == null) {
             // Make sure it doesn't exist in the old config
-            tallSelfDisguisesVisibility = getVisibility(migrateFrom.getGlobalConfig());
+            tallSelfDisguisesVisibility = getVisibility(globalConfig);
 
             // Try resolve it from booleans
             if (tallSelfDisguisesVisibility == null) {
                 // Previously, 'true' means they want tall disguises to obscure the player's view
-                if (migrateFrom.getGlobalConfig().getBoolean("TallSelfDisguises")) {
+                if (globalConfig.getBoolean("TallSelfDisguises")) {
                     tallSelfDisguisesVisibility = DisguiseConfig.TallSelfDisguise.VISIBLE;
                     // Previously, 'true' meant that if the above was false, they want the disguise to be scaled down
-                } else if (migrateFrom.getGlobalConfig().getBoolean("TallSelfDisguisesScaling")) {
+                    // Some versions didn't even have this setting, so assume its true
+                } else if (globalConfig.getBoolean("TallSelfDisguisesScaling", true)) {
                     tallSelfDisguisesVisibility = DisguiseConfig.TallSelfDisguise.SCALED;
                     // And if tall disguises are disabled and scaling is disabled, they don't want tall disguises to show at all
                 } else {
@@ -49,12 +54,8 @@ public class ConfigMigration_DisguiseScaling implements ConfigMigrator.ConfigMig
                 }
             }
 
-            keptValues.set("TallSelfDisguises", tallSelfDisguisesVisibility);
+            globalConfig.set("TallSelfDisguises", tallSelfDisguisesVisibility);
         }
-
-        // TODO Changes that may have been done over the dev build period
-        // TODO Add the list array
-
     }
 
     private DisguiseConfig.TallSelfDisguise getVisibility(YamlConfiguration configuration) {

@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.utilities.config.migrations;
 
 import me.libraryaddict.disguise.utilities.config.ConfigMigrator;
-import me.libraryaddict.disguise.utilities.config.SharedYamlConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ConfigMigration_RenamedFiles implements ConfigMigrator.ConfigMigration {
@@ -33,7 +32,7 @@ public class ConfigMigration_RenamedFiles implements ConfigMigrator.ConfigMigrat
     }
 
     @Override
-    public void migrate(SharedYamlConfiguration migrateFrom, YamlConfiguration migrateTo) {
+    public void migrate(YamlConfiguration migrateTo) {
         // Mostly files being shuffled around
     }
 }

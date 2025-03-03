@@ -150,13 +150,15 @@ public class ConfigLoader {
     }
 
     public void saveDefaultConfig(String configName) {
-        LibsDisguises.getInstance().getLogger().info("Config " + configName + " is out of date (Or missing)! Now refreshing it!");
         File loadFrom = new File(LibsDisguises.getInstance().getDataFolder(), configName);
 
         YamlConfiguration savedConfig = null;
 
         if (loadFrom.exists()) {
+            LibsDisguises.getInstance().getLogger().info("Updating config " + configName + " with missing entries.");
             savedConfig = YamlConfiguration.loadConfiguration(loadFrom);
+        } else {
+            LibsDisguises.getInstance().getLogger().info("Saving default config " + configName);
         }
 
         saveConfig(savedConfig, configName);

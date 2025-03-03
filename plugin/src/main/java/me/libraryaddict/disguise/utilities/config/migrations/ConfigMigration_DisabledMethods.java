@@ -1,20 +1,18 @@
 package me.libraryaddict.disguise.utilities.config.migrations;
 
-import me.libraryaddict.disguise.utilities.config.ConfigMigrator;
-import me.libraryaddict.disguise.utilities.config.SharedYamlConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import me.libraryaddict.disguise.utilities.config.ConfigMigrator;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 public class ConfigMigration_DisabledMethods implements ConfigMigrator.ConfigMigration {
-    private final List<String> defaultDisabledMethods;
+    private final String[] defaultDisabledMethods;
     private final int version;
 
     public ConfigMigration_DisabledMethods(int version, String... addedMethods) {
         this.version = version;
-        defaultDisabledMethods = Arrays.asList(addedMethods);
+        defaultDisabledMethods = addedMethods;
     }
 
     @Override
@@ -33,14 +31,14 @@ public class ConfigMigration_DisabledMethods implements ConfigMigrator.ConfigMig
     }
 
     @Override
-    public void migrate(SharedYamlConfiguration migrateFrom, YamlConfiguration migrateTo) {
+    public void migrate(YamlConfiguration globalConfig) {
         // If not set to a valid value, unset it and let us revert it to defaults
-        if (!migrateTo.isSet("DisabledMethods") || !migrateTo.isList("DisabledMethods")) {
-            migrateTo.set("DisabledMethods", null);
+        if (!globalConfig.isSet("DisabledMethods") || !globalConfig.isList("DisabledMethods")) {
+            globalConfig.set("DisabledMethods", null);
             return;
         }
 
-        List<String> list = migrateTo.getStringList("DisabledMethods");
+        List<String> list = globalConfig.getStringList("DisabledMethods");
         List<String> toAdd = new ArrayList<>(list);
 
         for (String setting : defaultDisabledMethods) {
@@ -55,6 +53,6 @@ public class ConfigMigration_DisabledMethods implements ConfigMigrator.ConfigMig
             return;
         }
 
-        migrateTo.set("DisabledMethods", toAdd);
+        globalConfig.set("DisabledMethods", toAdd);
     }
 }

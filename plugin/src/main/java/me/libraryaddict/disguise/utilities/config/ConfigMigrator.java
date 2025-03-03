@@ -1,20 +1,18 @@
 package me.libraryaddict.disguise.utilities.config;
 
-import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_DisabledMethods;
-import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_RenamedFiles;
-import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_DisguiseScaling;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+
+import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_DisabledMethods;
+import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_DisguiseScaling;
+import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_RenamedFiles;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ConfigMigrator {
     public interface ConfigMigration {
@@ -32,19 +30,33 @@ public class ConfigMigrator {
          */
         String[] getFilesToMigrateTo();
 
+        default List<String> getAllFilesTouched() {
+            List<String> list = new ArrayList<>(Arrays.asList(getFilesToMigrateFrom()));
+
+            for (String string : getFilesToMigrateTo()) {
+                if (list.stream().anyMatch(string::equals)) {
+                    continue;
+                }
+
+                list.add(string);
+            }
+
+            return list;
+        }
+
         /**
          * The version this config is
          */
         int getVersion();
 
-        void migrate(SharedYamlConfiguration migrateFrom, YamlConfiguration migrateTo);
+        void migrate(YamlConfiguration loadedConfig);
     }
 
-    private final Map<String, YamlConfiguration> migrations = new HashMap<>();
+    private final Set<String> alreadyLoaded = new HashSet<>();
     private final Set<String> toDelete = new HashSet<>();
     private final Set<String> toWrite = new HashSet<>();
 
-    private List<ConfigMigration> getMigrations() {
+    private static List<ConfigMigration> getMigrations() {
         List<ConfigMigration> list = new ArrayList<>();
 
         // V.1
@@ -55,6 +67,10 @@ public class ConfigMigrator {
         list.add(new ConfigMigration_DisguiseScaling());
 
         return list;
+    }
+
+    public static int getLastMigrationVersion() {
+        return getMigrations().stream().mapToInt(ConfigMigration::getVersion).max().orElse(-1);
     }
 
     public void runMigrations() {
@@ -99,13 +115,11 @@ public class ConfigMigrator {
     }
 
     private void runMigration(ConfigMigration migration, YamlConfiguration globalConfig) {
-        SharedYamlConfiguration oldConfig = loadConfig(migration.getFilesToMigrateFrom());
-
-        for (String filename : migration.getFilesToMigrateFrom()) {
+        for (String filename : migration.getAllFilesTouched()) {
             addConfigToConfig(filename, globalConfig);
         }
 
-        migration.migrate(oldConfig, globalConfig);
+        migration.migrate(globalConfig);
 
         // Add files that dont exist in new versions to be deleted
         for (String migrateFrom : migration.getFilesToMigrateFrom()) {
@@ -130,7 +144,19 @@ public class ConfigMigrator {
     }
 
     private void addConfigToConfig(String filename, YamlConfiguration globalConfig) {
-        YamlConfiguration config = load(filename);
+        if (alreadyLoaded.contains(filename)) {
+            return;
+        }
+
+        alreadyLoaded.add(filename);
+
+        File file = getConfig(filename);
+
+        if (!file.exists()) {
+            return;
+        }
+
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
         for (String k : config.getKeys(true)) {
             if (config.isConfigurationSection(k)) {
@@ -143,23 +169,5 @@ public class ConfigMigrator {
 
             globalConfig.set(k, config.get(k));
         }
-    }
-
-    private YamlConfiguration load(String filename) {
-        if (!migrations.containsKey(filename)) {
-            migrations.put(filename, YamlConfiguration.loadConfiguration(getConfig(filename)));
-        }
-
-        return migrations.get(filename);
-    }
-
-    private SharedYamlConfiguration loadConfig(String[] filenames) {
-        SharedYamlConfiguration configuration = new SharedYamlConfiguration();
-
-        for (String filename : filenames) {
-            configuration.addConfig(filename, load(filename));
-        }
-
-        return configuration;
     }
 }

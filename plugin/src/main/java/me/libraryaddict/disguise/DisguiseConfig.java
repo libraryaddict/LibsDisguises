@@ -8,6 +8,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.config.ConfigLoader;
+import me.libraryaddict.disguise.utilities.config.ConfigMigrator;
 import me.libraryaddict.disguise.utilities.modded.ModdedEntity;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
@@ -267,7 +268,7 @@ public class DisguiseConfig {
     private static String lastPluginUpdateVersion;
     @Getter
     @Setter
-    private static int lastConfigVersion;
+    private static int lastConfigVersion = ConfigMigrator.getLastMigrationVersion();
     @Getter
     @Setter
     private static boolean contactMojangServers;

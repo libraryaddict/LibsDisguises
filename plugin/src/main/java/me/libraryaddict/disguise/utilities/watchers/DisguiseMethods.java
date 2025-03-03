@@ -1,24 +1,5 @@
 package me.libraryaddict.disguise.utilities.watchers;
 
-import com.google.gson.Gson;
-import lombok.Getter;
-import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
-import me.libraryaddict.disguise.utilities.LibsPremium;
-import me.libraryaddict.disguise.utilities.params.ParamInfo;
-import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
-import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
-import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
-import me.libraryaddict.disguise.utilities.reflection.WatcherInfo;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
-
 import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -29,6 +10,24 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.gson.Gson;
+import lombok.Getter;
+import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
+import me.libraryaddict.disguise.utilities.params.ParamInfo;
+import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.reflection.WatcherInfo;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
 
 public class DisguiseMethods {
     private final HashMap<Class<? extends FlagWatcher>, List<WatcherMethod>> watcherMethods = new HashMap<>();
@@ -189,10 +188,10 @@ public class DisguiseMethods {
         // Methods hidden by default, mainly so it doesn't throw an exception if used
         // This means that any options in this will be set in a disguise, but it won't be copied when a disguise is parsed to string
         // And it won't appear in tab complete
-        List<String> hiddenAndIgnored = Arrays.asList("setTallDisguisesVisible", "setTallSelfDisguisesScaling");
+        List<String> hiddenAndIgnored = new ArrayList<>(Arrays.asList("setTallDisguisesVisible", "setTallSelfDisguisesScaling"));
 
         if (NmsVersion.v1_20_R4.isSupported()) {
-                extraMethods.add("setScalePlayerToDisguise");
+            extraMethods.add("setScalePlayerToDisguise");
         }
 
         extraMethods.addAll(hiddenAndIgnored);
