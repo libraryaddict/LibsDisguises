@@ -58,11 +58,8 @@ public class PacketEventsUpdater {
      * Returns the min required version, as in any older version will just not work.
      */
     public static String getMinimumPacketEventsVersion() {
-        // At time of writing, release is 2.4.0, and snapshot builds are all "2.5.0-SNAPSHOT"
-        // This means we'll always fail a release check!
-        // But now that 2.5.0 has released, it'll update to the release build
-        // Then I changed this once again!
-        return "2.7.0";
+        // We use a futuristic version if the features we want are in the snapshot builds
+        return "2.7.1";
     }
 
     /**
