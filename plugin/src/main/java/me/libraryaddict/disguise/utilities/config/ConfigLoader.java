@@ -36,23 +36,14 @@ public class ConfigLoader {
     }
 
     public void saveMissingConfigs() {
-        File oldFile = new File(LibsDisguises.getInstance().getDataFolder(), "config.yml");
-        boolean migrated = oldFile.exists();
-
         for (String config : configs) {
             File f = new File(LibsDisguises.getInstance().getDataFolder(), config);
 
             if (f.exists()) {
-                migrated = false;
                 continue;
             }
 
             saveDefaultConfig(config);
-        }
-
-        if (migrated) {
-            LibsDisguises.getInstance().getLogger().info("Migrated old config system to new config system");
-            oldFile.delete();
         }
     }
 
@@ -156,19 +147,11 @@ public class ConfigLoader {
 
             saveDefaultConfig(config);
         }
-
-        File f = new File(LibsDisguises.getInstance().getDataFolder(), "config.yml");
-
-        f.delete();
     }
 
     public void saveDefaultConfig(String configName) {
         LibsDisguises.getInstance().getLogger().info("Config " + configName + " is out of date (Or missing)! Now refreshing it!");
         File loadFrom = new File(LibsDisguises.getInstance().getDataFolder(), configName);
-
-        if (!loadFrom.exists()) {
-            loadFrom = new File(LibsDisguises.getInstance().getDataFolder(), "config.yml");
-        }
 
         YamlConfiguration savedConfig = null;
 
