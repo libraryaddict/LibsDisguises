@@ -1,5 +1,8 @@
 package me.libraryaddict.disguise.utilities.packets.packethandlers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.github.retrooper.packetevents.protocol.attribute.Attributes;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
@@ -13,9 +16,6 @@ import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PacketHandlerAttributes implements IPacketHandler<WrapperPlayServerUpdateAttributes> {
 
@@ -55,6 +55,9 @@ public class PacketHandlerAttributes implements IPacketHandler<WrapperPlayServer
 
                 // If it's for the self disguise and the disguise had to be scaled down
                 if (entity == observer && disguise.isTallSelfDisguisesScaling()) {
+                    // Trigger a refresh incase the attribute had changed
+                    disguise.getInternals().getPacketEntityScale(property.getValue());
+
                     attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE,
                         Math.min(disguise.getInternals().getPrevSelfDisguiseTallScaleMax(), scale == null ? property.getValue() : scale),
                         new ArrayList<>()));

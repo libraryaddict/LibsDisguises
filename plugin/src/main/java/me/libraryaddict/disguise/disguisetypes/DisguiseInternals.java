@@ -1,5 +1,10 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.attribute.Attributes;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateAttributes;
@@ -8,6 +13,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.scaling.DisguiseScaling;
@@ -17,11 +23,7 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlotGroup;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.UUID;
+import org.bukkit.scheduler.BukkitRunnable;
 
 @RequiredArgsConstructor
 /**
@@ -51,10 +53,30 @@ import java.util.UUID;
     private final NamespacedKey bossBar = new NamespacedKey("libsdisguises", UUID.randomUUID().toString());
     @Getter
     private final DisguiseScaling scaling;
+    private final AtomicBoolean refreshingScaling = new AtomicBoolean(false);
 
     public DisguiseInternals(D disguise) {
         this.disguise = disguise;
         scaling = new DisguiseScaling(this);
+    }
+
+    private void refreshScale() {
+        // If value was already true, return. Otherwise, set to true
+        if (refreshingScaling.getAndSet(true)) {
+            return;
+        }
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!disguise.isDisguiseInUse()) {
+                    return;
+                }
+
+                getScaling().adjustScaling();
+                refreshingScaling.set(false);
+            }
+        }.runTask(LibsDisguises.getInstance());
     }
 
     protected double getActualEntityScale() {
@@ -98,8 +120,7 @@ import java.util.UUID;
             return scaleInPacket;
         }
 
-        getPlayerScaleWithoutLibsDisguises();
-        entityScaleLastSentViaPackets = scaleInPacket;
+        refreshScale();
 
         return entityScaleWithoutLibsDisguises;
     }

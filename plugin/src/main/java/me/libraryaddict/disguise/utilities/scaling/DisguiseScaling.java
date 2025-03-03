@@ -62,24 +62,8 @@ public class DisguiseScaling {
     private final static double tallDisguiseAtHeight = 1.6;
     private final DisguiseScalingInternals scalingInternals;
 
-    private double getTinyFigureScale(double newTinyFigureScaleMax, double playerScaleWithoutLibsDisguises) {
-        double scaleToSend = getScalingInternals().getDisguiseScale();
-
-        if (getScalingInternals().isScalePlayerToDisguise()) {
-            scaleToSend = Math.min(scaleToSend, newTinyFigureScaleMax);
-        }
-
-        return scaleToSend;
-    }
-
     public double getHeightOfDisguise() {
-        double increasedNaturalHeightOfDisguise = getScalingInternals().getUnscaledHeight() * getScalingInternals().getDisguiseScale();
-
-        if (getScalingInternals().isTallDisguise()) {
-            //        increasedNaturalHeightOfDisguise *= getMaxTinyFigureHeight();
-        }
-
-        return increasedNaturalHeightOfDisguise;
+        return getScalingInternals().getUnscaledHeight() * getScalingInternals().getDisguiseScale();
     }
 
     public void adjustScaling() {
@@ -105,6 +89,9 @@ public class DisguiseScaling {
         double newTinyFigureScaleMax =
             getMaxTinyFigureHeight(getPlayerHeight() * playerScaleWithoutLibsDisguises * scalerToMakePlayerSeePerspective,
                 unscaledHeightOfDisguise);
+        // Clamp it so it's never bigger than before
+        newTinyFigureScaleMax =
+            Math.min(newTinyFigureScaleMax, Math.max(getScalingInternals().getDisguiseScale(), playerScaleWithoutLibsDisguises));
 
         getScalingInternals().setSelfDisguiseTallScaleMax(newTinyFigureScaleMax);
 
@@ -116,9 +103,9 @@ public class DisguiseScaling {
         if (prevTinyFigureScaleMax != newTinyFigureScaleMax) {
             // If tiny figure can be scaled
             if (getScalingInternals().isTinyFigureScaleable()) {
-                getScalingInternals().sendTinyFigureScale(getTinyFigureScale(newTinyFigureScaleMax, playerScaleWithoutLibsDisguises));
+                getScalingInternals().sendTinyFigureScale(newTinyFigureScaleMax);
             } else {
-                getScalingInternals().sendTinyFigureScale(1);
+                getScalingInternals().sendTinyFigureScale(playerScaleWithoutLibsDisguises);
             }
         }
 
