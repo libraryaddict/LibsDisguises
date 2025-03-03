@@ -1,5 +1,13 @@
 package me.libraryaddict.disguise;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -56,14 +64,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 public class LibsDisguises extends JavaPlugin {
     /**
      * -- GETTER --
@@ -105,6 +105,7 @@ public class LibsDisguises extends JavaPlugin {
 
             Plugin plugin = Bukkit.getPluginManager().getPlugin("packetevents");
 
+            DisguiseConfig.loadInternalConfig();
             DisguiseConfig.loadPreConfig();
 
             // Skipping the isPacketEventsOutdated check cos DisguiseConfig wouldn't be loaded
@@ -200,8 +201,6 @@ public class LibsDisguises extends JavaPlugin {
             updateOldDisguisesYaml();
             loadYamlWarnVirus();
             logInfo();
-
-            DisguiseConfig.loadInternalConfig();
 
             LibsPremium.check(getDescription().getVersion(), getFile());
 

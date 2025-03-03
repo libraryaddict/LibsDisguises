@@ -12,3 +12,5 @@ HittingRateLimit: %data%
 LastGithubETag: %data%
 LastPluginVersion: %data%
 Data: %data%
+# When it needs to migrate configs
+LastConfigVersion: %data%

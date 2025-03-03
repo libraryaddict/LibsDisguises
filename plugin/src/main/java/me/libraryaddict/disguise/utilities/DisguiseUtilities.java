@@ -1,5 +1,44 @@
 package me.libraryaddict.disguise.utilities;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
@@ -145,45 +184,6 @@ import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class DisguiseUtilities {
     @Setter
@@ -1934,13 +1934,13 @@ public class DisguiseUtilities {
         if (LibsPremium.isPremium()) {
             boolean fetch = true;
             UsersData hard = getGson().fromJson(new String(Base64.getDecoder().decode(
-                "eyJ1c2VycyI6WyIwMDAwMCIsIjAwMDAxIiwiNzEzNDcyIiwiNTMyODg2Nzk2IiwiLTg1MjcyMzMyNiIsIjExMDAyNzQiLCIxMjEyMzg4IiwiNDcxMzIyIiwiODI1MjYgLSBDbGFpbXMgdG8gaGF2ZSBiZWVuIGhhY2tlZCwgYW5kIHJlY292ZXJlZCB0aGVpciBhY2NvdW50IGEgZmV3IG1vbnRocyBhZ28gMTkvMDkvMjAyMyIsIi0xMDA3MDcxNTE4IiwiNjgwNTYxIiwiMzAzNTk0OTcyIiwiMTAwNzU4IiwiLTc3ODYxMDk0NyIsIi0xNzMwMDk5NjUiLCI1MTA0NzI3NzYiLCIxMjQ4NDgyNDMxIiwiOTg4OTQ3IiwiLTQzMDcwNDI2OCIsIjE1OTIiLCIxNjMxNTU1IiwiODIyMDk3IiwiNjQ1NjgyIiwiMTQ0OTk2OTc0NyIsIjg4ODQ4MCIsIjE2ODU0NCIsIjE1MjM0NDAiLCIzODU0MDMiLCIzNTA3NzIiLCIzODQ2MjciLCIyMDgyMTAiLCIxOTY2OTkwIiwiMCIsIjQ3MzcxIl0sImZldGNoZWQiOjE3MjEyNjc2MTM1ODR9"),
+                "eyJ1c2VycyI6WyIwMDAwMCIsIjAwMDAxIiwiNzEzNDcyIiwiNTMyODg2Nzk2IiwiLTg1MjcyMzMyNiIsIjExMDAyNzQiLCIxMjEyMzg4IiwiNDcxMzIyIiwiODI1MjYgLSBDbGFpbXMgdG8gaGF2ZSBiZWVuIGhhY2tlZCwgYW5kIHJlY292ZXJlZCB0aGVpciBhY2NvdW50IGEgZmV3IG1vbnRocyBhZ28gMTkvMDkvMjAyMyIsIi0xMDA3MDcxNTE4IiwiNjgwNTYxIiwiMzAzNTk0OTcyIiwiMTAwNzU4IiwiLTc3ODYxMDk0NyIsIi0xNzMwMDk5NjUiLCI1MTA0NzI3NzYiLCIxMjQ4NDgyNDMxIiwiOTg4OTQ3IiwiLTQzMDcwNDI2OCIsIjE1OTIiLCIxNjMxNTU1IiwiODIyMDk3IiwiNjQ1NjgyIiwiMTQ0OTk2OTc0NyIsIjg4ODQ4MCIsIjE2ODU0NCIsIjE1MjM0NDAiLCIzODU0MDMiLCIzNTA3NzIiLCIzODQ2MjciLCIyMDgyMTAiLCIxOTY2OTkwIiwiMCIsIjQ3MzcxIiwiODI5MTc2IC0gc2F5cyBhbm90aGVyIHNlcnZlciBhZG1pbiB1cGxvYWRlZCwgbmV4dCBpcyB0aGUgc3BlY2lmaWMgZG93bmxvYWQgSUQgb2YgdGhhdCBqYXIiLCIxNTM2NDU5NjMiLCIyMTg0NTUzIl0sImZldGNoZWQiOjE3NDA1NDA1ODI3NDB9"),
                 StandardCharsets.UTF_8), UsersData.class);
 
             try {
-                if (DisguiseConfig.getData() != null) {
+                if (DisguiseConfig.getHashedData() != null) {
                     UsersData data =
-                        getGson().fromJson(new String(Base64.getDecoder().decode(DisguiseConfig.getData()), StandardCharsets.UTF_8),
+                        getGson().fromJson(new String(Base64.getDecoder().decode(DisguiseConfig.getHashedData()), StandardCharsets.UTF_8),
                             UsersData.class);
 
                     if (data != null && data.fetched > hard.fetched && data.fetched < System.currentTimeMillis() &&
@@ -1969,7 +1969,7 @@ public class DisguiseUtilities {
                                 data.users = users;
                                 data.fetched = System.currentTimeMillis();
 
-                                DisguiseConfig.setData(
+                                DisguiseConfig.setHashedData(
                                     Base64.getEncoder().encodeToString(getGson().toJson(data).getBytes(StandardCharsets.UTF_8)));
                                 DisguiseConfig.saveInternalConfig();
                             }

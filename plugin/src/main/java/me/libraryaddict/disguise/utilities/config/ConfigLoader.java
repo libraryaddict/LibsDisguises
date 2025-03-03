@@ -1,5 +1,11 @@
 package me.libraryaddict.disguise.utilities.config;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.ClassGetter;
@@ -8,13 +14,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Getter
 public class ConfigLoader {
@@ -33,39 +32,7 @@ public class ConfigLoader {
             configs.add(s);
         }
 
-        // TODO Load from legacy if new doesn't exist
-    }
-
-    /**
-     * The configs that used to exist but don't anymore.
-     */
-    private List<String> getLegacyConfigs() {
-        return Arrays.asList("combat.yml", "features.yml", "nametags.yml", "players.yml", "sanity.yml");
-    }
-
-    private void moveLegacyConfigs() {
-        File configsFolder = new File(LibsDisguises.getInstance().getDataFolder(), "configs");
-
-        for (String name : getLegacyConfigs()) {
-            File file = new File(configsFolder, name);
-
-            if (!file.exists()) {
-                continue;
-            }
-
-            File legacy = new File(configsFolder, "legacy/" + name);
-
-            if (legacy.exists()) {
-                file.delete();
-                continue;
-            }
-
-            if (!legacy.getParentFile().exists()) {
-                legacy.getParentFile().mkdirs();
-            }
-
-            file.renameTo(legacy);
-        }
+        new ConfigMigrator().runMigrations();
     }
 
     public void saveMissingConfigs() {
@@ -110,7 +77,6 @@ public class ConfigLoader {
         }
 
         return globalConfig;
-
     }
 
     public YamlConfiguration loadDefaults() {
@@ -139,8 +105,55 @@ public class ConfigLoader {
         return globalConfig;
     }
 
+    public boolean isOutdated(String config) {
+        if (!config.startsWith("configs/")) {
+            config = "configs/" + config;
+        }
+
+        File file = new File(LibsDisguises.getInstance().getDataFolder(), config);
+
+        if (!file.exists()) {
+            return true;
+        }
+
+        try {
+            YamlConfiguration savedConfig = YamlConfiguration.loadConfiguration(file);
+
+            String ourConfig = ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), config);
+            YamlConfiguration internalConfig = new YamlConfiguration();
+            internalConfig.loadFromString(ourConfig);
+
+            // Loop over all the keys
+            for (String key : internalConfig.getKeys(true)) {
+                // Skip section identifiers
+                if (internalConfig.isConfigurationSection(key)) {
+                    continue;
+                }
+
+                // If the saved config has this key, continue
+                if (savedConfig.isSet(key)) {
+                    continue;
+                }
+
+                // Key is missing, config is not default. Return true.
+                return true;
+            }
+
+            // Return false, saved config is default
+            return false;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return true;
+    }
+
     public void saveDefaultConfigs() {
         for (String config : configs) {
+            if (!isOutdated(config)) {
+                continue;
+            }
+
             saveDefaultConfig(config);
         }
 
@@ -149,26 +162,37 @@ public class ConfigLoader {
         f.delete();
     }
 
-    public void saveDefaultConfig(String name) {
-        LibsDisguises.getInstance().getLogger().info("Config " + name + " is out of date (Or missing)! Now refreshing it!");
-        String ourConfig = ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), name);
-        YamlConfiguration savedConfig = null;
-
-        File loadFrom = new File(LibsDisguises.getInstance().getDataFolder(), name);
-        File configFile = loadFrom;
+    public void saveDefaultConfig(String configName) {
+        LibsDisguises.getInstance().getLogger().info("Config " + configName + " is out of date (Or missing)! Now refreshing it!");
+        File loadFrom = new File(LibsDisguises.getInstance().getDataFolder(), configName);
 
         if (!loadFrom.exists()) {
             loadFrom = new File(LibsDisguises.getInstance().getDataFolder(), "config.yml");
         }
 
+        YamlConfiguration savedConfig = null;
+
         if (loadFrom.exists()) {
             savedConfig = YamlConfiguration.loadConfiguration(loadFrom);
-        } else {
+        }
+
+        saveConfig(savedConfig, configName);
+    }
+
+    static void saveConfig(YamlConfiguration savedConfig, String configName) {
+        if (!configName.startsWith("configs/")) {
+            configName = "configs/" + configName;
+        }
+
+        String ourConfig = ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), configName);
+
+        if (savedConfig == null) {
             try {
                 savedConfig = new YamlConfiguration();
                 savedConfig.loadFromString(ourConfig);
             } catch (Exception e) {
                 e.printStackTrace();
+                return;
             }
         }
 
@@ -237,6 +261,8 @@ public class ConfigLoader {
 
             strings.add(s);
         }
+
+        File configFile = new File(LibsDisguises.getInstance().getDataFolder(), configName);
 
         try {
             if (!configFile.getParentFile().exists()) {

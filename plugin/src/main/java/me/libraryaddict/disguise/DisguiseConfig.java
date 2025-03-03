@@ -267,13 +267,16 @@ public class DisguiseConfig {
     private static String lastPluginUpdateVersion;
     @Getter
     @Setter
+    private static int lastConfigVersion;
+    @Getter
+    @Setter
     private static boolean contactMojangServers;
     @Getter
     @Setter(AccessLevel.PROTECTED)
     private static int disguiseRadiusMax;
     @Getter
     @Setter
-    private static String data;
+    private static String hashedData;
     @Getter
     @Setter
     private static boolean randomUUIDS;
@@ -428,7 +431,8 @@ public class DisguiseConfig {
         hittingRateLimit = configuration.getBoolean("HittingRateLimit", false);
         lastGithubUpdateETag = configuration.getString("LastGithubETag", null);
         lastPluginUpdateVersion = configuration.getString("LastPluginVersion", null);
-        data = configuration.getString("Data", null);
+        lastConfigVersion = configuration.getInt("LastConfigVersion", -1);
+        hashedData = configuration.getString("Data", null);
 
         if (!configuration.contains("Bisect-Hosted") || !configuration.contains("Server-IP") || !configuration.contains("ReleaseBuild")) {
             saveInternalConfig();
@@ -442,7 +446,7 @@ public class DisguiseConfig {
 
         // Bisect hosted, server ip, release builds
         for (Object s : new Object[]{isBisectHosted(), getSavedServerIp(), isUsingReleaseBuild(), getLastUpdateRequest(),
-            isHittingRateLimit(), getLastGithubUpdateETag(), getLastPluginUpdateVersion(), getData()}) {
+            isHittingRateLimit(), getLastGithubUpdateETag(), getLastPluginUpdateVersion(), getHashedData(), getLastConfigVersion()}) {
             internalConfig = internalConfig.replaceFirst("%data%", "" + s);
         }
 
