@@ -89,9 +89,14 @@ loadScripts(document, 'script');</script>
 <div class="inheritance">me.libraryaddict.disguise.disguisetypes.DisguiseInternals&lt;D&gt;</div>
 </div>
 <section class="class-description" id="class-description">
+<dl class="notes">
+<dt>All Implemented Interfaces:</dt>
+<dd><code>me.libraryaddict.disguise.utilities.scaling.DisguiseScaling.DisguiseScalingInternals</code></dd>
+</dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">DisguiseInternals&lt;D extends <a href="Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a>&gt;</span>
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
+implements me.libraryaddict.disguise.utilities.scaling.DisguiseScaling.DisguiseScalingInternals</span></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -103,7 +108,7 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E()" class="member-name-link">DisguiseInternals</a>()</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(D)" class="member-name-link">DisguiseInternals</a><wbr>(<a href="DisguiseInternals.html" title="type parameter in DisguiseInternals">D</a>&nbsp;disguise)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
@@ -123,20 +128,52 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getActualEntityScale()" class="member-name-link">getActualEntityScale</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>double</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getEntityScaleWithoutLibsDisguises()" class="member-name-link">getEntityScaleWithoutLibsDisguises</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDisguiseScale()" class="member-name-link">getDisguiseScale</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>double</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getPacketEntityScale(double)" class="member-name-link">getPacketEntityScale</a><wbr>(double&nbsp;scaleInPacket)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>double</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getPlayerScaleWithoutLibsDisguises()" class="member-name-link">getPlayerScaleWithoutLibsDisguises</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>double</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getPrevSelfDisguiseTallScaleMax()" class="member-name-link">getPrevSelfDisguiseTallScaleMax</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected double</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getRawEntityScaleWithoutLibsDisguises()" class="member-name-link">getRawEntityScaleWithoutLibsDisguises</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>double</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getUnscaledHeight()" class="member-name-link">getUnscaledHeight</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isScalePlayerToDisguise()" class="member-name-link">isScalePlayerToDisguise</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isScalingRelevant()" class="member-name-link">isScalingRelevant</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">If the disguise is in use, the disguised entity is a player and the disguised entity can see this disgiuse</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isTallDisguise()" class="member-name-link">isTallDisguise</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isTinyFigureScaleable()" class="member-name-link">isTinyFigureScaleable</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#sendTinyFigureScale(double)" class="member-name-link">sendTinyFigureScale</a><wbr>(double&nbsp;tinyFigureScale)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setPlayerScale(double)" class="member-name-link">setPlayerScale</a><wbr>(double&nbsp;personalPlayerScaleAttribute)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
+<div class="inherited-list">
+<h3 id="methods-inherited-from-class-me.libraryaddict.disguise.utilities.scaling.DisguiseScaling.DisguiseScalingInternals">Methods inherited from interface&nbsp;me.libraryaddict.disguise.utilities.scaling.DisguiseScaling.DisguiseScalingInternals</h3>
+<code>setSelfDisguiseTallScaleMax</code></div>
 </section>
 </li>
 </ul>
@@ -149,9 +186,9 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;()">
-<h3>DisguiseInternals</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">DisguiseInternals</span>()</div>
+<section class="detail" id="&lt;init&gt;(D)">
+<h3 id="&lt;init&gt;(me.libraryaddict.disguise.disguisetypes.Disguise)">DisguiseInternals</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">DisguiseInternals</span><wbr><span class="parameters">(<a href="DisguiseInternals.html" title="type parameter in DisguiseInternals">D</a>&nbsp;disguise)</span></div>
 </section>
 </li>
 </ul>
@@ -175,15 +212,110 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getEntityScaleWithoutLibsDisguises()">
-<h3>getEntityScaleWithoutLibsDisguises</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">getEntityScaleWithoutLibsDisguises</span>()</div>
+<section class="detail" id="getPlayerScaleWithoutLibsDisguises()">
+<h3>getPlayerScaleWithoutLibsDisguises</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">getPlayerScaleWithoutLibsDisguises</span>()</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code>getPlayerScaleWithoutLibsDisguises</code>&nbsp;in interface&nbsp;<code>me.libraryaddict.disguise.utilities.scaling.DisguiseScaling.DisguiseScalingInternals</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getPrevSelfDisguiseTallScaleMax()">
+<h3>getPrevSelfDisguiseTallScaleMax</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">getPrevSelfDisguiseTallScaleMax</span>()</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code>getPrevSelfDisguiseTallScaleMax</code>&nbsp;in interface&nbsp;<code>me.libraryaddict.disguise.utilities.scaling.DisguiseScaling.DisguiseScalingInternals</code></dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="getPacketEntityScale(double)">
 <h3>getPacketEntityScale</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">getPacketEntityScale</span><wbr><span class="parameters">(double&nbsp;scaleInPacket)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="sendTinyFigureScale(double)">
+<h3>sendTinyFigureScale</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">sendTinyFigureScale</span><wbr><span class="parameters">(double&nbsp;tinyFigureScale)</span></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code>sendTinyFigureScale</code>&nbsp;in interface&nbsp;<code>me.libraryaddict.disguise.utilities.scaling.DisguiseScaling.DisguiseScalingInternals</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setPlayerScale(double)">
+<h3>setPlayerScale</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setPlayerScale</span><wbr><span class="parameters">(double&nbsp;personalPlayerScaleAttribute)</span></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code>setPlayerScale</code>&nbsp;in interface&nbsp;<code>me.libraryaddict.disguise.utilities.scaling.DisguiseScaling.DisguiseScalingInternals</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isScalingRelevant()">
+<h3>isScalingRelevant</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isScalingRelevant</span>()</div>
+<div class="block">If the disguise is in use, the disguised entity is a player and the disguised entity can see this disgiuse</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code>isScalingRelevant</code>&nbsp;in interface&nbsp;<code>me.libraryaddict.disguise.utilities.scaling.DisguiseScaling.DisguiseScalingInternals</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isTinyFigureScaleable()">
+<h3>isTinyFigureScaleable</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isTinyFigureScaleable</span>()</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code>isTinyFigureScaleable</code>&nbsp;in interface&nbsp;<code>me.libraryaddict.disguise.utilities.scaling.DisguiseScaling.DisguiseScalingInternals</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isScalePlayerToDisguise()">
+<h3>isScalePlayerToDisguise</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isScalePlayerToDisguise</span>()</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code>isScalePlayerToDisguise</code>&nbsp;in interface&nbsp;<code>me.libraryaddict.disguise.utilities.scaling.DisguiseScaling.DisguiseScalingInternals</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isTallDisguise()">
+<h3>isTallDisguise</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isTallDisguise</span>()</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code>isTallDisguise</code>&nbsp;in interface&nbsp;<code>me.libraryaddict.disguise.utilities.scaling.DisguiseScaling.DisguiseScalingInternals</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getUnscaledHeight()">
+<h3>getUnscaledHeight</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">getUnscaledHeight</span>()</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code>getUnscaledHeight</code>&nbsp;in interface&nbsp;<code>me.libraryaddict.disguise.utilities.scaling.DisguiseScaling.DisguiseScalingInternals</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getDisguiseScale()">
+<h3>getDisguiseScale</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">getDisguiseScale</span>()</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code>getDisguiseScale</code>&nbsp;in interface&nbsp;<code>me.libraryaddict.disguise.utilities.scaling.DisguiseScaling.DisguiseScalingInternals</code></dd>
+</dl>
 </section>
 </li>
 </ul>
