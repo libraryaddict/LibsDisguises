@@ -154,11 +154,13 @@ public class ConfigLoader {
 
         YamlConfiguration savedConfig = null;
 
+        String neatName = configName.replace("configs/", "");
+
         if (loadFrom.exists()) {
-            LibsDisguises.getInstance().getLogger().info("Updating config " + configName + " with missing entries.");
+            LibsDisguises.getInstance().getLogger().info("Updating config " + neatName + " with missing entries.");
             savedConfig = YamlConfiguration.loadConfiguration(loadFrom);
         } else {
-            LibsDisguises.getInstance().getLogger().info("Saving default config " + configName);
+            LibsDisguises.getInstance().getLogger().info("Saving default config " + neatName);
         }
 
         saveConfig(savedConfig, configName);

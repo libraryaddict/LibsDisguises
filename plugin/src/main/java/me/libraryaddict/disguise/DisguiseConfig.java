@@ -1,5 +1,20 @@
 package me.libraryaddict.disguise;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,21 +46,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class DisguiseConfig {
     @Getter
@@ -308,6 +308,11 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static boolean hideDeathMessages;
+    /**
+     * Placed here instead of DisguiseUtilities as we don't want packetevent imports to be required before packetevents can be installed
+     */
+    private static final File internalFile =
+        LibsDisguises.getInstance() == null ? null : new File(LibsDisguises.getInstance().getDataFolder(), "internal/internal.yml");
 
     public static boolean isArmorstandsName() {
         return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
@@ -417,8 +422,6 @@ public class DisguiseConfig {
     }
 
     public static void loadInternalConfig() {
-        File internalFile = DisguiseUtilities.getInternalFile();
-
         if (!internalFile.exists()) {
             saveInternalConfig();
         }
@@ -441,8 +444,6 @@ public class DisguiseConfig {
     }
 
     public static void saveInternalConfig() {
-        File internalFile = DisguiseUtilities.getInternalFile();
-
         String internalConfig = ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), "internal.yml");
 
         // Bisect hosted, server ip, release builds

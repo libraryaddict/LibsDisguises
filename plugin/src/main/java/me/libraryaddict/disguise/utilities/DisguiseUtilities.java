@@ -347,7 +347,7 @@ public class DisguiseUtilities {
     @Setter
     private static boolean debuggingMode;
     @Getter
-    private static final File internalFolder, internalFile, preferencesFile;
+    private static final File internalFolder, preferencesFile;
 
     static {
         try {
@@ -361,7 +361,6 @@ public class DisguiseUtilities {
             sanitySkinCacheFile = null;
             savedDisguises = null;
             internalFolder = null;
-            internalFile = null;
             preferencesFile = null;
         } else {
             profileCache = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins");
@@ -369,7 +368,6 @@ public class DisguiseUtilities {
             savedDisguises = new File(LibsDisguises.getInstance().getDataFolder(), "SavedDisguises");
             runningGeyser = Bukkit.getPluginManager().getPlugin("Geyser-Spigot") != null;
             internalFolder = new File(LibsDisguises.getInstance().getDataFolder(), "internal");
-            internalFile = new File(getInternalFolder(), "internal.yml");
             preferencesFile = new File(getInternalFolder(), "preferences.json");
 
             // Ensure /internal exists
