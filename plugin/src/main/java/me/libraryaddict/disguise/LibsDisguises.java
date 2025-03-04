@@ -175,7 +175,7 @@ public class LibsDisguises extends JavaPlugin {
                 commandConfig.load();
             }
         } catch (Throwable throwable) {
-            ClassMappings.deleteMappingsCache();
+            deleteMappingsCache();
 
             try {
                 if (isJenkins() && DisguiseConfig.isAutoUpdate()) {
@@ -186,6 +186,16 @@ public class LibsDisguises extends JavaPlugin {
             }
 
             throw throwable;
+        }
+    }
+
+    private void deleteMappingsCache() {
+        try {
+            ClassMappings.deleteMappingsCache();
+        } catch (Throwable throwable1) {
+            throwable1.printStackTrace();
+
+            getLogger().severe("Failed to delete mappings cache");
         }
     }
 
@@ -238,7 +248,7 @@ public class LibsDisguises extends JavaPlugin {
 
             new MetricsInitalizer();
         } catch (Throwable throwable) {
-            ClassMappings.deleteMappingsCache();
+            deleteMappingsCache();
 
             try {
                 if (isJenkins() && DisguiseConfig.isAutoUpdate()) {
