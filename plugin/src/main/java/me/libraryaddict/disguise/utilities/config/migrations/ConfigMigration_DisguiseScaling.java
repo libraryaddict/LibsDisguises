@@ -13,11 +13,6 @@ public class ConfigMigration_DisguiseScaling implements ConfigMigrator.ConfigMig
     }
 
     @Override
-    public String[] getFilesToMigrateTo() {
-        return new String[]{"dangerous.yml"};
-    }
-
-    @Override
     public int getVersion() {
         return 2;
     }

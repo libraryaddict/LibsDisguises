@@ -28,7 +28,10 @@ public class ConfigMigrator {
          * <p>
          * If a file used in {@link #getFilesToMigrateFrom()} is not in this array, it will be deleted
          */
-        String[] getFilesToMigrateTo();
+        default String[] getFilesToMigrateTo() {
+            // Defaulted to providing the "migrate from" to avoid accidental mistakes!
+            return getFilesToMigrateFrom();
+        }
 
         default List<String> getAllFilesTouched() {
             List<String> list = new ArrayList<>(Arrays.asList(getFilesToMigrateFrom()));

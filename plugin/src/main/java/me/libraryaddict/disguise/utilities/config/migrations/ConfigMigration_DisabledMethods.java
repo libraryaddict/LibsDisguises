@@ -21,11 +21,6 @@ public class ConfigMigration_DisabledMethods implements ConfigMigrator.ConfigMig
     }
 
     @Override
-    public String[] getFilesToMigrateTo() {
-        return new String[]{"self_disguise.yml"};
-    }
-
-    @Override
     public int getVersion() {
         return version;
     }
