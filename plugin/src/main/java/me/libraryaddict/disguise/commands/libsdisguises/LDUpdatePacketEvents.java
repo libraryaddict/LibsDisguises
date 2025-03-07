@@ -54,9 +54,11 @@ public class LDUpdatePacketEvents implements LDCommand {
         UpdatesBranch branch;
 
         if (args.length > 1) {
-            if (args[1].toLowerCase(Locale.ENGLISH).contains("snapshot")) {
+            String type = args[1].toLowerCase(Locale.ENGLISH);
+
+            if (type.equals("dev") || type.matches("snapshots?")) {
                 branch = UpdatesBranch.SNAPSHOTS;
-            } else if (args[1].toLowerCase(Locale.ENGLISH).contains("release")) {
+            } else if (type.matches("releases?")) {
                 branch = UpdatesBranch.RELEASES;
             } else {
                 sendMessage(sender,
@@ -69,13 +71,13 @@ public class LDUpdatePacketEvents implements LDCommand {
 
         sendMessage(sender, "Please hold, now downloading " + (branch == UpdatesBranch.RELEASES ? "latest release for " :
             branch == UpdatesBranch.SNAPSHOTS ? "latest snapshot build for " : "") + "PacketEvents..");
+        updateInProgress.set(true);
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                PacketEventsUpdater updater = new PacketEventsUpdater();
-
                 try {
+                    PacketEventsUpdater updater = new PacketEventsUpdater();
                     boolean outcome;
 
                     if (branch == UpdatesBranch.SNAPSHOTS) {

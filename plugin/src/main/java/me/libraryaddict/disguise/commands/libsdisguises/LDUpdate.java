@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class LDUpdate implements LDCommand {
     @Override
@@ -40,15 +41,16 @@ public class LDUpdate implements LDCommand {
 
         if (args.length > 1) {
             boolean previous = releaseBuilds;
+            String type = args[1].toLowerCase(Locale.ENGLISH);
 
-            if (args[1].equalsIgnoreCase("dev")) {
+            if (type.equals("dev") || type.matches("snapshots?")) {
                 releaseBuilds = false;
 
                 if (DisguiseConfig.getUpdatesBranch() == DisguiseConfig.UpdatesBranch.RELEASES) {
                     LibsMsg.LIBS_UPDATE_CANT_SWITCH_BRANCH.send(sender, DisguiseConfig.getUpdatesBranch().name());
                     return;
                 }
-            } else if (args[1].equalsIgnoreCase("release")) {
+            } else if (type.equals("release")) {
                 releaseBuilds = true;
 
                 if (DisguiseConfig.getUpdatesBranch() == DisguiseConfig.UpdatesBranch.SNAPSHOTS) {
