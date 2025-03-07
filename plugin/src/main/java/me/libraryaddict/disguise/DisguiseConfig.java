@@ -1,20 +1,5 @@
 package me.libraryaddict.disguise;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,6 +31,21 @@ import org.bukkit.entity.Entity;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class DisguiseConfig {
     @Getter
@@ -308,6 +308,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static boolean hideDeathMessages;
+    @Getter
+    @Setter
+    private static boolean dynamicFilenames;
     /**
      * Placed here instead of DisguiseUtilities as we don't want packetevent imports to be required before packetevents can be installed
      */
@@ -637,6 +640,7 @@ public class DisguiseConfig {
         setShowDisguisedPlayersInTab(config.getBoolean("ShowPlayerDisguisesInTab"));
         setVelocitySent(config.getBoolean("SendVelocity"));
         setNeverUpdatePacketEvents(config.getBoolean("NeverUpdatePacketEvents", config.getBoolean("NeverUpdateProtocolLib", false)));
+        setDynamicFilenames(config.getBoolean("DynamicFilenames", true));
 
         setAutoUpdate(config.getBoolean("AutoUpdate"));
 

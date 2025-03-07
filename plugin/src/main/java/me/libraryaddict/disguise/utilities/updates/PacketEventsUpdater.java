@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.CodeSource;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -233,35 +234,68 @@ public class PacketEventsUpdater {
         return false;
     }
 
-    private File getDestination(String preferredName) {
-        File dest = new File(LibsDisguises.getInstance().getDataFolder().getAbsoluteFile().getParentFile(), preferredName);
-
+    private File getFileByPluginInstance() {
         try {
             Method getFile = JavaPlugin.class.getDeclaredMethod("getFile");
             getFile.setAccessible(true);
 
-            File theirFile = (File) getFile.invoke(PacketEvents.getAPI().getPlugin());
-            dest = new File(Bukkit.getUpdateFolderFile(), theirFile.getName());
-        } catch (Throwable throwable) {
-            // Fall back to trying to scanning files
-            if (Bukkit.getPluginManager().getPlugin("packetevents") != null) {
-                List<File> plJars = ReflectionManager.getFilesByPlugin("packetevents");
+            return (File) getFile.invoke(PacketEvents.getAPI().getPlugin());
+        } catch (Throwable ignored) {
+        }
 
-                if (plJars.size() > 1) {
-                    // Its probably the first file regardless, Bukkit seems to use folder.listFiles() and use the order provided
-                    LibsDisguises.getInstance().getLogger().warning(
-                        "You have multiple PacketEvents jars in your plugin folder, you may need to update PacketEvents yourself.");
-                }
+        return null;
+    }
 
-                if (!plJars.isEmpty()) {
-                    preferredName = plJars.get(0).getName();
-                }
+    private List<File> getFilesByYAML() {
+        // Fall back to trying to scanning files
+        if (Bukkit.getPluginManager().getPlugin("packetevents") == null) {
+            return new ArrayList<>();
+        }
 
-                dest = new File(Bukkit.getUpdateFolderFile(), preferredName);
+        List<File> plJars = ReflectionManager.getFilesByPlugin("packetevents");
+
+        if (plJars.size() > 1) {
+            // Its probably the first file regardless, Bukkit seems to use folder.listFiles() and use the order provided
+            LibsDisguises.getInstance().getLogger()
+                .warning("You have multiple PacketEvents jars in your plugin folder, you may need to update PacketEvents yourself.");
+        }
+
+        return plJars;
+    }
+
+    private File getDestination(String preferredName) {
+        File finalJarFolder = LibsDisguises.getInstance().getDataFolder().getAbsoluteFile().getParentFile();
+
+        // Attempt to retrieve File location by PE instance, before scanning other plugins
+        File fileJar = getFileByPluginInstance();
+
+        // If the first file check failed, try to resolve by plugin.yml
+        if (fileJar == null) {
+            List<File> files = getFilesByYAML();
+
+            // If it has found the plugin packetevents, set the variable
+            if (!files.isEmpty()) {
+                fileJar = files.get(0);
             }
         }
 
-        return dest;
+        // The name that the final jar will be called
+        String fileName = preferredName;
+
+        // If packetevents already exists on the server
+        if (fileJar != null) {
+            // This will be an update, not an install
+            finalJarFolder = Bukkit.getUpdateFolderFile();
+
+            // If the update name must be the same
+            if (!UpdateChecker.isFancyPluginUpdating()) {
+                // Set the name to the original file name
+                fileName = fileJar.getName();
+            }
+        }
+
+        // The update will be downloaded to this folder under this file name
+        return new File(finalJarFolder, fileName);
     }
 
     private void downloadFile(String fileUrl, String filename) throws IOException {
@@ -288,6 +322,12 @@ public class PacketEventsUpdater {
         }
 
         con.disconnect();
+
+        // Only if this is installed as an update
+        if (dest.getParentFile().equals(Bukkit.getUpdateFolderFile())) {
+            // Remove duplicate jars
+            UpdateChecker.removeOtherJars(dest, "packetevents");
+        }
 
         LibsDisguises.getInstance().getLogger().info(filename + " successfully downloaded and saved to " + dest.getPath());
         LibsDisguises.getInstance().setPacketEventsUpdateDownloaded(true);

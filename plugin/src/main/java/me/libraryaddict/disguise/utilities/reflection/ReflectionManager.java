@@ -154,6 +154,27 @@ public class ReflectionManager {
     private static Method propertyName, propertyValue, propertySignature;
     @Getter
     private static boolean mojangMapped;
+    @Getter
+    private static boolean runningPaper;
+
+    static {
+        try {
+            // Check if we enable the paperdisguiselistener
+            runningPaper = Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData") != null;
+        } catch (Exception ignored) {
+            runningPaper = false;
+        }
+
+        // An alternative implemention of https://github.com/PaperMC/Paper/blob/main/paper-server/src/main/java/io/papermc/paper/util/MappingEnvironment.java#L58
+        // On versions of MC that this doesn't exist, will be false, on spigot, will be false, on paper 1.20.6+, will be true
+        try {
+            // On spigot, this is called 'EnumCreatureType', and will throw class not found exception.
+            Class.forName("net.minecraft.world.entity.MobCategory");
+            mojangMapped = true;
+        } catch (ClassNotFoundException ex) {
+            mojangMapped = false;
+        }
+    }
 
     public static void init() {
         try {
@@ -161,17 +182,7 @@ public class ReflectionManager {
 
             loadAuthlibStuff();
 
-            // An alternative implemention of https://github.com/PaperMC/Paper/blob/main/paper-server/src/main/java/io/papermc/paper/util/MappingEnvironment.java#L58
-            // On versions of MC that this doesn't exist, will be false, on spigot, will be false, on paper 1.20.6+, will be true
-            try {
-                // On spigot, this is called 'EnumCreatureType', and will throw class not found exception.
-                Class.forName("net.minecraft.world.entity.MobCategory");
-                mojangMapped = true;
-            } catch (ClassNotFoundException ex) {
-                mojangMapped = false;
-            }
-
-            if (DisguiseUtilities.isRunningPaper() && !NmsVersion.v1_17.isSupported()) {
+            if (isRunningPaper() && !NmsVersion.v1_17.isSupported()) {
                 // Paper, prior to 1.17, used a map
                 // 17+ is handled by the reflection instance.
                 trackedPlayersMap = getNmsField("EntityTrackerEntry", "trackedPlayerMap");
@@ -298,9 +309,13 @@ public class ReflectionManager {
     }
 
     public static List<File> getFilesByPlugin(String pluginName) {
+        return getFilesByPlugin(LibsDisguises.getInstance().getDataFolder().getAbsoluteFile().getParentFile(), pluginName);
+    }
+
+    public static List<File> getFilesByPlugin(File containingFolder, String pluginName) {
         List<File> files = new ArrayList<>();
 
-        for (File file : LibsDisguises.getInstance().getDataFolder().getAbsoluteFile().getParentFile().listFiles()) {
+        for (File file : containingFolder.listFiles()) {
             if (!file.isFile() || !file.getName().toLowerCase(Locale.ENGLISH).endsWith(".jar")) {
                 continue;
             }
@@ -731,7 +746,7 @@ public class ReflectionManager {
         Object nmsEntity = getPlayerConnectionOrPlayer(player);
 
         // Add the player to their own entity tracker
-        if (!DisguiseUtilities.isRunningPaper() || NmsVersion.v1_17.isSupported()) {
+        if (!isRunningPaper() || NmsVersion.v1_17.isSupported()) {
             getTrackedPlayers(entityTracker, entityTrackerEntry).add(nmsEntity);
         } else {
             Map<Object, Object> map = ((Map<Object, Object>) trackedPlayersMap.get(entityTrackerEntry));
@@ -743,7 +758,7 @@ public class ReflectionManager {
     public static void removeEntityFromTracked(Object entityTracker, Object entityTrackerEntry, Player player) {
         Object nmsEntity = getPlayerConnectionOrPlayer(player);
 
-        if (!DisguiseUtilities.isRunningPaper() || NmsVersion.v1_17.isSupported()) {
+        if (!isRunningPaper() || NmsVersion.v1_17.isSupported()) {
             getTrackedPlayers(entityTracker, entityTrackerEntry).remove(nmsEntity);
         } else {
             Map<Object, Object> map = ((Map<Object, Object>) trackedPlayersMap.get(entityTrackerEntry));
@@ -1591,7 +1606,7 @@ public class ReflectionManager {
             return;
         }
 
-        if (canScheduleTask && (!Bukkit.isPrimaryThread() || DisguiseUtilities.isRunningPaper())) {
+        if (canScheduleTask && (!Bukkit.isPrimaryThread() || isRunningPaper())) {
             new BukkitRunnable() {
                 @Override
                 public void run() {

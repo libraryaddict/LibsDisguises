@@ -6,6 +6,8 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.plugin.LibsDisgInfo;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -18,6 +20,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -35,6 +38,38 @@ public class UpdateChecker {
     @Getter
     @Setter
     private boolean quiet;
+
+    /**
+     * Returns true if plugins are not a simple 'replace file with the same name' but instead actually checks plugin name.
+     * <p>
+     * Added in paper 1.21.4
+     * <p>
+     * Located here instead of DisguiseUtilities as DisguiseUtilities will fail to load if PE is not loaded
+     */
+    public static boolean isFancyPluginUpdating() {
+        return DisguiseConfig.isDynamicFilenames() && ReflectionManager.isRunningPaper() && NmsVersion.v1_21_R3.isSupported();
+    }
+
+    /**
+     * Removes other jars in the same folder that has a plugin.yml with the same plugin name
+     * Expects a File parameter that points to the File we want to keep, in the folder we want to prune
+     */
+    public static void removeOtherJars(File downloadedJar, String pluginName) {
+        if (!downloadedJar.isFile() || !downloadedJar.exists()) {
+            throw new IllegalArgumentException("Expected provided reference '" + downloadedJar + "' to point at an existing File");
+        }
+
+        List<File> jarsWithPlugin = ReflectionManager.getFilesByPlugin(downloadedJar.getAbsoluteFile().getParentFile(), pluginName);
+
+        for (File file : jarsWithPlugin) {
+            if (file.getName().equals(downloadedJar.getName())) {
+                continue;
+            }
+
+            LibsDisguises.getInstance().getLogger().info("Deleting duplicate jar " + file.getName());
+            file.delete();
+        }
+    }
 
     public boolean isServerLatestVersion() {
         return isOnLatestUpdate(false);
@@ -202,21 +237,19 @@ public class UpdateChecker {
     private LibsDisgInfo grabJarDownload(String urlString) {
         downloading.set(true);
 
+        Bukkit.getUpdateFolderFile().mkdirs();
         File dest = new File(Bukkit.getUpdateFolderFile(), LibsDisguises.getInstance().getFile().getName());
 
         if (!isQuiet()) {
-            LibsDisguises.getInstance().getLogger()
-                .info("Now downloading build of Lib's Disguises from " + urlString + " to " + dest.getName());
+            LibsDisguises.getInstance().getLogger().info("Now downloading update for Lib's Disguises from " + urlString);
         }
 
         if (dest.exists()) {
             dest.delete();
         }
 
-        dest.getParentFile().mkdirs();
-
         try {
-            // We're connecting to spigot's API
+            // We're connecting to github/jenkins
             URL url = new URL(urlString);
             // Creating a connection
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -229,6 +262,9 @@ public class UpdateChecker {
 
             con.disconnect();
 
+            // Ensure that it is not going to conflict with other updates for the same plugin
+            removeOtherJars(dest, "LibsDisguises");
+
             if (!isQuiet()) {
                 LibsDisguises.getInstance().getLogger().info("Download success!");
             }
@@ -240,11 +276,32 @@ public class UpdateChecker {
                 LibsMsg.UPDATE_INFO.get(result.getVersion(), result.getBuildNumber(), result.getParsedBuildDate().toString(),
                     result.getSize() / 1024)};
 
+            // If we can name the update as we like, and the version was retrieved successfully from the jar..
+            if (isFancyPluginUpdating() && result.getVersion() != null && result.getVersion().contains(".")) {
+                String version = result.getVersion();
+
+                // If this is a jenkins build, and there's a build number which is at least 2 digits
+                /*if (version.contains("SNAPSHOT") && result.getBuildNumber() != null && result.getBuildNumber().matches("#?\\d{2,}")) {
+                    version += "-b" + result.getBuildNumber().replace("#", "");
+                }*/
+
+                File newName = new File(Bukkit.getUpdateFolderFile(), "LibsDisguises-" + version + ".jar");
+
+                if (!newName.exists()) {
+                    dest.renameTo(newName);
+                    dest = newName;
+
+                    if (!isQuiet()) {
+                        LibsDisguises.getInstance().getLogger().info("LibsDisguises update saved to " + dest.getName());
+                    }
+                }
+            }
+
             return result;
         } catch (Exception ex) {
             // Failed, set the last download back to previous build
             dest.delete();
-            LibsDisguises.getInstance().getLogger().warning("Failed to download snapshot build.");
+            LibsDisguises.getInstance().getLogger().warning("Failed to download update for LibsDisguises.");
             ex.printStackTrace();
         } finally {
             downloading.set(false);

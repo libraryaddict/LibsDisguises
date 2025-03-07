@@ -18,6 +18,11 @@ AutoUpdate: true
 # SNAPSHOTS - Only check for new snapshots
 UpdatesBranch: SAME_BUILDS
 
+# On paper servers in 1.21.4+, plugin updates can be installed with a filename different to the original file.
+# This means that "LibsDisguises-5.0.3(4).jar" won't always be the name of the file, it can instead rename to "LibsDisguises-10.0.41.jar".
+# If unsupported or set to false, updates will always keep the same original (possibly misleadingly named) filename.
+DynamicFilenames: true
+
 # You can also get this information through /libsdisguises config
 # Should the plugin output missing config options instead of just counting them
 VerboseConfig: false
