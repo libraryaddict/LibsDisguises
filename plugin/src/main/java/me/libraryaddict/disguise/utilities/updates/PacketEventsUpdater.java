@@ -252,15 +252,15 @@ public class PacketEventsUpdater {
             return new ArrayList<>();
         }
 
-        List<File> plJars = ReflectionManager.getFilesByPlugin("packetevents");
+        List<File> peJars = ReflectionManager.getFilesByPlugin("packetevents");
 
-        if (plJars.size() > 1) {
+        if (peJars.size() > 1) {
             // Its probably the first file regardless, Bukkit seems to use folder.listFiles() and use the order provided
             LibsDisguises.getInstance().getLogger()
                 .warning("You have multiple PacketEvents jars in your plugin folder, you may need to update PacketEvents yourself.");
         }
 
-        return plJars;
+        return peJars;
     }
 
     private File getDestination(String preferredName) {
