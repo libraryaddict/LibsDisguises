@@ -9,9 +9,44 @@ You can modify each disguise to your own liking through use of the API or comman
 
 There are a few features which you need to pay for, but none of it is needed to enjoy the plugin to its fullest! For further details, read the plugin's description on SpigotMC. You are required to sign in, but you do not need to purchase the plugin.
 
+### Links
+* Spigot page: <a href="https://www.spigotmc.org/resources/32453/">Link</a>
+* JavaDocs: <a href="https://libraryaddict.github.io/LibsDisguises/javadoc/">Link</a>
+* Jenkins Downloads: <a href="https://ci.md-5.net/job/LibsDisguises/">Link</a>
 
-Spigot page: <a href="https://www.spigotmc.org/resources/32453/">Link</a>
-Jenkins Downloads: <a href="https://ci.md-5.net/job/LibsDisguises/">Link</a>
+### Gradle
+
+For `build.gradle` you can use
+
+```groovy
+repositories {
+    maven {
+        url "https://repo.md-5.net/content/groups/public/"
+    }
+}
+
+dependencies {
+    implementation group: 'me.libraryaddict.disguises', name: 'libsdisguises', version: '11.0.0'
+}
+```
+
+### Maven
+
+For maven's `pom.xml`, you can use
+
+```xml
+<repository>
+  <id>md_5-public</id>
+  <url>https://repo.md-5.net/content/groups/public/</url>
+</repository>
+
+<dependency>
+   <groupId>me.libraryaddict.disguises</groupId>
+   <artifactId>libsdisguises</artifactId>
+   <version>11.0.0</version>
+   <scope>provided</scope>
+</dependency>
+```
 
 NOTE: These versions will NOT work with older versions of Minecraft than 1.12, there is no support for older versions of this plugin.
 
