@@ -3,7 +3,7 @@ plugins {
     id("org.hibernate.build.maven-repo-auth") version "3.0.4" apply false
 }
 
-version = "10.0.44-SNAPSHOT"
+version = "11.0.0"
 
 dependencies {
     compileOnly(project(":shared"))
