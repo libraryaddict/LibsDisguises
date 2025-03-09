@@ -99,7 +99,8 @@ public class LibsPremium {
 
         /* Comparing major versions
         Current version must be the same, or lower than premium version */
-        return Integer.parseInt(currentSplit[0]) <= Integer.parseInt(premSplit[0]);
+        // Disabled because this was dumb. Autoupdates exist.
+        return true;//return Integer.parseInt(currentSplit[0]) <= Integer.parseInt(premSplit[0]);
     }
 
     public static LibsDisgInfo getInformation(File file) throws Exception {
@@ -187,7 +188,7 @@ public class LibsPremium {
                     plugin.getUserID().equals("666666")) {
                     LibsDisguises.getInstance().getLogger().warning(
                         "You have an old Lib's Disguises jar (" + file.getName() + " " + fileInfo +
-                            ") in the LibsDisguises folder! For security purposes, please replace this with a" + " new " +
+                            ") in the LibsDisguises folder! Please replace this with a new " +
                             "version from SpigotMC - https://www.spigotmc.org/resources/libs-disguises.32453/");
                     continue;
                 }
@@ -210,8 +211,7 @@ public class LibsPremium {
                 LibsDisguises.getInstance().getLogger().warning(
                     "You have a non-premium Lib's Disguises jar (" + file.getName() + " " + fileInfo + ") in the LibsDisguises folder!");
                 LibsDisguises.getInstance().getLogger().warning(
-                    "Please place the premium jar downloaded from https://www.spigotmc" + ".org/resources/libs-disguises.32453/ " +
-                        "in here!");
+                    "Please place the premium jar downloaded from https://www.spigotmc.org/resources/libs-disguises.32453/ " + "in here!");
             }
         }
 

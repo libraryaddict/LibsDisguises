@@ -36,15 +36,15 @@ For maven's `pom.xml`, you can use
 
 ```xml
 <repository>
-  <id>md_5-public</id>
-  <url>https://repo.md-5.net/content/groups/public/</url>
+    <id>md_5-public</id>
+    <url>https://repo.md-5.net/content/groups/public/</url>
 </repository>
 
 <dependency>
-   <groupId>me.libraryaddict.disguises</groupId>
-   <artifactId>libsdisguises</artifactId>
-   <version>11.0.0</version>
-   <scope>provided</scope>
+    <groupId>me.libraryaddict.disguises</groupId>
+    <artifactId>libsdisguises</artifactId>
+    <version>11.0.0</version>
+    <scope>provided</scope>
 </dependency>
 ```
 
