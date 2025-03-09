@@ -10,7 +10,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
-import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerAttachEntity;
+import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerSetPassengers;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerAttributes;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerCollectItem;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerEntityAnimation;
@@ -49,7 +49,7 @@ public class PacketsHandler {
             packetHandlers.add(new PacketHandlerEquipment());
         }
 
-        packetHandlers.add(new PacketHandlerAttachEntity());
+        packetHandlers.add(new PacketHandlerSetPassengers());
 
         packetHandlers.add(new PacketHandlerHeadLook());
 

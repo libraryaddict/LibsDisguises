@@ -2,7 +2,7 @@ package me.libraryaddict.disguise.utilities.packets.packethandlers;
 
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerAttachEntity;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetPassengers;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -12,14 +12,14 @@ import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public class PacketHandlerAttachEntity implements IPacketHandler<WrapperPlayServerAttachEntity> {
+public class PacketHandlerSetPassengers implements IPacketHandler<WrapperPlayServerSetPassengers> {
     @Override
     public PacketTypeCommon[] getHandledPackets() {
-        return new PacketTypeCommon[]{PacketType.Play.Server.ATTACH_ENTITY};
+        return new PacketTypeCommon[]{PacketType.Play.Server.SET_PASSENGERS};
     }
 
     @Override
-    public void handle(Disguise disguise, LibsPackets<WrapperPlayServerAttachEntity> packets, Player observer, Entity entity) {
+    public void handle(Disguise disguise, LibsPackets<WrapperPlayServerSetPassengers> packets, Player observer, Entity entity) {
         if (observer.getVehicle() == null) {
             DisguiseUtilities.removeInvisibleSlime(observer);
             return;
@@ -30,12 +30,23 @@ public class PacketHandlerAttachEntity implements IPacketHandler<WrapperPlayServ
             return;
         }
 
-        WrapperPlayServerAttachEntity packet = packets.getOriginalPacket();
+        WrapperPlayServerSetPassengers packet = packets.getOriginalPacket();
 
-        if (packet.getAttachedId() == observer.getEntityId() || packet.getAttachedId() == DisguiseAPI.getSelfDisguiseId()) {
+        boolean observerRiding = false;
+
+        for (int id : packet.getPassengers()) {
+            if (id != observer.getEntityId() && id != DisguiseAPI.getSelfDisguiseId()) {
+                continue;
+            }
+
+            observerRiding = true;
+            break;
+        }
+
+        if (observerRiding) {
             packets.clear();
 
-            DisguiseUtilities.sendInvisibleSlime(observer, entity.getEntityId());
+            DisguiseUtilities.sendInvisibleSlime(observer, entity.getEntityId(), packet.getPassengers());
         }
     }
 }

@@ -183,7 +183,7 @@ public class PacketsManager {
             packetsToListen.add(Server.ENTITY_TELEPORT);
             packetsToListen.add(Server.ENTITY_RELATIVE_MOVE);
             packetsToListen.add(Server.ENTITY_VELOCITY);
-            packetsToListen.add(Server.ATTACH_ENTITY);
+            packetsToListen.add(Server.SET_PASSENGERS);
             packetsToListen.add(Server.ENTITY_POSITION_SYNC);
         }
 

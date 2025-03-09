@@ -43,6 +43,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPl
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerPositionAndLook;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerRemoveEntityEffect;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetPassengers;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnExperienceOrb;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnLivingEntity;
@@ -100,7 +101,6 @@ import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
 import me.libraryaddict.disguise.utilities.scaling.DisguiseScaling;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.updates.PacketEventsUpdater;
-import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
 import me.libraryaddict.disguise.utilities.watchers.CompileMethodsIntfer;
 import me.libraryaddict.disguise.utilities.watchers.DisguiseMethods;
 import net.kyori.adventure.text.Component;
@@ -744,7 +744,7 @@ public class DisguiseUtilities {
         PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, getDestroyPacket(DisguiseAPI.getEntityAttachmentId()));
     }
 
-    public static void sendInvisibleSlime(Player player, int horseId) {
+    public static void sendInvisibleSlime(Player player, int horseId, int[] passengers) {
         if (!player.hasMetadata("LibsDisguises Invisible Slime")) {
             player.setMetadata("LibsDisguises Invisible Slime", new FixedMetadataValue(LibsDisguises.getInstance(), true));
         }
@@ -778,9 +778,21 @@ public class DisguiseUtilities {
             PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, metadata);
         }
 
-        WrapperPlayServerAttachEntity attachHorse = new WrapperPlayServerAttachEntity(horseId, DisguiseAPI.getEntityAttachmentId(), false);
-        WrapperPlayServerAttachEntity attachPlayer =
-            new WrapperPlayServerAttachEntity(DisguiseAPI.getEntityAttachmentId(), player.getEntityId(), false);
+        int[] toSend = new int[passengers.length];
+
+        for (int i = 0; i < passengers.length; i++) {
+            int id = passengers[i];
+
+            if (id == player.getEntityId() || id == DisguiseAPI.getSelfDisguiseId()) {
+                id = DisguiseAPI.getEntityAttachmentId();
+            }
+
+            toSend[i] = id;
+        }
+
+        WrapperPlayServerSetPassengers attachHorse = new WrapperPlayServerSetPassengers(horseId, toSend);
+        WrapperPlayServerSetPassengers attachPlayer =
+            new WrapperPlayServerSetPassengers(DisguiseAPI.getEntityAttachmentId(), new int[]{player.getEntityId()});
 
         PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, attachHorse);
         PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, attachPlayer);
@@ -3116,6 +3128,8 @@ public class DisguiseUtilities {
                 return new WrapperPlayServerSpawnPlayer(event);
             case ATTACH_ENTITY:
                 return new WrapperPlayServerAttachEntity(event);
+            case SET_PASSENGERS:
+                return new WrapperPlayServerSetPassengers(event);
             case ENTITY_RELATIVE_MOVE:
                 return new WrapperPlayServerEntityRelativeMove(event);
             case ENTITY_RELATIVE_MOVE_AND_ROTATION:
@@ -3216,6 +3230,8 @@ public class DisguiseUtilities {
             return ((WrapperPlayServerEntityPositionSync) wrapper).getId();
         } else if (wrapper instanceof WrapperPlayServerDamageEvent) {
             return ((WrapperPlayServerDamageEvent) wrapper).getEntityId();
+        } else if (wrapper instanceof WrapperPlayServerSetPassengers) {
+            return ((WrapperPlayServerSetPassengers) wrapper).getEntityId();
         } else {
             throw new IllegalStateException("The packet " + wrapper.getClass() + " has no entity ID");
         }
