@@ -3646,7 +3646,6 @@ public class DisguiseUtilities {
                 packets.add(constructMetadata(standIds[1], newLine));
             }
         } else {
-
             for (int loop = 0; loop < newNames.length; loop++) {
                 // Names are sent from bottom up, so we need to flip this a little
                 // Stands are sent with the bottom ID being index 0 and so on
@@ -3655,13 +3654,16 @@ public class DisguiseUtilities {
                 int inverted = newNames.length - (loop + 1);
                 int oldInverted = internalOldNames.length - (loop + 1);
                 String name = newNames[inverted];
+                String oldName = oldInverted >= 0 ? internalOldNames[oldInverted] : "";
 
-                if (oldInverted >= 0 && oldInverted < internalOldNames.length) {
-                    if (name.equals(internalOldNames[oldInverted])) {
+                // If we don't need to spawn or remove a stand
+                if (name.isEmpty() == oldName.isEmpty()) {
+                    if (name.equals(oldName)) {
                         continue;
                     }
 
                     packets.add(constructMetadata(standIds[loop], name));
+                    // If we need to remove a stand
                 } else if (name.isEmpty()) {
                     destroyIds = Arrays.copyOf(destroyIds, destroyIds.length + 1);
                     destroyIds[destroyIds.length - 1] = standIds[loop];
