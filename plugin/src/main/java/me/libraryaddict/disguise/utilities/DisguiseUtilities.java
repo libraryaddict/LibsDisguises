@@ -3657,10 +3657,11 @@ public class DisguiseUtilities {
                 // The inversion means the text doesn't move up/down as lines are added/removed
                 // But instead a new line has a new line directly added to the top of the existing names
                 int inverted = newNames.length - (loop + 1);
+                int oldInverted = internalOldNames.length - (loop + 1);
                 String name = newNames[inverted];
 
-                if (inverted < internalOldNames.length) {
-                    if (name.equals(internalOldNames[inverted])) {
+                if (oldInverted >= 0 && oldInverted < internalOldNames.length) {
+                    if (name.equals(internalOldNames[oldInverted])) {
                         continue;
                     }
 
