@@ -179,7 +179,11 @@ public abstract class Disguise {
     }
 
     public String[] getMultiName() {
-        return DisguiseUtilities.reverse(multiName);
+        if (multiName == null) {
+            multiName = new String[0];
+        }
+
+        return multiName;
     }
 
     public void setMultiName(String... name) {
@@ -190,8 +194,6 @@ public abstract class Disguise {
         for (int i = 0; i < name.length; i++) {
             name[i] = DisguiseUtilities.getHexedColors(name[i]);
         }
-
-        name = DisguiseUtilities.reverse(name);
 
         String[] oldName = multiName;
         multiName = name;
@@ -249,7 +251,15 @@ public abstract class Disguise {
     }
 
     public int[] getArmorstandIds() {
-        if (getMultiNameLength() > getInternalArmorstandIds().length) {
+        int desiredlength = getMultiNameLength();
+
+        // If text display and there is a display
+        if (DisguiseConfig.isDisplayTextName() && desiredlength > 0) {
+            // We only have the slime & text display IDs
+            desiredlength = 2;
+        }
+
+        if (desiredlength > getInternalArmorstandIds().length) {
             int oldLen = armorstandIds.length;
 
             armorstandIds = Arrays.copyOf(armorstandIds, getMultiNameLength());
@@ -257,6 +267,17 @@ public abstract class Disguise {
             for (int i = oldLen; i < armorstandIds.length; i++) {
                 armorstandIds[i] = ReflectionManager.getNewEntityId();
             }
+          /*  // If required armorstands is greater, then recreate the array but append the existing ids
+            int[] newIds = new int[desiredlength];
+            int diff = desiredlength - armorstandIds.length;
+            System.arraycopy(armorstandIds, 0, newIds, diff, armorstandIds.length);
+            armorstandIds = newIds;
+
+            for (int i = 0; i < diff; i++) {
+                newIds[i] = ReflectionManager.getNewEntityId();
+            }
+
+            armorstandIds = newIds;*/
         }
 
         return armorstandIds;

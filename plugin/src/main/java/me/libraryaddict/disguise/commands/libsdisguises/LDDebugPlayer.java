@@ -50,8 +50,9 @@ public class LDDebugPlayer implements LDCommand {
                 name.getPrefix().replace(ChatColor.COLOR_CHAR, '&'), name.getSuffix().replace(ChatColor.COLOR_CHAR, '&'),
                 name.getPlayer().replace(ChatColor.COLOR_CHAR, '&'), name.getTeamName()));
 
-            if (DisguiseConfig.isArmorstandsName()) {
-                player.sendMessage(ChatColor.AQUA + "Oh! You're using armorstands! Lets give some debug for that too..");
+            if (DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) {
+                player.sendMessage(
+                    ChatColor.AQUA + "Oh! You're using " + DisguiseConfig.getPlayerNameType() + "! Lets give some debug for that too..");
                 player.sendMessage(ChatColor.RED + String.format("Names: %s, Length: %s, Custom Name: '%s'",
                     new Gson().toJson(disg.getMultiName()).replace(ChatColor.COLOR_CHAR, '&'), disg.getMultiNameLength(),
                     disg.getWatcher().getCustomName().replace(ChatColor.COLOR_CHAR, '&')));

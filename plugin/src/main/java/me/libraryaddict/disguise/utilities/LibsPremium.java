@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 public class LibsPremium {
@@ -290,7 +291,7 @@ public class LibsPremium {
         } else {
             LibsDisguises.getInstance().getLogger().info("Registered to: " + getSanitizedUser(getUserID()));
 
-            boolean foundBetter = false;
+            boolean updateJar = getPluginInformation().isPaid();
 
             /* Let's not do any sanity checks since it won't affect legit users */
             for (File f : LibsDisguises.getInstance().getDataFolder().listFiles()) {
@@ -318,7 +319,19 @@ public class LibsPremium {
                         continue;
                     }
 
-                    foundBetter = true;
+                    Date d1 = getPluginInformation().getParsedBuildDate();
+                    Date d2 = info.getParsedBuildDate();
+
+                    // If current jar is equal to new jar, don't update
+                    // If current jar has a bad date, don't update
+                    // If new jar has a bad date, do update
+                    // If new jar is older than current jar, do update
+                    if (getPluginInformation().equals(info) || d1 == null || (d2 != null && d2.getTime() >= d1.getTime())) {
+                        updateJar = false;
+                    } else if (updateJar) {
+                        f.delete();
+                    }
+
                     break;
                 } catch (ClassNotFoundException | NoClassDefFoundError e) {
                     LibsDisguises.getInstance().getLogger()
@@ -331,13 +344,16 @@ public class LibsPremium {
 
             bisectHosted = isPremium("", "");
 
-            if (!foundBetter) {
+            if (updateJar) {
                 File f = LibsDisguises.getInstance().getFile();
+                File dest = new File(LibsDisguises.getInstance().getDataFolder(), f.getName());
 
-                FileUtil.copy(f, new File(LibsDisguises.getInstance().getDataFolder(), f.getName()));
+                dest.delete();
+
+                FileUtil.copy(f, dest);
 
                 LibsDisguises.getInstance().getLogger()
-                    .info("Copied " + f.getName() + " to the plugin folder! You can use dev builds with premium enabled!");
+                    .info("Added " + f.getName() + " to the 'plugins/LibsDisguises/' folder! You can use dev builds with premium enabled!");
             }
         }
 

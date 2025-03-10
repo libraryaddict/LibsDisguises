@@ -1,8 +1,5 @@
 package me.libraryaddict.disguise.utilities.packets.packethandlers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.github.retrooper.packetevents.protocol.attribute.Attributes;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
@@ -16,6 +13,9 @@ import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PacketHandlerAttributes implements IPacketHandler<WrapperPlayServerUpdateAttributes> {
 

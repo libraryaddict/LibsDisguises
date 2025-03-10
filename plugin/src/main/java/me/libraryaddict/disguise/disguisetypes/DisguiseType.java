@@ -521,4 +521,5 @@ public enum DisguiseType {
 
         return TranslateType.DISGUISES.get(StringUtils.join(split, " "));
     }
+
 }

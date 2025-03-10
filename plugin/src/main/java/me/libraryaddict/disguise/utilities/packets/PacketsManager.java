@@ -21,6 +21,7 @@ import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListene
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 
 import java.util.ArrayList;
 
@@ -35,6 +36,7 @@ public class PacketsManager {
     private static PacketListenerSounds soundsListener;
     private static boolean soundsListenerEnabled;
     private static PacketListenerViewSelfDisguise viewDisguisesListener;
+    private static PacketListenerVehicleMovement vehicleMovement;
     @Getter
     private static boolean viewDisguisesListenerEnabled;
     @Getter
@@ -53,11 +55,6 @@ public class PacketsManager {
             if (DisguiseConfig.isLoginPayloadPackets()) {
                 PacketEvents.getAPI().getEventManager().registerListener(customPayload);
             }
-
-            PacketListenerVehicleMovement vehicleMovement = new PacketListenerVehicleMovement();
-            Bukkit.getPluginManager().registerEvents(vehicleMovement, LibsDisguises.getInstance());
-
-            PacketEvents.getAPI().getEventManager().registerListener(vehicleMovement);
 
             initialListenersRegistered = true;
             PacketEvents.getAPI().getSettings().fullStackTrace(true);
@@ -143,6 +140,14 @@ public class PacketsManager {
             PacketEvents.getAPI().getEventManager().unregisterListener(mainListener);
         }
 
+        // If armorstand packet listener was registered, but isn't wanted anymore
+        if (vehicleMovement != null && !DisguiseConfig.isArmorstandsName()) {
+            PacketEvents.getAPI().getEventManager().unregisterListener(vehicleMovement);
+            HandlerList.unregisterAll(vehicleMovement);
+
+            vehicleMovement = null;
+        }
+
         getPacketsHandler().registerPacketHandlers();
 
         ArrayList<Server> packetsToListen = new ArrayList<>();
@@ -209,6 +214,13 @@ public class PacketsManager {
 
         if (NmsVersion.v1_13.isSupported() && DisguiseConfig.getPlayerNameType().isScoreboardPacketListenerNeeded()) {
             PacketEvents.getAPI().getEventManager().registerListener(new PacketListenerScoreboardTeam());
+        }
+
+        if (vehicleMovement == null && DisguiseConfig.isArmorstandsName()) {
+            vehicleMovement = new PacketListenerVehicleMovement();
+
+            Bukkit.getPluginManager().registerEvents(vehicleMovement, LibsDisguises.getInstance());
+            PacketEvents.getAPI().getEventManager().registerListener(vehicleMovement);
         }
     }
 

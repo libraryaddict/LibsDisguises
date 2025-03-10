@@ -3,8 +3,6 @@ package me.libraryaddict.disguise.utilities.mineskin.models.structures;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
-
 @Getter
 public class MineSkinJob {
     private String id;

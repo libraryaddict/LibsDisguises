@@ -136,7 +136,7 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public boolean hasScoreboardName() {
-        if (!DisguiseConfig.isArmorstandsName() && isStaticName(getName())) {
+        if (!(DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) && isStaticName(getName())) {
             return false;
         }
 
@@ -165,9 +165,9 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         if (isDisguiseInUse()) {
-            if (DisguiseConfig.isArmorstandsName()) {
+            if (DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) {
                 this.nameVisible = nameVisible;
-                sendArmorStands(isNameVisible() ? DisguiseUtilities.reverse(getMultiName()) : new String[0]);
+                sendArmorStands(isNameVisible() ? getMultiName() : new String[0]);
             } else if (!DisguiseConfig.isScoreboardNames()) {
                 if (removeDisguise()) {
                     this.nameVisible = nameVisible;
@@ -207,7 +207,7 @@ public class PlayerDisguise extends TargetedDisguise {
         getWatcher().setInternalUpsideDown(upsideDown);
 
         if (isDisguiseInUse()) {
-            resendDisguise(DisguiseConfig.isArmorstandsName() ? getName() : "Dinnerbone", true);
+            resendDisguise(DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName() ? getName() : "Dinnerbone", true);
         } else {
             scoreboardName = null;
         }
@@ -223,7 +223,7 @@ public class PlayerDisguise extends TargetedDisguise {
         this.deadmau5Ears = deadmau5Ears;
 
         if (isDisguiseInUse()) {
-            resendDisguise(DisguiseConfig.isArmorstandsName() ? getName() : "deadmau5", true);
+            resendDisguise(DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName() ? getName() : "deadmau5", true);
         } else {
             scoreboardName = null;
         }
@@ -324,6 +324,11 @@ public class PlayerDisguise extends TargetedDisguise {
                 // Plus newer versions may extend limit
                 cLimit = 256;
                 break;
+            case TEXT_DISPLAY:
+                // Arbitary limit, users can do what they like!
+                // This is too long for normal command usage, should be safer to unrestrict
+                cLimit = 10000;
+                break;
             default:
                 cLimit = 16;
                 break;
@@ -334,7 +339,7 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         if (isDisguiseInUse()) {
-            if (DisguiseConfig.isArmorstandsName()) {
+            if (DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) {
                 playerName = name;
 
                 setNameVisible(!name.isEmpty(), true);
@@ -388,7 +393,7 @@ public class PlayerDisguise extends TargetedDisguise {
                 setScoreboardName(split);
             }
 
-            if (DisguiseConfig.isArmorstandsName()) {
+            if (DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) {
                 setMultiName(DisguiseUtilities.splitNewLine(name));
             }
 

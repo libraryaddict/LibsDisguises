@@ -317,6 +317,10 @@ public class DisguiseConfig {
     private static final File internalFile =
         LibsDisguises.getInstance() == null ? null : new File(LibsDisguises.getInstance().getDataFolder(), "internal/internal.yml");
 
+    public static boolean isDisplayTextName() {
+        return getPlayerNameType() == PlayerNameType.TEXT_DISPLAY;
+    }
+
     public static boolean isArmorstandsName() {
         return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
     }
@@ -750,7 +754,13 @@ public class DisguiseConfig {
         }
 
         try {
-            setPlayerNameType(PlayerNameType.valueOf(config.getString("PlayerNames").toUpperCase(Locale.ENGLISH)));
+            PlayerNameType type = PlayerNameType.valueOf(config.getString("PlayerNames").toUpperCase(Locale.ENGLISH));
+
+            if (type == PlayerNameType.TEXT_DISPLAY && !NmsVersion.v1_19_R3.isSupported()) {
+                type = PlayerNameType.ARMORSTANDS;
+            }
+
+            setPlayerNameType(type);
         } catch (Exception ex) {
             LibsDisguises.getInstance().getLogger()
                 .warning("Cannot parse '" + config.getString("PlayerNames") + "' to a valid option for PlayerNames");
@@ -1198,7 +1208,8 @@ public class DisguiseConfig {
         VANILLA,
         EXTENDED,
         TEAMS,
-        ARMORSTANDS;
+        ARMORSTANDS,
+        TEXT_DISPLAY;
 
         public boolean isTeams() {
             return this == TEAMS || this == EXTENDED;

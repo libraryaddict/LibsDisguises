@@ -216,7 +216,7 @@ public class DisguiseUtilities {
         }
 
         public void handleTeam(Scoreboard board, boolean nameVisible) {
-            nameVisible = !DisguiseConfig.isArmorstandsName() && nameVisible;
+            nameVisible = !(DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) && nameVisible;
             Team team = board.getTeam(getTeamName());
 
             if (team == null) {
@@ -633,12 +633,13 @@ public class DisguiseUtilities {
             for (int i = 0; i < len; i++) {
                 int standId = disguise.getArmorstandIds()[i];
                 PacketWrapper cloned;
+                double y = height + (getNameSpacing() * i);
 
                 if (packet instanceof WrapperPlayServerEntityTeleport) {
                     WrapperPlayServerEntityTeleport tele = (WrapperPlayServerEntityTeleport) packet;
 
-                    cloned = new WrapperPlayServerEntityTeleport(standId, tele.getPosition().add(0, height + (getNameSpacing() * i), 0),
-                        tele.getYaw(), tele.getPitch(), tele.isOnGround());
+                    cloned = new WrapperPlayServerEntityTeleport(standId, tele.getPosition().add(0, y, 0), tele.getYaw(), tele.getPitch(),
+                        tele.isOnGround());
                 } else if (packet instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
                     WrapperPlayServerEntityRelativeMoveAndRotation rot = (WrapperPlayServerEntityRelativeMoveAndRotation) packet;
                     cloned = new WrapperPlayServerEntityRelativeMoveAndRotation(standId, rot.getDeltaX(), rot.getDeltaY(), rot.getDeltaZ(),
@@ -650,7 +651,7 @@ public class DisguiseUtilities {
                 } else if (packet instanceof WrapperPlayServerEntityPositionSync) {
                     WrapperPlayServerEntityPositionSync sync = (WrapperPlayServerEntityPositionSync) packet;
                     EntityPositionData data = clone(sync.getValues());
-                    data.setPosition(data.getPosition().add(0, height + (getNameSpacing() * i), 0));
+                    data.setPosition(data.getPosition().add(0, y, 0));
                     cloned = new WrapperPlayServerEntityPositionSync(standId, data, sync.isOnGround());
                 } else {
                     // It seems that EntityStatus packet was being added at some point, probably in some other transformation
@@ -2305,7 +2306,7 @@ public class DisguiseUtilities {
             return;
         }
 
-        int[] ids = Arrays.copyOf(disguise.getArmorstandIds(), 1 + disguise.getMultiNameLength());
+        int[] ids = Arrays.copyOf(disguise.getArmorstandIds(), disguise.getArmorstandIds().length + 1);
         ids[ids.length - 1] = DisguiseAPI.getSelfDisguiseId();
 
         // Send a packet to destroy the fake entity
@@ -2686,20 +2687,6 @@ public class DisguiseUtilities {
 
     public static String quoteNewLine(String string) {
         return string.replaceAll("\\\\(?=\\\\+n)", "\\\\\\\\");
-    }
-
-    public static String[] reverse(String[] array) {
-        if (array == null) {
-            return new String[0];
-        }
-
-        String[] newArray = new String[array.length];
-
-        for (int i = 1; i <= array.length; i++) {
-            newArray[array.length - i] = array[i - 1];
-        }
-
-        return newArray;
     }
 
     public static String[] splitNewLine(String string) {
@@ -3611,8 +3598,8 @@ public class DisguiseUtilities {
 
     public static List<PacketWrapper<?>> getNamePackets(Disguise disguise, Player viewer, String[] internalOldNames) {
         ArrayList<PacketWrapper<?>> packets = new ArrayList<>();
-        String[] newNames = (disguise instanceof PlayerDisguise && !((PlayerDisguise) disguise).isNameVisible()) ? new String[0] :
-            reverse(disguise.getMultiName());
+        String[] newNames =
+            (disguise instanceof PlayerDisguise && !((PlayerDisguise) disguise).isNameVisible()) ? new String[0] : disguise.getMultiName();
         int[] standIds = disguise.getArmorstandIds();
         int[] destroyIds = new int[0];
 
@@ -3632,105 +3619,57 @@ public class DisguiseUtilities {
             }
         }
 
-        if (internalOldNames.length > newNames.length) {
-            // Destroy packet
-            destroyIds = Arrays.copyOfRange(standIds, newNames.length, internalOldNames.length);
-        }
-
         Location loc = disguise.getEntity().getLocation();
         // Don't need to offset with getYModifier, because that's a visual offset and not an actual location offset
         double height = disguise.getHeight() + disguise.getWatcher().getYModifier() + disguise.getWatcher().getNameYModifier();
         double heightScale = disguise.getDisguiseScale();
         double startingY = loc.getY() + (height * heightScale);
         startingY += (getNameSpacing() * (heightScale - 1)) * 0.35;
-        // TODO If we support text display, there will not be any real features unfortunately
-        // Text Display is too "jumpy" so it'd require the display to be mounted on another entity, which probably means more packets
-        // than before
-        // With the only upside that we can customize how the text is displayed, such as visible through blocks, background color, etc
-        // But then there's also the issue of how we expose that
-        boolean useTextDisplay = false;// LibsDisguises.getInstance().isDebuggingBuild() && NmsVersion.v1_19_R3.isSupported();
 
-        for (int i = 0; i < newNames.length; i++) {
-            if (i < internalOldNames.length) {
-                if (newNames[i].equals(internalOldNames[i])) {
-                    continue;
-                }
+        if (DisguiseConfig.isDisplayTextName()) {
+            String origLine = StringUtils.join(internalOldNames, "\n");
+            String newLine = StringUtils.join(newNames, "\n");
 
-                EntityData data;
+            // Shouldn't have reached this state
+            if (origLine.equals(newLine)) {
+                return packets;
+            }
 
-                if (NmsVersion.v1_13.isSupported()) {
-                    data = ReflectionManager.getEntityData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.of(getAdventureChat(newNames[i])), true);
-                } else {
-                    data = ReflectionManager.getEntityData(MetaIndex.ENTITY_CUSTOM_NAME_OLD,
-                        ChatColor.translateAlternateColorCodes('&', newNames[i]), true);
-                }
-
-                WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(standIds[i], Collections.singletonList(data));
-
-                packets.add(packet);
-            } else if (newNames[i].isEmpty()) {
-                destroyIds = Arrays.copyOf(destroyIds, destroyIds.length + 1);
-                destroyIds[destroyIds.length - 1] = standIds[i];
+            if (newLine.replace("\n", "").isEmpty()) {
+                // Destroy packet
+                destroyIds = standIds;
+            } else if (origLine.replace("\n", "").isEmpty()) {
+                // Spawn packet
+                addSpawn(disguise.getEntity(), loc, startingY, standIds, 0, packets, newLine);
             } else {
-                List<EntityData> watcherValues = new ArrayList<>();
+                // Metadata packet, 0 is the slime, 1 is the text
+                packets.add(constructMetadata(standIds[1], newLine));
+            }
+        } else {
+            if (internalOldNames.length > newNames.length) {
+                // Destroy packet
+                destroyIds = Arrays.copyOfRange(standIds, newNames.length, internalOldNames.length);
+            }
 
-                for (MetaIndex index : MetaIndex.getMetaIndexes(useTextDisplay ? TextDisplayWatcher.class : ArmorStandWatcher.class)) {
-                    Object val = index.getDefault();
+            for (int loop = 0; loop < newNames.length; loop++) {
+                // Names are sent from bottom up, so we need to flip this a little
+                // Stands are sent with the bottom ID being index 0 and so on
+                // The inversion means the text doesn't move up/down as lines are added/removed
+                // But instead a new line has a new line directly added to the top of the existing names
+                int inverted = newNames.length - (loop + 1);
+                String name = newNames[inverted];
 
-                    if (index == MetaIndex.ENTITY_META) {
-                        val = (byte) 32;
-                    } else if (index == MetaIndex.ARMORSTAND_META) {
-                        val = (byte) 19;
-                    } else if (index == MetaIndex.ENTITY_CUSTOM_NAME_OLD) {
-                        val = ChatColor.translateAlternateColorCodes('&', newNames[i]);
-                    } else if (index == MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE) {
-                        // Unfortunately text display custom name visible won't work as expected either
-                        // It's either always hidden, or always showing if true
-                        val = true; //disguise.isPlayerDisguise() || disguise.getWatcher().isCustomNameVisible();
-                    }
-                    // Armorstand specific
-                    else if (index == MetaIndex.ENTITY_CUSTOM_NAME) {
-                        val = Optional.of(getAdventureChat(newNames[i]));
-                    }
-                    // Text Display specific
-                    else if (index == MetaIndex.TEXT_DISPLAY_TEXT) {
-                        val = getAdventureChat(newNames[i]);
-                    } else if (index == MetaIndex.DISPLAY_SCALE && !disguise.isMiscDisguise()) {
-                        Double scale = viewer == disguise.getEntity() ? disguise.getInternals().getSelfDisguiseTallScaleMax() :
-                            ((LivingWatcher) disguise.getWatcher()).getScale();
-                        // TODO Expand this out
-                    } else if (index == MetaIndex.DISPLAY_BILLBOARD_RENDER_CONSTRAINTS) {
-                        val = (byte) ReflectionManager.enumOrdinal(Display.Billboard.CENTER);
+                if (inverted < internalOldNames.length) {
+                    if (name.equals(internalOldNames[inverted])) {
+                        continue;
                     }
 
-                    watcherValues.add(new WatcherValue(index, val, true).getDataValue());
-                }
-
-                double y = startingY + (getNameSpacing() * i);
-
-                if (useTextDisplay) {
-                    WrapperPlayServerSpawnEntity spawnEntity =
-                        new WrapperPlayServerSpawnEntity(standIds[i], Optional.of(UUID.randomUUID()), EntityTypes.TEXT_DISPLAY,
-                            new Vector3d(loc.getX(), y, loc.getZ()), 0f, 0f, 0f, 0, Optional.of(Vector3d.zero()));
-
-                    packets.add(spawnEntity);
-                } else if (NmsVersion.v1_19_R1.isSupported()) {
-                    WrapperPlayServerSpawnEntity spawnEntity =
-                        new WrapperPlayServerSpawnEntity(standIds[i], Optional.of(UUID.randomUUID()), EntityTypes.ARMOR_STAND,
-                            new Vector3d(loc.getX(), y, loc.getZ()), 0f, 0f, 0f, 0, Optional.of(Vector3d.zero()));
-
-                    packets.add(spawnEntity);
+                    packets.add(constructMetadata(standIds[loop], name));
+                } else if (name.isEmpty()) {
+                    destroyIds = Arrays.copyOf(destroyIds, destroyIds.length + 1);
+                    destroyIds[destroyIds.length - 1] = standIds[loop];
                 } else {
-                    WrapperPlayServerSpawnLivingEntity spawnEntity =
-                        new WrapperPlayServerSpawnLivingEntity(standIds[i], UUID.randomUUID(), EntityTypes.ARMOR_STAND,
-                            new com.github.retrooper.packetevents.protocol.world.Location(loc.getX(), y, loc.getZ(), 0f, 0f), 0f,
-                            Vector3d.zero(), watcherValues);
-
-                    packets.add(spawnEntity);
-                }
-
-                if (NmsVersion.v1_15.isSupported()) {
-                    packets.add(new WrapperPlayServerEntityMetadata(standIds[i], watcherValues));
+                    addSpawn(disguise.getEntity(), loc, startingY, standIds, loop, packets, name);
                 }
             }
         }
@@ -3740,6 +3679,131 @@ public class DisguiseUtilities {
         }
 
         return packets;
+    }
+
+    private static void addSpawn(Entity entity, Location loc, double startingY, int[] standIds, int index, List<PacketWrapper<?>> packets,
+                                 String line) {
+        List<EntityData> watcherValues =
+            constructNameEntity(DisguiseConfig.isDisplayTextName() ? TextDisplayWatcher.class : ArmorStandWatcher.class, line);
+        double y = startingY + (getNameSpacing() * index);
+
+        int textEntityId = standIds[index];
+
+        if (DisguiseConfig.isDisplayTextName()) {
+            // With display text, the first ID is the middleman entity
+            int pufferfishId = textEntityId;
+            // The second ID is the text display
+            textEntityId = standIds[1];
+
+            // The hardcoded offset picked specifically for the pufferfish
+            WrapperPlayServerSpawnEntity spawnEntity =
+                new WrapperPlayServerSpawnEntity(textEntityId, Optional.of(UUID.randomUUID()), EntityTypes.TEXT_DISPLAY,
+                    new Vector3d(loc.getX(), y + 0.29, loc.getZ()), 0f, 0f, 0f, 0, Optional.of(Vector3d.zero()));
+
+            packets.add(spawnEntity);
+
+            List<Entity> riding = entity.getPassengers();
+            int[] passengers = new int[]{riding.size() + 1};
+
+            for (int i = 0; i < riding.size(); i++) {
+                passengers[i] = riding.get(i).getEntityId();
+            }
+
+            passengers[passengers.length - 1] = pufferfishId;
+
+            WrapperPlayServerSetPassengers setPassengers = new WrapperPlayServerSetPassengers(entity.getEntityId(), passengers);
+
+            WrapperPlayServerSpawnEntity spawnPufferfish =
+                new WrapperPlayServerSpawnEntity(pufferfishId, Optional.of(UUID.randomUUID()), EntityTypes.PUFFERFISH,
+                    new Vector3d(loc.getX(), y, loc.getZ()), 0f, 0f, 0f, 0, Optional.of(Vector3d.zero()));
+            WrapperPlayServerSetPassengers pufferfishPassengers = new WrapperPlayServerSetPassengers(pufferfishId, new int[]{textEntityId});
+
+            packets.add(spawnPufferfish);
+            packets.add(setPassengers);
+            packets.add(pufferfishPassengers);
+
+            packets.add(new WrapperPlayServerEntityMetadata(pufferfishId, constructNameEntity(LivingWatcher.class, null)));
+        } else if (NmsVersion.v1_19_R1.isSupported()) {
+            WrapperPlayServerSpawnEntity spawnEntity =
+                new WrapperPlayServerSpawnEntity(textEntityId, Optional.of(UUID.randomUUID()), EntityTypes.ARMOR_STAND,
+                    new Vector3d(loc.getX(), y, loc.getZ()), 0f, 0f, 0f, 0, Optional.of(Vector3d.zero()));
+
+            packets.add(spawnEntity);
+        } else {
+            WrapperPlayServerSpawnLivingEntity spawnEntity =
+                new WrapperPlayServerSpawnLivingEntity(textEntityId, UUID.randomUUID(), EntityTypes.ARMOR_STAND,
+                    new com.github.retrooper.packetevents.protocol.world.Location(loc.getX(), y, loc.getZ(), 0f, 0f), 0f, Vector3d.zero(),
+                    watcherValues);
+
+            packets.add(spawnEntity);
+        }
+
+        if (NmsVersion.v1_15.isSupported()) {
+            packets.add(new WrapperPlayServerEntityMetadata(textEntityId, watcherValues));
+        }
+    }
+
+    private static WrapperPlayServerEntityMetadata constructMetadata(int entityId, String line) {
+        EntityData data;
+
+        if (NmsVersion.v1_13.isSupported()) {
+            data = ReflectionManager.getEntityData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.of(getAdventureChat(line)), true);
+        } else {
+            data =
+                ReflectionManager.getEntityData(MetaIndex.ENTITY_CUSTOM_NAME_OLD, ChatColor.translateAlternateColorCodes('&', line), true);
+        }
+
+        return new WrapperPlayServerEntityMetadata(entityId, Collections.singletonList(data));
+    }
+
+    private static List<EntityData> constructNameEntity(Class<? extends FlagWatcher> clss, String line) {
+
+        List<EntityData> watcherValues = new ArrayList<>();
+
+        for (MetaIndex index : MetaIndex.getMetaIndexes(clss)) {
+            Object val = index.getDefault();
+
+            if (index == MetaIndex.ENTITY_META) {
+                // Invisible
+                val = (byte) 32;
+            } else if (index == MetaIndex.ARMORSTAND_META) {
+                val = (byte) 19;
+            } else if (index == MetaIndex.ENTITY_CUSTOM_NAME_OLD) {
+                val = ChatColor.translateAlternateColorCodes('&', line);
+            } else if (index == MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE && line != null) {
+                // Unfortunately text display custom name visible won't work as expected either
+                // It's either always hidden, or always showing if true
+                val = DisguiseConfig.isArmorstandsName();
+            }
+            // Armorstand specific
+            else if (index == MetaIndex.ENTITY_CUSTOM_NAME && line != null) {
+                val = Optional.of(getAdventureChat(line));
+            }
+            // Text Display specific
+            else if (index == MetaIndex.AGEABLE_BABY) {
+                val = true;
+            } else if (index == MetaIndex.TEXT_DISPLAY_TEXT && line != null) {
+                val = getAdventureChat(line);
+            } else if (index == MetaIndex.TEXT_DISPLAY_FLAGS) {
+                // Ensure it is seen through walls
+                val = (byte) 2;
+            } else if (index == MetaIndex.TEXT_DISPLAY_LINE_WIDTH) {
+                val = 1000;
+            } else if (index == MetaIndex.DISPLAY_TRANSLATION) {
+                // Not used as this actually adds an offset on the client's screen, not real world position.
+                // Such as, if you were looking directly down on the display, a Y of 1 would actually mean the text is  to a X/Z offset
+                // val = new Vector3f(0, 0.35f, 0);
+            } else if (index == MetaIndex.DISPLAY_SCALE) {
+                // Commented out to retain vanilla behavior, although its likely a scale of 1.05 is prefered
+                // val = new Vector3f(1.05f, 1.05f, 1.05f);
+            } else if (index == MetaIndex.DISPLAY_BILLBOARD_RENDER_CONSTRAINTS) {
+                val = (byte) ReflectionManager.enumOrdinal(Display.Billboard.CENTER);
+            }
+
+            watcherValues.add(new WatcherValue(index, val, true).getDataValue());
+        }
+
+        return watcherValues;
     }
 
     /**

@@ -1,18 +1,19 @@
 package me.libraryaddict.disguise.utilities.config;
 
+import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_DisabledMethods;
+import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_DisguiseScaling;
+import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_DisplayTextNames;
+import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_RenamedFiles;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_DisabledMethods;
-import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_DisguiseScaling;
-import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_RenamedFiles;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ConfigMigrator {
     public interface ConfigMigration {
@@ -68,6 +69,8 @@ public class ConfigMigrator {
         list.add(new ConfigMigration_DisabledMethods(1, "setNameYModifier", "setInvisible", "setUnsafeSize", "setScalePlayerToDisguise"));
         // V.2
         list.add(new ConfigMigration_DisguiseScaling());
+        // V.3
+        list.add(new ConfigMigration_DisplayTextNames());
 
         return list;
     }

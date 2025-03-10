@@ -1253,8 +1253,9 @@ public class DisguiseParser {
                 }
             }
 
-            if (DisguiseConfig.isArmorstandsName() && ((methodToUse.getMappedName().equals("setName") && disguise.isPlayerDisguise()) ||
-                (DisguiseConfig.isOverrideCustomNames() && methodToUse.getMappedName().equals("setCustomName"))) &&
+            if ((DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) &&
+                ((methodToUse.getMappedName().equals("setName") && disguise.isPlayerDisguise()) ||
+                    (DisguiseConfig.isOverrideCustomNames() && methodToUse.getMappedName().equals("setCustomName"))) &&
                 !sender.hasPermission("libsdisguises.multiname")) {
                 valueToSet = DisguiseUtilities.quoteNewLine((String) valueToSet);
             }

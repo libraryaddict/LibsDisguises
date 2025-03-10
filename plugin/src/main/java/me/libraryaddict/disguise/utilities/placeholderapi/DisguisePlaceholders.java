@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.utilities.placeholderapi;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import me.libraryaddict.disguise.utilities.LibsPremium;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -24,15 +24,19 @@ NameAboveDisguise: '%complex%'
 # Use \n for a new line, though if you're doing it in a config you may need to use \\n as " and ' are treated differently.
 OverrideCustomNames: true
 
-# There are four options you can use
-# VANILLA - Names are limited to 16 chars but can't be changed without resending disguise
+# VANILLA - Names are limited to 16 chars but playernames can't be changed without resending disguise
 # TEAMS - Names are limited to 32 chars but can be changed willy nilly
 # EXTENDED - Names are limited to 48 chars but can't be changed without resending disguise
 # ARMORSTANDS - Names are limited to 256 chars, uses a mix of armorstands and teams to do this. Slightly hacky.
-# Downside of armorstand names is that there's a chance of it becoming desynced from the player disguise
-# And names will always display even if the entity is invisible using potion effects
-# With ArmorStands & the Premium version, you can also use multiple lines in the nametag, use \n as a seperator.
-# Read the next option for more information.
+#     Armorstands on overloaded servers has a tiny chance of briefly becoming desynced from the player disguise
+#     Names will always show (ignores setCustomNameVisible), even if entity is invisible using potion effects - TEXT_DISPLAY too!
+#     Will act weirdly on Bedrock Minecraft, TEXT_DISPLAY is recommended instead
+# TEXT_DISPLAY - Names are limited to 1000+ chars, uses a Text Display -> riding invisible pufferfish (for position) -> riding disguised entity, via packets
+#     If server is older than 1.19.4+, this will revert to ARMORSTANDS behavior
+#     Names remain perfectly in sync with the disguised entity, but multi-line names are rendered as a giant text block
+# With ARMORSTANDS/TEXT_DISPLAY and Premium, you can also use multiple lines in the name, use \n as a seperator.
+# It's recommended that you restart the server after changing this setting, or at minimum, reapply disguises to see the changes.
+# Default is ARMORSTANDS
 PlayerNames: ARMORSTANDS
 
 # More options in case you want to disable a specific setting of the scoreboard

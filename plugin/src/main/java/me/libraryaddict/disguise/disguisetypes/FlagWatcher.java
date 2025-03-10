@@ -528,7 +528,7 @@ public class FlagWatcher {
             return ((PlayerDisguise) getDisguise()).getName();
         }
 
-        if (DisguiseConfig.isOverrideCustomNames() && DisguiseConfig.isArmorstandsName()) {
+        if (DisguiseConfig.isOverrideCustomNames() && (DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName())) {
             if (getDisguise().getMultiNameLength() == 0) {
                 return null;
             }
@@ -569,7 +569,7 @@ public class FlagWatcher {
             return;
         }
 
-        if (DisguiseConfig.isArmorstandsName() && DisguiseConfig.isOverrideCustomNames()) {
+        if ((DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) && DisguiseConfig.isOverrideCustomNames()) {
             MetaIndex custom = NmsVersion.v1_13.isSupported() ? MetaIndex.ENTITY_CUSTOM_NAME : MetaIndex.ENTITY_CUSTOM_NAME_OLD;
 
             if (!hasValue(custom)) {
@@ -710,7 +710,7 @@ public class FlagWatcher {
             return;
         }
 
-        if (DisguiseConfig.isArmorstandsName() && DisguiseConfig.isOverrideCustomNames()) {
+        if ((DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) && DisguiseConfig.isOverrideCustomNames()) {
             display = false;
         }
 

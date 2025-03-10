@@ -1,10 +1,10 @@
 package me.libraryaddict.disguise.utilities.config.migrations;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import me.libraryaddict.disguise.utilities.config.ConfigMigrator;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConfigMigration_DisabledMethods implements ConfigMigrator.ConfigMigration {
     private final String[] defaultDisabledMethods;

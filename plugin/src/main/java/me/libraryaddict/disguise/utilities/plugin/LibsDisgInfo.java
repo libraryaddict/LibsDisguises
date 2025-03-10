@@ -4,6 +4,7 @@ import lombok.Getter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 @Getter
 public class LibsDisgInfo {
@@ -40,5 +41,16 @@ public class LibsDisgInfo {
     public boolean isPaid() {
         return !"12345".equals(getUserID()) && getResourceID().equals("32453") && getUserID().matches("\\d+") &&
             getDownloadID().matches("-?\\d+");
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+        LibsDisgInfo that = (LibsDisgInfo) object;
+        return premium == that.premium && Objects.equals(userID, that.userID) && Objects.equals(resourceID, that.resourceID) &&
+            Objects.equals(downloadID, that.downloadID) && Objects.equals(version, that.version) &&
+            Objects.equals(buildNumber, that.buildNumber) && Objects.equals(buildDate, that.buildDate);
     }
 }

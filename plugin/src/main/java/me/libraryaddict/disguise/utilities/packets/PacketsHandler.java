@@ -10,7 +10,6 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
-import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerSetPassengers;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerAttributes;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerCollectItem;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerEntityAnimation;
@@ -19,6 +18,7 @@ import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerE
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerHeadLook;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerMetadata;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerMovement;
+import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerSetPassengers;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerSpawn;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerVelocity;
 import org.bukkit.entity.Entity;
