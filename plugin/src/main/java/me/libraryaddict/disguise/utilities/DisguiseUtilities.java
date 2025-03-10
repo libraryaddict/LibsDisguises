@@ -3646,10 +3646,6 @@ public class DisguiseUtilities {
                 packets.add(constructMetadata(standIds[1], newLine));
             }
         } else {
-            if (internalOldNames.length > newNames.length) {
-                // Destroy packet
-                destroyIds = Arrays.copyOfRange(standIds, newNames.length, internalOldNames.length);
-            }
 
             for (int loop = 0; loop < newNames.length; loop++) {
                 // Names are sent from bottom up, so we need to flip this a little
@@ -3672,6 +3668,11 @@ public class DisguiseUtilities {
                 } else {
                     addSpawn(disguise.getEntity(), loc, startingY, standIds, loop, packets, name);
                 }
+            }
+
+            if (internalOldNames.length > newNames.length) {
+                // Destroy packet
+                destroyIds = Arrays.copyOfRange(standIds, newNames.length, internalOldNames.length);
             }
         }
 
