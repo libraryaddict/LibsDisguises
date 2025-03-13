@@ -106,8 +106,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.profile.PlayerProfile;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.io.BufferedReader;
@@ -1599,13 +1597,7 @@ public class ReflectionManager {
         setScore(scoreboard, name, score, true);
     }
 
-    public static void setScore(Scoreboard scoreboard, String name, int score, boolean canScheduleTask) {
-        // Disabled for 1.20.4, 1.20.4 introduces "read only" scores and I don't have an idea on how to deal with it as yet
-        // Edit: The solution as far as I can see, is to modify the outgoing packet?
-        if (NmsVersion.v1_20_R3.isSupported()) {
-            return;
-        }
-
+    private static void setScore(Scoreboard scoreboard, String name, int score, boolean canScheduleTask) {
         if (canScheduleTask && (!Bukkit.isPrimaryThread() || isRunningPaper())) {
             new BukkitRunnable() {
                 @Override
@@ -1616,17 +1608,7 @@ public class ReflectionManager {
             return;
         }
 
-        Set<Objective> objectives = scoreboard.getObjectivesByCriteria("health");
-
-        for (Objective objective : objectives) {
-            Score s = objective.getScore(name);
-
-            /*if (score == 0 ? s.isScoreSet() : s.getScore() == score) {
-                continue;
-            }*/
-
-            s.setScore(score);
-        }
+        getNmsReflection().setScore(scoreboard, "health", name, score);
     }
 
     public static Map<String, Command> getCommands(CommandMap map) {

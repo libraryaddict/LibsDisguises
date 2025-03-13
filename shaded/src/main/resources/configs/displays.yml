@@ -31,6 +31,7 @@ OverrideCustomNames: true
 #     Armorstands on overloaded servers has a tiny chance of briefly becoming desynced from the player disguise
 #     Names will always show (ignores setCustomNameVisible), even if entity is invisible using potion effects - TEXT_DISPLAY too!
 #     Will act weirdly on Bedrock Minecraft, TEXT_DISPLAY is recommended instead
+#     Scoreboard displays won't appear (eg, health), use one of the above options instead
 # TEXT_DISPLAY - Names are limited to 1000+ chars, uses a Text Display -> riding invisible pufferfish (for position) -> riding disguised entity, via packets
 #     If server is older than 1.19.4+, this will revert to ARMORSTANDS behavior
 #     Names remain perfectly in sync with the disguised entity, but multi-line names are rendered as a giant text block
@@ -52,6 +53,14 @@ Scoreboard:
   # When disguising as a player, should the prefix/suffix of the player disguise name copy the team info?
   # Only takes effect if using PlayerNames TEAMS or ARMORSTANDS
   CopyPlayerTeamInfo: true
+  # Should player disguises modify scoreboards to add their 'health'? So scoreboards objectives with criteria 'health' still works?
+  # If 'ShowPlayerDisguisesInTab' is false and 'PlayerNames' is set to 'ARMORSTANDS', there is no reason to turn this on as it won't be seen (unless sidebar)
+  # If enabled, this can have a performance impact. Instead, an alternative is to manually include the health in the playername, then updating name as needed.
+  # Eg, in MythicMobs you could use: `Display: "Terrible Bandit\nHealth: <caster.hp> / <caster.mhp>"` along with a trigger for damage for updating the name.
+  # Refer to MythicMob's own documentation on how to use their 'setname' mechanic.
+  # For multiple lines, refer to 'PlayerNames' and 'ARMORSTANDS', it does require Lib's Disguises premium.
+  # You are not forced to use multiple lines, you can enable this. But most servers will not need or want this.
+  UpdateHealth: false
 
 # Hide players in tab when disguised? This means a disguised player cannot be seen when you press tab! This can be toggled on/off per disguise
 HideDisguisedPlayersFromTab: false

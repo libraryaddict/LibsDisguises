@@ -364,7 +364,8 @@ public class FlagWatcher {
 
             newList.add(watch);
 
-            if (!sendAllCustom && getDisguise().isPlayerDisguise() && index == MetaIndex.LIVING_HEALTH) {
+            if (!sendAllCustom && getDisguise().isPlayerDisguise() && index == MetaIndex.LIVING_HEALTH &&
+                DisguiseConfig.isScoreboardUpdateHealth()) {
                 float health = ((Number) watch.getValue()).floatValue();
 
                 String name = DisguiseConfig.isScoreboardNames() && ((PlayerDisguise) getDisguise()).hasScoreboardName() ?
@@ -396,7 +397,7 @@ public class FlagWatcher {
                 newList.add(watch);
             }
 
-            if (getDisguise().isPlayerDisguise()) {
+            if (getDisguise().isPlayerDisguise() && DisguiseConfig.isScoreboardUpdateHealth()) {
                 float health;
 
                 if (hasValue(MetaIndex.LIVING_HEALTH)) {

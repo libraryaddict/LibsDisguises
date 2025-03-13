@@ -33,6 +33,8 @@ import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.scores.Objective;
+import net.minecraft.world.scores.ScoreHolder;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -51,6 +53,7 @@ import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftFrog;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R3.scoreboard.CraftScoreboard;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
 import org.bukkit.entity.Cat;
@@ -60,6 +63,7 @@ import org.bukkit.entity.Frog;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -448,5 +452,23 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     @Override
     public Set getTrackedEntities(Object trackedEntity) {
         return ((ChunkMap.TrackedEntity) trackedEntity).seenBy;
+    }
+
+    @Override
+    public boolean setScore(Scoreboard scoreboard, String criteria, String name, int score) {
+        net.minecraft.world.scores.Scoreboard handle = ((CraftScoreboard) scoreboard).getHandle();
+        ScoreHolder holder = () -> name;
+        boolean updated = false;
+
+        for (Objective objective : handle.getObjectives()) {
+            if (!objective.getCriteria().getName().equals(criteria)) {
+                continue;
+            }
+
+            handle.getOrCreatePlayerScore(holder, objective, true).set(score);
+            updated = true;
+        }
+
+        return updated;
     }
 }

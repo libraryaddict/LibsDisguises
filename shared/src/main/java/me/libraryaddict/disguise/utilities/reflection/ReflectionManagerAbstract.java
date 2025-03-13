@@ -19,6 +19,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.Map;
 import java.util.Set;
@@ -166,4 +169,16 @@ public abstract class ReflectionManagerAbstract {
     public abstract void addEntityTracker(Object trackedEntity, Object serverPlayer);
 
     public abstract void clearEntityTracker(Object trackedEntity, Object serverPlayer);
+
+    public boolean setScore(Scoreboard scoreboard, String criteria, String name, int score) {
+        Set<Objective> objectives = scoreboard.getObjectivesByCriteria(criteria);
+
+        for (Objective objective : objectives) {
+            Score s = objective.getScore(name);
+
+            s.setScore(score);
+        }
+
+        return !objectives.isEmpty();
+    }
 }

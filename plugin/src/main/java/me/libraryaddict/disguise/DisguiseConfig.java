@@ -316,6 +316,9 @@ public class DisguiseConfig {
      */
     private static final File internalFile =
         LibsDisguises.getInstance() == null ? null : new File(LibsDisguises.getInstance().getDataFolder(), "internal/internal.yml");
+    @Getter
+    @Setter
+    private static boolean scoreboardUpdateHealth;
 
     public static boolean isDisplayTextName() {
         return getPlayerNameType() == PlayerNameType.TEXT_DISPLAY;
@@ -710,6 +713,7 @@ public class DisguiseConfig {
         setMiscDisguisesForLivingEnabled(config.getBoolean("MiscDisguisesForLiving"));
         setModifyBoundingBox(config.getBoolean("ModifyBoundingBox"));
         setModifyCollisions(config.getBoolean("Scoreboard.Collisions"));
+        setScoreboardUpdateHealth(config.getBoolean("Scoreboard.UpdateHealth"));
         setMonstersIgnoreDisguises(config.getBoolean("MonstersIgnoreDisguises"));
         setMovementPacketsEnabled(config.getBoolean("PacketsEnabled.Movement"));
         setNameAboveHeadAlwaysVisible(config.getBoolean("NameAboveHeadAlwaysVisible"));
