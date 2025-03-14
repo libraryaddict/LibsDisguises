@@ -462,6 +462,7 @@ public class DisguiseConfig {
             internalConfig = internalConfig.replaceFirst("%data%", "" + s);
         }
 
+        internalFile.getParentFile().mkdirs();
         internalFile.delete();
 
         try {
