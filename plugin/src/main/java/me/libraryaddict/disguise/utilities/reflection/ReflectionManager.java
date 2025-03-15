@@ -55,6 +55,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.SkinUtils;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.legacy.LegacyReflectionManager;
@@ -837,15 +838,22 @@ public class ReflectionManager {
      */
     public static UserProfile grabProfileAddUUID(String playername) {
         try {
-            LibsProfileLookupCaller callback = new LibsProfileLookupCaller();
+            UserProfile result;
 
-            getNmsReflection().injectCallback(playername, callback);
+            if (DisguiseConfig.getUuidResolvingUrl() != null) {
+                result = SkinUtils.getUUID(DisguiseConfig.getUuidResolvingUrl(), playername);
+            } else {
+                LibsProfileLookupCaller callback = new LibsProfileLookupCaller();
 
-            if (callback.getUserProfile() != null) {
-                return callback.getUserProfile();
+                getNmsReflection().injectCallback(playername, callback);
+                result = callback.getUserProfile();
             }
 
-            return getUserProfile(null, playername);
+            if (result == null) {
+                result = getUserProfile(null, playername);
+            }
+
+            return result;
         } catch (Exception ex) {
             ex.printStackTrace();
         }

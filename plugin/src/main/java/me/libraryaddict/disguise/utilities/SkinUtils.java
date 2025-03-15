@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities;
 
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
+import com.google.gson.Gson;
 import com.mojang.authlib.GameProfile;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.mineskin.models.responses.MineSkinQueueResponse;
@@ -11,11 +12,19 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class SkinUtils {
     public interface SkinCallback {
@@ -108,6 +117,55 @@ public class SkinUtils {
                 }.runTask(LibsDisguises.getInstance());
             }
         }.runTaskAsynchronously(LibsDisguises.getInstance());
+    }
+
+    public static UserProfile getUUID(String urlString, String name) {
+        try {
+            String path = String.format(urlString, name);
+            URL url = new URL(path);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestProperty("User-Agent", "plugin/LibsDisguises/" + LibsDisguises.getInstance().getDescription().getVersion());
+
+            int responseCode = con.getResponseCode();
+
+            if (responseCode == 404) {
+                return null;
+            }
+
+            boolean errored = responseCode >= 400 && responseCode < 600;
+
+            try (InputStream stream = (errored ? con.getErrorStream() : con.getInputStream())) {
+                // Read it to string
+                String response =
+                    new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
+
+                if (errored || !response.startsWith("{")) {
+                    LibsDisguises.getInstance().getLogger()
+                        .severe(String.format("Received error code %s when attempting to fetch %s: %s", errored, path, response));
+                    return null;
+                }
+
+                Map<String, String> map = new Gson().fromJson(response, Map.class);
+
+                if (!map.containsKey("id")) {
+                    return null;
+                }
+
+                String id = map.get("id");
+
+                // Conversion from old old data
+                if (!id.contains("-")) {
+                    id = Pattern.compile("([\\da-fA-F]{8})([\\da-fA-F]{4})([\\da-fA-F]{4})([\\da-fA-F]{4})([\\da-fA-F]+)").matcher(id)
+                        .replaceFirst("$1-$2-$3-$4-$5");
+                }
+
+                return new UserProfile(UUID.fromString(id), map.get("name"));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
     }
 
     public static void handleName(String playerName, SkinVariant modelType, SkinCallback callback) {

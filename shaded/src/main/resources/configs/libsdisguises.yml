@@ -5,6 +5,13 @@ MineSkinAPIKey: 'N/A'
 
 # Contact Mojang's servers? Disabling this option will disable player disguises if there's no skin to use!
 ContactMojangServers: true
+# This controls how the plugin attempts to resolve a playername to a Minecraft UUID
+# This can be set to one of the following three options, use %s to inject the name into the string
+# * https://api.mojang.com/users/profiles/minecraft/%s
+# * https://api.minecraftservices.com/minecraft/profile/lookup/name/%s
+# * null - So literally 'null', or an empty string. This will attempt to use the built into the server authlib
+# You can set this to another url of your choosing, but if you don't know what you're doing...
+UUIDResolvingUrl: 'https://api.mojang.com/users/profiles/minecraft/%s'
 
 # Shall I notify those with the correct permission when there's a LibsDisguises update?
 # Disabling this will also disable notifications when the plugin updated

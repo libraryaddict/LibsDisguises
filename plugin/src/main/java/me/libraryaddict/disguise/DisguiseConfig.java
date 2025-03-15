@@ -319,6 +319,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static boolean scoreboardUpdateHealth;
+    @Getter
+    @Setter
+    private static String uuidResolvingUrl;
 
     public static boolean isDisplayTextName() {
         return getPlayerNameType() == PlayerNameType.TEXT_DISPLAY;
@@ -739,6 +742,8 @@ public class DisguiseConfig {
         setSaveUserPreferences(config.getBoolean("SaveUserPreferences"));
         setPlayerDisguisesSkinExpiresMove(config.getInt("PlayerDisguisesTablistExpiresMove"));
         setContactMojangServers(config.getBoolean("ContactMojangServers"));
+        String url = config.getString("UUIDResolvingUrl");
+        setUuidResolvingUrl(url == null || url.isEmpty() || url.equalsIgnoreCase("null") ? null : url);
         setDisguiseRadiusMax(config.getInt("DisguiseRadiusMax"));
         setRandomUUIDS(config.getBoolean("RandomUUIDs"));
         setRemoveDisguiseBlockBreak(config.getBoolean("UndisguiseOnBlockBreak"));
