@@ -10,6 +10,6 @@ public class MineSkinJob {
     private @Nullable String result;
 
     public boolean isJobRunning() {
-        return status == MineSkinStatus.ACTIVE || status == MineSkinStatus.WAITING;
+        return status == MineSkinStatus.ACTIVE || status == MineSkinStatus.WAITING || status == MineSkinStatus.PROCESSING;
     }
 }
