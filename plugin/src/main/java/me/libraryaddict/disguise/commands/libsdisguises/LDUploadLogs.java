@@ -176,7 +176,8 @@ public class LDUploadLogs implements LDCommand {
                 lastFind = nextLine + 2;
 
                 if (!str.contains("Starting minecraft server version") && !str.contains("Loading properties") &&
-                    !str.contains("This server is running") && !str.contains(" Running Java ")) {
+                    !str.contains("This server is running") && !str.contains(" Running Java ") &&
+                    !str.contains("[ServerMain/INFO]: [bootstrap] Loading ")) {
                     continue;
                 }
 
