@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.Flying;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
@@ -68,7 +69,6 @@ public class DisguisePermissions {
         public void setNegated(boolean negated) {
             this.negated = negated;
         }
-
     }
 
     @Getter
@@ -82,7 +82,6 @@ public class DisguisePermissions {
             this.optionsAllowed = optionsAllowed;
             this.optionsForbidden = optionsForbidden;
         }
-
     }
 
     /**
@@ -443,6 +442,10 @@ public class DisguisePermissions {
             }
         } else if (permissionName.equals("animal") || permissionName.equals("animals")) {
             if (Animals.class.isAssignableFrom(disguiseType.getEntityClass())) {
+                return 3;
+            }
+        } else if (permissionName.equals("flying")) {
+            if (Flying.class.isAssignableFrom(disguiseType.getEntityClass())) {
                 return 3;
             }
         } else if (permissionName.equals("mob")) {
