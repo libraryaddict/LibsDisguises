@@ -216,23 +216,24 @@ public class DisguisePermissionsTest {
 
         assertFalse(permissions.isAllowedDisguise(firework, Arrays.asList("setBaby", "setBurning")),
             "The disguise should not be allowed even with options");
-
     }
 
     @Test
     public void testDisguiseParameters() {
         HashMap<String, HashMap<String, Boolean>> disguiseOptions = DisguisePermissions.getDisguiseOptions(
-            createPermissionsHolder(false, "libsdisguises.options.disguise.falling_block.setblock.stone"), "Disguise",
-            new DisguisePerm(DisguiseType.FALLING_BLOCK));
+            createPermissionsHolder(false, "libsdisguises.options.disguise.pink_sheep.setcolor.BLUE"), "Disguise",
+            new DisguisePerm(DisguiseType.SHEEP, "pink_sheep"));
 
         assertTrue(DisguisePermissions.hasPermissionOption(disguiseOptions, "setBurning", "true"),
             "They should be allowed to use true as a disguise option on setBurning");
 
-        assertTrue(DisguisePermissions.hasPermissionOption(disguiseOptions, "setBlock", "STONE"),
-            "They should be allowed to use Material.STONE as a disguise option");
+        assertTrue(DisguisePermissions.hasPermissionOption(disguiseOptions, "setColor", "BLUE"),
+            "They should be allowed to use Color.BLUE as a disguise option");
+        assertTrue(DisguisePermissions.hasPermissionOption(disguiseOptions, "setColor", "blue"),
+            "They should be allowed to use Color.BLUE as a disguise option");
 
-        assertFalse(DisguisePermissions.hasPermissionOption(disguiseOptions, "setBlock", "DIRT"),
-            "They should be not allowed to use Material.DIRT as a disguise option");
+        assertFalse(DisguisePermissions.hasPermissionOption(disguiseOptions, "setColor", "red"),
+            "They should be not allowed to use Color.RED as a disguise option");
     }
 
     @Test

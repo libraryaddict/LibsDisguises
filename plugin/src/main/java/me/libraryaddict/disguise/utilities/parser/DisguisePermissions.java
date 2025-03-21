@@ -563,7 +563,7 @@ public class DisguisePermissions {
             boolean applicable = false;
 
             for (String s : split[3].split("/")) {
-                if (!s.equals("*") && !s.replace("_", "").equalsIgnoreCase(type.toReadable().replace(" ", ""))) {
+                if (!s.equals("*") && !s.replaceAll("[ _]+", "").equalsIgnoreCase(type.toReadable().replaceAll("[ _]+", ""))) {
                     continue;
                 }
 
