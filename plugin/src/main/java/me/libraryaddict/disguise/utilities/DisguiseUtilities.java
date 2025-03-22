@@ -2732,7 +2732,7 @@ public class DisguiseUtilities {
         Pattern removeSlashes = Pattern.compile("^\\\\(\")|\\\\(?:(\\\\)(?=\\\\*\"$)|(\")$)");
 
         List<String> list = new ArrayList<>();
-        String[] split = string.split(" ");
+        String[] split = string.trim().split(" ");
         String[] unescapedSplit = new String[split.length];
 
         loop:
