@@ -43,6 +43,11 @@ public class ParamInfoEnum<T> extends ParamInfo<T> {
     }
 
     @Override
+    public boolean isParam(Class paramClass) {
+        return getParamClass().isAssignableFrom(paramClass);
+    }
+
+    @Override
     public String toString(T object) {
         return object.toString();
     }
