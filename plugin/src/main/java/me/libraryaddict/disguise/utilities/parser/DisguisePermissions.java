@@ -548,7 +548,8 @@ public class DisguisePermissions {
                 continue;
             }
 
-            String[] split = lowerPerm.split("\\.");
+            // Ensure that . can be escaped
+            String[] split = lowerPerm.split("(?<=(?<!\\\\)(?:\\\\{2}){0,1000})\\.");
 
             // 0             1       2         3          4        5+
             // libsdisguises.options.<command>.<disguise>.<method>.<options>
@@ -578,7 +579,7 @@ public class DisguisePermissions {
             HashMap<String, Boolean> options = new HashMap<>();
 
             for (int i = 5; i < split.length; i++) {
-                options.put(split[i], permission.getValue());
+                options.put(split[i].replace("\\.", "."), permission.getValue());
             }
 
             for (String s : split[4].split("/")) {

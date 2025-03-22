@@ -221,7 +221,8 @@ public class DisguisePermissionsTest {
     @Test
     public void testDisguiseParameters() {
         HashMap<String, HashMap<String, Boolean>> disguiseOptions = DisguisePermissions.getDisguiseOptions(
-            createPermissionsHolder(false, "libsdisguises.options.disguise.pink_sheep.setcolor.BLUE"), "Disguise",
+            createPermissionsHolder(false, "libsdisguises.options.disguise.pink_sheep.setcolor.BLUE",
+                "libsdisguises.options.disguise.pink_sheep.setscale.3\\.0"), "Disguise",
             new DisguisePerm(DisguiseType.SHEEP, "pink_sheep"));
 
         assertTrue(DisguisePermissions.hasPermissionOption(disguiseOptions, "setBurning", "true"),
@@ -234,6 +235,9 @@ public class DisguisePermissionsTest {
 
         assertFalse(DisguisePermissions.hasPermissionOption(disguiseOptions, "setColor", "red"),
             "They should be not allowed to use Color.RED as a disguise option");
+
+        assertTrue(DisguisePermissions.hasPermissionOption(disguiseOptions, "setscale", "3.0"),
+            "They should be allowed to escape a period");
     }
 
     @Test
