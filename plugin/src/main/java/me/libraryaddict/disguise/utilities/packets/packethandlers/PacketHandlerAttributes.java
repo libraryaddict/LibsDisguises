@@ -8,6 +8,7 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
@@ -53,20 +54,33 @@ public class PacketHandlerAttributes implements IPacketHandler<WrapperPlayServer
                 // Override whatever they're sending if we're using a non-default scale
                 Double scale = ((LivingWatcher) disguise.getWatcher()).getScale();
 
-                // If it's for the self disguise and the disguise had to be scaled down
-                if (entity == observer && disguise.isTallSelfDisguisesScaling()) {
+                // Only if it is for the player
+                if (entity == observer) {
                     // Trigger a refresh incase the attribute had changed
                     disguise.getInternals().getPacketEntityScale(property.calcValue());
+                }
 
-                    attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE,
-                        Math.min(disguise.getInternals().getPrevSelfDisguiseTallScaleMax(), scale == null ? property.calcValue() : scale),
-                        new ArrayList<>()));
+                // If the scale was hard set, use that
+                if (scale != null) {
+                    attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, scale, new ArrayList<>()));
+                } else if (entity == observer) {
+                    // If this scale was to the player, then they will always get the actual sent scale
+                    attributes.add(property);
                 } else {
-                    if (scale == null) {
-                        scale = disguise.getInternals().getPacketEntityScale(property.calcValue());
+                    // Otherwise if the scale wasn't sent, and it isn't to the disguised player
+                    // Send the scale while stripping out the player's personal scale
+                    List<WrapperPlayServerUpdateAttributes.PropertyModifier> modifiers = new ArrayList<>();
+
+                    for (WrapperPlayServerUpdateAttributes.PropertyModifier modifier : property.getModifiers()) {
+                        if (DisguiseUtilities.isDisguisesSelfScalingAttribute(modifier)) {
+                            continue;
+                        }
+
+                        modifiers.add(modifier);
                     }
 
-                    attributes.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, scale, new ArrayList<>()));
+                    attributes.add(
+                        new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, property.getValue(), modifiers));
                 }
             } else if (property.getAttribute() == Attributes.GENERIC_GRAVITY) {
                 attributes.add(property);

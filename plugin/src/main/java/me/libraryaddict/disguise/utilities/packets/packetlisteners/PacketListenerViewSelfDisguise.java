@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.SimplePacketListenerAbstract;
 import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
+import com.github.retrooper.packetevents.protocol.attribute.Attributes;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Server;
 import com.github.retrooper.packetevents.protocol.world.damagetype.DamageTypes;
@@ -11,6 +12,7 @@ import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityAnimation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityStatus;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateAttributes;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -113,6 +115,35 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
                     DisguiseUtilities.getEntityId(newPacket) == observer.getEntityId()) {
                     // No need to check if this is self disguise ID since we're only looking for unmapped
                     DisguiseUtilities.writeSelfDisguiseId(observer.getEntityId(), newPacket);
+                }
+
+                // Ensure that the self disguise is always underscaled
+                // This might be worth seperating elsewhere, it's not good code flow
+                if (newPacket.getPacketTypeData().getPacketType() == Server.UPDATE_ATTRIBUTES && disguise.isTallSelfDisguisesScaling()) {
+                    WrapperPlayServerUpdateAttributes attributes = (WrapperPlayServerUpdateAttributes) newPacket;
+
+                    // The 'clone' is a shallow clone, packet data is sent to player as well for their own attributes
+                    List<WrapperPlayServerUpdateAttributes.Property> toSend = new ArrayList<>(attributes.getProperties());
+
+                    for (WrapperPlayServerUpdateAttributes.Property prop : attributes.getProperties()) {
+                        // Only modify scale attribute
+                        if (prop.getAttribute() != Attributes.GENERIC_SCALE) {
+                            continue;
+                        }
+
+                        double playerValue = prop.calcValue();
+                        double max = disguise.getInternals().getPrevSelfDisguiseTallScaleMax();
+
+                        // If the disguise height is under the max height
+                        if (playerValue <= max) {
+                            break;
+                        }
+
+                        toSend.remove(prop);
+                        toSend.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, max, new ArrayList<>()));
+                    }
+
+                    attributes.setProperties(toSend);
                 }
 
                 selfTransformed.addPacket(newPacket);

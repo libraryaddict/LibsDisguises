@@ -17,6 +17,7 @@ import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.protocol.world.Direction;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
+import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.util.adventure.AdventureSerializer;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
@@ -491,6 +492,17 @@ public class DisguiseUtilities {
         }
 
         return modifier.getName().equals(getSelfDisguiseScaleNamespace().toString());
+    }
+
+    public static boolean isDisguisesSelfScalingAttribute(WrapperPlayServerUpdateAttributes.PropertyModifier modifier) {
+        if (NmsVersion.v1_21_R1.isSupported()) {
+            ResourceLocation name = modifier.getName();
+            NamespacedKey selfName = getSelfDisguiseScaleNamespace();
+
+            return name.getNamespace().equals(selfName.getNamespace()) && name.getKey().equals(selfName.getKey());
+        }
+
+        return modifier.getUUID().equals(getSelfDisguiseScaleUUID());
     }
 
     public static void removeSelfDisguiseScale(Entity entity) {
