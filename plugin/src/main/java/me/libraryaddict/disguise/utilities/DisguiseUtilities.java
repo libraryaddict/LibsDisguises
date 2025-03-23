@@ -1082,6 +1082,11 @@ public class DisguiseUtilities {
             return new Disguise[0];
         }
 
+        // Don't load disguises if they were not enabled as saved
+        if (!(entity instanceof Player ? DisguiseConfig.isSavePlayerDisguises() : DisguiseConfig.isSaveEntityDisguises())) {
+            return new Disguise[0];
+        }
+
         if (!NmsVersion.v1_14.isSupported()) {
             return getSavedDisguises(entity.getUniqueId());
         }
