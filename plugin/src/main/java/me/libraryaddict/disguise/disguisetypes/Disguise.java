@@ -841,7 +841,9 @@ public abstract class Disguise {
             removeBossBar();
         }
 
-        DisguiseUtilities.saveDisguises(getEntity());
+        if (getEntity().isValid()) {
+            DisguiseUtilities.saveDisguises(getEntity());
+        }
 
         return true;
     }
