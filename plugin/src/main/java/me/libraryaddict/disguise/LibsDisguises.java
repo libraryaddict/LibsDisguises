@@ -396,11 +396,13 @@ public class LibsDisguises extends JavaPlugin {
 
         getLogger().info("Build Date: " + buildDate);
 
-        String recommended = ReflectionManager.getVersion().getRecommendedMinorVersion();
+        if (ReflectionManager.getVersion() != null) {
+            String recommended = ReflectionManager.getVersion().getRecommendedMinorVersion();
 
-        if (!recommended.equals(minecraft)) {
-            getLogger().severe("You are running an outdated version of Minecraft, you are currently using " + minecraft +
-                ", you should update to a minimum of " + recommended);
+            if (!recommended.equals(minecraft)) {
+                getLogger().severe("You are running an outdated version of Minecraft, you are currently using " + minecraft +
+                    ", you should update to a minimum of " + recommended);
+            }
         }
     }
 
