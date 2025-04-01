@@ -301,10 +301,10 @@ public class LibsDisguises extends JavaPlugin {
     private String getPacketEventsFailedReason(Plugin plugin) {
         if (plugin == null) {
             return "PacketEvents not installed";
-        } else if (!plugin.isEnabled()) {
-            return "PacketEvents is not enabled";
         } else if (PacketEventsUpdater.isPacketEventsOutdated()) {
             return "PacketEvents is outdated";
+        } else if (!plugin.isEnabled()) {
+            return "PacketEvents is not enabled";
         }
 
         return "Lib's Disguises couldn't access PacketEvents properly";
