@@ -79,6 +79,7 @@ public abstract class Disguise {
     @Getter
     private boolean modifyBoundingBox = DisguiseConfig.isModifyBoundingBox();
     private boolean playerHiddenFromTab = DisguiseConfig.isHideDisguisedPlayers();
+    @Getter
     private boolean replaceSounds = DisguiseConfig.isSoundEnabled();
     @Setter
     @Getter
@@ -698,6 +699,7 @@ public abstract class Disguise {
         setViewSelfDisguise(selfDisguiseVisible);
     }
 
+    @Deprecated
     public boolean isSoundsReplaced() {
         return replaceSounds;
     }
