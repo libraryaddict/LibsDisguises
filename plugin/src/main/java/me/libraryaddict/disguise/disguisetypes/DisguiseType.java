@@ -9,6 +9,7 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.annotations.NmsEntityName;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.apache.commons.lang.StringUtils;
@@ -93,7 +94,7 @@ public enum DisguiseType {
 
     DRAGON_FIREBALL(93),
 
-    DROPPED_ITEM(2, "item", 1),
+    @NmsEntityName("item") DROPPED_ITEM(2, 1),
 
     @NmsAddedIn(NmsVersion.v1_13) DROWNED,
 
@@ -105,13 +106,13 @@ public enum DisguiseType {
 
     ENDERMITE,
 
-    ENDER_CRYSTAL(51, "end_crystal"),
+    @NmsEntityName("end_crystal") ENDER_CRYSTAL(51),
 
     ENDER_DRAGON,
 
     ENDER_PEARL(65),
 
-    ENDER_SIGNAL(72, "eye_of_ender"),
+    @NmsEntityName("eye_of_ender") ENDER_SIGNAL(72),
 
     EVOKER,
 
@@ -123,9 +124,9 @@ public enum DisguiseType {
 
     FIREBALL(63),
 
-    FIREWORK(76, "firework_rocket"),
+    @NmsEntityName("firework_rocket") FIREWORK(76),
 
-    FISHING_HOOK(90, "fishing_bobber"),
+    @NmsEntityName("fishing_bobber") FISHING_HOOK(90),
 
     @NmsAddedIn(NmsVersion.v1_14) FOX,
 
@@ -163,7 +164,9 @@ public enum DisguiseType {
 
     @NmsAddedIn(NmsVersion.v1_21_R2) JUNGLE_CHEST_BOAT,
 
-    LEASH_HITCH(77, "leash_knot"),
+    @NmsEntityName("leash_knot") LEASH_HITCH(77),
+
+    @NmsAddedIn(NmsVersion.v1_21_R4) LINGERING_POTION,
 
     LLAMA,
 
@@ -179,17 +182,17 @@ public enum DisguiseType {
 
     MINECART(10),
 
-    MINECART_CHEST(10, "chest_minecart", 1),
+    @NmsEntityName("chest_minecart") MINECART_CHEST(10, 1),
 
-    MINECART_COMMAND(10, "command_block_minecart", 6),
+    @NmsEntityName("command_block_minecart") MINECART_COMMAND(10, 6),
 
-    MINECART_FURNACE(10, "furnace_minecart", 2),
+    @NmsEntityName("furnace_minecart") MINECART_FURNACE(10, 2),
 
-    MINECART_HOPPER(10, "hopper_minecart", 5),
+    @NmsEntityName("hopper_minecart") MINECART_HOPPER(10, 5),
 
-    MINECART_MOB_SPAWNER(10, "spawner_minecart", 4),
+    @NmsEntityName("spawner_minecart") MINECART_MOB_SPAWNER(10, 4),
 
-    MINECART_TNT(10, "tnt_minecart", 3),
+    @NmsEntityName("tnt_minecart") MINECART_TNT(10, 3),
 
     MODDED_LIVING,
 
@@ -197,7 +200,7 @@ public enum DisguiseType {
 
     MULE,
 
-    MUSHROOM_COW("mooshroom"),
+    @NmsEntityName("mooshroom") MUSHROOM_COW,
 
     @NmsAddedIn(NmsVersion.v1_21_R2) OAK_BOAT,
 
@@ -225,7 +228,7 @@ public enum DisguiseType {
 
     @NmsAddedIn(NmsVersion.v1_16) PIGLIN_BRUTE,
 
-    @NmsRemovedIn(NmsVersion.v1_16) PIG_ZOMBIE("zombified_piglin"),
+    @NmsEntityName("zombified_piglin") @NmsRemovedIn(NmsVersion.v1_16) PIG_ZOMBIE(),
 
     @NmsAddedIn(NmsVersion.v1_14) PILLAGER,
 
@@ -233,7 +236,7 @@ public enum DisguiseType {
 
     POLAR_BEAR,
 
-    PRIMED_TNT(50, "tnt"),
+    @NmsEntityName("tnt") PRIMED_TNT(50),
 
     @NmsAddedIn(NmsVersion.v1_13) PUFFERFISH,
 
@@ -263,13 +266,13 @@ public enum DisguiseType {
 
     SNOWBALL(61),
 
-    SNOWMAN("snow_golem"),
+    @NmsEntityName("snow_golem") SNOWMAN,
 
     SPECTRAL_ARROW(91),
 
     SPIDER,
 
-    SPLASH_POTION(73, "potion"),
+    @NmsEntityName("potion") @NmsEntityName(version = NmsVersion.v1_21_R4, value = "splash_potion") SPLASH_POTION(73),
 
     @NmsAddedIn(NmsVersion.v1_21_R2) SPRUCE_BOAT,
 
@@ -285,7 +288,7 @@ public enum DisguiseType {
 
     @NmsAddedIn(NmsVersion.v1_19_R3) TEXT_DISPLAY,
 
-    THROWN_EXP_BOTTLE(75, "experience_bottle"),
+    @NmsEntityName("experience_bottle") THROWN_EXP_BOTTLE(75),
 
     @NmsRemovedIn(NmsVersion.v1_14) TIPPED_ARROW(60),
 
@@ -365,31 +368,23 @@ public enum DisguiseType {
     private Class<? extends FlagWatcher> watcherClass;
 
     DisguiseType() {
-        this(null, null, null);
+        this(null, null);
     }
 
     DisguiseType(Integer objectId) {
         this(objectId, null);
     }
 
-    DisguiseType(String modernMinecraftName) {
-        this(null, modernMinecraftName);
-    }
-
-    DisguiseType(Integer objectId, String modernMinecraftName) {
-        this(objectId, modernMinecraftName, null);
-    }
-
     @SneakyThrows
-    DisguiseType(Integer objectId, String modernMinecraftName, Integer defaultData) {
+    DisguiseType(Integer objectId, Integer defaultData) {
         if (defaultData != null) {
             this.defaultData = defaultData;
         }
 
-        figureOutEntityType(objectId, modernMinecraftName);
+        figureOutEntityType(objectId);
     }
 
-    private void figureOutEntityType(Integer objectId, String modernMinecraftName) throws NoSuchFieldException {
+    private void figureOutEntityType(Integer objectId) throws NoSuchFieldException {
         // Why oh why can't isCustom() work :(
         if (name().startsWith("MODDED_")) {
             setEntityType(EntityType.UNKNOWN);
@@ -421,9 +416,32 @@ public enum DisguiseType {
         // If we're not given a modern name, then the entity type for bukkit is absolute
 
         // Resolve bukkit type by modern name if it exists, fallback to enum name()
-        // Resolve packetevents entitytype by enum name if it doesnt exist
+        // Resolve packetevents entitytype by enum name if it doesn't exist
 
         // First try to resolve via modern name
+        String modernMinecraftName = null;
+        NmsVersion appliedTo = null;
+
+        NmsEntityName[] nmsEntityNames = DisguiseType.class.getField(name()).getAnnotationsByType(NmsEntityName.class);
+
+        for (NmsEntityName nmsEntityName : nmsEntityNames) {
+            // If this is on a running server
+            // If this nms entity name is too new for the server
+            if (LibsDisguises.getInstance() != null && !nmsEntityName.version().isSupported()) {
+                continue;
+            }
+
+            // If there's already an entity name, and it's for a newer version than this annotation (aka out of order)
+            // Then we skip, we don't want to apply a name for an older version if we already have a newer version name
+            if (appliedTo != null && appliedTo.ordinal() > nmsEntityName.version().ordinal()) {
+                continue;
+            }
+
+            // Set the version variable, so we can use it in the above check
+            appliedTo = nmsEntityName.version();
+            modernMinecraftName = nmsEntityName.value();
+        }
+
         if (modernMinecraftName != null) {
             setEntityType(EntityType.fromName(modernMinecraftName));
         }
@@ -462,7 +480,7 @@ public enum DisguiseType {
 
         if (getPacketEntityType() == null) {
             throw new IllegalStateException(
-                "Unable to find the packetevents entity type for " + name() + " with EntitType enum of " + getEntityType().name() +
+                "Unable to find the packetevents entity type for " + name() + " with EntityType enum of " + getEntityType().name() +
                     " and name of " + getEntityType().getName());
         }
     }
@@ -521,5 +539,4 @@ public enum DisguiseType {
 
         return TranslateType.DISGUISES.get(StringUtils.join(split, " "));
     }
-
 }

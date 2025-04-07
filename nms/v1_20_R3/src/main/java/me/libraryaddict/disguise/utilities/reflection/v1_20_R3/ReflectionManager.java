@@ -8,7 +8,6 @@ import io.netty.buffer.PooledByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.SneakyThrows;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
@@ -25,9 +24,6 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.animal.CatVariant;
-import net.minecraft.world.entity.animal.FrogVariant;
-import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.player.ChatVisiblity;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.block.Block;
@@ -392,51 +388,29 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     }
 
     @Override
-    public Cat.Type getCatTypeFromInt(int catType) {
-        Registry<CatVariant> registry = BuiltInRegistries.CAT_VARIANT;
+    public <T> int getIntFromType(T type) {
+        if (type instanceof Art) {
+            return BuiltInRegistries.PAINTING_VARIANT.getId(CraftArt.bukkitToMinecraft((Art) type));
+        } else if (type instanceof Frog.Variant) {
+            return BuiltInRegistries.FROG_VARIANT.getId(CraftFrog.CraftVariant.bukkitToMinecraft((Frog.Variant) type));
+        } else if (type instanceof Cat.Type) {
+            return BuiltInRegistries.CAT_VARIANT.getId(CraftCat.CraftType.bukkitToMinecraft((Cat.Type) type));
+        }
 
-        Holder.Reference<CatVariant> ref = registry.getHolder(catType).get();
-
-        return CraftCat.CraftType.minecraftToBukkit(ref.value());
+        return super.getIntFromType(type);
     }
 
     @Override
-    public int getCatVariantAsInt(Cat.Type type) {
-        Registry<CatVariant> registry = BuiltInRegistries.CAT_VARIANT;
+    public <T> T getTypeFromInt(Class<T> typeClass, int typeId) {
+        if (typeClass == Art.class) {
+            return (T) CraftArt.minecraftHolderToBukkit(BuiltInRegistries.PAINTING_VARIANT.getHolder(typeId).get());
+        } else if (typeClass == Frog.Variant.class) {
+            return (T) CraftFrog.CraftVariant.minecraftToBukkit(BuiltInRegistries.FROG_VARIANT.getHolder(typeId).get().value());
+        } else if (typeClass == Cat.Type.class) {
+            return (T) CraftCat.CraftType.minecraftToBukkit(BuiltInRegistries.CAT_VARIANT.getHolder(typeId).get().value());
+        }
 
-        return registry.getId(CraftCat.CraftType.bukkitToMinecraft(type));
-    }
-
-    @Override
-    public Frog.Variant getFrogVariantFromInt(int frogType) {
-        Registry<FrogVariant> registry = BuiltInRegistries.FROG_VARIANT;
-
-        Holder.Reference<FrogVariant> ref = registry.getHolder(frogType).get();
-
-        return CraftFrog.CraftVariant.minecraftToBukkit(ref.value());
-    }
-
-    @Override
-    public int getFrogVariantAsInt(Frog.Variant type) {
-        Registry<FrogVariant> registry = BuiltInRegistries.FROG_VARIANT;
-
-        return registry.getId(CraftFrog.CraftVariant.bukkitToMinecraft(type));
-    }
-
-    @Override
-    public Art getPaintingFromInt(int paintingId) {
-        Registry<PaintingVariant> registry = BuiltInRegistries.PAINTING_VARIANT;
-
-        Holder.Reference<PaintingVariant> ref = registry.getHolder(paintingId).get();
-
-        return CraftArt.minecraftHolderToBukkit(registry.getHolder(paintingId).get());
-    }
-
-    @Override
-    public int getPaintingAsInt(Art type) {
-        Registry<PaintingVariant> registry = BuiltInRegistries.PAINTING_VARIANT;
-
-        return registry.getId(CraftArt.bukkitToMinecraft(type));
+        return super.getTypeFromInt(typeClass, typeId);
     }
 
     @Override

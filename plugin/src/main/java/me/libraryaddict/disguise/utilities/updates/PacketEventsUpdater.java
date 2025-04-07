@@ -60,7 +60,7 @@ public class PacketEventsUpdater {
      */
     public static String getMinimumPacketEventsVersion() {
         // We use a futuristic version if the features we want are in the snapshot builds
-        return "2.7.1";
+        return "2.8.0";
     }
 
     /**
@@ -68,7 +68,7 @@ public class PacketEventsUpdater {
      */
     public static Instant getMinimumPacketEventsBuildTimestamp() {
         // As taken from the most recent packetevents compiled jar
-        return Instant.ofEpochMilli(1739788578056L);
+        return Instant.ofEpochMilli(1744033354200L);
     }
 
     public static boolean isPacketEventsOutdated(Instant requiredTime) {
@@ -299,7 +299,7 @@ public class PacketEventsUpdater {
     }
 
     private void downloadFile(String fileUrl, String filename) throws IOException {
-        LibsDisguises.getInstance().getLogger().info("Now downloading " + filename);
+        LibsDisguises.getInstance().getLogger().info("Now downloading " + filename + " from " + fileUrl);
 
         URL url = new URL(fileUrl);
         // Creating a connection

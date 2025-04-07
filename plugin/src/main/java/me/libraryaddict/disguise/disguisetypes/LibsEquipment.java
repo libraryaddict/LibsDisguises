@@ -281,6 +281,14 @@ public class LibsEquipment implements EntityEquipment {
         setItemInOffHand(itemStack);
     }
 
+    public ItemStack getSaddle() {
+        return getItem(EquipmentSlot.SADDLE);
+    }
+
+    public void setSaddle(ItemStack saddle) {
+        setItem(EquipmentSlot.SADDLE, saddle);
+    }
+
     static {
         try {
             // If custm buld

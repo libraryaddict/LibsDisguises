@@ -93,6 +93,8 @@ dependencies {
     testCompileOnly(libs.org.projectlombok.lombok)
     testAnnotationProcessor(libs.org.projectlombok.lombok)
 
+    implementation(rootProject.libs.io.papermc.paper.paper.api)
+
     // Dependencies that are used to compile, and will also be provided at test runtime
     testImplementation(project(":shared"))
     testImplementation(project(":plugin"))
@@ -103,8 +105,9 @@ dependencies {
     testImplementation(libs.net.kyori.adventure.text.minimessage)
     testImplementation(libs.net.kyori.adventure.text.serializer.gson)
     testImplementation(libs.net.kyori.adventure.text.serializer.json)
+
     // dependencies that are only used when running the tests
-    testRuntimeOnly(libs.org.spigotmc.spigot.api)
+    testRuntimeOnly(rootProject.libs.io.papermc.paper.paper.api)
     testRuntimeOnly(libs.org.spigotmc.spigot)
     testRuntimeOnly(libs.commons.lang.commons.lang)
     testRuntimeOnly(libs.io.netty.netty.buffer)

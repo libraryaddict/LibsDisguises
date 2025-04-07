@@ -2343,7 +2343,7 @@ public class DisguiseUtilities {
 
         // Resend entity metadata else they will be invisible to themselves until its resent
         try {
-            List<EntityData> list = ReflectionManager.getEntityWatcher(player);
+            List<EntityData<?>> list = ReflectionManager.getEntityWatcher(player);
 
             WrapperPlayServerEntityMetadata metadata = new WrapperPlayServerEntityMetadata(player.getEntityId(), list);
 
@@ -2899,6 +2899,8 @@ public class DisguiseUtilities {
                 for (EquipmentSlot slot : EquipmentSlot.values()) {
                     if (slot == EquipmentSlot.BODY && !NmsVersion.v1_20_R4.isSupported()) {
                         continue;
+                    } else if (slot == EquipmentSlot.SADDLE && !NmsVersion.v1_21_R4.isSupported()) {
+                        continue;
                     }
 
                     list.add(new Equipment(slot, fromBukkitItemStack(getSlot(player.getInventory(), getSlot(slot)))));
@@ -3428,8 +3430,8 @@ public class DisguiseUtilities {
         }
     }
 
-    public static List<EntityData> createDatawatcher(List<WatcherValue> watcherValues) {
-        List<EntityData> list = new ArrayList<>();
+    public static List<EntityData<?>> createDatawatcher(List<WatcherValue> watcherValues) {
+        List<EntityData<?>> list = new ArrayList<>();
 
         for (WatcherValue value : watcherValues) {
             list.add(value.getDataValue());
@@ -3704,7 +3706,7 @@ public class DisguiseUtilities {
 
     private static void addSpawn(Entity entity, Location loc, double startingY, int[] standIds, int index, List<PacketWrapper<?>> packets,
                                  String line) {
-        List<EntityData> watcherValues =
+        List<EntityData<?>> watcherValues =
             constructNameEntity(DisguiseConfig.isDisplayTextName() ? TextDisplayWatcher.class : ArmorStandWatcher.class, line);
         double y = startingY + (getNameSpacing() * index);
 
@@ -3777,9 +3779,8 @@ public class DisguiseUtilities {
         return new WrapperPlayServerEntityMetadata(entityId, Collections.singletonList(data));
     }
 
-    private static List<EntityData> constructNameEntity(Class<? extends FlagWatcher> clss, String line) {
-
-        List<EntityData> watcherValues = new ArrayList<>();
+    private static List<EntityData<?>> constructNameEntity(Class<? extends FlagWatcher> clss, String line) {
+        List<EntityData<?>> watcherValues = new ArrayList<>();
 
         for (MetaIndex index : MetaIndex.getMetaIndexes(clss)) {
             Object val = index.getDefault();
@@ -4090,7 +4091,8 @@ public class DisguiseUtilities {
             case HEAD:
                 return ((LivingEntity) disguisedEntity).getEquipment().getHelmet();
             default:
-                if (NmsVersion.v1_20_R4.isSupported() && slot == org.bukkit.inventory.EquipmentSlot.BODY) {
+                if ((NmsVersion.v1_20_R4.isSupported() && slot == org.bukkit.inventory.EquipmentSlot.BODY) ||
+                    (NmsVersion.v1_21_R4.isSupported() && slot == org.bukkit.inventory.EquipmentSlot.SADDLE)) {
                     // Paper will throw an error, which is valid, but annoying
                     if (disguisedEntity instanceof Player) {
                         return new ItemStack(Material.AIR);
@@ -4103,7 +4105,7 @@ public class DisguiseUtilities {
         }
     }
 
-    public static org.bukkit.inventory.EquipmentSlot getSlot(com.github.retrooper.packetevents.protocol.player.EquipmentSlot slot) {
+    public static org.bukkit.inventory.EquipmentSlot getSlot(EquipmentSlot slot) {
         switch (slot) {
             case BOOTS:
                 return org.bukkit.inventory.EquipmentSlot.FEET;
@@ -4119,6 +4121,8 @@ public class DisguiseUtilities {
                 return org.bukkit.inventory.EquipmentSlot.CHEST;
             case BODY:
                 return org.bukkit.inventory.EquipmentSlot.BODY;
+            case SADDLE:
+                return org.bukkit.inventory.EquipmentSlot.SADDLE;
             default:
                 throw new IllegalStateException("Unknown equip slot " + slot);
         }
@@ -4127,19 +4131,21 @@ public class DisguiseUtilities {
     public static com.github.retrooper.packetevents.protocol.player.EquipmentSlot getSlot(org.bukkit.inventory.EquipmentSlot slot) {
         switch (slot) {
             case FEET:
-                return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.BOOTS;
+                return EquipmentSlot.BOOTS;
             case OFF_HAND:
-                return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.OFF_HAND;
+                return EquipmentSlot.OFF_HAND;
             case HEAD:
-                return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.HELMET;
+                return EquipmentSlot.HELMET;
             case HAND:
-                return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.MAIN_HAND;
+                return EquipmentSlot.MAIN_HAND;
             case CHEST:
-                return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.CHEST_PLATE;
+                return EquipmentSlot.CHEST_PLATE;
             case LEGS:
-                return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.LEGGINGS;
+                return EquipmentSlot.LEGGINGS;
             case BODY:
-                return com.github.retrooper.packetevents.protocol.player.EquipmentSlot.BODY;
+                return EquipmentSlot.BODY;
+            case SADDLE:
+                return EquipmentSlot.SADDLE;
             default:
                 throw new IllegalStateException("Unknown equip slot " + slot);
         }

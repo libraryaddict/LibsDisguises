@@ -79,7 +79,7 @@ public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerE
             MetaIndex toUse = NmsVersion.v1_13.isSupported() ? MetaIndex.LIVING_META : MetaIndex.ENTITY_META;
 
             if (DisguiseConfig.isMetaPacketsEnabled()) {
-                List<EntityData> data = ReflectionManager.getEntityWatcher(entity);
+                List<EntityData<?>> data = ReflectionManager.getEntityWatcher(entity);
                 byte b = (byte) toUse.getDefault();
 
                 for (EntityData d : data) {

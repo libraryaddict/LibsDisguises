@@ -75,6 +75,7 @@ public class VillagerWatcher extends AbstractVillagerWatcher {
         return getType();
     }
 
+    @RandomDefaultValue
     @NmsAddedIn(NmsVersion.v1_14)
     public void setBiome(Villager.Type type) {
         setType(type);
@@ -85,6 +86,7 @@ public class VillagerWatcher extends AbstractVillagerWatcher {
         return getVillagerData().getLevel();
     }
 
+    @RandomDefaultValue
     @NmsAddedIn(NmsVersion.v1_14)
     public void setLevel(int level) {
         setVillagerData(new VillagerData(VillagerTypes.getByName(ReflectionManager.keyedName(getType())),

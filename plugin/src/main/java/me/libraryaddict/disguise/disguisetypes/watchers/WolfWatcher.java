@@ -1,9 +1,12 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariants;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
@@ -23,9 +26,28 @@ public class WolfWatcher extends TameableWatcher {
 
         if (DisguiseConfig.isRandomDisguises()) {
             if (NmsVersion.v1_20_R4.isSupported()) {
-                setVariant(ReflectionManager.randomEnum(Wolf.Variant.class));
+                Wolf.Variant variant = ReflectionManager.randomEnum(Wolf.Variant.class);
+
+                setVariant(variant);
+
+                if (NmsVersion.v1_21_R4.isSupported()) {
+                    setSoundVariant(WolfSoundVariants.getRegistry().getByName(variant.getKey().getKey()));
+                }
             }
         }
+    }
+
+    @Deprecated
+    @NmsAddedIn(NmsVersion.v1_21_R4)
+    public WolfSoundVariant getSoundVariant() {
+        return getData(MetaIndex.WOLF_SOUND_VARIANT);
+    }
+
+    @Deprecated
+    @RandomDefaultValue
+    @NmsAddedIn(NmsVersion.v1_21_R4)
+    public void setSoundVariant(WolfSoundVariant soundVariant) {
+        sendData(MetaIndex.WOLF_SOUND_VARIANT, soundVariant);
     }
 
     public DyeColor getCollarColor() {
@@ -105,6 +127,7 @@ public class WolfWatcher extends TameableWatcher {
         sendData(MetaIndex.WOLF_DAMAGE, damage);
     }
 
+    @RandomDefaultValue
     @NmsAddedIn(NmsVersion.v1_20_R4)
     public void setVariant(Wolf.Variant variant) {
         sendData(MetaIndex.WOLF_VARIANT, variant);

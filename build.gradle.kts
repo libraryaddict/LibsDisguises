@@ -51,8 +51,6 @@ subprojects {
     version = "1.0-SNAPSHOT"
 
     dependencies {
-        implementation(rootProject.libs.org.spigotmc.spigot.api)
-
         compileOnly(rootProject.libs.org.projectlombok.lombok)
         annotationProcessor(rootProject.libs.org.projectlombok.lombok)
     }

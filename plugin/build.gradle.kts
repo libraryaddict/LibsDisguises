@@ -13,7 +13,6 @@ dependencies {
     compileOnly(libs.commons.lang.commons.lang)
     compileOnly(libs.com.mojang.authlib.new)
     compileOnly(libs.io.papermc.paper.paper.api);
-    compileOnly(libs.org.spigotmc.spigot.api)
     compileOnly(libs.com.retro.packetevents)
     compileOnly(libs.it.unimi.dsi.fastutil)
     compileOnly(libs.placeholder.api)

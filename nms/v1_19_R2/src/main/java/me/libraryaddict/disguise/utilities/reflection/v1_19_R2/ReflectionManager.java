@@ -9,7 +9,6 @@ import io.netty.buffer.PooledByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.SneakyThrows;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
@@ -25,7 +24,6 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -382,19 +380,21 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     }
 
     @Override
-    public Art getPaintingFromInt(int paintingId) {
-        Registry<PaintingVariant> registry = BuiltInRegistries.PAINTING_VARIANT;
+    public <T> int getIntFromType(T type) {
+        if (type instanceof Art) {
+            return BuiltInRegistries.PAINTING_VARIANT.getId(CraftArt.BukkitToNotch((Art) type).value());
+        }
 
-        Holder.Reference<PaintingVariant> ref = registry.getHolder(paintingId).get();
-
-        return CraftArt.NotchToBukkit(ref);
+        return super.getIntFromType(type);
     }
 
     @Override
-    public int getPaintingAsInt(Art type) {
-        Registry<PaintingVariant> registry = BuiltInRegistries.PAINTING_VARIANT;
+    public <T> T getTypeFromInt(Class<T> typeClass, int typeId) {
+        if (typeClass == Art.class) {
+            return (T) CraftArt.NotchToBukkit(BuiltInRegistries.PAINTING_VARIANT.getHolder(typeId).get());
+        }
 
-        return registry.getId(CraftArt.BukkitToNotch(type).value());
+        return super.getTypeFromInt(typeClass, typeId);
     }
 
     @Override

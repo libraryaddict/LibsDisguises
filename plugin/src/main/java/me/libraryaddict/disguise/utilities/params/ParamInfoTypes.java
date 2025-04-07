@@ -52,6 +52,8 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Cat;
+import org.bukkit.entity.Chicken;
+import org.bukkit.entity.Cow;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Fox;
 import org.bukkit.entity.Frog;
@@ -62,6 +64,7 @@ import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Panda;
 import org.bukkit.entity.Parrot;
+import org.bukkit.entity.Pig;
 import org.bukkit.entity.Pose;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Salmon;
@@ -204,6 +207,16 @@ public class ParamInfoTypes {
 
         if (NmsVersion.v1_21_R2.isSupported()) {
             paramInfos.add(new ParamInfoEnum(Salmon.Variant.class, "Salmon Variant", "The size of a salmon"));
+        }
+
+        if (NmsVersion.v1_21_R4.isSupported()) {
+            // Disabled for now, it doesn't seem to make a clientside difference, though could be used for differnating wolf types for
+            // sounds
+            //paramInfos.add(new ParamInfoPacketEvents(WolfSoundVariant.class, WolfSoundVariants.getRegistry(), "Wolf Sound Variants",
+            //    "The variant of wolf sounds"));
+            paramInfos.add(new ParamInfoEnum(Chicken.Variant.class, "Chicken Variant", "The variant of a chicken"));
+            paramInfos.add(new ParamInfoEnum(Pig.Variant.class, "Pig Variant", "The variant of a pig"));
+            paramInfos.add(new ParamInfoEnum(Cow.Variant.class, "Cow Variant", "The variant of a cow"));
         }
 
         paramInfos.add(new ParamInfoEnum(DisguiseConfig.NotifyBar.class, "NotifyBar", "Where the disguised indicator should appear"));

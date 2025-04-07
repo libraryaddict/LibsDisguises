@@ -28,10 +28,6 @@ import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.animal.CatVariant;
-import net.minecraft.world.entity.animal.FrogVariant;
-import net.minecraft.world.entity.animal.WolfVariant;
-import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.player.ChatVisiblity;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.block.Block;
@@ -395,59 +391,41 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     }
 
     @Override
-    public Cat.Type getCatTypeFromInt(int catType) {
-        Registry<CatVariant> registry = MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.CAT_VARIANT);
+    public <T> int getIntFromType(T type) {
+        if (type instanceof Art) {
+            return MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.PAINTING_VARIANT)
+                .getIdOrThrow(CraftArt.bukkitToMinecraft((Art) type));
+        } else if (type instanceof Frog.Variant) {
+            return MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.FROG_VARIANT)
+                .getIdOrThrow(CraftFrog.CraftVariant.bukkitToMinecraft((Frog.Variant) type));
+        } else if (type instanceof Cat.Type) {
+            return MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.CAT_VARIANT)
+                .getIdOrThrow(CraftCat.CraftType.bukkitToMinecraft((Cat.Type) type));
+        } else if (type instanceof Wolf.Variant) {
+            return MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.WOLF_VARIANT)
+                .getIdOrThrow(CraftWolf.CraftVariant.bukkitToMinecraft((Wolf.Variant) type));
+        }
 
-        return CraftCat.CraftType.minecraftHolderToBukkit(registry.get(catType).get());
+        return super.getIntFromType(type);
     }
 
     @Override
-    public int getCatVariantAsInt(Cat.Type type) {
-        Registry<CatVariant> registry = MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.CAT_VARIANT);
+    public <T> T getTypeFromInt(Class<T> typeClass, int typeId) {
+        if (typeClass == Art.class) {
+            return (T) CraftArt.minecraftHolderToBukkit(
+                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.PAINTING_VARIANT).get(typeId).get());
+        } else if (typeClass == Frog.Variant.class) {
+            return (T) CraftFrog.CraftVariant.minecraftHolderToBukkit(
+                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.FROG_VARIANT).get(typeId).get());
+        } else if (typeClass == Cat.Type.class) {
+            return (T) CraftCat.CraftType.minecraftHolderToBukkit(
+                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.CAT_VARIANT).get(typeId).get());
+        } else if (typeClass == Wolf.Variant.class) {
+            return (T) CraftWolf.CraftVariant.minecraftHolderToBukkit(
+                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.WOLF_VARIANT).get(typeId).get());
+        }
 
-        return registry.getIdOrThrow(CraftCat.CraftType.bukkitToMinecraft(type));
-    }
-
-    @Override
-    public Frog.Variant getFrogVariantFromInt(int frogType) {
-        Registry<FrogVariant> registry = MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.FROG_VARIANT);
-
-        return CraftFrog.CraftVariant.minecraftHolderToBukkit(registry.get(frogType).get());
-    }
-
-    @Override
-    public int getFrogVariantAsInt(Frog.Variant type) {
-        Registry<FrogVariant> registry = MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.FROG_VARIANT);
-
-        return registry.getIdOrThrow(CraftFrog.CraftVariant.bukkitToMinecraft(type));
-    }
-
-    @Override
-    public Art getPaintingFromInt(int paintingId) {
-        Registry<PaintingVariant> registry = MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.PAINTING_VARIANT);
-
-        return CraftArt.minecraftHolderToBukkit(registry.get(paintingId - 1).get());
-    }
-
-    @Override
-    public int getPaintingAsInt(Art type) {
-        Registry<PaintingVariant> registry = MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.PAINTING_VARIANT);
-
-        return registry.getIdOrThrow(CraftArt.bukkitToMinecraft(type)) + 1;
-    }
-
-    @Override
-    public Wolf.Variant getWolfVariantFromInt(int wolfVariant) {
-        Registry<WolfVariant> registry = MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.WOLF_VARIANT);
-
-        return CraftWolf.CraftVariant.minecraftHolderToBukkit(registry.get(wolfVariant - 1).get());
-    }
-
-    @Override
-    public int getWolfVariantAsInt(Wolf.Variant type) {
-        Registry<WolfVariant> registry = MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.WOLF_VARIANT);
-
-        return registry.getIdOrThrow(CraftWolf.CraftVariant.bukkitToMinecraft(type)) + 1;
+        return super.getTypeFromInt(typeClass, typeId);
     }
 
     @Override

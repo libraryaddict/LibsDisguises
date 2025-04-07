@@ -23,7 +23,6 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.decoration.Motive;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -359,19 +358,21 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     }
 
     @Override
-    public Art getPaintingFromInt(int paintingId) {
-        Registry<Motive> registry = Registry.MOTIVE;
+    public <T> int getIntFromType(T type) {
+        if (type instanceof Art) {
+            return Registry.MOTIVE.getId(CraftArt.BukkitToNotch((Art) type));
+        }
 
-        Motive ref = registry.byId(paintingId);
-
-        return CraftArt.NotchToBukkit(ref);
+        return super.getIntFromType(type);
     }
 
     @Override
-    public int getPaintingAsInt(Art type) {
-        Registry<Motive> registry = Registry.MOTIVE;
+    public <T> T getTypeFromInt(Class<T> typeClass, int typeId) {
+        if (typeClass == Art.class) {
+            return (T) CraftArt.NotchToBukkit(Registry.MOTIVE.byId(typeId));
+        }
 
-        return registry.getId(CraftArt.BukkitToNotch(type));
+        return super.getTypeFromInt(typeClass, typeId);
     }
 
     @Override

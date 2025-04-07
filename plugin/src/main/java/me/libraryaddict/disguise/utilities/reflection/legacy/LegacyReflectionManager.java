@@ -22,7 +22,6 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -963,16 +962,6 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
     }
 
     @Override
-    public Art getPaintingFromInt(int paintingId) {
-        throw new IllegalArgumentException("Not supported prior to 1.19");
-    }
-
-    @Override
-    public int getPaintingAsInt(Art type) {
-        throw new IllegalArgumentException("Not supported prior to 1.19");
-    }
-
-    @Override
     public Object getEntityTracker(Entity target) throws Exception {
         // Prior to 1.14, 'EntityTracker' is never used
         if (!NmsVersion.v1_14.isSupported()) {
@@ -1038,13 +1027,21 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
     }
 
     @Override
-    public Cat.Type getCatTypeFromInt(int catType) {
-        return fromEnum(Cat.Type.class, catType);
+    public <T> T getTypeFromInt(Class<T> typeClass, int typeId) {
+        if (typeClass == Cat.Type.class) {
+            return (T) fromEnum(Cat.Type.class, typeId);
+        }
+
+        return super.getTypeFromInt(typeClass, typeId);
     }
 
     @Override
-    public int getCatVariantAsInt(Cat.Type type) {
-        return enumOrdinal(type);
+    public <T> int getIntFromType(T type) {
+        if (type instanceof Cat.Type) {
+            return enumOrdinal(type);
+        }
+
+        return super.getIntFromType(type);
     }
 
     @Override

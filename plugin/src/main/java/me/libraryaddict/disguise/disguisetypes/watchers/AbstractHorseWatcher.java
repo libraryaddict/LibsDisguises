@@ -5,6 +5,9 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
+import org.bukkit.Material;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -78,12 +81,23 @@ public abstract class AbstractHorseWatcher extends AgeableWatcher {
     }
 
     public boolean isSaddled() {
-        return isHorseFlag(SADDLED);
+        if (!NmsVersion.v1_21_R4.isSupported()) {
+            return isHorseFlag(SADDLED);
+        }
+
+        ItemStack item = getItemStack(EquipmentSlot.SADDLE);
+
+        return item != null && item.getType() != Material.AIR;
     }
 
     @MethodDescription("Is the horse wearing a saddle?")
     public void setSaddled(boolean saddled) {
-        setHorseFlag(SADDLED, saddled);
+        if (!NmsVersion.v1_21_R4.isSupported()) {
+            setHorseFlag(SADDLED, saddled);
+            return;
+        }
+
+        setItemStack(EquipmentSlot.SADDLE, new ItemStack(saddled ? Material.SADDLE : Material.AIR));
     }
 
     public boolean isTamed() {

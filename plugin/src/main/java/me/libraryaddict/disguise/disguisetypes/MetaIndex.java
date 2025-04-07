@@ -7,6 +7,8 @@ import com.github.retrooper.packetevents.protocol.entity.sniffer.SnifferState;
 import com.github.retrooper.packetevents.protocol.entity.villager.VillagerData;
 import com.github.retrooper.packetevents.protocol.entity.villager.profession.VillagerProfessions;
 import com.github.retrooper.packetevents.protocol.entity.villager.type.VillagerTypes;
+import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariants;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.particle.Particle;
 import com.github.retrooper.packetevents.protocol.particle.data.ParticleColorData;
@@ -38,6 +40,8 @@ import me.libraryaddict.disguise.disguisetypes.watchers.BoggedWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CamelWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ChestedHorseWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ChickenWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.CowWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CreakingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CreeperWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.DisplayWatcher;
@@ -47,6 +51,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.EnderCrystalWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.EnderDragonWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.EnderSignalWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.EndermanWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ExperienceOrbWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FireballWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FireworkWatcher;
@@ -130,13 +135,17 @@ import org.bukkit.TreeSpecies;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Cat;
+import org.bukkit.entity.Chicken;
+import org.bukkit.entity.Cow;
 import org.bukkit.entity.Fox;
 import org.bukkit.entity.Frog;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Llama;
+import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Panda;
 import org.bukkit.entity.Parrot;
+import org.bukkit.entity.Pig;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Salmon;
 import org.bukkit.entity.Wolf;
@@ -332,9 +341,17 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<AnimalColor> CAT_COLLAR = new MetaIndex<>(CatWatcher.class, 3, AnimalColor.RED);
 
+    @NmsAddedIn(NmsVersion.v1_21_R4)
+    public static MetaIndex<Chicken.Variant> CHICKEN_VARIANT =
+        new MetaIndex<>(ChickenWatcher.class, 0, NmsVersion.v1_21_R4.isSupported() ? Chicken.Variant.TEMPERATE : null);
+
+    @NmsAddedIn(NmsVersion.v1_21_R4)
+    public static MetaIndex<Cow.Variant> COW_VARIANT =
+        new MetaIndex<>(CowWatcher.class, 0, NmsVersion.v1_21_R4.isSupported() ? Cow.Variant.TEMPERATE : null);
+
     @NmsAddedIn(NmsVersion.v1_21_R3)
     public static MetaIndex<Boolean> CREAKING_CAN_MOVE = new MetaIndex<>(CreakingWatcher.class, 0, true);
-    
+
     @NmsAddedIn(NmsVersion.v1_21_R3)
     public static MetaIndex<Boolean> CREAKING_IS_ACTIVE = new MetaIndex<>(CreakingWatcher.class, 0, false);
 
@@ -397,6 +414,7 @@ public class MetaIndex<Y> {
     /**
      * No visible effect
      */
+    @NmsRemovedIn(NmsVersion.v1_21_R4)
     public static MetaIndex<Vector3i> DOLPHIN_TREASURE_POS = new MetaIndex<>(DolphinWatcher.class, 0, Vector3i.zero());
     /**
      * No visible effect
@@ -482,6 +500,9 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_17)
     public static MetaIndex<Integer> ENTITY_TICKS_FROZEN = new MetaIndex<>(FlagWatcher.class, 7, 0);
 
+    @NmsAddedIn(NmsVersion.v1_21_R4)
+    public static MetaIndex<Integer> EXPERIENCE_ORB_VALUE = new MetaIndex<>(ExperienceOrbWatcher.class, 0, 0);
+
     public static MetaIndex<Vector3i> FALLING_BLOCK_POSITION = new MetaIndex<>(FallingBlockWatcher.class, 0, Vector3i.zero());
 
     @NmsAddedIn(NmsVersion.v1_14)
@@ -564,6 +585,7 @@ public class MetaIndex<Y> {
 
     @NmsRemovedIn(NmsVersion.v1_14)
     public static MetaIndex<Integer> HORSE_ARMOR = new MetaIndex<>(HorseWatcher.class, 1, 0);
+
     /**
      * Color of the horse, uses enum not RGB
      */
@@ -674,7 +696,12 @@ public class MetaIndex<Y> {
     /**
      * The block id:data combined id, 0 if no block
      */
+    @NmsRemovedIn(NmsVersion.v1_21_R4)
     public static MetaIndex<Integer> MINECART_BLOCK = new MetaIndex<>(MinecartWatcher.class, 3, 0);
+
+    @NmsAddedIn(NmsVersion.v1_21_R4)
+    public static MetaIndex<WrappedBlockState> MINECART_BLOCK_NEW =
+        new MetaIndex<>(MinecartWatcher.class, 3, WrappedBlockState.getByGlobalId(0));
 
     /**
      * How much gap there should be between minecart and block, 6 by default
@@ -684,6 +711,7 @@ public class MetaIndex<Y> {
     /**
      * If there is a block inside the minecart
      */
+    @NmsRemovedIn(NmsVersion.v1_21_R4)
     public static MetaIndex<Boolean> MINECART_BLOCK_VISIBLE = new MetaIndex<>(MinecartWatcher.class, 5, false);
 
     /**
@@ -699,7 +727,8 @@ public class MetaIndex<Y> {
     public static MetaIndex<Boolean> MINECART_FURANCE_FUELED = new MetaIndex<>(MinecartFurnaceWatcher.class, 0, false);
 
     @NmsAddedIn(NmsVersion.v1_14)
-    public static MetaIndex<String> MUSHROOM_COW_TYPE = new MetaIndex<>(MushroomCowWatcher.class, 0, "RED");
+    public static MetaIndex<MushroomCow.Variant> MUSHROOM_COW_TYPE =
+        new MetaIndex<>(MushroomCowWatcher.class, 0, NmsVersion.v1_14.isSupported() ? MushroomCow.Variant.RED : null);
 
     @NmsRemovedIn(NmsVersion.v1_14)
     public static MetaIndex<Ocelot.Type> OCELOT_TYPE =
@@ -739,12 +768,17 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> PHANTOM_SIZE = new MetaIndex<>(PhantomWatcher.class, 0, 0);
 
+    @NmsRemovedIn(NmsVersion.v1_21_R4)
     public static MetaIndex<Boolean> PIG_SADDLED = new MetaIndex<>(PigWatcher.class, 0, false);
 
     /**
      * If pig runs faster, no visible effect
      */
     public static MetaIndex<Integer> PIG_BOOST = new MetaIndex<>(PigWatcher.class, 1, 0);
+
+    @NmsAddedIn(NmsVersion.v1_21_R4)
+    public static MetaIndex<Pig.Variant> PIG_VARIANT =
+        new MetaIndex<>(PigWatcher.class, 2, NmsVersion.v1_21_R4.isSupported() ? Pig.Variant.TEMPERATE : null);
 
     @NmsAddedIn(NmsVersion.v1_16)
     public static MetaIndex<Boolean> PIGLIN_ABSTRACT_SHAKING = new MetaIndex<>(PiglinAbstractWatcher.class, 0, false);
@@ -818,9 +852,10 @@ public class MetaIndex<Y> {
     public static MetaIndex<Integer> STRIDER_BOOST_TIME = new MetaIndex<>(StriderWatcher.class, 0, 0);
 
     @NmsAddedIn(NmsVersion.v1_16)
-    public static MetaIndex<Boolean> STRIDER_WARM = new MetaIndex<>(StriderWatcher.class, 1, false);
+    public static MetaIndex<Boolean> STRIDER_SUFFOCATING = new MetaIndex<>(StriderWatcher.class, 1, false);
 
     @NmsAddedIn(NmsVersion.v1_16)
+    @NmsRemovedIn(NmsVersion.v1_21_R4)
     public static MetaIndex<Boolean> STRIDER_SADDLED = new MetaIndex<>(StriderWatcher.class, 2, false);
 
     public static MetaIndex<Byte> SPIDER_CLIMB = new MetaIndex<>(SpiderWatcher.class, 0, (byte) 0);
@@ -860,17 +895,22 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> TROPICAL_FISH_VARIANT = new MetaIndex<>(TropicalFishWatcher.class, 0, 0);
 
+    @NmsRemovedIn(NmsVersion.v1_21_R4)
     public static MetaIndex<Vector3i> TURTLE_HOME_POSITION = new MetaIndex<>(TurtleWatcher.class, 0, Vector3i.zero());
 
     public static MetaIndex<Boolean> TURTLE_HAS_EGG = new MetaIndex<>(TurtleWatcher.class, 1, false);
 
-    public static MetaIndex<Boolean> TURTLE_UNKNOWN_3 = new MetaIndex<>(TurtleWatcher.class, 2, false);
+    // No visible effect
+    public static MetaIndex<Boolean> TURTLE_LAYING_EGG = new MetaIndex<>(TurtleWatcher.class, 2, false);
 
+    @NmsRemovedIn(NmsVersion.v1_21_R4)
     public static MetaIndex<Vector3i> TURTLE_TRAVEL_POSITION = new MetaIndex<>(TurtleWatcher.class, 3, Vector3i.zero());
 
-    public static MetaIndex<Boolean> TURTLE_UNKNOWN_1 = new MetaIndex<>(TurtleWatcher.class, 4, false);
+    @NmsRemovedIn(NmsVersion.v1_21_R4)
+    public static MetaIndex<Boolean> TURTLE_GOING_HOME = new MetaIndex<>(TurtleWatcher.class, 4, false);
 
-    public static MetaIndex<Boolean> TURTLE_UNKNOWN_2 = new MetaIndex<>(TurtleWatcher.class, 5, false);
+    @NmsRemovedIn(NmsVersion.v1_21_R4)
+    public static MetaIndex<Boolean> TURTLE_TRAVELLING = new MetaIndex<>(TurtleWatcher.class, 5, false);
 
     public static MetaIndex<Byte> VEX_ANGRY = new MetaIndex<>(VexWatcher.class, 0, (byte) 0);
 
@@ -911,6 +951,12 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_20_R4)
     public static MetaIndex<Wolf.Variant> WOLF_VARIANT =
         new MetaIndex<>(WolfWatcher.class, 4, NmsVersion.v1_20_R4.isSupported() ? Wolf.Variant.PALE : null);
+
+    /**
+     * Uses WolfSoundVariant as Wolf.SoundVariant is paper only, and spigot does not seem to have an implemention at casual glance
+     */
+    @NmsAddedIn(NmsVersion.v1_21_R4)
+    public static MetaIndex<WolfSoundVariant> WOLF_SOUND_VARIANT = new MetaIndex<>(WolfWatcher.class, 5, WolfSoundVariants.CLASSIC);
 
     @NmsAddedIn(NmsVersion.v1_16)
     public static MetaIndex<Boolean> ZOGLIN_BABY = new MetaIndex<>(ZoglinWatcher.class, 0, false);
@@ -1302,7 +1348,7 @@ public class MetaIndex<Y> {
     }
 
     public boolean isBlockOpt() {
-        return this == ENDERMAN_ITEM;
+        return this == ENDERMAN_ITEM || this == MINECART_BLOCK_NEW;
     }
 
     public boolean isRotation() {

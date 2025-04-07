@@ -126,7 +126,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
         boolean inLineOfSight = true;
 
-        if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
+        if (disguise.getType() == DisguiseType.EXPERIENCE_ORB && !NmsVersion.v1_21_R4.isSupported()) {
             WrapperPlayServerSpawnExperienceOrb spawnOrb =
                 new WrapperPlayServerSpawnExperienceOrb(entityId, loc.getX(), loc.getY() + 0.06, loc.getZ(), (short) 1);
             packets.addPacket(spawnOrb);
@@ -360,6 +360,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
         if (DisguiseConfig.isEquipmentPacketsEnabled()) {
             for (EquipmentSlot slot : EquipmentSlot.values()) {
                 if (slot == EquipmentSlot.BODY && !NmsVersion.v1_20_R4.isSupported()) {
+                    continue;
+                } else if (slot == EquipmentSlot.SADDLE && !NmsVersion.v1_21_R4.isSupported()) {
                     continue;
                 }
 

@@ -150,7 +150,7 @@ public class MiscDisguise extends TargetedDisguise {
                 return ((FallingBlockWatcher) getWatcher()).getBlockCombinedId();
             case PAINTING:
                 if (!NmsVersion.v1_19_R1.isSupported()) {
-                    return ((PaintingWatcher) getWatcher()).getArt().getId();
+                    return ReflectionManager.enumOrdinal(((PaintingWatcher) getWatcher()).getArt());
                 }
 
                 return data;

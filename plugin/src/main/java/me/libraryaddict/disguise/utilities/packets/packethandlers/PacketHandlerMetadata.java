@@ -30,7 +30,7 @@ public class PacketHandlerMetadata implements IPacketHandler<WrapperPlayServerEn
             return;
         }
 
-        List<EntityData> dataList = packets.getOriginalPacket().getEntityMetadata();
+        List<EntityData<?>> dataList = packets.getOriginalPacket().getEntityMetadata();
         List<WatcherValue> watcherValues = new ArrayList<>();
 
         for (EntityData data : dataList) {

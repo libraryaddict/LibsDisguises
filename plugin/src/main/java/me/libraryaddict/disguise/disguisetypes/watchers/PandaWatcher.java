@@ -42,6 +42,7 @@ public class PandaWatcher extends AgeableWatcher {
         return getData(MetaIndex.PANDA_MAIN_GENE);
     }
 
+    @RandomDefaultValue
     @MethodOnlyUsedBy(value = {}) // Hide from command
     public void setMainGene(Panda.Gene gene) {
         sendData(MetaIndex.PANDA_MAIN_GENE, gene);
@@ -51,6 +52,7 @@ public class PandaWatcher extends AgeableWatcher {
         return getData(MetaIndex.PANDA_HIDDEN_GENE);
     }
 
+    @RandomDefaultValue
     @MethodOnlyUsedBy(value = {}) // Hide from command
     public void setHiddenGene(Panda.Gene gene) {
         sendData(MetaIndex.PANDA_HIDDEN_GENE, gene);

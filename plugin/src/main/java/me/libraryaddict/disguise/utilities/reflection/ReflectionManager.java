@@ -3,15 +3,29 @@ package me.libraryaddict.disguise.utilities.reflection;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
 import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloState;
+import com.github.retrooper.packetevents.protocol.entity.cat.CatVariant;
+import com.github.retrooper.packetevents.protocol.entity.cat.CatVariants;
+import com.github.retrooper.packetevents.protocol.entity.chicken.ChickenVariant;
+import com.github.retrooper.packetevents.protocol.entity.chicken.ChickenVariants;
+import com.github.retrooper.packetevents.protocol.entity.cow.CowVariant;
+import com.github.retrooper.packetevents.protocol.entity.cow.CowVariants;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataType;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
+import com.github.retrooper.packetevents.protocol.entity.frog.FrogVariant;
+import com.github.retrooper.packetevents.protocol.entity.frog.FrogVariants;
+import com.github.retrooper.packetevents.protocol.entity.pig.PigVariant;
+import com.github.retrooper.packetevents.protocol.entity.pig.PigVariants;
 import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.protocol.entity.sniffer.SnifferState;
+import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfVariant;
+import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfVariants;
 import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
+import com.github.retrooper.packetevents.protocol.world.painting.PaintingVariant;
+import com.github.retrooper.packetevents.protocol.world.painting.PaintingVariants;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.util.Vector3f;
@@ -48,6 +62,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.OcelotWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PufferFishWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SpiderWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TNTWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TameableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TippedArrowWatcher;
@@ -82,6 +97,8 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Cat;
+import org.bukkit.entity.Chicken;
+import org.bukkit.entity.Cow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -93,9 +110,11 @@ import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Llama;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Panda;
 import org.bukkit.entity.Parrot;
+import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Salmon;
@@ -380,7 +399,7 @@ public class ReflectionManager {
     }
 
     public static WrapperPlayServerEntityMetadata getMetadataPacket(int entityId, List<WatcherValue> values) {
-        List<EntityData> entityData = new ArrayList<>();
+        List<EntityData<?>> entityData = new ArrayList<>();
 
         values.forEach(v -> entityData.add(v.getDataValue()));
 
@@ -902,13 +921,40 @@ public class ReflectionManager {
         if (index == MetaIndex.BOAT_TYPE_OLD) {
             return (T) TreeSpecies.getByData((byte) ((int) value));
         } else if (index == MetaIndex.CAT_TYPE) {
-            return (T) getNmsReflection().getCatTypeFromInt((int) value);
+            // At time of writing, only 1.21.5+ use variant classes
+            if (value instanceof CatVariant) {
+                value = ((CatVariant) value).getId(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
+            }
+
+            return (T) getNmsReflection().getTypeFromInt(Cat.Type.class, (Integer) value);
         } else if (index == MetaIndex.FROG_VARIANT) {
-            return (T) getNmsReflection().getFrogVariantFromInt((int) value);
+            // At time of writing, only 1.21.5+ use variant classes
+            if (value instanceof FrogVariant) {
+                value = ((FrogVariant) value).getId(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
+            }
+
+            return (T) getNmsReflection().getTypeFromInt(Frog.Variant.class, (Integer) value);
         } else if (index == MetaIndex.PAINTING) {
-            return (T) getNmsReflection().getPaintingFromInt((int) value);
+            return (T) getNmsReflection().getTypeFromInt(Art.class,
+                ((PaintingVariant) value).getId(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion()));
         } else if (index == MetaIndex.WOLF_VARIANT) {
-            return (T) getNmsReflection().getWolfVariantFromInt((int) value);
+            return (T) getNmsReflection().getTypeFromInt(Wolf.Variant.class,
+                ((WolfVariant) value).getId(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion()));
+        } else if (index == MetaIndex.CHICKEN_VARIANT) {
+            return (T) getNmsReflection().getTypeFromInt(Chicken.Variant.class,
+                ((ChickenVariant) value).getId(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion()));
+        } else if (index == MetaIndex.PIG_VARIANT) {
+            return (T) getNmsReflection().getTypeFromInt(Pig.Variant.class,
+                ((PigVariant) value).getId(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion()));
+        } else if (index == MetaIndex.MUSHROOM_COW_TYPE) {
+            if (!NmsVersion.v1_21_R4.isSupported()) {
+                return (T) fromEnum(MushroomCow.Variant.class, (String) value);
+            }
+
+            return (T) fromEnum(MushroomCow.Variant.class, (int) value);
+        } else if (index == MetaIndex.COW_VARIANT) {
+            return (T) getNmsReflection().getTypeFromInt(Cow.Variant.class,
+                ((CowVariant) value).getId(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion()));
         } else if (index == MetaIndex.SALMON_VARIANT) {
             if (NmsVersion.v1_21_R3.isSupported()) {
                 return (T) Salmon.Variant.values()[(int) value];
@@ -986,21 +1032,42 @@ public class ReflectionManager {
 
         if (NmsVersion.v1_14.isSupported()) {
             if (value instanceof Cat.Type) {
-                return getNmsReflection().getCatVariantAsInt((Cat.Type) value);
+                int asInt = getNmsReflection().getIntFromType(value);
+
+                if (index.getDataType() != EntityDataTypes.TYPED_CAT_VARIANT) {
+                    return asInt;
+                }
+
+                return CatVariants.getRegistry().getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(), asInt);
+            } else if (value instanceof MushroomCow.Variant) {
+                if (NmsVersion.v1_21_R4.isSupported()) {
+                    return enumOrdinal(value);
+                }
+
+                return ((Enum) value).name().toLowerCase(Locale.ENGLISH);
             }
 
             if (NmsVersion.v1_19_R1.isSupported()) {
                 if (value instanceof Frog.Variant) {
-                    return getNmsReflection().getFrogVariantAsInt((Frog.Variant) value);
+                    int asInt = getNmsReflection().getIntFromType(value);
+
+                    if (index.getDataType() != EntityDataTypes.TYPED_FROG_VARIANT) {
+                        return asInt;
+                    }
+
+                    return FrogVariants.getRegistry()
+                        .getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(), asInt);
                 } else if (value instanceof Art) {
-                    return getNmsReflection().getPaintingAsInt((Art) value);
+                    return PaintingVariants.getRegistry().getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(),
+                        getNmsReflection().getIntFromType(value));
                 } else if (value instanceof Boat.Type) {
                     return enumOrdinal(value);
                 }
 
                 if (NmsVersion.v1_20_R4.isSupported()) {
                     if (value instanceof Wolf.Variant) {
-                        return getNmsReflection().getWolfVariantAsInt((Wolf.Variant) value);
+                        return WolfVariants.getRegistry().getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(),
+                            getNmsReflection().getIntFromType(value));
                     }
 
                     if (NmsVersion.v1_21_R2.isSupported()) {
@@ -1010,6 +1077,22 @@ public class ReflectionManager {
                                 return ((Salmon.Variant) value).ordinal();
                             } else {
                                 return ((Salmon.Variant) value).name().toLowerCase(Locale.ENGLISH);
+                            }
+                        }
+
+                        if (NmsVersion.v1_21_R4.isSupported()) {
+                            if (value instanceof Cow.Variant) {
+                                return CowVariants.getRegistry()
+                                    .getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(),
+                                        getNmsReflection().getIntFromType(value));
+                            } else if (value instanceof Chicken.Variant) {
+                                return ChickenVariants.getRegistry()
+                                    .getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(),
+                                        getNmsReflection().getIntFromType(value));
+                            } else if (value instanceof Pig.Variant) {
+                                return PigVariants.getRegistry()
+                                    .getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(),
+                                        getNmsReflection().getIntFromType(value));
                             }
                         }
                     }
@@ -1238,6 +1321,9 @@ public class ReflectionManager {
                 case SPRUCE_BOAT:
                     watcherClass = BoatWatcher.class;
                     break;
+                case LINGERING_POTION:
+                    watcherClass = SplashPotionWatcher.class;
+                    break;
                 default:
                     watcherClass = (Class<? extends FlagWatcher>) Class.forName(
                         "me.libraryaddict.disguise.disguisetypes.watchers." + toReadable(disguiseType.name()) + "Watcher");
@@ -1458,7 +1544,7 @@ public class ReflectionManager {
             DisguiseValues disguiseValues =
                 new DisguiseValues(disguiseType, bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0);
 
-            List<EntityData> watcher = getEntityWatcher(bukkitEntity);
+            List<EntityData<?>> watcher = getEntityWatcher(bukkitEntity);
             ArrayList<MetaIndex> indexes = MetaIndex.getMetaIndexes(disguiseType.getWatcherClass());
             boolean loggedName = false;
 
@@ -1582,14 +1668,14 @@ public class ReflectionManager {
         }
     }
 
-    public static List<EntityData> getEntityWatcher(Entity entity) {
+    public static List<EntityData<?>> getEntityWatcher(Entity entity) {
         try {
             ByteBuf buffer = getNmsReflection().getDataWatcherValues(entity);
 
             // So now we have all the metadata serialized, lets deserialize it
             PacketWrapper wrapper = PacketWrapper.createUniversalPacketWrapper(buffer);
 
-            List<EntityData> list = wrapper.readEntityMetadata();
+            List<EntityData<?>> list = wrapper.readEntityMetadata();
 
             ByteBufHelper.release(buffer);
 
@@ -1672,13 +1758,13 @@ public class ReflectionManager {
             } else if (index.isItemStack()) {
                 return EntityDataTypes.ITEMSTACK;
             } else if (index == MetaIndex.WOLF_VARIANT) {
-                return EntityDataTypes.WOLF_VARIANT;
+                return EntityDataTypes.TYPED_WOLF_VARIANT;
             } else if (index == MetaIndex.CAT_TYPE && NmsVersion.v1_19_R1.isSupported()) {
-                return EntityDataTypes.CAT_VARIANT;
+                return EntityDataTypes.TYPED_CAT_VARIANT;
             } else if (index == MetaIndex.FROG_VARIANT) {
-                return EntityDataTypes.FROG_VARIANT;
+                return EntityDataTypes.TYPED_FROG_VARIANT;
             } else if (index == MetaIndex.PAINTING) {
-                return EntityDataTypes.PAINTING_VARIANT_TYPE;
+                return EntityDataTypes.PAINTING_VARIANT;
             } else if (index == MetaIndex.ENTITY_POSE) {
                 return EntityDataTypes.ENTITY_POSE;
             } else if (index == MetaIndex.SNIFFER_STATE) {
@@ -1689,6 +1775,14 @@ public class ReflectionManager {
                 return EntityDataTypes.BLOCK_FACE;
             } else if (index == MetaIndex.AREA_EFFECT_CLOUD_COLOR) {
                 return EntityDataTypes.INT;
+            } else if (index == MetaIndex.CHICKEN_VARIANT) {
+                return EntityDataTypes.CHICKEN_VARIANT;
+            } else if (index == MetaIndex.PIG_VARIANT) {
+                return EntityDataTypes.PIG_VARIANT;
+            } else if (index == MetaIndex.COW_VARIANT) {
+                return EntityDataTypes.COW_VARIANT;
+            } else if (index == MetaIndex.MUSHROOM_COW_TYPE && !NmsVersion.v1_21_R4.isSupported()) {
+                return EntityDataTypes.STRING;
             } else if (index == MetaIndex.SALMON_VARIANT) {
                 // TODO PacketEvents may add Salmon variant at a future date, also could be doing something redundant here
                 // Such as could be mapping the variant to what we serialize

@@ -5,18 +5,14 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import io.netty.buffer.ByteBuf;
-import org.bukkit.Art;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Cat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Frog;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.Objective;
@@ -108,47 +104,20 @@ public abstract class ReflectionManagerAbstract {
         return new UserProfile(uuid, playerName == null || playerName.length() < 17 ? playerName : playerName.substring(0, 16));
     }
 
-    public Cat.Type getCatTypeFromInt(int catType) {
-        if (Cat.Type.class.isEnum()) {
-            return Cat.Type.class.getEnumConstants()[catType];
+    public <T> T getTypeFromInt(Class<T> typeClass, int typeId) {
+        if (typeClass.isEnum()) {
+            return typeClass.getEnumConstants()[typeId];
         }
+
         throw new IllegalStateException("This method should have been overwritten by an extending class");
     }
 
-    public int getCatVariantAsInt(Cat.Type type) {
+    public <T> int getIntFromType(T type) {
         if (type instanceof Enum) {
             return ((Enum) type).ordinal();
         }
 
         throw new IllegalStateException("This method should have been overwritten by an extending class");
-    }
-
-    public abstract Art getPaintingFromInt(int paintingId);
-
-    public abstract int getPaintingAsInt(Art type);
-
-    public Frog.Variant getFrogVariantFromInt(int frogType) {
-        if (Frog.Variant.class.isEnum()) {
-            return Frog.Variant.class.getEnumConstants()[frogType];
-        }
-
-        throw new IllegalStateException("This method should have been overwritten by an extending class");
-    }
-
-    public int getFrogVariantAsInt(Frog.Variant type) {
-        if (type instanceof Enum) {
-            return ((Enum) type).ordinal();
-        }
-
-        throw new IllegalStateException("This method should have been overwritten by an extending class");
-    }
-
-    public Wolf.Variant getWolfVariantFromInt(int wolfVariant) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    public int getWolfVariantAsInt(Wolf.Variant type) {
-        throw new IllegalStateException("Not implemented");
     }
 
     public String getDataAsString(ItemStack itemStack) {

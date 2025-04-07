@@ -1,11 +1,13 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.inventory.ItemStack;
 
+@Getter
 public class SplashPotionWatcher extends FlagWatcher {
     private int potionId;
 
@@ -19,10 +21,6 @@ public class SplashPotionWatcher extends FlagWatcher {
         watcher.setPotionId(getPotionId());
 
         return watcher;
-    }
-
-    public int getPotionId() {
-        return potionId;
     }
 
     public void setPotionId(int newPotionId) {
