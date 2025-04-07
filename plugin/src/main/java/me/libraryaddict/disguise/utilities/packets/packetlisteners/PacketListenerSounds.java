@@ -92,7 +92,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
                         continue;
                     }
 
-                    group = SoundGroup.getGroup(entity.getType().name());
+                    group = SoundGroup.getGroup(entity);
 
                     if (group == null) {
                         continue;
@@ -134,7 +134,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
         }
 
         if (group == null) {
-            group = SoundGroup.getGroup(entity.getType().name());
+            group = SoundGroup.getGroup(entity);
         }
 
         if (group == null) {

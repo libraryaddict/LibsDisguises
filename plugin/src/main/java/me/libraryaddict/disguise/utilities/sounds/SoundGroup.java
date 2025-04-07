@@ -1,13 +1,24 @@
 package me.libraryaddict.disguise.utilities.sounds;
 
+import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariants;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.apache.commons.lang.math.RandomUtils;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Wolf;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SoundGroup {
     public enum SoundType {
@@ -124,10 +135,60 @@ public class SoundGroup {
             }
         }
 
-        return getGroup(disguise.getType().name());
+        String variantName = null;
+
+        if (NmsVersion.v1_21_R4.isSupported() && disguise.getWatcher() instanceof WolfWatcher) {
+            WolfSoundVariant variant = ((WolfWatcher) disguise.getWatcher()).getSoundVariant();
+
+            variantName = variant.getName().getKey();
+        }
+
+        return getGroup(disguise.getType().name(), variantName);
+    }
+
+    public static SoundGroup getGroup(Entity entity) {
+        String name = entity.getType().name();
+        String variantName = null;
+
+        if (entity instanceof Wolf && NmsVersion.v1_21_R4.isSupported()) {
+            // At the point of writing, spigot does not have a Wolf.SoundVariants
+            // Paper on the contrary, has implemented it in their version
+            if (DisguiseUtilities.isRunningPaper()) {
+                variantName = ((Wolf) entity).getSoundVariant().getKey().getKey();
+            } else {
+                variantName = ReflectionManager.getNmsReflection().getVariant(entity, WolfSoundVariants.getRegistry());
+            }
+        }
+
+        return getGroup(name, variantName);
+    }
+
+    /**
+     * Returns the group by this name, and its variants
+     */
+    public static SoundGroup[] getGroups(String name) {
+        List<SoundGroup> list = new ArrayList<>();
+
+        for (Map.Entry<String, SoundGroup> entry : groups.entrySet()) {
+            if (!entry.getKey().split("\\$")[0].equals(name)) {
+                continue;
+            }
+
+            list.add(entry.getValue());
+        }
+
+        return list.toArray(new SoundGroup[0]);
     }
 
     public static SoundGroup getGroup(String name) {
+        return getGroup(name, null);
+    }
+
+    public static SoundGroup getGroup(String name, String variant) {
+        if (variant != null) {
+            return groups.getOrDefault(name + "$" + variant, groups.get(name));
+        }
+
         return groups.get(name);
     }
 }

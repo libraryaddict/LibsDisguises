@@ -16,16 +16,22 @@ public class CompileSounds {
         List<String> list = new ArrayList<>();
 
         for (DisguiseSoundEnums e : DisguiseSoundEnums.values()) {
-            StringBuilder sound = getSoundAsString(e);
+            list.add(getSoundAsString(e, null).toString());
 
-            list.add(sound.toString());
+            for (String variant : e.getVariants()) {
+                list.add(getSoundAsString(e, variant).toString());
+            }
         }
 
         return String.join("\n", list).getBytes(StandardCharsets.UTF_8);
     }
 
-    private StringBuilder getSoundAsString(DisguiseSoundEnums e) {
+    private StringBuilder getSoundAsString(DisguiseSoundEnums e, String variant) {
         StringBuilder sound = new StringBuilder(e.name());
+
+        if (variant != null) {
+            sound.append("$").append(variant);
+        }
 
         for (SoundGroup.SoundType type : SoundGroup.SoundType.values()) {
             sound.append("/");
@@ -41,6 +47,11 @@ public class CompileSounds {
 
                 if (soundValue.contains("*")) {
                     soundValue = String.join(",", getMatchingFields(soundValue));
+                } else if (variant != null) {
+                    // Get the second period, so entity.wolf<.>stuff.stuff
+                    int period = soundValue.indexOf(".", soundValue.indexOf(".") + 2);
+
+                    soundValue = soundValue.substring(0, period) + "_" + variant + soundValue.substring(period);
                 }
 
                 if (i++ > 0) {

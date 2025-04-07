@@ -20,6 +20,7 @@ import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.protocol.entity.sniffer.SnifferState;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfVariant;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfVariants;
+import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
 import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
@@ -29,6 +30,7 @@ import com.github.retrooper.packetevents.protocol.world.painting.PaintingVariant
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.util.Vector3f;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import com.mojang.authlib.GameProfile;
@@ -148,6 +150,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1422,10 +1425,8 @@ public class ReflectionManager {
 
             disguiseValues.setAdultBox(new FakeBoundingBox(0, 0, 0));
 
-            SoundGroup sound = SoundGroup.getGroup(disguiseType.name());
-
-            if (sound != null) {
-                sound.setDamageAndIdleSoundVolume(1f);
+            for (SoundGroup group : SoundGroup.getGroups(disguiseType.name())) {
+                group.setDamageAndIdleSoundVolume(1f);
             }
 
             return;
@@ -1624,19 +1625,18 @@ public class ReflectionManager {
                     disguiseType + " has MetaIndex remaining! " + index.getFlagWatcher().getSimpleName() + " at index " + index.getIndex());
             }
 
-            SoundGroup sound = SoundGroup.getGroup(disguiseType.name());
+            SoundGroup[] groups = SoundGroup.getGroups(disguiseType.name());
+            Float soundStrength;
 
-            if (sound != null) {
-                Float soundStrength = getSoundModifier(nmsEntity);
-
-                if (soundStrength != null) {
+            if (groups.length > 0 && (soundStrength = getSoundModifier(nmsEntity)) != null) {
+                for (SoundGroup sound : groups) {
                     sound.setDamageAndIdleSoundVolume(soundStrength);
+                }
 
-                    // This should only display on custom builds
-                    if (disguiseType == DisguiseType.COW && soundStrength != 0.4F && !LibsDisguises.getInstance().isJenkins()) {
-                        LibsDisguises.getInstance().getLogger()
-                            .severe("The hurt sound volume may be wrong on the COW disguise! Bad nms update?");
-                    }
+                // This should only display on custom builds
+                if (disguiseType == DisguiseType.COW && soundStrength != 0.4F && !LibsDisguises.getInstance().isJenkins()) {
+                    LibsDisguises.getInstance().getLogger()
+                        .severe("The hurt sound volume may be wrong on the COW disguise! Bad nms update?");
                 }
             }
 
@@ -1879,6 +1879,25 @@ public class ReflectionManager {
         }
 
         return (T[]) Bukkit.getRegistry((Class<Keyed>) clss).stream().toArray((i) -> (T[]) Array.newInstance(clss, i));
+    }
+
+    public static <T extends MappedEntity> T randomRegistry(VersionedRegistry<T> registry) {
+        int rnd = DisguiseUtilities.getRandom().nextInt(registry.size());
+
+        Iterator<T> iterator = registry.getEntries().iterator();
+
+        while (iterator.hasNext()) {
+            T obj = iterator.next();
+
+            // If there's another value, and we need to iterate over X more values
+            if (iterator.hasNext() && --rnd >= 0) {
+                continue;
+            }
+
+            return obj;
+        }
+
+        return null;
     }
 
     public static <T> T randomEnum(Class<T> clss) {

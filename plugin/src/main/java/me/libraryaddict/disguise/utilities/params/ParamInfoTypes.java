@@ -2,6 +2,8 @@ package me.libraryaddict.disguise.utilities.params;
 
 import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloState;
 import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
+import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariants;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.util.Vector3i;
@@ -25,6 +27,7 @@ import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoDisplayB
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoEulerAngle;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemStack;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemStackArray;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoPacketEvents;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoParticle;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoPotionEffect;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoQuaternionf;
@@ -210,10 +213,8 @@ public class ParamInfoTypes {
         }
 
         if (NmsVersion.v1_21_R4.isSupported()) {
-            // Disabled for now, it doesn't seem to make a clientside difference, though could be used for differnating wolf types for
-            // sounds
-            //paramInfos.add(new ParamInfoPacketEvents(WolfSoundVariant.class, WolfSoundVariants.getRegistry(), "Wolf Sound Variants",
-            //    "The variant of wolf sounds"));
+            paramInfos.add(new ParamInfoPacketEvents(WolfSoundVariant.class, WolfSoundVariants.getRegistry(), "Wolf Sound Variant",
+                "The variant of wolf sounds"));
             paramInfos.add(new ParamInfoEnum(Chicken.Variant.class, "Chicken Variant", "The variant of a chicken"));
             paramInfos.add(new ParamInfoEnum(Pig.Variant.class, "Pig Variant", "The variant of a pig"));
             paramInfos.add(new ParamInfoEnum(Cow.Variant.class, "Cow Variant", "The variant of a cow"));

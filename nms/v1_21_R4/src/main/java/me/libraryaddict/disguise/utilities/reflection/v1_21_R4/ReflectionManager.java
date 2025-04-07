@@ -1,5 +1,8 @@
 package me.libraryaddict.disguise.utilities.reflection.v1_21_R4;
 
+import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariants;
+import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
@@ -8,6 +11,7 @@ import io.netty.buffer.PooledByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.SneakyThrows;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -28,6 +32,7 @@ import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.animal.wolf.WolfSoundVariant;
 import net.minecraft.world.entity.player.ChatVisiblity;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.block.Block;
@@ -89,6 +94,7 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     private final AtomicInteger entityCounter;
     private final Method entityDefaultSoundMethod;
     private final UnsafeValues craftMagicNumbers;
+    private Method wolfSoundVariantMethods;
 
     @SneakyThrows
     public ReflectionManager() {
@@ -108,6 +114,19 @@ public class ReflectionManager extends ReflectionManagerAbstract {
         // Default is protected method, 1.0F on EntityLiving.class
         entityDefaultSoundMethod = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("fe");
         entityDefaultSoundMethod.setAccessible(true);
+
+        // Paper did a hard fork, not all features available in paper are available in spigot
+        // As of time of writing, 8/4/2025, only paper has a way to get the wolf sound variant
+        try {
+            // Try to get the class
+            Class.forName("org.bukkit.entity.Wolf$SoundVariant");
+            // Class exists! This is a paper server, or spigot has updated
+            wolfSoundVariantMethods = null;
+        } catch (Throwable throwable) {
+            wolfSoundVariantMethods = net.minecraft.world.entity.animal.wolf.Wolf.class.getDeclaredMethod("gM");
+            wolfSoundVariantMethods.setAccessible(true);
+            // Failed to load, fall back to nms
+        }
 
         craftMagicNumbers = (UnsafeValues) CraftMagicNumbers.class.getField("INSTANCE").get(null);
     }
@@ -158,8 +177,8 @@ public class ReflectionManager extends ReflectionManagerAbstract {
             return null;
         }
 
-        net.minecraft.world.entity.EntityType<?> entityType = optional.get();
-        ServerLevel world = getWorldServer(Bukkit.getWorlds().get(0));
+        net.minecraft.world.entity.EntityType<?> entityType = optional.orElse(null);
+        ServerLevel world = getWorldServer(Bukkit.getWorlds().getFirst());
         net.minecraft.world.entity.Entity entity;
         if (entityType == net.minecraft.world.entity.EntityType.PLAYER) {
             GameProfile gameProfile = new GameProfile(new UUID(0, 0), "Steve");
@@ -427,25 +446,25 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     public <T> T getTypeFromInt(Class<T> typeClass, int typeId) {
         if (typeClass == Art.class) {
             return (T) CraftArt.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.PAINTING_VARIANT).get(typeId).get());
+                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.PAINTING_VARIANT).get(typeId).orElse(null));
         } else if (typeClass == Frog.Variant.class) {
             return (T) CraftFrog.CraftVariant.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.FROG_VARIANT).get(typeId).get());
+                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.FROG_VARIANT).get(typeId).orElse(null));
         } else if (typeClass == Cat.Type.class) {
             return (T) CraftCat.CraftType.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.CAT_VARIANT).get(typeId).get());
+                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.CAT_VARIANT).get(typeId).orElse(null));
         } else if (typeClass == Wolf.Variant.class) {
             return (T) CraftWolf.CraftVariant.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.WOLF_VARIANT).get(typeId).get());
+                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.WOLF_VARIANT).get(typeId).orElse(null));
         } else if (typeClass == Cow.Variant.class) {
             return (T) CraftCow.CraftVariant.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.COW_VARIANT).get(typeId).get());
+                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.COW_VARIANT).get(typeId).orElse(null));
         } else if (typeClass == Chicken.Variant.class) {
             return (T) CraftChicken.CraftVariant.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.CHICKEN_VARIANT).get(typeId).get());
+                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.CHICKEN_VARIANT).get(typeId).orElse(null));
         } else if (typeClass == Pig.Variant.class) {
             return (T) CraftPig.CraftVariant.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.PIG_VARIANT).get(typeId).get());
+                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.PIG_VARIANT).get(typeId).orElse(null));
         }
 
         return super.getTypeFromInt(typeClass, typeId);
@@ -487,5 +506,17 @@ public class ReflectionManager extends ReflectionManagerAbstract {
         }
 
         return updated;
+    }
+
+    @SneakyThrows
+    @Override
+    public String getVariant(Entity entity, VersionedRegistry<? extends MappedEntity> registry) {
+        if (registry == WolfSoundVariants.getRegistry() && entity instanceof Wolf) {
+            // The "minecraft:" is pretty crude, though I strugg
+            return ((Holder<WolfSoundVariant>) wolfSoundVariantMethods.invoke(((CraftWolf) entity).getHandle())).unwrapKey()
+                .map(k -> k.location().getPath()).orElse(null);
+        }
+
+        return super.getVariant(entity, registry);
     }
 }

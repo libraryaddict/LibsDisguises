@@ -1,6 +1,8 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
+import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
@@ -149,5 +151,12 @@ public abstract class ReflectionManagerAbstract {
         }
 
         return !objectives.isEmpty();
+    }
+
+    /**
+     * Retrieves variant information, using packtevents registry as identifier. Mainly because paper & spigot do not implement the same apis
+     */
+    public String getVariant(Entity entity, VersionedRegistry<? extends MappedEntity> registry) {
+        return null;
     }
 }

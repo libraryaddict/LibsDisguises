@@ -283,7 +283,12 @@ public enum DisguiseSoundEnums {
         "entity.wither_skeleton.ambient"),
 
     WOLF("entity.wolf.hurt", "entity.wolf.step", "entity.wolf.death", "entity.wolf.ambient", "entity.wolf.growl", "entity.wolf.pant",
-        "entity.wolf.howl", "entity.wolf.shake", "entity.wolf.whine"),
+        "entity.wolf.howl", "entity.wolf.shake", "entity.wolf.whine") {
+        @Override
+        public String[] getVariants() {
+            return new String[]{"puglin", "sad", "angry", "grumpy", "big", "cute"};
+        }
+    },
 
     ZOGLIN("entity.zoglin.hurt", "entity.zoglin.step", "entity.zoglin.death", "entity.zoglin.ambient", "entity.zoglin.angry",
         "entity.zoglin.attack"),
@@ -317,6 +322,10 @@ public enum DisguiseSoundEnums {
         for (Object obj : sounds) {
             addSound(obj, SoundType.CANCEL);
         }
+    }
+
+    public String[] getVariants() {
+        return new String[0];
     }
 
     private void addSound(Object sound, SoundType type) {

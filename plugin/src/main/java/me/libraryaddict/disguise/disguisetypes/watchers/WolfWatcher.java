@@ -26,27 +26,24 @@ public class WolfWatcher extends TameableWatcher {
 
         if (DisguiseConfig.isRandomDisguises()) {
             if (NmsVersion.v1_20_R4.isSupported()) {
-                Wolf.Variant variant = ReflectionManager.randomEnum(Wolf.Variant.class);
-
-                setVariant(variant);
+                setVariant(ReflectionManager.randomEnum(Wolf.Variant.class));
 
                 if (NmsVersion.v1_21_R4.isSupported()) {
-                    setSoundVariant(WolfSoundVariants.getRegistry().getByName(variant.getKey().getKey()));
+                    setSoundVariant(ReflectionManager.randomRegistry(WolfSoundVariants.getRegistry()));
                 }
             }
         }
     }
 
-    @Deprecated
     @NmsAddedIn(NmsVersion.v1_21_R4)
     public WolfSoundVariant getSoundVariant() {
         return getData(MetaIndex.WOLF_SOUND_VARIANT);
     }
 
-    @Deprecated
     @RandomDefaultValue
     @NmsAddedIn(NmsVersion.v1_21_R4)
     public void setSoundVariant(WolfSoundVariant soundVariant) {
+        // Spigot does not have Wolf.SoundVariant
         sendData(MetaIndex.WOLF_SOUND_VARIANT, soundVariant);
     }
 
