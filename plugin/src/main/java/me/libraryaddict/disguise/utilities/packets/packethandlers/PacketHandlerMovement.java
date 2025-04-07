@@ -122,24 +122,47 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
                     new WrapperPlayServerEntityRotation(DisguiseAPI.getEntityAttachmentId(), yawValue, pitchValue, false);
 
                 packets.addPacket(packet);
-            } else if (cloned instanceof WrapperPlayServerEntityTeleport && disguise.getType().isArtDisplay()) {
-                // TODO Sync too
-                WrapperPlayServerEntityTeleport tele = (WrapperPlayServerEntityTeleport) cloned;
+            } else if ((cloned instanceof WrapperPlayServerEntityTeleport || cloned instanceof WrapperPlayServerEntityPositionSync) &&
+                disguise.getType().isArtDisplay()) {
+                Location loc = entity.getLocation();
+                double data = (((loc.getYaw() % 360) + 720 + 45) / 90) % 4;
+
+                Vector3d position;
+
+                if (data % 2 == 0) {
+                    position = new Vector3d(loc.getX(), 0, loc.getZ() + data == 0 ? -1 : 1);
+                } else {
+                    position = new Vector3d(loc.getX() + data == 3 ? -1 : 1, loc.getY(), loc.getZ());
+                }
+
+                double y = DisguiseUtilities.getYModifier(disguise);
+
+                if (y != 0) {
+                    position = position.add(0, y, 0);
+                }
+
+                if (cloned instanceof WrapperPlayServerEntityTeleport) {
+                    ((WrapperPlayServerEntityTeleport) cloned).setPosition(position);
+                } else {
+                    ((WrapperPlayServerEntityPositionSync) cloned).getValues().setPosition(position);
+                }
+            } else if (cloned instanceof WrapperPlayServerEntityPositionSync && disguise.getType().isArtDisplay()) {
+                WrapperPlayServerEntityPositionSync tele = (WrapperPlayServerEntityPositionSync) cloned;
 
                 Location loc = entity.getLocation();
 
                 double data = (((loc.getYaw() % 360) + 720 + 45) / 90) % 4;
 
                 if (data % 2 == 0) {
-                    tele.setPosition(new Vector3d(loc.getX(), 0, loc.getZ() + data == 0 ? -1 : 1));
+                    tele.getValues().setPosition(new Vector3d(loc.getX(), 0, loc.getZ() + data == 0 ? -1 : 1));
                 } else {
-                    tele.setPosition(new Vector3d(loc.getX() + data == 3 ? -1 : 1, loc.getY(), loc.getZ()));
+                    tele.getValues().setPosition(new Vector3d(loc.getX() + data == 3 ? -1 : 1, loc.getY(), loc.getZ()));
                 }
 
                 double y = DisguiseUtilities.getYModifier(disguise);
 
                 if (y != 0) {
-                    tele.setPosition(tele.getPosition().add(0, y, 0));
+                    tele.getValues().setPosition(tele.getValues().getPosition().add(0, y, 0));
                 }
             } else if (disguise.getType() == DisguiseType.DOLPHIN) {
                 if (cloned instanceof WrapperPlayServerEntityTeleport) {
