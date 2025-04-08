@@ -5,6 +5,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Color;
 
@@ -31,6 +32,7 @@ public class TippedArrowWatcher extends ArrowWatcher {
     }
 
     @RandomDefaultValue
+    @MethodDescription("The color of the tipped arrow's head")
     public void setColor(Color color) {
         sendData(MetaIndex.TIPPED_ARROW_COLOR, color.asRGB());
     }

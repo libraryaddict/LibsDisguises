@@ -9,12 +9,12 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 
 public class ZombieVillagerWatcher extends ZombieWatcher {
-
     public ZombieVillagerWatcher(Disguise disguise) {
         super(disguise);
 
@@ -27,6 +27,7 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
         return getData(MetaIndex.ZOMBIE_VILLAGER_SHAKING);
     }
 
+    @MethodDescription("If the Zombie Villager is shaking, this normally happens during the 'curing' processes")
     public void setShaking(boolean shaking) {
         sendData(MetaIndex.ZOMBIE_VILLAGER_SHAKING, shaking);
     }
@@ -50,6 +51,8 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
     }
 
     @NmsAddedIn(NmsVersion.v1_14)
+    @RandomDefaultValue
+    @MethodDescription("The villager data that is displayed")
     public void setVillagerData(VillagerData villagerData) {
         sendData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION, villagerData);
     }
@@ -63,6 +66,7 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
     }
 
     @RandomDefaultValue
+    @MethodDescription("The profession of the villager")
     public void setProfession(Profession profession) {
         if (NmsVersion.v1_14.isSupported()) {
             setVillagerData(new VillagerData(VillagerTypes.getByName(ReflectionManager.keyedName(getType())),
@@ -91,6 +95,7 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
     }
 
     @NmsAddedIn(NmsVersion.v1_14)
+    @MethodDescription("The villager biome variant")
     public void setBiome(Villager.Type type) {
         setType(type);
     }
@@ -101,6 +106,7 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
     }
 
     @NmsAddedIn(NmsVersion.v1_14)
+    @MethodDescription("The villager level shown")
     public void setLevel(int level) {
         setVillagerData(new VillagerData(VillagerTypes.getByName(ReflectionManager.keyedName(getType())),
             VillagerProfessions.getByName(ReflectionManager.keyedName(getProfession())), Math.max(1, Math.min(5, level))));

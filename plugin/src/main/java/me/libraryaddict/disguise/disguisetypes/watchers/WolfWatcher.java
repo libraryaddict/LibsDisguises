@@ -9,6 +9,7 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import org.bukkit.Color;
@@ -42,6 +43,7 @@ public class WolfWatcher extends TameableWatcher {
 
     @RandomDefaultValue
     @NmsAddedIn(NmsVersion.v1_21_R4)
+    @MethodDescription("The sound a wolf makes")
     public void setSoundVariant(WolfSoundVariant soundVariant) {
         // Spigot does not have Wolf.SoundVariant
         // Although Lib's Disguises could support Wolf.SoundVariant as a seperate method, we do not implement it as this could indirectly
@@ -58,6 +60,7 @@ public class WolfWatcher extends TameableWatcher {
         setCollarColor(color.getDyeColor());
     }
 
+    @MethodDescription("The color of the wolf's collar")
     public void setCollarColor(DyeColor newColor) {
         if (!isTamed()) {
             setTamed(true);
@@ -86,6 +89,7 @@ public class WolfWatcher extends TameableWatcher {
         return getAnger() > 0;
     }
 
+    @MethodDescription("If the wolf should look angry")
     public void setAngry(boolean angry) {
         if (!NmsVersion.v1_16.isSupported()) {
             setTameableFlag(2, angry);
@@ -101,6 +105,7 @@ public class WolfWatcher extends TameableWatcher {
 
     @NmsAddedIn(NmsVersion.v1_16)
     public void setAnger(int anger) {
+        // TODO Does this have a visible effect?
         sendData(MetaIndex.WOLF_ANGER, anger);
     }
 
@@ -122,12 +127,14 @@ public class WolfWatcher extends TameableWatcher {
      */
     @Deprecated
     @NmsRemovedIn(NmsVersion.v1_15)
+    @MethodDescription("Controls the angle of the wolf's tail")
     public void setDamageTaken(float damage) {
         sendData(MetaIndex.WOLF_DAMAGE, damage);
     }
 
     @RandomDefaultValue
     @NmsAddedIn(NmsVersion.v1_20_R4)
+    @MethodDescription("The variant that controls the wolf's appearance")
     public void setVariant(Wolf.Variant variant) {
         sendData(MetaIndex.WOLF_VARIANT, variant);
     }
@@ -143,6 +150,7 @@ public class WolfWatcher extends TameableWatcher {
     }
 
     @NmsAddedIn(NmsVersion.v1_20_R4)
+    @MethodDescription("The item that renders as the wolf's armor, only a certain subset of items will display")
     public void setWolfArmor(ItemStack item) {
         getEquipment().setItem(EquipmentSlot.BODY, item);
     }
@@ -159,6 +167,7 @@ public class WolfWatcher extends TameableWatcher {
     }
 
     @NmsAddedIn(NmsVersion.v1_20_R4)
+    @MethodDescription("The color the wolf's armor will be dyed to, if null, armor will also be treated as null")
     public void setWolfArmorColor(Color color) {
         if (color == null) {
             setWolfArmor(null);
