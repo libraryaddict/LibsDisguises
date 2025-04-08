@@ -213,6 +213,9 @@ public class ParamInfoTypes {
         }
 
         if (NmsVersion.v1_21_R4.isSupported()) {
+            // Spigot does not have Wolf.SoundVariant
+            // Although Lib's Disguises could support Wolf.SoundVariant without breaking on Spigot servers, we do not implement it as
+            // this could indirectly break third party plugins
             paramInfos.add(new ParamInfoPacketEvents(WolfSoundVariant.class, WolfSoundVariants.getRegistry(), "Wolf Sound Variant",
                 "The variant of wolf sounds"));
             paramInfos.add(new ParamInfoEnum(Chicken.Variant.class, "Chicken Variant", "The variant of a chicken"));

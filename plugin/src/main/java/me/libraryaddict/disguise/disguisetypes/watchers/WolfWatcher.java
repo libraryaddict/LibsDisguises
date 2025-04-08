@@ -44,6 +44,8 @@ public class WolfWatcher extends TameableWatcher {
     @NmsAddedIn(NmsVersion.v1_21_R4)
     public void setSoundVariant(WolfSoundVariant soundVariant) {
         // Spigot does not have Wolf.SoundVariant
+        // Although Lib's Disguises could support Wolf.SoundVariant as a seperate method, we do not implement it as this could indirectly
+        // break third party plugins
         sendData(MetaIndex.WOLF_SOUND_VARIANT, soundVariant);
     }
 
