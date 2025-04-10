@@ -13,7 +13,7 @@ public class ZoglinWatcher extends InsentientWatcher {
         return getData(MetaIndex.ZOGLIN_BABY);
     }
 
-    @MethodDescription("If the Zoglin should be a baby")
+    @MethodDescription("If the Zoglin is a baby")
     public void setBaby(boolean baby) {
         sendData(MetaIndex.ZOGLIN_BABY, baby);
     }
