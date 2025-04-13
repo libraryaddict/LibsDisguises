@@ -266,12 +266,75 @@ public enum TranslateType {
                 disguiseText.remove(i);
             }
 
+            String[] removedLinesPrefixes =
+                new String[]{"# Found in the disguise options for ", "# Used for the disguise option ", "# Name for the ", "# Reference: ",
+                    "# A disguise option name, has description ", "# Description for the disguise option "};
+            String lastNonEmptyLine = "";
+
+            for (int i = 0; i < disguiseText.size() - 1; i++) {
+                String line = disguiseText.get(i);
+
+                // If line isn't a comment
+                if (!line.startsWith("# ")) {
+                    continue;
+                }
+
+                // The next non-empty line
+                String nextLine = null;
+
+                // Loop over the lines ahead, find the first non-empty line
+                for (int a = i + 1; a < disguiseText.size(); a++) {
+                    nextLine = disguiseText.get(a);
+
+                    if (nextLine.isEmpty()) {
+                        nextLine = null;
+                        continue;
+                    }
+
+                    break;
+                }
+
+                // If next line not found, then we reached end of file
+                if (nextLine == null) {
+                    break;
+                }
+
+                // If next line is not a comment, then we are not removing anything
+                if (!nextLine.startsWith("# ")) {
+                    continue;
+                }
+
+                boolean genericLine1 = false;
+                boolean genericLine2 = false;
+
+                for (String s : removedLinesPrefixes) {
+                    if (!genericLine1) {
+                        genericLine1 = line.startsWith(s);
+                    }
+
+                    if (!genericLine2) {
+                        genericLine2 = nextLine.startsWith(s);
+                    }
+                }
+
+                // If either line was not auto-generated, then it is either a config field, or a custom comment
+                if (!genericLine1 || !genericLine2) {
+                    continue;
+                }
+
+                // Remove the current line
+                disguiseText.remove(i--);
+                dupes++;
+            }
+
             if (dupes + outdated > 0) {
                 LibsDisguises.getInstance().getLogger().info(
                     "Removed " + dupes + " duplicate and " + outdated + " outdated translations from " + getFile().getName() +
-                        ", this was likely caused by a previous issue in the plugin");
+                        ", this was likely caused by a previous issue in the plugin or switching between MC versions");
 
-                Files.write(getFile().toPath(), StringUtils.join(disguiseText, "\n").getBytes());
+                // Join list into a string, remove duplicate empty lines
+                String toWrite = StringUtils.join(disguiseText, "\n").replaceAll("\n{3,}", "\n\n");
+                Files.write(getFile().toPath(), toWrite.getBytes());
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -20,7 +20,7 @@ public class TranslateFiller {
 
         for (ParamInfo info : ParamInfoManager.getParamInfos()) {
             TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawName(),
-                "A disguise option name, has description " + info.getDescription());
+                "A disguise option name, has description '" + info.getDescription() + "'");
 
             if (!info.getRawName().equals(info.getRawDescriptiveName())) {
                 TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawDescriptiveName(), "A disguise option descriptive name");
