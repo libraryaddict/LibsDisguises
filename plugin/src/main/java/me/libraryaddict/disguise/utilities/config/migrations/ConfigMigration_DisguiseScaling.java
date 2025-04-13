@@ -30,7 +30,7 @@ public class ConfigMigration_DisguiseScaling implements ConfigMigrator.ConfigMig
 
         // If config is already migrated
         if (o instanceof String && Arrays.stream(DisguiseConfig.TallSelfDisguise.values()).map(Enum::name).collect(Collectors.toList())
-            .contains(o.toString().toLowerCase(Locale.ENGLISH))) {
+            .contains(o.toString().toUpperCase(Locale.ENGLISH))) {
             return;
         }
 
