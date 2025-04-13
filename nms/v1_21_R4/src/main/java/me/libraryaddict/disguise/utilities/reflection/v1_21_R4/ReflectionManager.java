@@ -50,6 +50,7 @@ import org.bukkit.UnsafeValues;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_21_R4.CraftArt;
+import org.bukkit.craftbukkit.v1_21_R4.CraftRegistry;
 import org.bukkit.craftbukkit.v1_21_R4.CraftServer;
 import org.bukkit.craftbukkit.v1_21_R4.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R4.block.data.CraftBlockData;
@@ -417,25 +418,25 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     @Override
     public <T> int getIntFromType(T type) {
         if (type instanceof Art) {
-            return MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.PAINTING_VARIANT)
+            return CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.PAINTING_VARIANT)
                 .getIdOrThrow(CraftArt.bukkitToMinecraft((Art) type));
         } else if (type instanceof Frog.Variant) {
-            return MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.FROG_VARIANT)
+            return CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.FROG_VARIANT)
                 .getIdOrThrow(CraftFrog.CraftVariant.bukkitToMinecraft((Frog.Variant) type));
         } else if (type instanceof Cat.Type) {
-            return MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.CAT_VARIANT)
+            return CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.CAT_VARIANT)
                 .getIdOrThrow(CraftCat.CraftType.bukkitToMinecraft((Cat.Type) type));
         } else if (type instanceof Wolf.Variant) {
-            return MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.WOLF_VARIANT)
+            return CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.WOLF_VARIANT)
                 .getIdOrThrow(CraftWolf.CraftVariant.bukkitToMinecraft((Wolf.Variant) type));
         } else if (type instanceof Cow.Variant) {
-            return MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.COW_VARIANT)
+            return CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.COW_VARIANT)
                 .getIdOrThrow(CraftCow.CraftVariant.bukkitToMinecraft((Cow.Variant) type));
         } else if (type instanceof Chicken.Variant) {
-            return MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.CHICKEN_VARIANT)
+            return CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.CHICKEN_VARIANT)
                 .getIdOrThrow(CraftChicken.CraftVariant.bukkitToMinecraft((Chicken.Variant) type));
         } else if (type instanceof Pig.Variant) {
-            return MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.PIG_VARIANT)
+            return CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.PIG_VARIANT)
                 .getIdOrThrow(CraftPig.CraftVariant.bukkitToMinecraft((Pig.Variant) type));
         }
 
@@ -446,25 +447,25 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     public <T> T getTypeFromInt(Class<T> typeClass, int typeId) {
         if (typeClass == Art.class) {
             return (T) CraftArt.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.PAINTING_VARIANT).get(typeId).orElse(null));
+                CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.PAINTING_VARIANT).get(typeId).orElse(null));
         } else if (typeClass == Frog.Variant.class) {
             return (T) CraftFrog.CraftVariant.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.FROG_VARIANT).get(typeId).orElse(null));
+                CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.FROG_VARIANT).get(typeId).orElse(null));
         } else if (typeClass == Cat.Type.class) {
             return (T) CraftCat.CraftType.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.CAT_VARIANT).get(typeId).orElse(null));
+                CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.CAT_VARIANT).get(typeId).orElse(null));
         } else if (typeClass == Wolf.Variant.class) {
             return (T) CraftWolf.CraftVariant.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.WOLF_VARIANT).get(typeId).orElse(null));
+                CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.WOLF_VARIANT).get(typeId).orElse(null));
         } else if (typeClass == Cow.Variant.class) {
             return (T) CraftCow.CraftVariant.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.COW_VARIANT).get(typeId).orElse(null));
+                CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.COW_VARIANT).get(typeId).orElse(null));
         } else if (typeClass == Chicken.Variant.class) {
             return (T) CraftChicken.CraftVariant.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.CHICKEN_VARIANT).get(typeId).orElse(null));
+                CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.CHICKEN_VARIANT).get(typeId).orElse(null));
         } else if (typeClass == Pig.Variant.class) {
             return (T) CraftPig.CraftVariant.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.PIG_VARIANT).get(typeId).orElse(null));
+                CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.PIG_VARIANT).get(typeId).orElse(null));
         }
 
         return super.getTypeFromInt(typeClass, typeId);
