@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class ConfigMigration_DisguiseScaling implements ConfigMigrator.ConfigMigration {
     @Override
@@ -28,9 +29,8 @@ public class ConfigMigration_DisguiseScaling implements ConfigMigrator.ConfigMig
         Object o = globalConfig.get("TallSelfDisguises");
 
         // If config is already migrated
-        if (o instanceof String &&
-            Arrays.asList(Arrays.stream(DisguiseConfig.TallSelfDisguise.values()).map(Enum::name).toArray(String[]::new))
-                .contains(o.toString().toLowerCase(Locale.ENGLISH))) {
+        if (o instanceof String && Arrays.stream(DisguiseConfig.TallSelfDisguise.values()).map(Enum::name).collect(Collectors.toList())
+            .contains(o.toString().toLowerCase(Locale.ENGLISH))) {
             return;
         }
 
