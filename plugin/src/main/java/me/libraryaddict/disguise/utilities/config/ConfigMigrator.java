@@ -97,15 +97,16 @@ public class ConfigMigrator {
             ConfigMigration migration = iterator.next();
 
             // If this migration will be applied, continue as it will not be removed
-            if (migration.getVersion() >= currentMigration) {
+            if (migration.getVersion() > currentMigration) {
                 continue;
             }
 
             // If this migration wasn't applied properly in the past, as determined programatically
             // Set the current migration level, and continue without removing
             if (migration.isRelevant()) {
-                currentMigration = Math.min(currentMigration, migration.getVersion());
-                LibsDisguises.getInstance().getLogger().info("Old config migration doesn't seem to have applied properly, will try migrating configs again.");
+                currentMigration = Math.min(currentMigration, migration.getVersion() - 1);
+                LibsDisguises.getInstance().getLogger()
+                    .info("Old config migration doesn't seem to have applied properly, will try migrating configs again.");
                 continue;
             }
 
