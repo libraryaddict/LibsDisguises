@@ -4,6 +4,7 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.utilities.config.ConfigMigrator;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 public class ConfigMigration_DisguiseScaling implements ConfigMigrator.ConfigMigration {
@@ -21,6 +22,15 @@ public class ConfigMigration_DisguiseScaling implements ConfigMigrator.ConfigMig
     public void migrate(YamlConfiguration globalConfig) {
         // Let defaults work itself out if this wasn't set
         if (!globalConfig.isSet("TallSelfDisguises")) {
+            return;
+        }
+
+        Object o = globalConfig.get("TallSelfDisguises");
+
+        // If config is already migrated
+        if (o instanceof String &&
+            Arrays.asList(Arrays.stream(DisguiseConfig.TallSelfDisguise.values()).map(Enum::name).toArray(String[]::new))
+                .contains(o.toString().toLowerCase(Locale.ENGLISH))) {
             return;
         }
 
