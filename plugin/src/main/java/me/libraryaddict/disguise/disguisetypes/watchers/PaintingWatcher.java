@@ -4,6 +4,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Art;
 
@@ -40,5 +41,7 @@ public class PaintingWatcher extends FlagWatcher {
                 DisguiseUtilities.refreshTrackers(getDisguise());
             }
         }
+
+        DisguiseParser.updateDisguiseName(getDisguise());
     }
 }

@@ -10,6 +10,7 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
@@ -373,7 +374,6 @@ public class PlayerDisguise extends TargetedDisguise {
             }
 
             if (isDisplayedInTab() && tablistName == null) {
-
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (!canSee(player)) {
                         continue;
@@ -404,6 +404,8 @@ public class PlayerDisguise extends TargetedDisguise {
                 userProfile = ReflectionManager.getUserProfileWithThisSkin(getUUID(), getProfileName(), getUserProfile());
             }
         }
+
+        DisguiseParser.updateDisguiseName(this);
     }
 
     public String getTablistName() {

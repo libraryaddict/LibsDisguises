@@ -8,11 +8,11 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodMappedAs;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
-import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
@@ -87,10 +87,7 @@ public class FallingBlockWatcher extends FlagWatcher implements GridLockedWatche
 
         this.blockCombinedId = ReflectionManager.getCombinedIdByItemStack(block);
 
-        if (!getDisguise().isCustomDisguiseName()) {
-            getDisguise().setDisguiseName(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("Block") + " " +
-                TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(ReflectionManager.toReadable(block.getType().name(), " ")));
-        }
+        DisguiseParser.updateDisguiseName(getDisguise());
 
         if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {
             DisguiseUtilities.refreshTrackers(getDisguise());
@@ -104,7 +101,7 @@ public class FallingBlockWatcher extends FlagWatcher implements GridLockedWatche
 
     @MethodMappedAs("setBlock")
     public void setBlockState(WrappedBlockState state) {
-        setBlockCombinedId(state.getType().getName(), ReflectionManager.getCombinedIdByWrappedBlockState(state));
+        setBlockCombinedId(ReflectionManager.getCombinedIdByWrappedBlockState(state));
     }
 
     @NmsAddedIn(NmsVersion.v1_13)
@@ -119,16 +116,13 @@ public class FallingBlockWatcher extends FlagWatcher implements GridLockedWatche
             return;
         }
 
-        setBlockCombinedId(data.getMaterial().name(), ReflectionManager.getCombinedIdByBlockData(data));
+        setBlockCombinedId(ReflectionManager.getCombinedIdByBlockData(data));
     }
 
-    private void setBlockCombinedId(String materialName, int combinedId) {
+    private void setBlockCombinedId(int combinedId) {
         this.blockCombinedId = combinedId;
 
-        if (!getDisguise().isCustomDisguiseName()) {
-            getDisguise().setDisguiseName(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("Block") + " " +
-                TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(ReflectionManager.toReadable(materialName, " ")));
-        }
+        DisguiseParser.updateDisguiseName(getDisguise());
 
         if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {
             DisguiseUtilities.refreshTrackers(getDisguise());

@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.parser;
 
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
+import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -12,6 +13,12 @@ import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.ModdedDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.BlockDisplayWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ItemDisplayWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.OminousItemSpawnerWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.SkinUtils;
@@ -371,6 +378,85 @@ public class DisguiseParser {
                 fetchingSkins.remove(skinFile).forEach((a) -> a.accept(profile));
             }
         });
+    }
+
+    public static void updateDisguiseName(Disguise disguise) {
+        if (disguise == null || disguise.isCustomDisguiseName() || disguise.getWatcher() == null) {
+            return;
+        }
+
+        ItemStack toResolve = null;
+        WrappedBlockState blockState = null;
+        String name = null;
+        TranslateType prefixType = TranslateType.DISGUISES;
+        String prefixName = disguise.getType().toReadable();
+
+        switch (disguise.getType()) {
+            case PAINTING:
+                name = ((PaintingWatcher) disguise.getWatcher()).getArt().toString();
+                break;
+            case PLAYER:
+                prefixName = null;
+                name = ((PlayerDisguise) disguise).getName();
+                break;
+            case DROPPED_ITEM:
+                toResolve = ((DroppedItemWatcher) disguise.getWatcher()).getItemStack();
+                break;
+            case ITEM_DISPLAY:
+                prefixName = "Item";
+                prefixType = TranslateType.DISGUISE_OPTIONS_PARAMETERS;
+                toResolve = ((ItemDisplayWatcher) disguise.getWatcher()).getItemStack();
+                break;
+            case BLOCK_DISPLAY:
+                prefixName = "Block";
+                prefixType = TranslateType.DISGUISE_OPTIONS_PARAMETERS;
+                blockState = ((BlockDisplayWatcher) disguise.getWatcher()).getBlockState();
+                break;
+            case FALLING_BLOCK:
+                prefixName = "Block";
+                prefixType = TranslateType.DISGUISE_OPTIONS_PARAMETERS;
+                blockState = ((FallingBlockWatcher) disguise.getWatcher()).getBlockState();
+                break;
+            case OMINOUS_ITEM_SPAWNER:
+                toResolve = ((OminousItemSpawnerWatcher) disguise.getWatcher()).getItemStack();
+                break;
+            default:
+                return;
+        }
+
+        String toTranslate = null;
+
+        // Convert Item & Block to their name
+        if (toResolve != null) {
+            toTranslate = toResolve.getType().name();
+        } else if (blockState != null) {
+            toTranslate = blockState.getType().getName();
+        }
+
+        // If there was an item/block, set the name
+        if (toTranslate != null) {
+            name = ReflectionManager.toReadable(toTranslate, " ");
+        }
+
+        // If the name is null, return
+        if (name == null || name.trim().isEmpty()) {
+            return;
+        }
+
+        // Translate the name if possible
+        String disguiseName = TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(name);
+
+        // If there was a prefix (atm, only player disguises clears it), then add the prefix to the name
+        if (prefixName != null && !prefixName.trim().isEmpty()) {
+            prefixName = prefixType.get(prefixName.trim());
+
+            if (prefixName != null && !prefixName.trim().isEmpty()) {
+                disguiseName = prefixName + " " + disguiseName;
+            }
+        }
+
+        // Finally, set the disguise name
+        disguise.setDisguiseName(disguiseName);
     }
 
     public static String parseToString(Disguise disguise) {
@@ -1131,7 +1217,8 @@ public class DisguiseParser {
                     handle.invoke(param);
                 }
 
-                if (!hasSetCustomName && !disguisePerm.isPlayer()) {
+                if (!hasSetCustomName) {
+                    updateDisguiseName(disguise);
                     name = disguise.getDisguiseName();
                 }
             }

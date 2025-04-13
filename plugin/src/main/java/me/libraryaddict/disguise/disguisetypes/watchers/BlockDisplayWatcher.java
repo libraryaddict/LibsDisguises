@@ -10,6 +10,7 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodMappedAs;
@@ -49,6 +50,8 @@ public class BlockDisplayWatcher extends DisplayWatcher implements GridLockedWat
     @MethodMappedAs("setBlock")
     public void setBlockState(WrappedBlockState block) {
         sendData(MetaIndex.BLOCK_DISPLAY_BLOCK_STATE, block);
+
+        DisguiseParser.updateDisguiseName(getDisguise());
     }
 
     public BlockData getBlock() {
@@ -57,6 +60,8 @@ public class BlockDisplayWatcher extends DisplayWatcher implements GridLockedWat
 
     public void setBlock(BlockData block) {
         sendData(MetaIndex.BLOCK_DISPLAY_BLOCK_STATE, SpigotConversionUtil.fromBukkitBlockData(block));
+
+        DisguiseParser.updateDisguiseName(getDisguise());
     }
 
     public boolean isAutoCentered() {

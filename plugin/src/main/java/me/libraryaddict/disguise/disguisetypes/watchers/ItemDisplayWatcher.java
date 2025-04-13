@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import org.bukkit.Material;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.inventory.ItemStack;
@@ -24,6 +25,7 @@ public class ItemDisplayWatcher extends DisplayWatcher {
         }
 
         sendData(MetaIndex.ITEM_DISPLAY_ITEMSTACK, item);
+        DisguiseParser.updateDisguiseName(getDisguise());
     }
 
     public ItemDisplay.ItemDisplayTransform getItemDisplayTransform() {
