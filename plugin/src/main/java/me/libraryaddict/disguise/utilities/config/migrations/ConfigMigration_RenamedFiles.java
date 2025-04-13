@@ -1,7 +1,10 @@
 package me.libraryaddict.disguise.utilities.config.migrations;
 
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.config.ConfigMigrator;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
 
 public class ConfigMigration_RenamedFiles implements ConfigMigrator.ConfigMigration {
     /**
@@ -34,5 +37,10 @@ public class ConfigMigration_RenamedFiles implements ConfigMigrator.ConfigMigrat
     @Override
     public void migrate(YamlConfiguration migrateTo) {
         // Mostly files being shuffled around
+    }
+
+    @Override
+    public boolean isRelevant() {
+        return new File(LibsDisguises.getInstance().getDataFolder(), "configs/features.yml").exists();
     }
 }

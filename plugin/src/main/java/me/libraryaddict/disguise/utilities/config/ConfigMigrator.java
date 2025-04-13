@@ -12,6 +12,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -54,6 +55,13 @@ public class ConfigMigrator {
         int getVersion();
 
         void migrate(YamlConfiguration loadedConfig);
+
+        /**
+         * Programatically detect if this migration can be applied again, used to correct failed migrations
+         */
+        default boolean isRelevant() {
+            return false;
+        }
     }
 
     private final Set<String> alreadyLoaded = new HashSet<>();
@@ -81,13 +89,35 @@ public class ConfigMigrator {
 
     public void runMigrations() {
         List<ConfigMigration> migrations = getMigrations();
-        migrations.removeIf(m -> m.getVersion() <= DisguiseConfig.getLastConfigVersion());
+        int currentMigration = DisguiseConfig.getLastConfigVersion();
+
+        Iterator<ConfigMigration> iterator = migrations.iterator();
+
+        while (iterator.hasNext()) {
+            ConfigMigration migration = iterator.next();
+
+            // If this migration will be applied, continue as it will not be removed
+            if (migration.getVersion() >= currentMigration) {
+                continue;
+            }
+
+            // If this migration wasn't applied properly in the past, as determined programatically
+            // Set the current migration level, and continue without removing
+            if (migration.isRelevant()) {
+                currentMigration = Math.min(currentMigration, migration.getVersion());
+                LibsDisguises.getInstance().getLogger().info("Old config migration doesn't seem to have applied properly, will try migrating configs again.");
+                continue;
+            }
+
+            // This migration is older than the current migration we will be applying
+            iterator.remove();
+        }
 
         if (migrations.isEmpty()) {
             return;
         }
 
-        int version = DisguiseConfig.getLastConfigVersion();
+        int version = currentMigration;
         int finalVersion = migrations.stream().map(ConfigMigration::getVersion).max(Integer::compareTo).get();
         LibsDisguises.getInstance().getLogger()
             .info("Running " + migrations.size() + " config migrations.. Jumping from version " + version + " to " + finalVersion);
