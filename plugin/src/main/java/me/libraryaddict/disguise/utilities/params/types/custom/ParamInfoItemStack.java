@@ -61,7 +61,7 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
                 name += ":" + TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("glow");
             }
 
-            if (NmsVersion.v1_14.isSupported() && item.getItemMeta().hasCustomModelData()) {
+            if (NmsVersion.v1_14.isSupported() && item.hasItemMeta() && item.getItemMeta().hasCustomModelData()) {
                 name += ":custom_model_" + item.getItemMeta().getCustomModelData();
             }
 
