@@ -393,7 +393,7 @@ public class DisguiseParser {
 
         switch (disguise.getType()) {
             case PAINTING:
-                name = ((PaintingWatcher) disguise.getWatcher()).getArt().toString();
+                name = ReflectionManager.enumName(((PaintingWatcher) disguise.getWatcher()).getArt());
                 break;
             case PLAYER:
                 prefixName = null;
