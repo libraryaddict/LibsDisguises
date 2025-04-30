@@ -60,7 +60,8 @@ public class PacketEventsUpdater {
      */
     public static String getMinimumPacketEventsVersion() {
         // We use a futuristic version if the features we want are in the snapshot builds
-        return "2.8.0";
+        // If we require snapshot builds, we specify 'SNAPSHOT' in the version string so we don't confuse the users
+        return "2.8.0-SNAPSHOT";
     }
 
     /**

@@ -3098,7 +3098,7 @@ public class DisguiseUtilities {
         p.sendMessage(ChatColor.RED +
             "Release: https://modrinth.com/plugin/packetevents - Snapshots: https://ci.codemc.io/job/retrooper/job/packetevents/");
         p.sendMessage(ChatColor.RED + "Or! Use " + ChatColor.DARK_RED + "/ld packetevents" + ChatColor.RED +
-            " - To update to the latest release from Modrinth");
+            " - To update to the latest release from Modrinth (Will grab snapshot instead if required)");
         p.sendMessage(
             ChatColor.DARK_GREEN + "This message is provided by Lib's Disguises to all players with the permission 'libsdisguises.update'");
     }

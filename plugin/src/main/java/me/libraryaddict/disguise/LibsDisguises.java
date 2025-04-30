@@ -486,8 +486,19 @@ public class LibsDisguises extends JavaPlugin {
                     getLogger().severe(
                         "Update your PacketEvents! You are running " + version + " but the minimum version you should be on is " +
                             requiredPacketEvents + "!");
-                    getLogger().severe("https://www.spigotmc.org/resources/packetevents-api.80279/");
-                    getLogger().severe("Or! Use /ld packetevents - To have Lib's Disguises download the latest release from Modrinth");
+                    getLogger().severe("Release Builds: https://modrinth.com/plugin/packetevents");
+
+                    if (requiredPacketEvents.contains("SNAPSHOT")) {
+                        getLogger().severe(
+                            "Minimum version is a SNAPSHOT build, it's possible that the features/bugfixes has not made it into the " +
+                                "releases yet. As such, you may need to use the dev builds instead. Using `/ld packetevents` will handle " +
+                                "it for you.");
+                        getLogger().severe("Snapshot Builds: https://ci.codemc.io/job/retrooper/job/packetevents/");
+                    }
+
+                    getLogger().severe(
+                        "Or! Use /ld packetevents - To have Lib's Disguises download the latest release (Or snapshot if release is " +
+                            "behind)");
                 }
             }
         };
