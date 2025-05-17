@@ -23,6 +23,7 @@ public class MiscDisguise extends TargetedDisguise {
         this(disguiseType, -1, disguiseType.getDefaultData());
     }
 
+    @Deprecated
     public MiscDisguise(DisguiseType disguiseType, Material material, int data) {
         this(disguiseType, new ItemStack(material, 1, (short) data));
     }
@@ -37,6 +38,7 @@ public class MiscDisguise extends TargetedDisguise {
         apply(0, itemStack);
     }
 
+    @Deprecated
     public MiscDisguise(DisguiseType disguiseType, Material material) {
         super(disguiseType);
 
@@ -47,6 +49,7 @@ public class MiscDisguise extends TargetedDisguise {
         apply(0, new ItemStack(material));
     }
 
+    @Deprecated
     public MiscDisguise(DisguiseType disguiseType, int id) {
         this(disguiseType, id, disguiseType.getDefaultData());
     }
