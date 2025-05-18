@@ -120,7 +120,7 @@ public class FlagWatcher {
 
         Entity entity = getDisguise().getEntity();
 
-        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             WrapperPlayServerEntityTeleport teleport =
                 new WrapperPlayServerEntityTeleport(entity.getEntityId(), SpigotConversionUtil.fromBukkitLocation(entity.getLocation()),
                     entity.isOnGround());
@@ -142,7 +142,7 @@ public class FlagWatcher {
 
         Entity entity = getDisguise().getEntity();
 
-        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             WrapperPlayServerEntityTeleport teleport =
                 new WrapperPlayServerEntityTeleport(entity.getEntityId(), SpigotConversionUtil.fromBukkitLocation(entity.getLocation()),
                     entity.isOnGround());
@@ -187,7 +187,7 @@ public class FlagWatcher {
         Entity entity = getDisguise().getEntity();
         Location loc = entity.getLocation();
 
-        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             WrapperPlayServerEntityRotation packet =
                 new WrapperPlayServerEntityRotation(entity.getEntityId(), loc.getYaw(), loc.getPitch(), entity.isOnGround());
 
@@ -510,7 +510,7 @@ public class FlagWatcher {
 
         getDisguise().adjustTallSelfDisguiseScale();
 
-        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             if (!DisguiseUtilities.isFancyHiddenTabs() && getDisguise().isPlayerDisguise() &&
                 LibsDisguises.getInstance().getSkinHandler().isSleeping(player, (PlayerDisguise) getDisguise())) {
                 continue;
@@ -903,7 +903,7 @@ public class FlagWatcher {
         }
 
         if (!list.isEmpty()) {
-            for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+            for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
                 int entityId =
                     player == getDisguise().getEntity() ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId();
 
@@ -966,7 +966,7 @@ public class FlagWatcher {
             itemStack = DisguiseUtilities.getEquipment(slot, getDisguise().getEntity());
         }
 
-        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             List<Equipment> list =
                 Collections.singletonList(new Equipment(DisguiseUtilities.getSlot(slot), DisguiseUtilities.fromBukkitItemStack(itemStack)));
             WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(getDisguise().getEntity().getEntityId(), list);

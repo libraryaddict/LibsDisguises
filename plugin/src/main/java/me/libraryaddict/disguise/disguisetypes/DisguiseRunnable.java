@@ -118,7 +118,7 @@ public class DisguiseRunnable extends BukkitRunnable {
         }
 
         Vector disgLoc = disguise.getEntity().getLocation().toVector();
-        List<Player> toPlay = DisguiseUtilities.getPerverts(disguise);
+        List<Player> toPlay = DisguiseUtilities.getTrackingPlayers(disguise);
 
         if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible() && disguise.isHearSelfDisguise()) {
             toPlay.add((Player) disguise.getEntity());
@@ -205,7 +205,7 @@ public class DisguiseRunnable extends BukkitRunnable {
         doVelocity(vectorY, alwaysSendVelocity);
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
-            for (Player player : DisguiseUtilities.getPerverts(disguise)) {
+            for (Player player : DisguiseUtilities.getTrackingPlayers(disguise)) {
                 if (disguise.getEntity() != player) {
                     WrapperPlayServerEntityRelativeMove packet =
                         new WrapperPlayServerEntityRelativeMove(disguise.getEntity().getEntityId(), 0, 0, 0, true);
@@ -270,7 +270,7 @@ public class DisguiseRunnable extends BukkitRunnable {
 
         try {
 
-            for (Player player : DisguiseUtilities.getPerverts(disguise)) {
+            for (Player player : DisguiseUtilities.getTrackingPlayers(disguise)) {
                 int entityId = entity.getEntityId();
 
                 // If the viewing player is the disguised player

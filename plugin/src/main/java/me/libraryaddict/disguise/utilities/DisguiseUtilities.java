@@ -1671,7 +1671,7 @@ public class DisguiseUtilities {
      * @param disguise
      * @return
      */
-    public static List<Player> getPerverts(Disguise disguise) {
+    public static List<Player> getTrackingPlayers(Disguise disguise) {
         if (!Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("Cannot modify disguises on an async thread");
         }

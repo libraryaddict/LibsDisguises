@@ -270,7 +270,7 @@ public abstract class Disguise {
 
         adjustTallSelfDisguiseScale();
 
-        for (Player player : DisguiseUtilities.getPerverts(this)) {
+        for (Player player : DisguiseUtilities.getTrackingPlayers(this)) {
             if (!DisguiseUtilities.isFancyHiddenTabs() && isPlayerDisguise() &&
                 LibsDisguises.getInstance().getSkinHandler().isSleeping(player, (PlayerDisguise) this)) {
                 continue;

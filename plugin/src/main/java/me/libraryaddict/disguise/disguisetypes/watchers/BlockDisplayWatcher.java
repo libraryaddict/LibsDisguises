@@ -146,7 +146,7 @@ public class BlockDisplayWatcher extends DisplayWatcher implements GridLockedWat
         double y = conRel(loc.getY(), centerY);
         double z = conRel(loc.getZ(), centerZ);
 
-        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             int entityId = getDisguise().getEntity() == player ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId();
 
             WrapperPlayServerEntityRelativeMove relMov = new WrapperPlayServerEntityRelativeMove(entityId, x, y, z, true);

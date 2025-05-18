@@ -96,7 +96,7 @@ public class LivingWatcher extends FlagWatcher {
 
         Entity entity = getDisguise().getEntity();
 
-        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             double toSend = player == entity && getDisguise().isTallSelfDisguisesScaling() ?
                 Math.min(getDisguise().getInternals().getPrevSelfDisguiseTallScaleMax(), scaleToSend) : scaleToSend;
 
@@ -226,7 +226,7 @@ public class LivingWatcher extends FlagWatcher {
             return;
         }
 
-        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             WrapperPlayServerUpdateAttributes.Property property =
                 new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_MAX_HEALTH, getMaxHealth(), new ArrayList<>());
             WrapperPlayServerUpdateAttributes packet = new WrapperPlayServerUpdateAttributes(
