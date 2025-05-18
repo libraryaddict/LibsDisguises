@@ -112,6 +112,7 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
     private static Field entitySizeWidth;
     private static Field entityHeadHeight;
     private static Method entityGetHeadHeight;
+    private static Method ambientSoundVolume;
 
     public LegacyReflectionManager() throws Exception {
         getServerMethod = getCraftMethod("CraftServer", "getServer");
@@ -158,6 +159,28 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
             magicGetBlock = getCraftMethod("CraftMagicNumbers", "getBlock", Material.class);
             magicGetMaterial = getCraftMethod("CraftMagicNumbers", "getMaterial", getNmsClass("Block"));
             entityTypesAMethod = getNmsMethod("EntityTypes", "a", String.class);
+        }
+
+        // As far as I can see, only one method in this class should match the method signiture
+        for (Method method : getNmsClass("EntityWaterAnimal").getMethods()) {
+            // There are no parameters, and we expect an int
+            if (method.getParameterCount() != 0 || method.getReturnType() != int.class) {
+                continue;
+            }
+
+            int modifiers = method.getModifiers();
+
+            // Method should never find a static, it should also be public
+            if (Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers)) {
+                continue;
+            }
+
+            if (ambientSoundVolume != null) {
+                throw new IllegalStateException("Multiple possible ambient sound methods on EntityWaterAnimal");
+            }
+
+            // Use the name found here, to get the base method
+            ambientSoundVolume = getNmsClass("Mob").getMethod(method.getName());
         }
 
         getBlockDataAsId = getNmsMethod("Block", "getCombinedId", getNmsClass("IBlockData"));
@@ -284,6 +307,19 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
                 }
             }
         }
+    }
+
+    @SneakyThrows
+    @Override
+    public int getAmbientSoundInterval(Entity entity) {
+        Object nmsEntity = getNmsEntity(entity);
+
+        // If this entity does not extend this class
+        if (!ambientSoundVolume.getDeclaringClass().isAssignableFrom(nmsEntity.getClass())) {
+            return -1;
+        }
+
+        return (int) ambientSoundVolume.invoke(getNmsEntity(entity));
     }
 
     @Override

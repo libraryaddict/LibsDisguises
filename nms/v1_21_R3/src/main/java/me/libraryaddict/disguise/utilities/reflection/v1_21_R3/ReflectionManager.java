@@ -28,6 +28,7 @@ import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.ChatVisiblity;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.block.Block;
@@ -105,6 +106,17 @@ public class ReflectionManager extends ReflectionManagerAbstract {
         entityDefaultSoundMethod.setAccessible(true);
 
         craftMagicNumbers = (UnsafeValues) CraftMagicNumbers.class.getField("INSTANCE").get(null);
+    }
+
+    @Override
+    public int getAmbientSoundInterval(Entity entity) {
+        Object nmsEntity = getNmsEntity(entity);
+
+        if (!(nmsEntity instanceof Mob)) {
+            return -1;
+        }
+
+        return ((Mob) nmsEntity).getAmbientSoundInterval();
     }
 
     @Override

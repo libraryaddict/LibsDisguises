@@ -18,7 +18,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ClientInformation;
@@ -32,6 +31,7 @@ import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.wolf.WolfSoundVariant;
 import net.minecraft.world.entity.player.ChatVisiblity;
 import net.minecraft.world.flag.FeatureFlagSet;
@@ -130,6 +130,17 @@ public class ReflectionManager extends ReflectionManagerAbstract {
         }
 
         craftMagicNumbers = (UnsafeValues) CraftMagicNumbers.class.getField("INSTANCE").get(null);
+    }
+
+    @Override
+    public int getAmbientSoundInterval(Entity entity) {
+        Object nmsEntity = getNmsEntity(entity);
+
+        if (!(nmsEntity instanceof Mob)) {
+            return -1;
+        }
+
+        return ((Mob) nmsEntity).getAmbientSoundInterval();
     }
 
     @Override

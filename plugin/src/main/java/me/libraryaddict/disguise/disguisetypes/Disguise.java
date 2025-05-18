@@ -38,7 +38,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,37 +61,57 @@ public abstract class Disguise {
     @Getter
     private transient boolean disguiseInUse;
     private final DisguiseType disguiseType;
-    private transient BukkitRunnable runnable;
     /**
      * The entity that is disguised
      */
     @Getter
     private transient Entity entity;
     @Getter
+    private String disguiseName;
+    /**
+     * Is the name specifically set to something by a third party?
+     */
+    @Getter
+    @Setter
+    private boolean customDisguiseName = false;
+    @Getter
+    private DisguiseConfig.TallSelfDisguise tallSelfDisguise = DisguiseConfig.getTallSelfDisguisesVisibility();
+    @Getter
+    private boolean replaceSounds = DisguiseConfig.isSoundEnabled();
+    @Getter
     private boolean hearSelfDisguise = DisguiseConfig.isSelfDisguisesSoundsReplaced();
+    private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises() && DisguiseConfig.isViewSelfDisguisesDefault();
+    @Getter
+    @Setter
+    private boolean playIdleSounds = DisguiseConfig.isPlayIdleSounds();
     @Getter
     private boolean hideArmorFromSelf = DisguiseConfig.isHidingArmorFromSelf();
     @Getter
     private boolean hideHeldItemFromSelf = DisguiseConfig.isHidingHeldItemFromSelf();
     @Getter
-    private boolean keepDisguiseOnPlayerDeath = DisguiseConfig.isKeepDisguiseOnPlayerDeath();
+    private boolean velocitySent = DisguiseConfig.isVelocitySent();
     @Getter
     private boolean modifyBoundingBox = DisguiseConfig.isModifyBoundingBox();
-    private boolean playerHiddenFromTab = DisguiseConfig.isHideDisguisedPlayers();
+    private String[] multiName = new String[0];
+    private transient int[] armorstandIds = new int[0];
     @Getter
-    private boolean replaceSounds = DisguiseConfig.isSoundEnabled();
     @Setter
+    private boolean dynamicName;
     @Getter
-    private boolean mobsIgnoreDisguise;
-    @Getter
-    private boolean velocitySent = DisguiseConfig.isVelocitySent();
-    private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises() && DisguiseConfig.isViewSelfDisguisesDefault();
+    @Setter
+    private String soundGroup;
     @Getter
     private DisguiseConfig.NotifyBar notifyBar = DisguiseConfig.getNotifyBar();
     @Getter
     private BarColor bossBarColor = DisguiseConfig.getBossBarColor();
     @Getter
     private BarStyle bossBarStyle = DisguiseConfig.getBossBarStyle();
+    @Getter
+    private boolean keepDisguiseOnPlayerDeath = DisguiseConfig.isKeepDisguiseOnPlayerDeath();
+    private boolean playerHiddenFromTab = DisguiseConfig.isHideDisguisedPlayers();
+    @Setter
+    @Getter
+    private boolean mobsIgnoreDisguise;
     /**
      * The unique FlagWatcher of this disguise
      */
@@ -106,24 +125,6 @@ public abstract class Disguise {
      * For when plugins may want to assign custom data to a disguise, such as who owns it
      */
     private final LinkedHashMap<String, Object> customData = new LinkedHashMap<>();
-    @Getter
-    private String disguiseName;
-    /**
-     * Is the name specifically set to something by a third party?
-     */
-    @Getter
-    @Setter
-    private boolean customDisguiseName = false;
-    @Getter
-    private DisguiseConfig.TallSelfDisguise tallSelfDisguise = DisguiseConfig.getTallSelfDisguisesVisibility();
-    private String[] multiName = new String[0];
-    private transient int[] armorstandIds = new int[0];
-    @Getter
-    @Setter
-    private boolean dynamicName;
-    @Getter
-    @Setter
-    private String soundGroup;
     private UUID uuid = ReflectionManager.getRandomUUID();
     /*
       If the player should see their own height grow/shrink to match the disguise
@@ -137,6 +138,38 @@ public abstract class Disguise {
         this.disguiseType = disguiseType;
         this.disguiseName = disguiseType.toReadable();
         this.internals = new DisguiseInternals(this);
+    }
+
+    protected void clone(Disguise disguise) {
+        disguise.setDisguiseName(getDisguiseName());
+        disguise.setCustomDisguiseName(isCustomDisguiseName());
+        disguise.setTallSelfDisguise(getTallSelfDisguise());
+
+        disguise.setReplaceSounds(isSoundsReplaced());
+        disguise.setViewSelfDisguise(isSelfDisguiseVisible());
+        disguise.setHearSelfDisguise(isSelfDisguiseSoundsReplaced());
+        disguise.setPlayIdleSounds(isPlayIdleSounds());
+        disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
+        disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
+        disguise.setVelocitySent(isVelocitySent());
+        disguise.setModifyBoundingBox(isModifyBoundingBox());
+        disguise.multiName = Arrays.copyOf(multiName, multiName.length);
+        disguise.setDynamicName(isDynamicName());
+        disguise.setSoundGroup(getSoundGroup());
+        disguise.notifyBar = getNotifyBar();
+        disguise.bossBarColor = getBossBarColor();
+        disguise.bossBarStyle = getBossBarStyle();
+        disguise.setExpires(getExpires());
+        disguise.setScalePlayerToDisguise(isScalePlayerToDisguise());
+        disguise.setHidePlayer(isHidePlayer());
+        disguise.setKeepDisguiseOnPlayerDeath(isKeepDisguiseOnPlayerDeath());
+        disguise.setMobsIgnoreDisguise(isMobsIgnoreDisguise());
+
+        if (getWatcher() != null) {
+            disguise.setWatcher(getWatcher().clone(disguise));
+        }
+
+        disguise.createDisguise();
     }
 
     public HashMap<String, Object> getCustomData() {
@@ -298,33 +331,6 @@ public abstract class Disguise {
 
     @Override
     public abstract Disguise clone();
-
-    protected void clone(Disguise disguise) {
-        disguise.setDisguiseName(getDisguiseName());
-        disguise.setCustomDisguiseName(isCustomDisguiseName());
-        disguise.setTallSelfDisguise(getTallSelfDisguise());
-
-        disguise.setReplaceSounds(isSoundsReplaced());
-        disguise.setViewSelfDisguise(isSelfDisguiseVisible());
-        disguise.setHearSelfDisguise(isSelfDisguiseSoundsReplaced());
-        disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
-        disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
-        disguise.setVelocitySent(isVelocitySent());
-        disguise.setModifyBoundingBox(isModifyBoundingBox());
-        disguise.multiName = Arrays.copyOf(multiName, multiName.length);
-        disguise.setDynamicName(isDynamicName());
-        disguise.setSoundGroup(getSoundGroup());
-        disguise.notifyBar = getNotifyBar();
-        disguise.bossBarColor = getBossBarColor();
-        disguise.bossBarStyle = getBossBarStyle();
-        disguise.setExpires(getExpires());
-
-        if (getWatcher() != null) {
-            disguise.setWatcher(getWatcher().clone(disguise));
-        }
-
-        disguise.createDisguise();
-    }
 
     /**
      * Seems I do this method so I can make cleaner constructors on disguises..
@@ -492,19 +498,6 @@ public abstract class Disguise {
                 getWatcher().setCustomName(name);
             }
         }
-    }
-
-    private void createRunnable() {
-        if (runnable != null && !runnable.isCancelled()) {
-            runnable.cancel();
-        }
-
-        final TargetedDisguise disguise = (TargetedDisguise) this;
-
-        // A scheduler to clean up any unused disguises.
-        runnable = new DisguiseRunnable(this);
-
-        runnable.runTaskTimer(LibsDisguises.getInstance(), 1, 1);
     }
 
     /**
@@ -750,10 +743,7 @@ public abstract class Disguise {
 
         disguiseInUse = false;
 
-        if (runnable != null) {
-            runnable.cancel();
-            runnable = null;
-        }
+        getInternals().cancelRunnable();
 
         // If this disguise hasn't a entity set
         if (getEntity() == null) {
@@ -1021,7 +1011,7 @@ public abstract class Disguise {
         disguiseInUse = true;
 
         if (!DisguiseUtilities.isInvalidFile()) {
-            createRunnable();
+            getInternals().createRunnable();
         }
 
         if (this instanceof PlayerDisguise) {

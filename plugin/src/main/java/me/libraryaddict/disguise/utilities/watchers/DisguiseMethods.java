@@ -183,7 +183,7 @@ public class DisguiseMethods {
         List<String> extraMethods = new ArrayList<>(
             Arrays.asList("setSelfDisguiseVisible", "setHideHeldItemFromSelf", "setHideArmorFromSelf", "setHearSelfDisguise",
                 "setReplaceSounds", "setHidePlayer", "setExpires", "setNotifyBar", "setBossBarColor", "setBossBarStyle", "setDynamicName",
-                "setSoundGroup", "setDisguiseName", "setDeadmau5Ears", "setTallSelfDisguise"));
+                "setSoundGroup", "setDisguiseName", "setDeadmau5Ears", "setTallSelfDisguise", "setPlayIdleSounds"));
 
         // Methods hidden by default, mainly so it doesn't throw an exception if used
         // This means that any options in this will be set in a disguise, but it won't be copied when a disguise is parsed to string

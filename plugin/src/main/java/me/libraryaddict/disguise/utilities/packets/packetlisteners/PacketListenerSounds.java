@@ -11,6 +11,7 @@ import com.github.retrooper.packetevents.util.Vector3i;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntitySoundEffect;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSoundEffect;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseRunnable;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -145,6 +146,15 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
 
         if (soundType == null) {
             return;
+        }
+
+        // Idle sounds are reset on hurt
+        if (soundType == SoundType.HURT && disguise.isPlayIdleSounds()) {
+            DisguiseRunnable runnable = disguise.getInternals().getRunnable();
+
+            if (runnable != null) {
+                runnable.resetAmbientSoundTime();
+            }
         }
 
         SoundGroup disguiseSound = SoundGroup.getGroup(disguise);

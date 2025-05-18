@@ -26,6 +26,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.ChatVisiblity;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.block.Block;
@@ -103,6 +104,17 @@ public class ReflectionManager extends ReflectionManagerAbstract {
         // Default is protected method, 1.0F on EntityLiving.class
         entityDefaultSoundMethod = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("fe");
         entityDefaultSoundMethod.setAccessible(true);
+    }
+
+    @Override
+    public int getAmbientSoundInterval(Entity entity) {
+        Object nmsEntity = getNmsEntity(entity);
+
+        if (!(nmsEntity instanceof Mob)) {
+            return -1;
+        }
+
+        return ((Mob) nmsEntity).getAmbientSoundInterval();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMove;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
@@ -9,7 +10,10 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.DisguiseValues;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -18,12 +22,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-class DisguiseRunnable extends BukkitRunnable {
+import java.util.List;
+
+public class DisguiseRunnable extends BukkitRunnable {
     private int blockX, blockY, blockZ, facing;
     private int deadTicks = 0;
     private int actionBarTicks = -1;
     private int refreshRate;
     private long lastRefreshed = System.currentTimeMillis();
+    private int ambientSoundTime;
+    private SoundGroup ignoredSoundGroup;
     private final Disguise disguise;
     final Double vectorY;
     final boolean alwaysSendVelocity;
@@ -58,6 +66,74 @@ class DisguiseRunnable extends BukkitRunnable {
         }
 
         refreshRate *= 50;
+        resetAmbientSoundTime();
+    }
+
+    public void resetAmbientSoundTime() {
+        DisguiseValues values = DisguiseValues.getDisguiseValues(disguise.getType());
+
+        if (values == null) {
+            return;
+        }
+
+        this.ambientSoundTime = -values.getAmbientSoundInterval();
+    }
+
+    private void playIdleSound() {
+        if (!disguise.isPlayIdleSounds() || !disguise.isReplaceSounds() || !disguise.getEntity().isValid()) {
+            return;
+        }
+
+        if (DisguiseUtilities.getRandom().nextInt(1000) >= this.ambientSoundTime++) {
+            return;
+        }
+
+        resetAmbientSoundTime();
+
+        SoundGroup group = SoundGroup.getGroup(disguise);
+
+        // If group was redeemed ignored
+        if (group == ignoredSoundGroup) {
+            return;
+        }
+
+        ResourceLocation idleSound;
+
+        // If no group, or the group has no sound
+        if (group == null || (idleSound = group.getSound(SoundGroup.SoundType.IDLE)) == null) {
+            ignoredSoundGroup = group;
+            return;
+        }
+
+        float volume = group.getDamageAndIdleSoundVolume();
+        float volumeSquared = volume * (16 * 16);
+        float pitch = 1f;
+
+        if (disguise instanceof MobDisguise && ((MobDisguise) disguise).doesDisguiseAge()) {
+            if (((MobDisguise) disguise).isAdult()) {
+                pitch = ((DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F) + 1.0F;
+            } else {
+                pitch = ((DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F) + 1.4F;
+            }
+        }
+
+        Vector disgLoc = disguise.getEntity().getLocation().toVector();
+        List<Player> toPlay = DisguiseUtilities.getPerverts(disguise);
+
+        if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible() && disguise.isHearSelfDisguise()) {
+            toPlay.add((Player) disguise.getEntity());
+        }
+
+        for (Player player : toPlay) {
+            double dist = player.getLocation().toVector().distance(disgLoc);
+
+            if (dist > volumeSquared) {
+                continue;
+            }
+
+            player.playSound(disguise.getEntity().getLocation(), NmsVersion.v1_16.isSupported() ? idleSound.toString() : idleSound.getKey(),
+                volume, pitch);
+        }
     }
 
     @Override
@@ -71,6 +147,8 @@ class DisguiseRunnable extends BukkitRunnable {
             }
             return;
         }
+
+        playIdleSound();
 
         if (++actionBarTicks % 15 == 0) {
             actionBarTicks = 0;

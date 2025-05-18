@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVa
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariants;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import lombok.Getter;
+import lombok.Setter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
@@ -31,7 +32,9 @@ public class SoundGroup {
 
     @Getter
     private final static LinkedHashMap<String, SoundGroup> groups = new LinkedHashMap<>();
-    private float damageSoundVolume = 1F;
+    @Getter
+    @Setter
+    private float damageAndIdleSoundVolume = 1F;
     @Getter
     private final LinkedHashMap<ResourceLocation, SoundType> disguiseSoundTypes = new LinkedHashMap<>();
     @Getter
@@ -65,14 +68,6 @@ public class SoundGroup {
         } else {
             disguiseSounds.put(type, new ResourceLocation[]{soundString});
         }
-    }
-
-    public float getDamageAndIdleSoundVolume() {
-        return damageSoundVolume;
-    }
-
-    public void setDamageAndIdleSoundVolume(float strength) {
-        this.damageSoundVolume = strength;
     }
 
     public ResourceLocation getSound(SoundType type) {

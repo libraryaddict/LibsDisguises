@@ -40,6 +40,8 @@ public abstract class ReflectionManagerAbstract {
         return createEntityInstance(entityName);
     }
 
+    public abstract int getAmbientSoundInterval(Entity entity);
+
     protected abstract Object createEntityInstance(String entityName);
 
     public abstract double[] getBoundingBox(Entity entity);

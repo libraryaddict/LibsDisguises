@@ -15,11 +15,13 @@ public class CompileSounds {
     public byte[] doSounds() {
         List<String> list = new ArrayList<>();
 
-        for (DisguiseSoundEnums e : DisguiseSoundEnums.values()) {
+        for (DisguiseSoundEnums e : DisguiseSoundEnums.getValues()) {
             list.add(getSoundAsString(e, null).toString());
 
-            for (String variant : e.getVariants()) {
-                list.add(getSoundAsString(e, variant).toString());
+            if (e.getVariants() != null) {
+                for (String variant : e.getVariants()) {
+                    list.add(getSoundAsString(e, variant).toString());
+                }
             }
         }
 
@@ -27,7 +29,7 @@ public class CompileSounds {
     }
 
     private StringBuilder getSoundAsString(DisguiseSoundEnums e, String variant) {
-        StringBuilder sound = new StringBuilder(e.name());
+        StringBuilder sound = new StringBuilder(e.getName());
 
         if (variant != null) {
             sound.append("$").append(variant);

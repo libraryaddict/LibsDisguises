@@ -54,10 +54,32 @@ import java.util.concurrent.atomic.AtomicBoolean;
     @Getter
     private final DisguiseScaling scaling;
     private final AtomicBoolean refreshingScaling = new AtomicBoolean(false);
+    @Getter
+    private transient DisguiseRunnable runnable;
 
     public DisguiseInternals(D disguise) {
         this.disguise = disguise;
         scaling = new DisguiseScaling(this);
+    }
+
+    protected void createRunnable() {
+        if (runnable != null && !runnable.isCancelled()) {
+            runnable.cancel();
+        }
+
+        // A scheduler to clean up any unused disguises.
+        runnable = new DisguiseRunnable(getDisguise());
+
+        runnable.runTaskTimer(LibsDisguises.getInstance(), 1, 1);
+    }
+
+    protected void cancelRunnable() {
+        if (runnable == null) {
+            return;
+        }
+
+        runnable.cancel();
+        runnable = null;
     }
 
     private void refreshScale() {

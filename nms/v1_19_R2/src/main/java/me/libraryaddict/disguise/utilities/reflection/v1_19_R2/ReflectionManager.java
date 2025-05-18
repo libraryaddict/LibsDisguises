@@ -24,6 +24,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -93,6 +94,17 @@ public class ReflectionManager extends ReflectionManagerAbstract {
 
         Class<?> aClass = Class.forName("org.bukkit.craftbukkit.v1_19_R2.inventory.CraftMetaItem$SerializableMeta");
         itemMetaDeserialize = aClass.getDeclaredMethod("deserialize", Map.class);
+    }
+
+    @Override
+    public int getAmbientSoundInterval(Entity entity) {
+        Object nmsEntity = getNmsEntity(entity);
+
+        if (!(nmsEntity instanceof Mob)) {
+            return -1;
+        }
+
+        return ((Mob) nmsEntity).getAmbientSoundInterval();
     }
 
     @Override

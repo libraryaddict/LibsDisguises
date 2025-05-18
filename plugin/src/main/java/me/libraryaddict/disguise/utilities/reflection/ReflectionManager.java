@@ -1421,7 +1421,7 @@ public class ReflectionManager {
 
     private static void createNMSValues(DisguiseType disguiseType) {
         if (disguiseType == DisguiseType.UNKNOWN || disguiseType.isCustom()) {
-            DisguiseValues disguiseValues = new DisguiseValues(disguiseType, 0);
+            DisguiseValues disguiseValues = new DisguiseValues(disguiseType, 0, 0);
 
             disguiseValues.setAdultBox(new FakeBoundingBox(0, 0, 0));
 
@@ -1543,7 +1543,8 @@ public class ReflectionManager {
             Entity bukkitEntity = getBukkitEntity(nmsEntity);
 
             DisguiseValues disguiseValues =
-                new DisguiseValues(disguiseType, bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0);
+                new DisguiseValues(disguiseType, bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0,
+                    getNmsReflection().getAmbientSoundInterval(bukkitEntity));
 
             List<EntityData<?>> watcher = getEntityWatcher(bukkitEntity);
             ArrayList<MetaIndex> indexes = MetaIndex.getMetaIndexes(disguiseType.getWatcherClass());
@@ -1634,9 +1635,16 @@ public class ReflectionManager {
                 }
 
                 // This should only display on custom builds
-                if (disguiseType == DisguiseType.COW && soundStrength != 0.4F && !LibsDisguises.getInstance().isJenkins()) {
-                    LibsDisguises.getInstance().getLogger()
-                        .severe("The hurt sound volume may be wrong on the COW disguise! Bad nms update?");
+                if (!LibsDisguises.getInstance().isJenkins()) {
+                    if (disguiseType == DisguiseType.COW) {
+                        if (soundStrength != 0.4F) {
+                            LibsDisguises.getInstance().getLogger()
+                                .severe("The hurt sound volume may be wrong on the COW disguise! Bad nms update?");
+                        } else if (disguiseValues.getAmbientSoundInterval() != 120) {
+                            LibsDisguises.getInstance().getLogger()
+                                .severe("The ambient interval may be wrong on the COW disguise! Bad nms update?");
+                        }
+                    }
                 }
             }
 

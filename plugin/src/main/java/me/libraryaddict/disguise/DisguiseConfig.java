@@ -322,6 +322,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static String uuidResolvingUrl;
+    @Getter
+    @Setter
+    private static boolean playIdleSounds;
 
     public static boolean isDisplayTextName() {
         return getPlayerNameType() == PlayerNameType.TEXT_DISPLAY;
@@ -644,6 +647,7 @@ public class DisguiseConfig {
         setRandomDisguises(config.getBoolean("RandomDisguiseOptions"));
         setViewDisguises(config.getBoolean("ViewSelfDisguises"));
         setViewSelfDisguisesDefault(config.getBoolean("ViewSelfDisguisesDefault"));
+        setPlayIdleSounds(config.getBoolean("PlayIdleSounds"));
         setScaleSelfDisguises(config.getBoolean("SelfDisguisesScaling"));
         setScaleSelfDisguisesMin(config.getDouble("SelfDisguisesScaleMin"));
         setScaleSelfDisguisesMax(config.getDouble("SelfDisguisesScaleMax"));
