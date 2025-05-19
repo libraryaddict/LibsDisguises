@@ -162,7 +162,7 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
         }
 
         // As far as I can see, only one method in this class should match the method signiture
-        for (Method method : getNmsClass("EntityWaterAnimal").getMethods()) {
+        for (Method method : getNmsClass("EntityWaterAnimal").getDeclaredMethods()) {
             // There are no parameters, and we expect an int
             if (method.getParameterCount() != 0 || method.getReturnType() != int.class) {
                 continue;
@@ -180,7 +180,7 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
             }
 
             // Use the name found here, to get the base method
-            ambientSoundVolume = getNmsClass("Mob").getMethod(method.getName());
+            ambientSoundVolume = getNmsClass("EntityInsentient").getMethod(method.getName());
         }
 
         getBlockDataAsId = getNmsMethod("Block", "getCombinedId", getNmsClass("IBlockData"));

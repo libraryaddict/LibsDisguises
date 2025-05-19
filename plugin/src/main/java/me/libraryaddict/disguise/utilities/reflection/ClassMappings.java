@@ -150,6 +150,12 @@ public class ClassMappings {
                     continue;
                 }
 
+                if (parts[1].equals("???")) {
+                    LibsDisguises.getInstance().getLogger().info("Mappings cache pointing to " + parts[0] + " is invalid, will rebuild.");
+                    classLocations.clear();
+                    return;
+                }
+
                 try {
                     // Check if class name is still valid
                     if (parts[1].contains(".")) {
