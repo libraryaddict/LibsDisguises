@@ -22,6 +22,7 @@ tasks {
     shadowJar {
         configurations = listOf(project.configurations.shadow.get())
         exclude("me/libraryaddict/disguise/utilities/compiler/**")
+        exclude("META-INF/**")
     }
 
     getByName("run") {

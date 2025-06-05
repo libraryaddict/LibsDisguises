@@ -369,10 +369,10 @@ public class LibsDisguises extends JavaPlugin {
                     "need to reinstall all your plugins, jars, etc as just one infected plugin will infect everything else when it loads.");
             getLogger().severe(
                 "Unfortunately I have seen this happen from time to time, this normally happens when a server owner is tricked into " +
-                    "adding third party plugins. Please note that Lib's Disguises is only detecting this and doesn't know what plugins " +
-                    "are infected, only that Lib's Disguises itself was infected immediately after you installed it in your server. The " +
+                    "adding third party plugins. Please note that Lib's Disguises is only detecting itself and doesn't know what other plugins " +
+                    "have malware, only that Lib's Disguises itself was infected immediately after you installed it in your server. The " +
                     "jar in your plugins folder will be bigger than what you downloaded from SpigotMC, you can easily check that for " +
-                    "yourself. I can't help you deal with the malware, there's no shortcuts but to redownload everything and remember not" +
+                    "yourself. I can't help you deal with the malware, there's no shortcuts but to re-download everything and remember not" +
                     " to download from shady sources.");
         }
     }

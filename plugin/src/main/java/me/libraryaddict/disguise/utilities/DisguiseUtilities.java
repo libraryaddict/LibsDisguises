@@ -1897,6 +1897,11 @@ public class DisguiseUtilities {
         invalidFile = LibsDisguises.getInstance().getFile().getName().toLowerCase(Locale.ENGLISH).matches(".*((crack)|(null)|(leak)).*");
 
         if (LibsPremium.isPremium()) {
+            try (InputStream stream = LibsDisguises.getInstance().getResource("module-info.class")) {
+                invalidFile = stream != null;
+            } catch (Throwable e) {
+            }
+
             if (!savedDisguises.exists() && !NmsVersion.v1_14.isSupported()) {
                 savedDisguises.mkdirs();
             }
