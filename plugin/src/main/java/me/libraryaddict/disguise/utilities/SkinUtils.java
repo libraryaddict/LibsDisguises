@@ -23,6 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -120,6 +121,10 @@ public class SkinUtils {
     }
 
     public static UserProfile getUUID(String urlString, String name) {
+        return getUUID(urlString, name, new AtomicInteger());
+    }
+
+    public static UserProfile getUUID(String urlString, String name, AtomicInteger responseCodeInteger) {
         try {
             String path = String.format(urlString, name);
             URL url = new URL(path);
@@ -127,6 +132,8 @@ public class SkinUtils {
             con.setRequestProperty("User-Agent", "plugin/LibsDisguises/" + LibsDisguises.getInstance().getDescription().getVersion());
 
             int responseCode = con.getResponseCode();
+
+            responseCodeInteger.set(responseCode);
 
             if (responseCode == 404) {
                 return null;

@@ -11,6 +11,8 @@ ContactMojangServers: true
 # * https://api.minecraftservices.com/minecraft/profile/lookup/name/%s
 # * null - So literally 'null', or an empty string. This will attempt to use the built into the server authlib
 # You can set this to another url of your choosing, but if you don't know what you're doing...
+# NOTE - This is currently defunct, Mojang have broken both endpoints. We're simply going to test both and use whatever works
+# We have no way to tell which one will work, no communication on the bug issues.
 UUIDResolvingUrl: 'https://api.mojang.com/users/profiles/minecraft/%s'
 
 # Shall I notify those with the correct permission when there's a LibsDisguises update?

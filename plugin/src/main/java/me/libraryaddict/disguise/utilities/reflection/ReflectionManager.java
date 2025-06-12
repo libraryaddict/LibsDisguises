@@ -157,6 +157,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
@@ -855,16 +856,52 @@ public class ReflectionManager {
         return getNmsReflection().getSoundModifier(entity);
     }
 
+    // Defaults to null, resolves to a string when a working backend is found, empty string if no working backend
+    private static String workingBackend = null;
+
     /**
      * Gets the UUID of the player, as well as properly capitalized playername
      */
     public static UserProfile grabProfileAddUUID(String playername) {
         try {
-            UserProfile result;
+            UserProfile result = null;
 
-            if (DisguiseConfig.getUuidResolvingUrl() != null) {
-                result = SkinUtils.getUUID(DisguiseConfig.getUuidResolvingUrl(), playername);
-            } else {
+            // If the backend has not been decided as a total wipe
+            if (!"".equals(workingBackend)) {
+                AtomicInteger responseCode = new AtomicInteger(-1);
+
+                // Loop over the two backends we know
+                for (String backend : new String[]{"https://api.minecraftservices.com/minecraft/profile/lookup/name/%s",
+                    "https://api.mojang.com/users/profiles/minecraft/%s"}) {
+
+                    // If backend has not been verified yet
+                    if (workingBackend == null) {
+                        LibsDisguises.getInstance().getLogger().info(
+                            "Trying to resolve a working backend for fetching names... You may see an error pop in console. This should " +
+                                "only happen 1-2 times per startup");
+                    } else if (!backend.equals(workingBackend)) {
+                        // Else we know what backend we want, and this isn't it
+                        continue;
+                    }
+
+                    result = SkinUtils.getUUID(backend, playername, responseCode);
+
+                    // If backend did not 403, then set it and break the loop
+                    if (responseCode.get() != 403) {
+                        workingBackend = backend;
+                        break;
+                    }
+                }
+
+                // If backends are erroring
+                if (responseCode.get() == 403 && result == null) {
+                    // Fall back to internal
+                    workingBackend = "";
+                }
+            }
+
+            // If we don't have a backend and the result isn't known, use internal
+            if ("".equals(workingBackend) && result == null) {
                 LibsProfileLookupCaller callback = new LibsProfileLookupCaller();
 
                 getNmsReflection().injectCallback(playername, callback);
