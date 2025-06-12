@@ -141,7 +141,7 @@ public class SkinUtils {
 
                 if (errored || !response.startsWith("{")) {
                     LibsDisguises.getInstance().getLogger()
-                        .severe(String.format("Received error code %s when attempting to fetch %s: %s", errored, path, response));
+                        .severe(String.format("Received error code %s when attempting to fetch %s: %s", responseCode, path, response));
                     return null;
                 }
 
