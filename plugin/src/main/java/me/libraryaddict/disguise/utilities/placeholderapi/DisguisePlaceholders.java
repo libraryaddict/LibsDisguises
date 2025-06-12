@@ -21,6 +21,10 @@ public class DisguisePlaceholders extends PlaceholderExpansion {
         add(new PlaceholderDisguiseSkin());
         add(new PlaceholderDisguiseMaterial());
         add(new PlaceholderDisguiseFlag());
+        add(new PlaceholderHasNotifyBarPreference());
+        add(new PlaceholderHasSelfDisguisePreference());
+        add(new PlaceholderHasNotifyBars());
+        add(new PlaceholderHasSelfDisguises());
     }
 
     private void add(DPlaceholder dPlaceholder) {
