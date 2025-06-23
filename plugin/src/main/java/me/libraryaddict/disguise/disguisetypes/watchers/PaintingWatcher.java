@@ -1,14 +1,13 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Art;
 
-public class PaintingWatcher extends FlagWatcher {
+public class PaintingWatcher extends HangingWatcher {
     private Art painting;
 
     public PaintingWatcher(Disguise disguise) {

@@ -24,6 +24,7 @@ public enum NmsVersion {
     v1_21_R2("1.21.3"), // 1.21.2 was hotfixed by 1.21.3
     v1_21_R3("1.21.4"),
     v1_21_R4("1.21.5"),
+    v1_21_R5("1.21.6"),
     UNSUPPORTED("N/A");
 
     private final String[] supportedVersions;

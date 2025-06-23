@@ -1816,7 +1816,7 @@ public class ReflectionManager {
                 return EntityDataTypes.SNIFFER_STATE;
             } else if (index == MetaIndex.ARMADILLO_STATE) {
                 return EntityDataTypes.ARMADILLO_STATE;
-            } else if (index == MetaIndex.SHULKER_FACING) {
+            } else if (index.getDefault() instanceof BlockFace) {
                 return EntityDataTypes.BLOCK_FACE;
             } else if (index == MetaIndex.AREA_EFFECT_CLOUD_COLOR) {
                 return EntityDataTypes.INT;

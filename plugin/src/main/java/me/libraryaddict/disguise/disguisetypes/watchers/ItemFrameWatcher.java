@@ -6,7 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class ItemFrameWatcher extends FlagWatcher {
+public class ItemFrameWatcher extends HangingWatcher {
     public ItemFrameWatcher(Disguise disguise) {
         super(disguise);
     }

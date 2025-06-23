@@ -7,12 +7,15 @@ import lombok.Getter;
 import lombok.Setter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.apache.commons.lang.math.RandomUtils;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HappyGhast;
 import org.bukkit.entity.Wolf;
 
 import java.util.ArrayList;
@@ -138,7 +141,14 @@ public class SoundGroup {
             variantName = variant.getName().getKey();
         }
 
-        return getGroup(disguise.getType().name(), variantName);
+        String entityName = disguise.getType().name();
+
+        if (disguise.getType() == DisguiseType.HAPPY_GHAST && disguise.getWatcher() instanceof AgeableWatcher &&
+            ((AgeableWatcher) disguise.getWatcher()).isBaby()) {
+            entityName = "GHASTLING";
+        }
+
+        return getGroup(entityName, variantName);
     }
 
     public static SoundGroup getGroup(Entity entity) {
@@ -153,6 +163,8 @@ public class SoundGroup {
             } else {
                 variantName = ReflectionManager.getNmsReflection().getVariant(entity, WolfSoundVariants.getRegistry());
             }
+        } else if (NmsVersion.v1_21_R5.isSupported() && entity instanceof HappyGhast && !((Ageable) entity).isAdult()) {
+            name = "GHASTLING";
         }
 
         return getGroup(name, variantName);

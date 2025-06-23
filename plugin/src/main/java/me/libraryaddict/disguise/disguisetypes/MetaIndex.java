@@ -14,6 +14,7 @@ import com.github.retrooper.packetevents.protocol.particle.Particle;
 import com.github.retrooper.packetevents.protocol.particle.data.ParticleColorData;
 import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
+import com.github.retrooper.packetevents.protocol.world.Direction;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.util.Quaternion4f;
@@ -63,6 +64,8 @@ import me.libraryaddict.disguise.disguisetypes.watchers.GhastWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GlowSquidWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GoatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.HangingWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.HappyGhastWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HoglinWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.IllagerWatcher;
@@ -574,6 +577,21 @@ public class MetaIndex<Y> {
      * Play a guardian beam between guardian and target entity id
      */
     public static MetaIndex<Integer> GUARDIAN_TARGET = new MetaIndex<>(GuardianWatcher.class, 1, 0);
+
+    /**
+     * Hanging direction
+     */
+    @NmsAddedIn(NmsVersion.v1_21_R5)
+    public static MetaIndex<BlockFace> HANGING_DIRECTION = new MetaIndex(HangingWatcher.class, 0, BlockFace.SOUTH);
+
+    @NmsAddedIn(NmsVersion.v1_21_R5)
+    public static MetaIndex<Boolean> HAPPY_GHAST_IS_LEASH_HOLDER = new MetaIndex<>(HappyGhastWatcher.class, 0, false);
+
+    /**
+     * No visible effect
+     */
+    @NmsAddedIn(NmsVersion.v1_21_R5)
+    public static MetaIndex<Boolean> HAPPY_GHAST_STAYS_STILL = new MetaIndex<>(HappyGhastWatcher.class, 1, false);
 
     @NmsAddedIn(NmsVersion.v1_16)
     public static MetaIndex<Boolean> HOGLIN_SHAKING = new MetaIndex<>(HoglinWatcher.class, 0, false);

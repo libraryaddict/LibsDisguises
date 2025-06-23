@@ -6,6 +6,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+@Getter
 public enum AnimalColor {
     BLACK(DyeColor.BLACK, NmsVersion.v1_13.isSupported() ? Material.getMaterial("INK_SAC") : Material.getMaterial("INK_SACK")),
     BLUE(DyeColor.BLUE, NmsVersion.v1_13.isSupported() ? Material.getMaterial("LAPIS_LAZULI") : null),
@@ -73,7 +74,19 @@ public enum AnimalColor {
 
     public static AnimalColor getColorByMaterial(Material material) {
         for (AnimalColor color : values()) {
-            if (color.getDyeMaterial() != material) {
+            if (color.getDyeMaterial() != material && color.getHarnessColor() != material) {
+                continue;
+            }
+
+            return color;
+        }
+
+        return null;
+    }
+
+    public static AnimalColor getColorByHarness(Material material) {
+        for (AnimalColor color : values()) {
+            if (color.getHarnessColor() != material) {
                 continue;
             }
 
@@ -107,17 +120,13 @@ public enum AnimalColor {
         return null;
     }
 
-    @Getter
     private final DyeColor dyeColor;
-    private final Material material;
+    private final Material dyeMaterial;
+    private final Material harnessColor;
 
-    AnimalColor(DyeColor color, Material material) {
+    AnimalColor(DyeColor color, Material dyeMaterial) {
         dyeColor = color;
-        this.material = NmsVersion.v1_13.isSupported() ? material : Material.getMaterial("INK_SACK");
+        this.dyeMaterial = NmsVersion.v1_13.isSupported() ? dyeMaterial : Material.getMaterial("INK_SACK");
+        this.harnessColor = NmsVersion.v1_21_R5.isSupported() ? Material.getMaterial(name() + "_HARNESS") : null;
     }
-
-    public Material getDyeMaterial() {
-        return material;
-    }
-
 }

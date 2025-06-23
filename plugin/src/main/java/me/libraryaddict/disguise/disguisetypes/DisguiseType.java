@@ -144,6 +144,8 @@ public enum DisguiseType {
 
     GUARDIAN,
 
+    @NmsAddedIn(NmsVersion.v1_21_R5) HAPPY_GHAST,
+
     @NmsAddedIn(NmsVersion.v1_16) HOGLIN,
 
     HORSE,

@@ -181,6 +181,9 @@ public class DisguiseSoundEnums {
             .setIgnored("entity.player.small_fall", "entity.ghast.shoot", "entity.player.big_fall", "entity.ghast.scream",
                 "entity.ghast.warn");
 
+        register("GHASTLING").setHurt("entity.ghastling.hurt").setDeath("entity.ghastling.death").setIdle("entity.ghastling.ambient")
+            .setIgnored("entity.ghastling.spawn");
+
         register("GIANT").setHurt("entity.player.hurt").setStep("block.grass.step");
 
         register("GLOW_SQUID").setHurt("entity.glow_squid.hurt").setDeath("entity.glow_squid.death").setIdle("entity.glow_squid.ambient")
@@ -196,6 +199,11 @@ public class DisguiseSoundEnums {
         register("GUARDIAN").setHurt("entity.guardian.hurt", "entity.guardian.hurt_land")
             .setDeath("entity.guardian.death", "entity.guardian.death_land")
             .setIdle("entity.guardian.ambient", "entity.guardian.ambient_land").setIgnored("entity.guardian.flop");
+
+        register("HAPPY_GHAST").setHurt("entity.happy_ghast.hurt").setDeath("entity.happy_ghast.death")
+            .setIdle("entity.happy_ghast.ambient")
+            .setIgnored("entity.happy_ghast.riding", "entity.happy_ghast.harness_goggles_down", "entity.happy_ghast.harness_goggles_up",
+                "entity.happy_ghast.equip", "entity.happy_ghast.unequip");
 
         register("HOGLIN").setHurt("entity.hoglin.hurt").setDeath("entity.hoglin.death").setStep("entity.hoglin.step")
             .setIdle("entity.hoglin.ambient")
