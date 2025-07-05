@@ -16,9 +16,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -27,6 +29,7 @@ public class DisguisePermissions {
         private final DisguisePerm disguisePerm;
         private final List<String> permittedOptions = new ArrayList<>();
         private final List<String> negatedOptions = new ArrayList<>();
+        private final Set<String> externalNegatedOptions = new HashSet<>();
         private boolean wildcardAllow = false;
 
         public PermissionStorage(DisguisePerm disguisePerm) {
@@ -408,16 +411,14 @@ public class DisguisePermissions {
 
             // If invisibility was disabled in the config, ignore permissions and make sure it's disabled
             if (DisguiseConfig.isDisabledInvisibility()) {
-                storage.permittedOptions.remove("setinvisible");
-                storage.negatedOptions.add("setinvisible");
+                storage.externalNegatedOptions.add("setinvisible");
             }
 
             if (sender instanceof Player && !isOperator()) {
-                for (String unsafeMethod : DisguiseConfig.getDisabledMethods()) {
-                    storage.permittedOptions.remove(unsafeMethod);
-                    storage.negatedOptions.add(unsafeMethod);
-                }
+                storage.externalNegatedOptions.addAll(DisguiseConfig.getDisabledMethods());
             }
+
+            storage.permittedOptions.removeAll(storage.externalNegatedOptions);
 
             disguises.add(storage);
         }
@@ -511,7 +512,7 @@ public class DisguisePermissions {
             return false;
         }
 
-        // If they are able to use all permitted options by default, why bother checking what they can use
+        // If user cannot use all permitted options naturally
         if (!storage.wildcardAllow) {
             // If their permitted options are defined, or the denied options are not defined
             // If they don't have permitted options defined, but they have denied options defined then they probably
@@ -525,7 +526,8 @@ public class DisguisePermissions {
         }
 
         // If the user is using a forbidden option, return false. Otherwise true
-        return disguiseOptions.stream().noneMatch(option -> storage.negatedOptions.contains(option.toLowerCase(Locale.ENGLISH)));
+        return disguiseOptions.stream().map(s -> s.toLowerCase(Locale.ENGLISH))
+            .noneMatch(option -> storage.negatedOptions.contains(option) || storage.externalNegatedOptions.contains(option));
     }
 
     public boolean isAllowedDisguise(DisguisePerm disguisePerm) {

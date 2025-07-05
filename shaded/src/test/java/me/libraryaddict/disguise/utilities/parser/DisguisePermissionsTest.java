@@ -11,7 +11,8 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestTemplate;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
@@ -27,13 +28,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(DisguisePermissionsNegatedProvider.class)
 public class DisguisePermissionsTest {
     @BeforeAll
     public static void beforeAll() {
         Mockito.mockStatic(Bukkit.class).when(Bukkit::getConsoleSender).thenReturn(null);
     }
 
-    @Test
+    @TestTemplate
     public void testDisguisesExist() {
         assertNull(DisguiseParser.getDisguisePerm("Reindeer"), "There should not be a reindeer disguise");
 
@@ -42,7 +44,7 @@ public class DisguisePermissionsTest {
         assertNotNull(DisguiseParser.getDisguisePerm("Firework"), "There should be a firework disguise");
     }
 
-    @Test
+    @TestTemplate
     public void testPermissionNames() {
         assertFalse(createPermissions("Disguise", false).hasPermissions(), "There should not be permissions");
 
@@ -54,7 +56,7 @@ public class DisguisePermissionsTest {
         assertTrue(createPermissions("Disguise", false, "libsdisguises.*.animal").hasPermissions(), "There should be permissions");
     }
 
-    @Test
+    @TestTemplate
     public void testOperatorPermissions() {
         DisguisePermissions permissions =
             createPermissions("Disguise", true, "-libsdisguises.disguise.sheep", "-libsdisguises.disguise.horse.setBaby");
@@ -71,7 +73,7 @@ public class DisguisePermissionsTest {
             "The disguise horse should not be allowed with setBaby");
     }
 
-    @Test
+    @TestTemplate
     public void testWildcardsPermissions() {
         assertTrue(createPermissions("Disguise", false, "libsdisguises.*.animal").isAllowedDisguise(DisguiseParser.getDisguisePerm("Cow")),
             "The cow disguise should be allowed");
@@ -102,7 +104,7 @@ public class DisguisePermissionsTest {
                 DisguiseParser.getDisguisePerm("Firework")), "The firework disguise should be allowed");
     }
 
-    @Test
+    @TestTemplate
     public void testInheritedPermissions() {
         testInheritedPermissions(
             createPermissions("Disguise", false, "libsdisguises.disguise.animal.setBaby", "-libsdisguises.disguise.sheep.setBaby"));
@@ -126,7 +128,7 @@ public class DisguisePermissionsTest {
             "The firework disguise should not be allowed");
     }
 
-    @Test
+    @TestTemplate
     public void testNegatedPermissions() {
         DisguisePermissions permissions =
             createPermissions("Disguise", false, "libsdisguises.disguise.sheep", "-libsdisguises.disguise.cow.setSprinting",
@@ -147,7 +149,7 @@ public class DisguisePermissionsTest {
             "The horse disguise should not be allowed setRearing");
     }
 
-    @Test
+    @TestTemplate
     public void testMultiDisguises() {
         DisguisePermissions permissions =
             createPermissions("Disguise", false, "libsdisguises.disguise.cow.setBaby", "libsdisguises.disguise.cow.setHealth",
@@ -172,7 +174,7 @@ public class DisguisePermissionsTest {
             "The cow disguise should not be able to use setSprinting with setBaby");
     }
 
-    @Test
+    @TestTemplate
     public void testOptions() {
         assertFalse(createPermissions("Disguise", false, "libsdisguises.disguise.cow", "-libsdisguises.disguise.cow").hasPermissions(),
             "The disguise should not be valid");
@@ -218,7 +220,7 @@ public class DisguisePermissionsTest {
             "The disguise should not be allowed even with options");
     }
 
-    @Test
+    @TestTemplate
     public void testDisguiseParameters() {
         HashMap<String, HashMap<String, Boolean>> disguiseOptions = DisguisePermissions.getDisguiseOptions(
             createPermissionsHolder(false, "libsdisguises.options.disguise.pink_sheep.setcolor.BLUE",
@@ -240,7 +242,7 @@ public class DisguisePermissionsTest {
             "They should be allowed to escape a period");
     }
 
-    @Test
+    @TestTemplate
     public void testDisguiseValidWorksToGiveMore() {
         DisguisePermissions permissions = createPermissions("Disguise", false, "libsdisguises.disguise.falling_block.setCustomName",
             "libsdisguises.disguise.valid.falling_block.setblock");
@@ -255,7 +257,7 @@ public class DisguisePermissionsTest {
             "The falling block disguise should allow setBlock");
     }
 
-    @Test
+    @TestTemplate
     public void testDisguiseValidDoesntGiveExtra() {
         DisguisePermissions permissions = createPermissions("Disguise", false, "libsdisguises.disguise.valid.falling_block.setblock");
 
@@ -270,7 +272,7 @@ public class DisguisePermissionsTest {
     }
 
     @SneakyThrows
-    @Test
+    @TestTemplate
     public void testCustomDisguisePermissions() {
         DisguiseConfig.getCustomDisguises().put(new DisguisePerm(DisguiseType.BEE, "babybee"), "bee setbaby");
 
@@ -299,7 +301,7 @@ public class DisguisePermissionsTest {
         DisguiseAPI.removeCustomDisguise("babybee");
     }
 
-    @Test
+    @TestTemplate
     public void testExplictPermissions() {
         DisguiseConfig.setExplicitDisguisePermissions(true);
 
