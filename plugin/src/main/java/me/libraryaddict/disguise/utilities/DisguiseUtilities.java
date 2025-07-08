@@ -3489,8 +3489,12 @@ public class DisguiseUtilities {
         return getYaw(disguiseType, getYaw(entityType, value));
     }
 
+    public static int getHangingOrdinal(float yaw) {
+        return (int) Math.round(Math.abs((yaw + 720) % 360) / 90D) % 4;
+    }
+
     public static Direction getHangingDirection(float yaw) {
-        return Direction.valueOf(BlockFace.values()[(int) Math.round(Math.abs((yaw + 720) % 360) / 90D) % 4].name());
+        return Direction.valueOf(BlockFace.values()[getHangingOrdinal(yaw)].name());
     }
 
     /**

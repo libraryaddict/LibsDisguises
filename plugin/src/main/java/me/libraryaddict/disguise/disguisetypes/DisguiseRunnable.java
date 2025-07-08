@@ -9,6 +9,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.HangingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -136,31 +137,12 @@ public class DisguiseRunnable extends BukkitRunnable {
         }
     }
 
-    @Override
-    public void run() {
-        if (!disguise.isDisguiseInUse() || disguise.getEntity() == null || !Bukkit.getWorlds().contains(disguise.getEntity().getWorld())) {
-            disguise.stopDisguise();
-
-            // If still somehow not cancelled
-            if (!isCancelled()) {
-                cancel();
-            }
-            return;
-        }
-
-        playIdleSound();
-
-        if (++actionBarTicks % 15 == 0) {
-            actionBarTicks = 0;
-
-            disguise.doPeriodicTick();
-        }
-
+    private boolean isDead() {
         // If entity is no longer valid. Remove it.
         if (disguise.getEntity() instanceof Player && !((Player) disguise.getEntity()).isOnline()) {
             disguise.removeDisguise();
 
-            return;
+            return true;
         } else if (disguise.disguiseExpires > 0 && (DisguiseConfig.isDynamicExpiry() ? disguise.disguiseExpires-- == 1 :
             disguise.disguiseExpires < System.currentTimeMillis())) { // If disguise expired
             disguise.removeDisguise();
@@ -169,7 +151,7 @@ public class DisguiseRunnable extends BukkitRunnable {
                 LibsMsg.EXPIRED_DISGUISE.send(disguise.getEntity());
             }
 
-            return;
+            return true;
         } else if (!disguise.getEntity().isValid()) {
             // If it has been dead for 30+ ticks
             // This is to ensure that this disguise isn't removed while clients think its the real entity
@@ -182,10 +164,42 @@ public class DisguiseRunnable extends BukkitRunnable {
                 }
             }
 
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void run() {
+        if (!disguise.isDisguiseInUse() || disguise.getEntity() == null || !Bukkit.getWorlds().contains(disguise.getEntity().getWorld())) {
+            disguise.stopDisguise();
+
+            // If still somehow not cancelled
+            if (!isCancelled()) {
+                cancel();
+            }
+            return;
+        }
+
+        if (++actionBarTicks % 15 == 0) {
+            actionBarTicks = 0;
+
+            disguise.doPeriodicTick();
+        }
+
+        // As of 1.21.7, hanging entities have rotation decided by metadata
+        if (NmsVersion.v1_21_R5.isSupported() && disguise.getWatcher() instanceof HangingWatcher) {
+            ((HangingWatcher) disguise.getWatcher()).updateHangingRotation();
+        }
+
+        if (isDead()) {
             return;
         }
 
         deadTicks = 0;
+
+        playIdleSound();
 
         // If the disguise type is invisible, we need to resend the entity packet else it will turn invisible
         if (refreshRate > 0 && lastRefreshed + refreshRate < System.currentTimeMillis()) {
