@@ -489,7 +489,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<Boolean> ENTITY_SILENT = new MetaIndex<>(FlagWatcher.class, 4, false);
 
     /**
-     * If entity is effected by gravity, some visial effects
+     * If entity is effected by gravity, some visual effects
      */
     public static MetaIndex<Boolean> ENTITY_NO_GRAVITY = new MetaIndex<>(FlagWatcher.class, 5, false);
 
