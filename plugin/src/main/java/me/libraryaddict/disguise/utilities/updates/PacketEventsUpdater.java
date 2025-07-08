@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.CodeSource;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -75,7 +76,7 @@ public class PacketEventsUpdater {
 
     public static boolean isPacketEventsOutdated(Instant requiredTime) {
         try {
-            return PEVersions.BUILD_TIMESTAMP.isBefore(requiredTime);
+            return PEVersions.BUILD_TIMESTAMP.isBefore(requiredTime.minus(1, ChronoUnit.MINUTES));
         } catch (Throwable ignored) {
             // If error is thrown, then the field is missing and we're definitely outdated
         }
