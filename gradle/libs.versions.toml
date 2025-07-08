@@ -9,9 +9,10 @@ com-mojang-datafixerupper = "7.0.14"
 
 lombok-version = "1.18.34"
 shadow-version = "8.1.1"
-junit-version = "4.13.2"
 junit-jupiter-version = "5.9.3"
 mockito-version = "5.12.0"
+json-version = "20250517"
+asm-version = "9.8"
 
 net-kyori-adventure-api = "4.17.0"
 com-retro-packetevents = "2.9.0-SNAPSHOT"
@@ -38,10 +39,11 @@ org-spigotmc-spigot = { module = "org.spigotmc:spigot", version.ref = "org-spigo
 org-spigotmc-spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "org-spigotmc-spigot" }
 com-retro-packetevents = { module = "com.github.retrooper:packetevents-spigot", version.ref = "com-retro-packetevents" }
 org-projectlombok-lombok = { module = "org.projectlombok:lombok", version.ref = "lombok-version" }
-junit-plugin = { module = "junit:junit", version.ref = "junit-version" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter-version" }
 mockito = { module = "org.mockito:mockito-core", version.ref = "mockito-version" }
 placeholder-api = { module = "me.clip:placeholderapi", version.ref = "placeholder-api" }
+org-json = { module = "org.json:json", version.ref = "json-version" }
+org-ow2-asm = { module = "org.ow2.asm:asm", version.ref = "asm-version" }
 
 [plugins]
 shadowjar = { id = "com.github.johnrengelman.shadow", version.ref = "shadow-version" }
