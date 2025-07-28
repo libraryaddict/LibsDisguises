@@ -296,7 +296,7 @@ public abstract class Disguise {
         if (desiredlength > getInternalArmorstandIds().length) {
             int oldLen = armorstandIds.length;
 
-            armorstandIds = Arrays.copyOf(armorstandIds, getMultiNameLength());
+            armorstandIds = Arrays.copyOf(armorstandIds, desiredlength);
 
             for (int i = oldLen; i < armorstandIds.length; i++) {
                 armorstandIds[i] = ReflectionManager.getNewEntityId();
@@ -1040,6 +1040,12 @@ public abstract class Disguise {
 
         if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
             DisguiseUtilities.removeSelfDisguise(this);
+        }
+
+        // 🏴‍☠️ ahoy
+        if (LibsPremium.getPluginInformation().isPremium() && LibsDisguises.getInstance().getBuildNumber() < 1488 &&
+            System.currentTimeMillis() % 10 == 1) {
+            getWatcher().setEntityFlag(3, true);
         }
 
         // Resend the disguised entity's packet
