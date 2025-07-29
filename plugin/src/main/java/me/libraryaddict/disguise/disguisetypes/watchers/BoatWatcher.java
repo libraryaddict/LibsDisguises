@@ -82,6 +82,7 @@ public class BoatWatcher extends FlagWatcher {
     }
 
     @NmsRemovedIn(NmsVersion.v1_19_R1)
+    @Deprecated
     public TreeSpecies getBoatType() {
         if (NmsVersion.v1_19_R1.isSupported()) {
             return ParamInfoBoatType.getSpeciesFromType(getType());
@@ -92,6 +93,7 @@ public class BoatWatcher extends FlagWatcher {
 
     @NmsRemovedIn(NmsVersion.v1_19_R1)
     @MethodDescription("What type of wood is this boat made of?")
+    @Deprecated
     public void setBoatType(TreeSpecies boatType) {
         if (NmsVersion.v1_19_R1.isSupported()) {
             setType(ParamInfoBoatType.getTypeFromSpecies(boatType));

@@ -292,7 +292,7 @@ public class DisguiseUtilities {
     private static final Cache<Integer, Long> velocityTimes = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.SECONDS).build();
     private static final HashMap<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
     @Getter
-    private static boolean runningPaper, runningGeyser;
+    private static boolean runningGeyser;
     private static MineSkinAPI mineSkinAPI;
     @Getter
     private static boolean invalidFile;
@@ -352,12 +352,6 @@ public class DisguiseUtilities {
     private static final File internalFolder, preferencesFile;
 
     static {
-        try {
-            // Check if we enable the paperdisguiselistener
-            runningPaper = Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData") != null;
-        } catch (Exception ignored) {
-        }
-
         if (LibsDisguises.getInstance() == null) {
             profileCache = null;
             sanitySkinCacheFile = null;

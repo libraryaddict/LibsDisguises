@@ -150,7 +150,6 @@ public class ParamInfoParticle extends ParamInfoEnum {
 
             return Integer.parseInt(s);
         }
-
     }
 
     @RequiredArgsConstructor
@@ -448,7 +447,6 @@ public class ParamInfoParticle extends ParamInfoEnum {
                 data = new ParticleItemStackData(
                     com.github.retrooper.packetevents.protocol.item.ItemStack.builder().type(ItemTypes.STONE).build());
             }
-
         } else if (cl == ParticleDustData.class) {
             Color color = new Color(0, 0, 0);
             float scale = 1;

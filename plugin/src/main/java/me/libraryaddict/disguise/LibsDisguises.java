@@ -207,13 +207,17 @@ public class LibsDisguises extends JavaPlugin {
                 getLogger().severe("Server was reloaded! Please do not report any bugs! This plugin can't handle reloads gracefully!");
             }
 
+            verboseLog("Checking for terrible Minecraft versions (Shouldn't be used)...");
             runWarnings();
-            updateOldDisguisesYaml();
+            verboseLog("Quickly checking Libs Disguises jar for third party viruses...");
             loadYamlWarnVirus();
+            verboseLog("Printing off information about the current server + plugin...");
             logInfo();
 
+            verboseLog("Checking if the plugin should have cool stuff, or if the user opted for free stuff...");
             LibsPremium.check(getDescription().getVersion(), getFile());
 
+            // No point logging this one
             someMoreLogging();
 
             if (ReflectionManager.getVersion() == null) {
@@ -224,6 +228,7 @@ public class LibsDisguises extends JavaPlugin {
                 return;
             }
 
+            verboseLog("Checking if packetevents is outdated...");
             startOutdatedPacketevents();
 
             // If this is a release build, even if jenkins build..
@@ -237,15 +242,21 @@ public class LibsDisguises extends JavaPlugin {
                 DisguiseConfig.setUsingReleaseBuilds(false);
             }
 
+            verboseLog("Eunning some backend loading...");
             runBackendStuff();
 
+            verboseLog("Loading the bulky configs...");
             DisguiseConfig.loadConfig();
 
+            verboseLog("Registering the listeners...");
             registerListeners();
+            verboseLog("Registering the commands...");
             registerCommands();
 
+            verboseLog("Sorting out the PlaceholderAPI integration incase its on the server...");
             integratePlaceholderApi();
 
+            verboseLog("Adding in metrics... Unless its disabled, then I'm very sad...");
             new MetricsInitalizer();
         } catch (Throwable throwable) {
             deleteMappingsCache();
@@ -264,19 +275,27 @@ public class LibsDisguises extends JavaPlugin {
 
     private void runBackendStuff() {
         if (SpigotReflectionUtil.VERSION == null) {
+            verboseLog("Starting up packetevents reflections as it isn't ready yet...");
             SpigotReflectionUtil.init();
         }
 
+        verboseLog("Starting up our own reflection classes...");
         ReflectionManager.init();
 
+        verboseLog("Creating but not registering the packet listeners...");
         PacketsManager.init();
+        verboseLog("Setting up some internal utilities for disguises...");
         DisguiseUtilities.init();
 
+        verboseLog("Loading the sound files...");
         new SoundManager().load();
 
+        verboseLog("Integrating information about entities...");
         ReflectionManager.registerValues();
+        verboseLog("Loading disguise parsing information...");
         DisguiseParser.createDefaultMethods();
 
+        verboseLog("Recalculating some sounds...");
         ParamInfoManager.getParamInfoSoundGroup().recalculate();
     }
 
@@ -335,22 +354,6 @@ public class LibsDisguises extends JavaPlugin {
         }
     }
 
-    private void updateOldDisguisesYaml() {
-        File disguiseFile = new File(getDataFolder(), "configs/disguises.yml");
-
-        if (!disguiseFile.exists()) {
-            disguiseFile.getParentFile().mkdirs();
-
-            File oldFile = new File(getDataFolder(), "disguises.yml");
-
-            if (oldFile.exists()) {
-                oldFile.renameTo(disguiseFile);
-            } else {
-                saveResource("configs/disguises.yml", false);
-            }
-        }
-    }
-
     private void loadYamlWarnVirus() throws IOException {
         YamlConfiguration pluginYml = ReflectionManager.getPluginYAML(getFile());
         buildNumber = StringUtils.stripToNull(pluginYml.getString("build-number"));
@@ -369,10 +372,12 @@ public class LibsDisguises extends JavaPlugin {
                     "need to reinstall all your plugins, jars, etc as just one infected plugin will infect everything else when it loads.");
             getLogger().severe(
                 "Unfortunately I have seen this happen from time to time, this normally happens when a server owner is tricked into " +
-                    "adding third party plugins. Please note that Lib's Disguises is only detecting itself and doesn't know what other plugins " +
+                    "adding third party plugins. Please note that Lib's Disguises is only detecting itself and doesn't know what other " +
+                    "plugins " +
                     "have malware, only that Lib's Disguises itself was infected immediately after you installed it in your server. The " +
                     "jar in your plugins folder will be bigger than what you downloaded from SpigotMC, you can easily check that for " +
-                    "yourself. I can't help you deal with the malware, there's no shortcuts but to re-download everything and remember not" +
+                    "yourself. I can't help you deal with the malware, there's no shortcuts but to re-download everything and remember " +
+                    "not" +
                     " to download from shady sources.");
         }
     }
@@ -584,5 +589,13 @@ public class LibsDisguises extends JavaPlugin {
         if (executioner instanceof TabCompleter) {
             command.setTabCompleter((TabCompleter) executioner);
         }
+    }
+
+    public void verboseLog(String line) {
+        if (!DisguiseConfig.isVerboseLogging()) {
+            return;
+        }
+
+        getLogger().info("DEBUG: " + line);
     }
 }

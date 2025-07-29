@@ -21,6 +21,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.AbstractHorse;
@@ -122,10 +123,11 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
                     new WrapperPlayServerEntityRotation(DisguiseAPI.getEntityAttachmentId(), yawValue, pitchValue, false);
 
                 packets.addPacket(packet);
-            } else if ((cloned instanceof WrapperPlayServerEntityTeleport || cloned instanceof WrapperPlayServerEntityPositionSync) &&
+            } else if (!NmsVersion.v1_21_R5.isSupported() &&
+                (cloned instanceof WrapperPlayServerEntityTeleport || cloned instanceof WrapperPlayServerEntityPositionSync) &&
                 disguise.getType().isArtDisplay()) {
                 Location loc = entity.getLocation();
-                double data = (((loc.getYaw() % 360) + 720 + 45) / 90) % 4;
+                int data = (int) (((loc.getYaw() % 360) + 720 + 45) / 90) % 4;
 
                 Vector3d position;
 
@@ -145,24 +147,6 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
                     ((WrapperPlayServerEntityTeleport) cloned).setPosition(position);
                 } else {
                     ((WrapperPlayServerEntityPositionSync) cloned).getValues().setPosition(position);
-                }
-            } else if (cloned instanceof WrapperPlayServerEntityPositionSync && disguise.getType().isArtDisplay()) {
-                WrapperPlayServerEntityPositionSync tele = (WrapperPlayServerEntityPositionSync) cloned;
-
-                Location loc = entity.getLocation();
-
-                double data = (((loc.getYaw() % 360) + 720 + 45) / 90) % 4;
-
-                if (data % 2 == 0) {
-                    tele.getValues().setPosition(new Vector3d(loc.getX(), 0, loc.getZ() + data == 0 ? -1 : 1));
-                } else {
-                    tele.getValues().setPosition(new Vector3d(loc.getX() + data == 3 ? -1 : 1, loc.getY(), loc.getZ()));
-                }
-
-                double y = DisguiseUtilities.getYModifier(disguise);
-
-                if (y != 0) {
-                    tele.getValues().setPosition(tele.getValues().getPosition().add(0, y, 0));
                 }
             } else if (disguise.getType() == DisguiseType.DOLPHIN) {
                 if (cloned instanceof WrapperPlayServerEntityTeleport) {

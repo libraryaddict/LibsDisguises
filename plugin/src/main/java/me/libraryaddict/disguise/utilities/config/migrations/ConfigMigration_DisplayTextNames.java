@@ -1,8 +1,6 @@
 package me.libraryaddict.disguise.utilities.config.migrations;
 
-import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.config.ConfigMigrator;
-import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ConfigMigration_DisplayTextNames implements ConfigMigrator.ConfigMigration {

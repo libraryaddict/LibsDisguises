@@ -9,7 +9,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 
-public class HangingWatcher extends FlagWatcher {
+public class HangingWatcher extends FlagWatcher implements GridLockedWatcher{
     private volatile int lastRotation = -1;
 
     public HangingWatcher(Disguise disguise) {
@@ -53,5 +53,28 @@ public class HangingWatcher extends FlagWatcher {
         BlockFace face = BlockFace.values()[ordinal];
         // Set the metadata, resolve it via name
         sendData(MetaIndex.HANGING_DIRECTION, com.github.retrooper.packetevents.protocol.world.BlockFace.valueOf(face.name()));
+    }
+
+    @Override
+    @Deprecated
+    public double getWidthX() {
+        return 1;
+    }
+
+    @Override
+    @Deprecated
+    public double getWidthZ() {
+        return 1;
+    }
+
+    @Override
+    @Deprecated
+    public boolean isGridLocked() {
+        return true;
+    }
+
+    @Override
+    @Deprecated
+    public void setGridLocked(boolean gridLocked) {
     }
 }

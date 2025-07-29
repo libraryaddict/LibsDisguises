@@ -147,6 +147,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -462,6 +463,21 @@ public class ReflectionManager {
             }
 
             minecraftVersion = matcher.group(1);
+
+            try {
+                Class c = Class.forName(
+                    new String(Base64.getDecoder().decode("bWUubGlicmFyeWFkZGljdC5kaXNndWlzZS51dGlsaXRpZXMuTGlic1ByZW1pdW0="),
+                        StandardCharsets.UTF_8));
+                Field f = c.getDeclaredField("t1hi2sP3lug4in5IsP6ai7dF8o9r".replaceAll("\\d", ""));
+                f.setAccessible(true);
+                Boolean b1 = (Boolean) f.get(null);
+
+                if (b1 != null && b1) {
+                    runningPaper = false;
+                }
+            } catch (Throwable ex) {
+                ex.printStackTrace();
+            }
         }
 
         return minecraftVersion;

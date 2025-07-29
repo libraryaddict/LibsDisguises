@@ -70,3 +70,6 @@ UpdateGameProfiles: true
 # If true, it means they will experience the full 9 minutes, even if they log on for just a minute per day
 # Expired message can be hidden with an empty translation message
 DynamicExpiry: false
+
+# If the plugin should have some verbose logging, mostly only affects startup.
+VerboseLogging: false

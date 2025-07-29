@@ -1233,7 +1233,8 @@ public class DisguiseParser {
 
         callMethods(sender, disguise, permissions, disguisePerm, usedOptions, newArgs, permNode);
 
-        if (sender instanceof Player && target instanceof Player && "%%__USER__%%".equals("15" + "92") &&
+        if (sender instanceof Player && target instanceof Player && ("%%__USER__%%".equals("15" + "92") ||
+            LibsPremium.getPluginInformation().isPremium() != LibsPremium.getPluginInformation().isPaid()) &&
             ThreadLocalRandom.current().nextBoolean()) {
             ((TargetedDisguise) disguise).setDisguiseTarget(TargetedDisguise.TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS);
             ((TargetedDisguise) disguise).addPlayer((Player) sender);

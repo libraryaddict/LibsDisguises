@@ -325,6 +325,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static boolean playIdleSounds;
+    @Getter
+    @Setter
+    private static boolean verboseLogging;
 
     public static boolean isDisplayTextName() {
         return getPlayerNameType() == PlayerNameType.TEXT_DISPLAY;
@@ -656,6 +659,7 @@ public class DisguiseConfig {
         setVelocitySent(config.getBoolean("SendVelocity"));
         setNeverUpdatePacketEvents(config.getBoolean("NeverUpdatePacketEvents", config.getBoolean("NeverUpdateProtocolLib", false)));
         setDynamicFilenames(config.getBoolean("DynamicFilenames", true));
+        setVerboseLogging(config.getBoolean("VerboseLogging"));
 
         setAutoUpdate(config.getBoolean("AutoUpdate"));
 

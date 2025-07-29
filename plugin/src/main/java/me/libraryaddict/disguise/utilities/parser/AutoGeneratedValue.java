@@ -7,9 +7,9 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation should only be used on setter methods
- *
+ * <p>
  * If set, it means this method will always have the same value.
- *
+ * <p>
  * This is mostly for config values, such as "see self disguise" where it's always true which is the default
  */
 @Retention(RetentionPolicy.RUNTIME)

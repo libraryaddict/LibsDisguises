@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities.parser.constructors;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Art;
 
 import java.util.Locale;
@@ -41,6 +42,6 @@ public class ArtPaintingDisguiseParam extends ExtraDisguiseParam<Art> {
 
     @Override
     public String getParameterAsString(Art param) {
-        return param.name().toLowerCase(Locale.ENGLISH);
+        return ReflectionManager.enumName(param).toLowerCase(Locale.ENGLISH);
     }
 }

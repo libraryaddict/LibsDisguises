@@ -5,7 +5,6 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
-import org.checkerframework.checker.signature.qual.MethodDescriptor;
 
 public class TridentWatcher extends ArrowWatcher {
     public TridentWatcher(Disguise disguise) {

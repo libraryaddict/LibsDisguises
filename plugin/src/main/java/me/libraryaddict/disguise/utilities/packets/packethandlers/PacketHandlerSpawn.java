@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.packets.packethandlers;
 
 import com.github.retrooper.packetevents.protocol.attribute.Attributes;
+import com.github.retrooper.packetevents.protocol.entity.EntityPositionData;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Server;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
@@ -14,6 +15,7 @@ import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerCamera;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityPositionSync;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityStatus;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
@@ -271,6 +273,16 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     WrapperPlayServerEntityMetadata metaPacket = ReflectionManager.getMetadataPacket(entityId, watcherValues);
 
                     packets.addPacket(metaPacket);
+
+                    if (NmsVersion.v1_21_R2.isSupported()) {
+                        // Only seems to be required for ItemFrame
+                        // ItemFrame seems to desync movement, not sure why. Could be related to hanging rotations
+                        WrapperPlayServerEntityPositionSync sync = new WrapperPlayServerEntityPositionSync(entityId,
+                            new EntityPositionData(spawnEntity.getPosition(), spawnEntity.getVelocity().orElse(null), yaw, pitch),
+                            disguisedEntity.isOnGround());
+
+                        packets.addPacket(sync);
+                    }
                 }
 
                 // If it's not the same type, then highly likely they have different velocity settings which we'd want to
@@ -285,7 +297,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     }
                 }
 
-                if (disguise.getType() == DisguiseType.ITEM_FRAME) {
+                if (!NmsVersion.v1_21_R5.isSupported() && disguise.getType() == DisguiseType.ITEM_FRAME) {
                     if (data % 2 == 0) {
                         spawnEntity.setPosition(new Vector3d(loc.getX(), 0, loc.getZ() + data == 0 ? -1 : 1));
                     } else {

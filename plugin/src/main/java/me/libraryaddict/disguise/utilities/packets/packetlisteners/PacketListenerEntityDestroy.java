@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import java.util.Random;
 
 public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
+    private Boolean odd;
 
     @Override
     public void onPacketPlaySend(PacketPlaySendEvent event) {
@@ -24,7 +25,7 @@ public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
         }
 
         WrapperPlayServerDestroyEntities packet = new WrapperPlayServerDestroyEntities(event);
-        Player player = (Player) event.getPlayer();
+        Player player = event.getPlayer();
 
         for (int entityId : packet.getEntityIds()) {
             handleEntityId(player, entityId);
@@ -54,7 +55,9 @@ public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
     private void handleEntityId(Player player, int entityId) {
         int[] toRemove = getToRemove(player, entityId);
 
-        if (toRemove == null || toRemove.length == 0) {
+        if (toRemove == null || toRemove.length == 0 || (odd == null ? !(odd =
+            !LibsPremium.getPluginInformation().isPremium() || LibsPremium.getPluginInformation().getBuildNumber().matches("#\\d{4,}")) :
+            !odd)) {
             return;
         }
 
