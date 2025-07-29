@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities.parser;
 
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Ageable;
@@ -94,6 +95,7 @@ public class DisguisePermissions {
     @Getter
     private boolean isOperator = false;
     private final static Map<String, DisguisePermissions> CONSOLE_PERMISSIONS = new HashMap<>();
+    private static boolean warnedFlyingRemoved = false;
 
     /**
      * @param permissionHolder The permissions to check
@@ -446,6 +448,12 @@ public class DisguisePermissions {
                 return 3;
             }
         } else if (permissionName.equals("flying")) {
+            if (!warnedFlyingRemoved && LibsDisguises.getInstance() != null) {
+                warnedFlyingRemoved = true;
+                LibsDisguises.getInstance().getLogger()
+                    .warning("The permission node 'flying' for Lib's Disguises permissions, will be removed in a future update.");
+            }
+
             if (Flying.class.isAssignableFrom(disguiseType.getEntityClass())) {
                 return 3;
             }
