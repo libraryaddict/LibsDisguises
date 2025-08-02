@@ -347,7 +347,10 @@ public class ReflectionManager {
 
             try {
                 config = getPluginYAMLEx(file);
-            } catch (Throwable ignored) {
+            } catch (Throwable ex) {
+                if (DisguiseConfig.isVerboseLogging()) {
+                    ex.printStackTrace();
+                }
             }
 
             if (config == null) {

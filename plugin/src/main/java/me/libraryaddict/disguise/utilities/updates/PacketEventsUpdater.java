@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.util.PEVersions;
 import com.google.gson.Gson;
 import lombok.Getter;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Bukkit;
@@ -243,7 +244,10 @@ public class PacketEventsUpdater {
             getFile.setAccessible(true);
 
             return (File) getFile.invoke(PacketEvents.getAPI().getPlugin());
-        } catch (Throwable ignored) {
+        } catch (Throwable ex) {
+            if (DisguiseConfig.isVerboseLogging()) {
+                ex.printStackTrace();
+            }
         }
 
         return null;
