@@ -468,7 +468,7 @@ public class LibsDisguises extends JavaPlugin {
     }
 
     private void integratePlaceholderApi() {
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null) {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             return;
         }
 

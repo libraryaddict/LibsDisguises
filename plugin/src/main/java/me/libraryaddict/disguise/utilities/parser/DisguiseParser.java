@@ -913,6 +913,10 @@ public class DisguiseParser {
     }
 
     public static long parseStringToTime(String string) throws DisguiseParseException {
+        return parseStringToTime(string, false);
+    }
+
+    public static long parseStringToTime(String string, boolean resolveToTicks) throws DisguiseParseException {
         string = string.toLowerCase(Locale.ENGLISH);
 
         if (!string.matches("([0-9]+[a-z]+)+")) {
@@ -922,12 +926,15 @@ public class DisguiseParser {
         String[] split = string.split("((?<=[a-zA-Z])(?=[0-9]))|((?<=[0-9])(?=[a-zA-Z]))");
 
         long time = 0;
+        long ticks = 0;
 
         for (int i = 0; i < split.length; i += 2) {
             String t = split[i + 1];
             long v = Long.parseLong(split[i]);
 
-            if (t.equals("s") || t.equals("sec") || t.equals("secs") || t.equals("seconds")) {
+            if (t.equals("t") || t.equals("tick") || t.equals("ticks")) {
+                ticks += v;
+            } else if (t.equals("s") || t.equals("sec") || t.equals("secs") || t.equals("seconds")) {
                 time += v;
             } else if (t.equals("m") || t.equals("min") || t.equals("minute") || t.equals("minutes")) {
                 time += TimeUnit.MINUTES.toSeconds(v);
@@ -946,7 +953,11 @@ public class DisguiseParser {
             }
         }
 
-        return time;
+        if (resolveToTicks) {
+            return ticks + (time * 20);
+        }
+
+        return (long) Math.ceil(ticks / 20D) + time;
     }
 
     /**
