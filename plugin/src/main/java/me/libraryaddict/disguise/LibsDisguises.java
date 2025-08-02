@@ -405,7 +405,7 @@ public class LibsDisguises extends JavaPlugin {
             String recommended = ReflectionManager.getVersion().getRecommendedMinorVersion();
 
             if (!recommended.equals(minecraft)) {
-                getLogger().severe("You are running an outdated version of Minecraft, you are currently using " + minecraft +
+                getLogger().warning("You are running an outdated version of Minecraft, you are currently using " + minecraft +
                     ", you should update to a minimum of " + recommended);
             }
         }
