@@ -271,6 +271,11 @@ public class PacketEventsUpdater {
     }
 
     private File getDestination(String preferredName) {
+        // If packetevents is known to the server and fancy plugin updating exists, don't need to run the rest of the logic.
+        if (UpdateChecker.isFancyPluginUpdating() && Bukkit.getPluginManager().getPlugin("packetevents") != null) {
+            return new File(Bukkit.getUpdateFolderFile(), preferredName);
+        }
+
         File finalJarFolder = LibsDisguises.getInstance().getDataFolder().getAbsoluteFile().getParentFile();
 
         // Attempt to retrieve File location by PE instance, before scanning other plugins
@@ -289,8 +294,8 @@ public class PacketEventsUpdater {
         // The name that the final jar will be called
         String fileName = preferredName;
 
-        // If packetevents already exists on the server
         if (fileJar != null) {
+            // If packetevents already exists on the server
             // This will be an update, not an install
             finalJarFolder = Bukkit.getUpdateFolderFile();
 
