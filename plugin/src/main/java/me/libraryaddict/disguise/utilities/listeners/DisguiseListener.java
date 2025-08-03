@@ -176,7 +176,6 @@ public class DisguiseListener implements Listener {
                     event.setCancelled(false);
                 }
             }
-
         }
 
         if (event.isCancelled()) {
@@ -408,8 +407,6 @@ public class DisguiseListener implements Listener {
             String requiredPacketEvents = PacketEventsUpdater.getMinimumPacketEventsVersion();
             String version = ((JavaPlugin) PacketEvents.getAPI().getPlugin()).getDescription().getVersion() +
                 ("1592".equals(LibsPremium.getUserID()) ? "-pirated" : "");
-            DisguiseUtilities.sendPacketEventsUpdateMessage(p, version, requiredPacketEvents);
-
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -420,7 +417,7 @@ public class DisguiseListener implements Listener {
 
                     DisguiseUtilities.sendPacketEventsUpdateMessage(p, version, requiredPacketEvents);
                 }
-            }.runTaskTimer(LibsDisguises.getInstance(), 10, 10 * 60 * 20); // Run every 10 minutes
+            }.runTaskLater(LibsDisguises.getInstance(), 20);
         }
 
         if (DisguiseConfig.isSavePlayerDisguises()) {

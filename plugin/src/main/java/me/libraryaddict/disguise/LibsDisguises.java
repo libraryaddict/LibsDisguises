@@ -377,8 +377,7 @@ public class LibsDisguises extends JavaPlugin {
                     "have malware, only that Lib's Disguises itself was infected immediately after you installed it in your server. The " +
                     "jar in your plugins folder will be bigger than what you downloaded from SpigotMC, you can easily check that for " +
                     "yourself. I can't help you deal with the malware, there's no shortcuts but to re-download everything and remember " +
-                    "not" +
-                    " to download from shady sources.");
+                    "not" + " to download from shady sources.");
         }
     }
 
@@ -435,7 +434,7 @@ public class LibsDisguises extends JavaPlugin {
 
             BukkitRunnable runnable = createPacketEventsOutdatedRunnable(version, requiredPacketEvents);
             runnable.run();
-            runnable.runTaskTimer(this, 20, 30 * 60 * 20);
+            runnable.runTaskLater(this, 20);
         }
 
         PacketEventsUpdater.doShadedWarning();
