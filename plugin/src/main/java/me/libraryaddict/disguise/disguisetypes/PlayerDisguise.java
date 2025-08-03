@@ -6,6 +6,7 @@ import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfo;
 import com.mojang.authlib.GameProfile;
 import lombok.Getter;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
@@ -299,6 +300,11 @@ public class PlayerDisguise extends TargetedDisguise {
 
         if (DisguiseConfig.isCopyPlayerTeamInfo() && DisguiseConfig.getPlayerNameType().isDisplayNameCopy()) {
             name = DisguiseUtilities.getDisplayName(name);
+        }
+
+        // Replace placeholders in the name, but only if the name contains a %
+        if (DisguiseUtilities.isPlaceholderApi() && name != null && name.contains("%")) {
+            name = PlaceholderAPI.setPlaceholders(getEntity() instanceof Player ? (Player) getEntity() : null, name);
         }
 
         name = DisguiseUtilities.getHexedColors(name);

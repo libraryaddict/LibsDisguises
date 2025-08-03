@@ -14,6 +14,7 @@ import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -560,6 +561,11 @@ public class FlagWatcher {
         if (getDisguise().isPlayerDisguise()) {
             ((PlayerDisguise) getDisguise()).setName(name);
             return;
+        }
+
+        if (DisguiseUtilities.isPlaceholderApi() && name != null && name.contains("%")) {
+            name = PlaceholderAPI.setPlaceholders(getDisguise().getEntity() instanceof Player ? (Player) getDisguise().getEntity() : null,
+                name);
         }
 
         name = DisguiseUtilities.getHexedColors(name);

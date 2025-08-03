@@ -350,6 +350,8 @@ public class DisguiseUtilities {
     private static boolean debuggingMode;
     @Getter
     private static final File internalFolder, preferencesFile;
+    @Getter
+    private static boolean placeholderApi;
 
     static {
         if (LibsDisguises.getInstance() == null) {
@@ -1863,6 +1865,7 @@ public class DisguiseUtilities {
         savedDisguisesKey = new NamespacedKey(LibsDisguises.getInstance(), "SavedDisguises");
         selfDisguiseScaleNamespace = new NamespacedKey(LibsDisguises.getInstance(), "Self_Disguise_Scaling");
         debuggingMode = LibsDisguises.getInstance().isDebuggingBuild();
+        placeholderApi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
 
         recreateGsonSerializer();
 

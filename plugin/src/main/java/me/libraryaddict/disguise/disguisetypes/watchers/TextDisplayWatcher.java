@@ -1,10 +1,13 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
 import org.bukkit.entity.Display;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
 
 public class TextDisplayWatcher extends DisplayWatcher {
@@ -16,11 +19,24 @@ public class TextDisplayWatcher extends DisplayWatcher {
     }
 
     public String getText() {
-        return DisguiseUtilities.getSimpleString(getData(MetaIndex.TEXT_DISPLAY_TEXT));
+        return DisguiseUtilities.getSimpleString(getAdvText());
     }
 
     public void setText(String string) {
-        sendData(MetaIndex.TEXT_DISPLAY_TEXT, DisguiseUtilities.getAdventureChat(string));
+        if (DisguiseUtilities.isPlaceholderApi() && string != null && string.contains("%")) {
+            string = PlaceholderAPI.setPlaceholders(getDisguise().getEntity() instanceof Player ? (Player) getDisguise().getEntity() : null,
+                string);
+        }
+
+        setAdvText(DisguiseUtilities.getAdventureChat(string));
+    }
+
+    public Component getAdvText() {
+        return getData(MetaIndex.TEXT_DISPLAY_TEXT);
+    }
+
+    public void setAdvText(Component component) {
+        sendData(MetaIndex.TEXT_DISPLAY_TEXT, component);
     }
 
     public int getLineWidth() {
@@ -124,5 +140,4 @@ public class TextDisplayWatcher extends DisplayWatcher {
 
         sendData(MetaIndex.TEXT_DISPLAY_FLAGS, flagBits);
     }
-
 }

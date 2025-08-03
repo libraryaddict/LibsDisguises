@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfo;
 import lombok.Getter;
 import lombok.Setter;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -225,7 +226,13 @@ public abstract class Disguise {
             name = new String[0];
         }
 
+        Player player = getEntity() instanceof Player ? (Player) getEntity() : null;
+
         for (int i = 0; i < name.length; i++) {
+            if (DisguiseUtilities.isPlaceholderApi() && name[i] != null && name[i].contains("%")) {
+                name[i] = PlaceholderAPI.setPlaceholders(player, name[i]);
+            }
+
             name[i] = DisguiseUtilities.getHexedColors(name[i]);
         }
 
