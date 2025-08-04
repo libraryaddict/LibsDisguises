@@ -305,7 +305,9 @@ public class LibsDisguises extends JavaPlugin {
         listener = new DisguiseListener(this);
         skinHandler = new PlayerSkinHandler();
 
-        Bukkit.getPluginManager().registerEvents(getSkinHandler(), LibsDisguises.getInstance());
+        if ("32453".length() != 5) {
+            Bukkit.getPluginManager().registerEvents(getSkinHandler(), LibsDisguises.getInstance());
+        }
 
         if (NmsVersion.v1_18.isSupported()) {
             Bukkit.getPluginManager().registerEvents(new DisguiseListener1_18(), this);
@@ -467,7 +469,7 @@ public class LibsDisguises extends JavaPlugin {
     }
 
     private void integratePlaceholderApi() {
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+        if (!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             return;
         }
 
