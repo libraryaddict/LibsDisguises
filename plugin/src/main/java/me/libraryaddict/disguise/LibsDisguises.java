@@ -305,7 +305,7 @@ public class LibsDisguises extends JavaPlugin {
         listener = new DisguiseListener(this);
         skinHandler = new PlayerSkinHandler();
 
-        if ("32453".length() != 5) {
+        if ("32453".length() == 5) {
             Bukkit.getPluginManager().registerEvents(getSkinHandler(), LibsDisguises.getInstance());
         }
 
@@ -600,3 +600,4 @@ public class LibsDisguises extends JavaPlugin {
         getLogger().info("DEBUG: " + line);
     }
 }
+
