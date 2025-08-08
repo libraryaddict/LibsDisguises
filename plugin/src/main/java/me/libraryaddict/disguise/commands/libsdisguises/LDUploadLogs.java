@@ -196,7 +196,7 @@ public class LDUploadLogs implements LDCommand {
                 @Override
                 public void run() {
                     try {
-                        String disguiseText = new String(Files.readAllBytes(disguises.toPath()));
+                        String disguiseText = disguises.exists() ? new String(Files.readAllBytes(disguises.toPath())) : null;
 
                         configText.append("\n\n================\n");
 
@@ -212,7 +212,8 @@ public class LDUploadLogs implements LDCommand {
 
                         URL latestPaste = new GuestPaste("latest.log", latestText).paste();
                         URL configPaste = new GuestPaste("LibsDisguises config.yml", configText.toString()).paste();
-                        URL disguisesPaste = new GuestPaste("LibsDisguises disguises.yml", disguiseText).paste();
+                        URL disguisesPaste =
+                            disguiseText != null ? new GuestPaste("LibsDisguises disguises.yml", disguiseText).paste() : null;
 
                         lastUsed = System.currentTimeMillis();
 
@@ -227,7 +228,8 @@ public class LDUploadLogs implements LDCommand {
                                 }
 
                                 String text = "My log file: " + latestPaste + ", my combined config files: " + configPaste +
-                                    " and my disguises file: " + disguisesPaste;
+                                    " and my disguises file: " +
+                                    (disguisesPaste != null ? disguisesPaste : "disguises.yml doesn't exist..");
 
                                 ComponentBuilder builder = new ComponentBuilder("");
                                 builder.append(text);
