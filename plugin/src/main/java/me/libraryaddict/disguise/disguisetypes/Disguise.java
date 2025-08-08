@@ -988,6 +988,11 @@ public abstract class Disguise {
 
         DisguiseUtilities.setPluginsUsed();
 
+        if (LibsPremium.isPremium() && isSelfDisguiseVisible() && getEntity() instanceof Player &&
+            !getEntity().hasPermission("libsdisguises.selfdisguises")) {
+            setSelfDisguiseVisible(false);
+        }
+
         // Fire a disguise event
         DisguiseEvent event = new DisguiseEvent(commandSender, entity, this);
 
@@ -997,11 +1002,6 @@ public abstract class Disguise {
         // Just return.
         if (event.isCancelled()) {
             return false;
-        }
-
-        if (LibsPremium.isPremium() && isSelfDisguiseVisible() && getEntity() instanceof Player &&
-            !getEntity().hasPermission("libsdisguises.selfdisguises")) {
-            setSelfDisguiseVisible(false);
         }
 
         if (isDynamicName() && (!isPlayerDisguise() || !((PlayerDisguise) this).getName().equals("<Inherit>"))) {
