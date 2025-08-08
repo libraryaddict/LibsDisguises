@@ -769,7 +769,7 @@ public abstract class Disguise {
         if (this instanceof PlayerDisguise) {
             PlayerDisguise disguise = (PlayerDisguise) this;
 
-            if (disguise.isDisplayedInTab()) {
+            if (disguise.isDisplayedInTab() || DisguiseUtilities.isFancyHiddenTabs()) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (!((TargetedDisguise) this).canSee(player)) {
                         continue;
