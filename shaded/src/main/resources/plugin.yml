@@ -141,6 +141,9 @@ permissions:
     description: Allows the command user to use /grabhead
   libsdisguises.ratelimitbypass:
     description: Allows a living player to bypass the 500ms rate limit on disguise commands, used to prevent crashes
+  libsdisguises.selfdisguises:
+    description: Controls if the player can view a self disguise, defaults to true. Only checked when disguise starts and toggling self disguises command. If the player has access to /disguisemodify they can turn it back on.
+    default: true
   libsdisguises.seecmd:
     description: See all commands in tab-completion
     default: true

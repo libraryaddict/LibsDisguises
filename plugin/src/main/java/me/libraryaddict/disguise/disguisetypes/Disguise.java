@@ -999,6 +999,11 @@ public abstract class Disguise {
             return false;
         }
 
+        if (LibsPremium.isPremium() && isSelfDisguiseVisible() && getEntity() instanceof Player &&
+            !getEntity().hasPermission("libsdisguises.selfdisguises")) {
+            setSelfDisguiseVisible(false);
+        }
+
         if (isDynamicName() && (!isPlayerDisguise() || !((PlayerDisguise) this).getName().equals("<Inherit>"))) {
             String name;
 

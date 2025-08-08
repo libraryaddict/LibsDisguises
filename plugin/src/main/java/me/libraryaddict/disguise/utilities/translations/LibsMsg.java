@@ -347,7 +347,8 @@ public enum LibsMsg {
     LD_COMMAND_DEBUG("<blue>/libsdisguises debug - <aqua>Used to help debug scoreboard issues on a player disguise"),
     LD_COMMAND_UPLOAD_LOGS("<blue>/libsdisguises uploadlogs - <aqua>" +
         "Uploads latest.log, disguises.yml and configs and gives you the link to share. Used when seeking assistance."),
-    SELF_DISGUISE_HIDDEN("<green>Self disguise hidden as it's too tall..");
+    SELF_DISGUISE_HIDDEN("<green>Self disguise hidden as it's too tall.."),
+    NO_PERMISSION_VIEW_SELF("<red>You do not have the permission to view self disguises!");
 
     private final String string;
 

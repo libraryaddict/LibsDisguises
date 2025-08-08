@@ -13,11 +13,13 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -497,8 +499,13 @@ public class DisguiseAPI {
         if (isDisguised(entity)) {
             Disguise[] disguises = getDisguises(entity);
 
-            for (Disguise disguise : disguises) {
-                disguise.setViewSelfDisguise(canSeeSelfDisguises);
+            if (disguises.length > 0 && canSeeSelfDisguises && LibsPremium.isPremium() && entity instanceof Player &&
+                !entity.hasPermission("libsdisguises.selfdisguises")) {
+                LibsMsg.NO_PERMISSION_VIEW_SELF.send(entity);
+            } else {
+                for (Disguise disguise : disguises) {
+                    disguise.setViewSelfDisguise(canSeeSelfDisguises);
+                }
             }
         }
 
