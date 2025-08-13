@@ -272,6 +272,7 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
 
                             if (DisguiseUtilities.shouldBeHiddenSelfDisguise(item) && item.getType() != Material.ELYTRA) {
                                 items.set(slot, com.github.retrooper.packetevents.protocol.item.ItemStack.EMPTY);
+                                event.markForReEncode(true);
                             }
                         }
                         // Else if its a hotbar slot
@@ -285,6 +286,7 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
 
                                 if (DisguiseUtilities.shouldBeHiddenSelfDisguise(item)) {
                                     items.set(slot, com.github.retrooper.packetevents.protocol.item.ItemStack.EMPTY);
+                                    event.markForReEncode(true);
                                 }
                             }
                         }
