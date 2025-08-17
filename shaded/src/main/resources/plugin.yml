@@ -82,6 +82,19 @@ commands:
                modifydentity, moddisguiseentity, moddisgentity, mdisguiseentity, mdisgentity ]
     permission: libsdisguises.seecmd.disguisemodifyentity
     description: Modify a disguise by right clicking them
+  disguiseanimation:
+    permission: libsdisguises.disguiseanimation
+    description: Play a supported animation on your own disguise
+  disguiseplayeranimation:
+    aliases: [ disguiseuuidanimation ]
+    permission: libsdisguises.disguiseplayeranimation
+    description: Play a supported animation on a player/uuid's disguise
+  disguiseradiusanimation:
+    permission: libsdisguises.disguiseradiusanimation
+    description: Play a supported animation on all supported disguises in a radius
+  disguiseentityanimation:
+    permission: libsdisguises.disguiseentityanimation
+    description: Play a supported animation on a right clicked entity's disguise
   copydisguise:
     aliases: [ disguisecopy, disgcopy, dcopy, copydisg, copyd, parsedisguise, disguiseparse ]
     permission: libsdisguises.seecmd.copydisguise
@@ -144,6 +157,18 @@ permissions:
   libsdisguises.selfdisguises:
     description: Controls if the player can view a self disguise, defaults to true. Only checked when disguise starts and toggling self disguises command. If the player has access to /disguisemodify they can turn it back on.
     default: true
+  libsdisguises.disguiseanimation:
+    description: Play a supported animation on your own disguise
+    default: op
+  libsdisguises.disguiseplayeranimation:
+    description: Play a supported animation on a player/uuid's disguise
+    default: op
+  libsdisguises.disguiseradiusanimation:
+    description: Play a supported animation on all supported disguises in a radius
+    default: op
+  libsdisguises.disguiseentityanimation:
+    description: Play a supported animation on a right clicked entity's disguise
+    default: op
   libsdisguises.seecmd:
     description: See all commands in tab-completion
     default: true

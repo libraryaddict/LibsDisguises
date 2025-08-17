@@ -3,7 +3,10 @@ package me.libraryaddict.disguise.utilities.packets.packethandlers;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityAnimation;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityStatus;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.utilities.animations.DisguiseAnimation;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import org.bukkit.entity.Entity;
@@ -23,16 +26,24 @@ public class PacketHandlerEntityAnimation implements IPacketHandler<WrapperPlayS
             return;
         }
 
-        // If this animation isn't a wake up, then don't need to handle
-        if (packets.getOriginalPacket().getType() != WrapperPlayServerEntityAnimation.EntityAnimationType.WAKE_UP) {
-            return;
-        }
+        WrapperPlayServerEntityAnimation.EntityAnimationType type = packets.getOriginalPacket().getType();
 
-        // Player disguises can play the animation
-        if (disguise.isPlayerDisguise()) {
-            return;
-        }
+        if (type == WrapperPlayServerEntityAnimation.EntityAnimationType.WAKE_UP) {
+            // Player disguises can play the animation
+            if (disguise.isPlayerDisguise()) {
+                return;
+            }
 
-        packets.clear();
+            packets.clear();
+        } else if (DisguiseConfig.isSendAttackAnimations() && type == WrapperPlayServerEntityAnimation.EntityAnimationType.SWING_MAIN_ARM) {
+            DisguiseAnimation attackAnimation = DisguiseAnimation.getAttackAnimation(disguise.getWatcher().getClass());
+
+            if (attackAnimation != null) {
+                WrapperPlayServerEntityStatus status =
+                    new WrapperPlayServerEntityStatus(packets.getOriginalPacket().getEntityId(), attackAnimation.getStatus());
+
+                packets.addPacket(status);
+            }
+        }
     }
 }

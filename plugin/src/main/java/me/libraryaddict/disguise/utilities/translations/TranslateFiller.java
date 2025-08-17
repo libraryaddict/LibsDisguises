@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities.translations;
 
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.animations.DisguiseAnimation;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
@@ -98,6 +99,11 @@ public class TranslateFiller {
 
         for (LibsMsg msg : LibsMsg.values()) {
             TranslateType.MESSAGES.save(msg, DisguiseUtilities.translateAlternateColorCodes(msg.getRaw()), "Reference: " + msg.name());
+        }
+
+        for (DisguiseAnimation animation : DisguiseAnimation.values()) {
+            TranslateType.DISGUISE_ANIMATIONS.save(animation.name(),
+                "Animation that's played on disguises inheriting " + animation.getWatcher().getSimpleName().replace("Watcher", ""));
         }
 
         for (TranslateType type : TranslateType.values()) {

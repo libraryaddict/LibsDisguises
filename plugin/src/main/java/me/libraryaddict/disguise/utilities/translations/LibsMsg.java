@@ -15,6 +15,7 @@ public enum LibsMsg {
     ACTIVE_DISGUISES_COUNT("<dark_green>There are %s disguises active"),
     ACTIVE_DISGUISES_DISGUISE("<green>%s:</green> <aqua>%s</aqua>"),
     ACTIVE_DISGUISES_SEPERATOR("<red>,</red>"),
+    ANIMATE_ENTITY_CLICK("<red>Right click a disguised entity in the next %s seconds to play the animation!</red>"),
     BLOWN_DISGUISE("<red>Your disguise was blown!"),
     BLOWN_DISGUISE_BLOCK_BREAK("<red>Breaking a block blew your disguise!"),
     BLOWN_DISGUISE_BLOCK_PLACE("<red>Placing a block blew your disguise!"),
@@ -61,6 +62,10 @@ public enum LibsMsg {
     DISABLED_LIVING_TO_MISC("<red>Can't disguise a living entity as a misc disguise. This has been disabled in the config!"),
     DISGUISECOPY_INTERACT("<red>Right click a disguised entity in the next %s seconds to copy their disguise!"),
     DISGUISED("<red>Now disguised as %s"),
+    DISGUISE_ANIMATE_HELP_COMMAND("<green>/%s <animation></green> <dark_green>- play a supported animation on the disguise.</dark_green>"),
+    DISGUISE_ANIMATE_HELP_DISGUISED("<dark_green>Disguise supports the following animations:</dark_green> <green>%s</green>"),
+    DISGUISE_ANIMATE_HELP_DISGUISED_SEPERATOR("<red>, </red>"),
+    DISGUISE_ANIMATE_SEE_ALL_ANIMATIONS("<dark_green>To see all animations, use</dark_green> <green>/disguisehelp %s</green>"),
     DISGUISE_REQUIRED("<red>You must be disguised to run this command!"),
     DISG_ENT_CLICK("<red>Right click an entity in the next %s seconds to disguise it as a %s!"),
     DISG_ENT_HELP1("<dark_green>Choose a disguise then right click an entity to disguise it!"),
@@ -87,7 +92,7 @@ public enum LibsMsg {
     DMODPLAYER_NODISGUISE("<red>The player '%s' is not disguised"),
     DMODPLAYER_NOPERM("<red>You do not have permission to modify this disguise"),
     DMODRADIUS("<red>Successfully modified the disguises of %s entities!"),
-    DMODRADIUS_HELP1("<dark_green>Modify the disguises in a radius! Caps at %s blocks!"),
+    DMODRADIUS_HELP1("<dark_green>Modify nearby disguises! Caps at <green>%s</green> blocks!"),
     DMODRADIUS_HELP2("<dark_green>/disguisemodifyradius <<green>DisguiseType</green>(<green>Optional</green>)> <<green>Radius</green>> " +
         "<<green>Disguise " + "Methods</green>>"),
     DMODRADIUS_HELP3("<dark_green>See the DisguiseType's usable by <green>/disguisemodifyradius DisguiseType"),
@@ -98,7 +103,7 @@ public enum LibsMsg {
     DMODRADIUS_USABLE("<dark_green>DisguiseTypes usable are: %s.</dark_green>"),
     DPLAYER_SUPPLY("<red>You need to supply a disguise as well as the player/uuid"),
     DRADIUS_ENTITIES("<dark_green>EntityTypes usable are:</dark_green> <green>%s</green>"),
-    DRADIUS_HELP1("<dark_green>Disguise all entities in a radius! Caps at %s blocks!"),
+    DRADIUS_HELP1("<dark_green>Disguise nearby entities! Caps at <green>%s</green> blocks!"),
     DRADIUS_HELP3("<dark_green>/disguiseradius <<green>EntityType</green>(<green>Optional</green>)> <<green>Radius</green>> player " +
         "<<green>Name<dark_green>>"),
     DRADIUS_HELP4("<dark_green>/disguiseradius <<green>EntityType</green>(<green>Optional</green>)> <<green>Radius</green>> " +
@@ -112,6 +117,15 @@ public enum LibsMsg {
             "config"),
     DRADIUS_NEEDOPTIONS("<red>You need to supply a disguise as well as the radius"),
     DRADIUS_NEEDOPTIONS_ENTITY("<red>You need to supply a disguise as well as the radius and EntityType"),
+    D_ANIMATE_ENTITY("<dark_green>Provide the animation to play, then right click a disguised entity!</dark_green>"),
+    D_ANIMATE_PLAYER(
+        "<green>/%s <Player/UUID> <Animation></green> <dark_green>- Play an animation on a disguised player/uuid!</dark_green>"),
+    D_ANIM_RADIUS_FAIL("<red>No disguises in range support that animation!</red>"),
+    D_ANIM_RADIUS_HELP_1("<dark_green>Play animations on nearby disguises! Caps at <green>%s</green> blocks!</dark_green>"),
+    D_ANIM_RADIUS_HELP_2("<dark_green>/%s <DisguiseType(Optional)> <Radius> <Animation></dark_green>"),
+    D_ANIM_RADIUS_NEED_ANIMS("<red>You need to supply the animation as well as the radius</red>"),
+    D_ANIM_RADIUS_NEED_ANIMS_ENTITY("<red>You need to supply the animation as well as the radius and EntityType"),
+    D_ANIM_RADIUS_SUCCESS("<red>Successfully played animation on %s disguises!</red>"),
     D_HELP1("<dark_green>Disguise another player!"),
     D_HELP3("<dark_green>/disguiseplayer <PlayerName> player <Name>"),
     D_HELP4("<dark_green>/disguiseplayer <PlayerName> <DisguiseType> <Baby>"),
@@ -247,8 +261,10 @@ public enum LibsMsg {
     PARSE_DISG_NO_EXIST("<red>Error! The disguise <green>%s</green> doesn't exist!"),
     PARSE_DISPLAY_BRIGHTNESS("<red>Expected <green>(Block Light),(Sky Light)</green> from 0-15, received <green>%s</green> instead"),
     PARSE_EXPECTED_RECEIVED("<red>Expected <green>%s</green>, received <green>%s</green> instead for <green>%s"),
-    PARSE_INVALID_TIME("<red>Error! %s is not a valid time! Use s,m,h,d or secs,mins,hours,days"),
-    PARSE_INVALID_TIME_SEQUENCE("<red>Error! %s is not a valid time! Do amount then time, eg. 4min10sec"),
+    PARSE_INVALID_ANIMATION("<red>Error! The animation <green>%s</green> does not exist!</red>"),
+    PARSE_INVALID_TIME("<red>Error! <green>%s</green> is not a valid time! Use s,m,h,d or secs,mins,hours,days"),
+    PARSE_INVALID_TIME_SEQUENCE("<red>Error! <green>%s</green> is not a valid time! Do amount then time, eg. 4min10sec"),
+    PARSE_MISMATCHED_ANIMATION("<red>Error! Animation <green>%s</green> is not compatible with that disguise!</red>"),
     PARSE_NO_ARGS("No arguments defined"),
     PARSE_NO_OPTION_VALUE("<red>No value was given for the method %s"),
     PARSE_NO_PERM_NAME("<red>Error! You don't have permission to use that name!"),
@@ -335,11 +351,11 @@ public enum LibsMsg {
     UPDATE_IN_PROGRESS("<dark_green>LibsDisguises is now downloading an update..."),
     UPDATE_ON_LATEST("<red>You are already on the latest version of LibsDisguises!"),
     UPDATE_READY(
-        "<red>[LibsDisguises]</red> <dark_red>There is an update ready to be downloaded! You are using <red>v%s</red>, the new version is " +
-            "<red>v%s</red>!"),
+        "<red>[LibsDisguises]</red> <dark_red>There is an update ready to be downloaded! You are using <red>v%s</red>, the new version is" +
+            " <red>v%s</red>!"),
     UPDATE_READY_SNAPSHOT(
         "<red>[LibsDisguises]</red> <dark_red>There is a new build of Lib's Disguises! You are using <red>%s</red>, the latest build " +
-            "is</dark_red> " + "<red>#%s</red>!"),
+            "is</dark_red> <red>#%s</red>!"),
     UPDATE_REQUIRED("<red>LibsDisguises requies an update check before it can give you that!"),
     UPDATE_SUCCESS("<dark_green>LibsDisguises update success! Restart server to update!"),
     USING_DEFAULT_CONFIG("<dark_green>Using the default config!</dark_green>"),
@@ -422,6 +438,6 @@ public enum LibsMsg {
             return name();
         }
 
-        throw new IllegalStateException("Dont call this");
+        throw new IllegalStateException(getClass().getSimpleName() + ".toString() cannot be used, was invoked on " + name());
     }
 }

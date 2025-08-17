@@ -27,24 +27,32 @@ import java.util.Map;
 import java.util.Objects;
 
 public enum TranslateType {
-    DISGUISES("disguises"),
-    MESSAGES("messages"),
-    DISGUISE_OPTIONS("disguise_options"),
-    DISGUISE_OPTIONS_PARAMETERS("disguise_option_parameters");
+    DISGUISES("disguises", "This file covers the name of the entity types"),
+    MESSAGES("messages",
+        "This file covers the messages that are sent to the player, mostly via chat.\n# To use hex color codes, use <#hexcolor> where " +
+            "hexcolor is the 6 char code\n# %s is where text is inserted, look up printf format codes if you are interested."),
+    DISGUISE_OPTIONS("disguise_options", "This file covers the names of the disguise options, such as 'setBurning' and 'setSprinting'"),
+    DISGUISE_OPTIONS_PARAMETERS("disguise_option_parameters",
+        "This file covers the names of the disguise option parameters, such as 'true' + 'false' being remapped to 'positive' + 'negative'"),
+    DISGUISE_ANIMATIONS("disguise_animations",
+        "# You can read more about what these animations represent here: https://minecraft.wiki/w/Java_Edition_protocol/Entity_statuses");
 
     @Getter(AccessLevel.PRIVATE)
     private File file;
+    @Getter(AccessLevel.PRIVATE)
+    private String typeDescriptor;
     private final LinkedHashMap<String, String> translated = new LinkedHashMap<>();
     private final HashMap<String, Boolean[]> toDeDupe = new HashMap<>();
     private OutputStreamWriter writer;
     private int written;
 
-    TranslateType(String fileName) {
+    TranslateType(String fileName, String desciptor) {
         if (LibsDisguises.getInstance() == null) {
             return;
         }
 
         file = new File(LibsDisguises.getInstance().getDataFolder(), "Translations/" + fileName + ".yml");
+        typeDescriptor = desciptor;
     }
 
     public static void refreshTranslations() {
@@ -194,14 +202,12 @@ public enum TranslateType {
 
                 if (!exists) {
                     writer.write("# To use translations in Lib's Disguises, you must have the purchased plugin\n");
-
-                    if (this == TranslateType.MESSAGES) {
-                        writer.write("# %s is where text is inserted, look up printf format codes if you're interested\n");
-                    }
-
                     writer.write("# To translate, follow this example 'Original Message': 'My New Message'\n# The Original" +
-                        " Message is used as a yaml config key to get your new message!");
-                    writer.write("\n# To use hex color codes, use <#hexcolor> where hexcolor is the 6 char code");
+                        " Message is used as a yaml config key to get your new message!\n");
+
+                    if (this.getTypeDescriptor() != null) {
+                        writer.write("\n# " + this.getTypeDescriptor() + "\n");
+                    }
                 }
             }
 

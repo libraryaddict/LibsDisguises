@@ -58,6 +58,9 @@ public class DisguiseConfig {
     @Setter
     private static boolean addEntityAnimations;
     @Getter
+    @Setter
+    private static boolean sendAttackAnimations;
+    @Getter
     private static boolean animationPacketsEnabled;
     @Getter
     @Setter
@@ -625,6 +628,7 @@ public class DisguiseConfig {
     private static ConfigurationSection loadPreConfig(ConfigLoader configLoader) {
         ConfigurationSection config = configLoader.load();
 
+        setSendAttackAnimations(config.getBoolean("SendAttackAnimations"));
         setAddEntityAnimations(config.getBoolean("AddEntityAnimations"));
         setDisguiseCloneExpire(config.getInt("DisguiseCloneExpire"));
         setDisguiseEntityExpire(config.getInt("DisguiseEntityExpire"));

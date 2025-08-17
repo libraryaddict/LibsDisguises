@@ -58,6 +58,8 @@ import me.libraryaddict.disguise.disguisetypes.watchers.IllagerWizardWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.InsentientWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ItemFrameWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.MinecartSpawnerWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.MinecartTntWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ModdedWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.OcelotWatcher;
@@ -1328,10 +1330,14 @@ public class ReflectionManager {
                 case PRIMED_TNT:
                     watcherClass = TNTWatcher.class;
                     break;
+                case MINECART_MOB_SPAWNER:
+                    watcherClass = MinecartSpawnerWatcher.class;
+                    break;
+                case MINECART_TNT:
+                    watcherClass = MinecartTntWatcher.class;
+                    break;
                 case MINECART_CHEST:
                 case MINECART_HOPPER:
-                case MINECART_MOB_SPAWNER:
-                case MINECART_TNT:
                     watcherClass = MinecartWatcher.class;
                     break;
                 case CAVE_SPIDER:

@@ -22,6 +22,10 @@ RandomDisguiseOptions: true
 # This is only valid if you set a animation on the disguise itself. Because the entity's animations are applied otherwise.
 AddEntityAnimations: true
 
+# Not all entities play their attack animation the same way, an iron golem for example sends a different packet than a player's arm swing
+# Set this to false if you do not want Lib's Disguises to convert the animation when it's needed.
+SendAttackAnimations: true
+
 # This controls if a entity's max health is determined by the entity, or by the disguise.
 # Wither is 200, a player is 20. With this enabled, a player disguised as a wither will have the boss bar health accurate to the players health.
 # Else it will be 1/20 of the boss bar when they are full health.

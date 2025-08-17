@@ -10,6 +10,7 @@ import com.github.retrooper.packetevents.util.Vector3i;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.GolemCrack;
+import me.libraryaddict.disguise.utilities.animations.DisguiseAnimation;
 import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.params.types.base.ParamInfoBoolean;
 import me.libraryaddict.disguise.utilities.params.types.base.ParamInfoByte;
@@ -122,6 +123,8 @@ public class ParamInfoTypes {
         paramInfos.add(new ParamInfoEnum(Llama.Color.class, "Llama Color", "View all the colors you can use for a llama color"));
         paramInfos.add(new ParamInfoEnum(Parrot.Variant.class, "Parrot Variant", "View the different colors a parrot can be"));
         paramInfos.add(new ParamInfoComponent(Component.class, "Component", "A kyori adventure text component"));
+        paramInfos.add(new ParamInfoEnum(DisguiseAnimation.class, "Disguise Animation",
+            "Every animation that Mojang has added to entities, not all of them will work"));
 
         Material[] materials = getMaterials();
 
