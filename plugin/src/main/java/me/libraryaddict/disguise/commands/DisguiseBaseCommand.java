@@ -81,7 +81,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         return false;
     }
 
-    protected boolean isNotPremium(CommandSender sender) {
+    protected boolean sendIfNotPremium(CommandSender sender) {
         String requiredPacketEvents = PacketEventsUpdater.getMinimumPacketEventsVersion();
         String version = Bukkit.getPluginManager().getPlugin("packetevents").getDescription().getVersion();
 

@@ -22,7 +22,7 @@ import java.util.List;
 public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (isNotPremium(sender)) {
+        if (sendIfNotPremium(sender)) {
             return true;
         }
 

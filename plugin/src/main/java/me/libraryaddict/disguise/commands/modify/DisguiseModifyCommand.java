@@ -27,6 +27,10 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
+        if (sendIfNotPremium(sender)) {
+            return true;
+        }
+
         DisguisePermissions permissions = getPermissions(sender);
 
         if (!permissions.hasPermissions()) {

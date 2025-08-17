@@ -26,6 +26,10 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
             return true;
         }
 
+        if (sendIfNotPremium(sender)) {
+            return true;
+        }
+
         DisguisePermissions permissions = getPermissions(sender);
 
         if (!permissions.hasPermissions()) {
@@ -37,8 +41,6 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
             sendCommandUsage(sender, permissions);
             return true;
         }
-
-        // TODO Validate if any disguises have this arg
 
         LibsDisguises.getInstance().getListener()
             .addInteraction(sender.getName(), new DisguiseModifyInteraction(DisguiseUtilities.split(StringUtils.join(args, " "))),

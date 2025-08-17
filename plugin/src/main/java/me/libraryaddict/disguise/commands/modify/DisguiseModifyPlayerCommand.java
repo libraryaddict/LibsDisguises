@@ -32,6 +32,10 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
             return true;
         }
 
+        if (sendIfNotPremium(sender)) {
+            return true;
+        }
+
         if (args.length == 0) {
             sendCommandUsage(sender, permissions);
             return true;

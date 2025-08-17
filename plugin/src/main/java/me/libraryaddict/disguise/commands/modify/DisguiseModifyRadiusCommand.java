@@ -57,6 +57,10 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             return true;
         }
 
+        if (sendIfNotPremium(sender)) {
+            return true;
+        }
+
         if (args.length == 0) {
             sendCommandUsage(sender, permissions);
             return true;
@@ -98,7 +102,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             }
 
             if (baseType == null) {
-                LibsMsg.DMODRADIUS_UNRECOGNIZED.send(sender, args[0]);
+                LibsMsg.UNRECOGNIZED_DISGUISE_TYPE.send(sender, args[0]);
                 return true;
             }
         }
@@ -148,6 +152,10 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             }
 
             if (baseType != null && !baseType.name().equalsIgnoreCase(entity.getType().name())) {
+                continue;
+            }
+
+            if (sender instanceof Player && entity instanceof Player && !((Player) sender).canSee((Player) entity)) {
                 continue;
             }
 

@@ -98,7 +98,7 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
             LibsMsg.UNDISG_PLAYER.send(sender,
                 entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable());
         } else {
-            LibsMsg.UNDISG_PLAYER_FAIL.send(sender,
+            LibsMsg.NOT_DISGUISED_FAIL.send(sender,
                 entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable());
         }
 

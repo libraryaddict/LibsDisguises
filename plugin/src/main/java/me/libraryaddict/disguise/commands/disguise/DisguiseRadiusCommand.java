@@ -44,7 +44,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (isNotPremium(sender)) {
+        if (sendIfNotPremium(sender)) {
             return true;
         }
 
@@ -103,7 +103,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                 }
 
                 if (type == null) {
-                    LibsMsg.DMODRADIUS_UNRECOGNIZED.send(sender, args[0]);
+                    LibsMsg.UNRECOGNIZED_DISGUISE_TYPE.send(sender, args[0]);
                     return true;
                 }
             }
