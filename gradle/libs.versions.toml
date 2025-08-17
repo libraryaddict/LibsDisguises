@@ -15,7 +15,7 @@ json-version = "20250517"
 asm-version = "9.8"
 
 net-kyori-adventure-api = "4.17.0"
-com-retro-packetevents = "2.9.0-SNAPSHOT"
+com-retro-packetevents = "2.9.4"
 placeholder-api = "2.11.6"
 
 org-spigotmc-spigot = "1.21.6-R0.1-SNAPSHOT"
