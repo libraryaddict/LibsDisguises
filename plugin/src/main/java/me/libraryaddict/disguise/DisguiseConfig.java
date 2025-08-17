@@ -463,7 +463,7 @@ public class DisguiseConfig {
     }
 
     public static void saveInternalConfig() {
-        String internalConfig = ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), "internal.yml");
+        String internalConfig = ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), "internal/internal.yml");
 
         // Bisect hosted, server ip, release builds
         for (Object s : new Object[]{isBisectHosted(), getSavedServerIp(), isUsingReleaseBuild(), getLastUpdateRequest(),
