@@ -262,6 +262,17 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isUpsideDown()" class="member-name-link">isUpsideDown</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#playAnimation(me.libraryaddict.disguise.utilities.animations.DisguiseAnimation)" class="member-name-link">playAnimation</a><wbr>(me.libraryaddict.disguise.utilities.animations.DisguiseAnimation&nbsp;animation)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Plays an animation to all players currently in range of this disguise, no validation is run.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#playAnimation(org.bukkit.entity.Player,me.libraryaddict.disguise.utilities.animations.DisguiseAnimation)" class="member-name-link">playAnimation</a><wbr>(org.bukkit.entity.Player&nbsp;observer,
+ me.libraryaddict.disguise.utilities.animations.DisguiseAnimation&nbsp;animation)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Plays an animation to the specific player, no validation is run.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeDisguise()" class="member-name-link">removeDisguise</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -874,6 +885,46 @@ loadScripts(document, 'script');</script>
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isTallDisguisesVisible</span>()</div>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 <div class="block">Returns true if the self disguise will never check for height before blocking the player's view</div>
+</section>
+</li>
+<li>
+<section class="detail" id="playAnimation(org.bukkit.entity.Player,me.libraryaddict.disguise.utilities.animations.DisguiseAnimation)">
+<h3>playAnimation</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">playAnimation</span><wbr><span class="parameters">(org.bukkit.entity.Player&nbsp;observer,
+ me.libraryaddict.disguise.utilities.animations.DisguiseAnimation&nbsp;animation)</span></div>
+<div class="block">Plays an animation to the specific player, no validation is run.
+ <p>
+ Some reasons to validate are
+ - Animation is not relevant for this disguise type
+ - Disguise is not a living entity, which may kick/crash players
+ - Player is not in range (can't see entity)
+ - Player does not see this disguise
+ - Disguise is not active</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>observer</code> - </dd>
+<dd><code>animation</code> - </dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="playAnimation(me.libraryaddict.disguise.utilities.animations.DisguiseAnimation)">
+<h3>playAnimation</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">playAnimation</span><wbr><span class="parameters">(me.libraryaddict.disguise.utilities.animations.DisguiseAnimation&nbsp;animation)</span></div>
+<div class="block">Plays an animation to all players currently in range of this disguise, no validation is run.
+ <p>
+ Some reasons to validate are
+ - Animation is not relevant for this disguise type
+ - Disguise is not a living entity, which may kick/crash players
+ - Player is not in range (can't see entity)
+ - Player does not see this disguise
+ - Disguise is not active</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>animation</code> - </dd>
+<dt>Returns:</dt>
+<dd>Count of players that saw the animation</dd>
+</dl>
 </section>
 </li>
 </ul>
