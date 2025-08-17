@@ -15,10 +15,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Gradle 8.10
+      - name: Set up Gradle 8.14.3
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.10'
+          gradle-version: '8.14.3'
 
       - name: Deploy JavaDoc 🚀
         uses: MathieuSoysal/Javadoc-publisher.yml@v2.5.0
