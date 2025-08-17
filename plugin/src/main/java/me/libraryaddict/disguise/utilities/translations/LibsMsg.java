@@ -26,14 +26,14 @@ public enum LibsMsg {
     CAN_USE_DISGS("<dark_green>You can use the disguises:</dark_green> <green>%s</green>"),
     CAN_USE_DISGS_SEPERATOR("<red>, </red>"),
     CLICK_COPY("<yellow><bold>%s"),
-    CLICK_TIMER("<red>Right click a entity in the next %s seconds to grab the disguise reference!"),
+    CLICK_TIMER("<red>Right click an entity in the next %s seconds to grab the disguise reference!</red>"),
     CLICK_TO_COPY("<green>Click to Copy: </green>"),
     CLICK_TO_COPY_DATA("<yellow>Data"),
     CLICK_TO_COPY_HOVER("<gold>%s / %s. Click to Copy</gold>\n<green>%s</green>"),
     CLICK_TO_COPY_HOVER_CLIPBOARD("<gold>%s / %s. Click to Copy to Clipboard</gold>\n<green>%s</green>"),
     CLICK_TO_COPY_WITH_SKIN("<green>Version with skin data:"),
     CLICK_TO_COPY_WITH_SKIN_NO_COPY("<green>Version with skin data: <yellow>%s"),
-    CLONE_HELP1("<dark_green>Right click a entity to get a disguise reference you can pass to other disguise commands!"),
+    CLONE_HELP1("<dark_green>Right click an entity to get a disguise reference you can pass to other disguise commands!</dark_green>"),
     CLONE_HELP2("<dark_green>Security note: Any references you create will be available to all players able to use disguise references."),
     CLONE_HELP3("<dark_green>/disguiseclone IgnoreEquipment<dark_green>(<green>Optional</green>)"),
     COPY_DISGUISE_NO_COPY("<green>Data: <yellow>%s"),
@@ -75,7 +75,7 @@ public enum LibsMsg {
     DISG_PLAYER_AS_DISG_FAIL("<red>Failed to disguise %s as a %s!"),
     DISRADIUS("<red>Successfully disguised %s entities!"),
     DISRADIUS_FAIL("<red>Couldn't find any entities to disguise!"),
-    DMODENT_HELP1("<dark_green>Choose the options for a disguise then right click a entity to modify it!"),
+    DMODENT_HELP1("<dark_green>Choose the options for a disguise then right click an entity to modify it!</dark_green>"),
     DMODIFYENT_CLICK("<red>Right click a disguised entity in the next %s seconds to modify their disguise!"),
     DMODIFY_HELP1("<dark_green>Modify your own disguise as you wear it!"),
     DMODIFY_HELP2("<dark_green>/disguisemodify setBaby true setSprinting true"),
@@ -335,7 +335,7 @@ public enum LibsMsg {
     UPDATE_IN_PROGRESS("<dark_green>LibsDisguises is now downloading an update..."),
     UPDATE_ON_LATEST("<red>You are already on the latest version of LibsDisguises!"),
     UPDATE_READY(
-        "<red>[LibsDisguises] <dark_red>There is a update ready to be downloaded! You are using <red>v%s</red>, the new version is " +
+        "<red>[LibsDisguises]</red> <dark_red>There is an update ready to be downloaded! You are using <red>v%s</red>, the new version is " +
             "<red>v%s</red>!"),
     UPDATE_READY_SNAPSHOT(
         "<red>[LibsDisguises]</red> <dark_red>There is a new build of Lib's Disguises! You are using <red>%s</red>, the latest build " +
