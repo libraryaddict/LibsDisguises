@@ -83,11 +83,11 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
         if (sentPacket instanceof WrapperPlayServerEntityRelativeMove) {
             WrapperPlayServerEntityRelativeMove packet = (WrapperPlayServerEntityRelativeMove) sentPacket;
 
-            return packet.getDeltaX() != 0 || packet.getDeltaY() != 0 || packet.getDeltaZ() != 0;
+            return Math.abs(packet.getDeltaX()) > 0.01 || Math.abs(packet.getDeltaY()) > 0.01 || Math.abs(packet.getDeltaZ()) > 0.01;
         } else if (sentPacket instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
             WrapperPlayServerEntityRelativeMoveAndRotation packet = (WrapperPlayServerEntityRelativeMoveAndRotation) sentPacket;
 
-            return packet.getDeltaX() != 0 || packet.getDeltaY() != 0 || packet.getDeltaZ() != 0;
+            return Math.abs(packet.getDeltaX()) > 0.01 || Math.abs(packet.getDeltaY()) > 0.01 || Math.abs(packet.getDeltaZ()) > 0.01;
         }
 
         return false;
