@@ -286,6 +286,9 @@ public class LibsDisguises extends JavaPlugin {
         verboseLog("Starting up our own reflection classes...");
         ReflectionManager.init();
 
+        verboseLog("Giving packetevents awareness of server registry");
+        ReflectionManager.tryLoadRegistriesIntoPE();
+
         verboseLog("Creating but not registering the packet listeners...");
         PacketsManager.init();
         verboseLog("Setting up some internal utilities for disguises...");

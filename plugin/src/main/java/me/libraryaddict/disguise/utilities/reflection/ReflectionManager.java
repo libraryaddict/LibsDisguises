@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
 import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloState;
 import com.github.retrooper.packetevents.protocol.entity.cat.CatVariant;
@@ -21,6 +22,9 @@ import com.github.retrooper.packetevents.protocol.entity.sniffer.SnifferState;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfVariant;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfVariants;
 import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
+import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
+import com.github.retrooper.packetevents.protocol.nbt.NBTList;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
@@ -29,9 +33,14 @@ import com.github.retrooper.packetevents.protocol.world.painting.PaintingVariant
 import com.github.retrooper.packetevents.protocol.world.painting.PaintingVariants;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
+import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.Vector3f;
+import com.github.retrooper.packetevents.util.mappings.GlobalRegistryHolder;
+import com.github.retrooper.packetevents.util.mappings.IRegistryHolder;
+import com.github.retrooper.packetevents.util.mappings.SynchronizedRegistriesHandler;
 import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.configuration.server.WrapperConfigServerRegistryData;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
@@ -131,6 +140,8 @@ import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.profile.PlayerProfile;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -214,6 +225,49 @@ public class ReflectionManager {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Not really the optimal solution, but the alternative is that we cannot resolve any of this until a player joins
+     */
+    public static void tryLoadRegistriesIntoPE() {
+        ServerVersion serverVersion = PacketEvents.getAPI().getServerManager().getVersion();
+        ClientVersion cacheKey = serverVersion.toClientVersion();
+
+        for (ByteBuf buf : getNmsReflection().getRegistryPacketdata()) {
+            WrapperConfigServerRegistryData wrapper = new WrapperConfigServerRegistryData((NBTCompound) null);
+            wrapper.buffer = buf;
+            wrapper.setServerVersion(serverVersion);
+            wrapper.read();
+
+            ResourceLocation key;
+            List<WrapperConfigServerRegistryData.RegistryElement> elements;
+
+            if (wrapper.getRegistryKey() != null) {
+                key = wrapper.getRegistryKey();
+                elements = wrapper.getElements();
+            } else { // For our purposes, this is 1.20.1 to 1.20.4
+                NBTCompound compound = wrapper.getRegistryData();
+                // extract registry name
+                key = new ResourceLocation(compound.getStringTagValueOrThrow("type"));
+                // extract registry entries
+                NBTList<@NotNull NBTCompound> nbtElements = compound.getCompoundListTagOrNull("value");
+
+                if (nbtElements == null) {
+                    continue;
+                }
+
+                elements = WrapperConfigServerRegistryData.RegistryElement.convertNbt(nbtElements);
+            }
+
+            SynchronizedRegistriesHandler.@Nullable RegistryEntry<?> registryEntry = SynchronizedRegistriesHandler.getRegistryEntry(key);
+
+            if (registryEntry == null) {
+                continue;
+            }
+
+            registryEntry.computeSyncedRegistry(cacheKey, () -> registryEntry.createFromElements(elements, wrapper));
         }
     }
 
@@ -1071,6 +1125,10 @@ public class ReflectionManager {
     }
 
     public static Object convertMetaToSerialized(MetaIndex index, Object value) {
+        return convertMetaToSerialized(GlobalRegistryHolder.INSTANCE, index, value);
+    }
+
+    public static Object convertMetaToSerialized(IRegistryHolder registryHolder, MetaIndex index, Object value) {
         if (value instanceof Optional) {
             if (!((Optional) value).isPresent()) {
                 if (index.getDataType() == EntityDataTypes.OPTIONAL_BLOCK_STATE) {
@@ -1099,7 +1157,8 @@ public class ReflectionManager {
                     return asInt;
                 }
 
-                return CatVariants.getRegistry().getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(), asInt);
+                return registryHolder.getRegistryOr(CatVariants.getRegistry())
+                    .getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(), asInt);
             } else if (value instanceof MushroomCow.Variant) {
                 if (NmsVersion.v1_21_R4.isSupported()) {
                     return enumOrdinal(value);
@@ -1116,19 +1175,21 @@ public class ReflectionManager {
                         return asInt;
                     }
 
-                    return FrogVariants.getRegistry()
+                    return registryHolder.getRegistryOr(FrogVariants.getRegistry())
                         .getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(), asInt);
                 } else if (value instanceof Art) {
-                    return PaintingVariants.getRegistry().getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(),
-                        getNmsReflection().getIntFromType(value));
+                    return registryHolder.getRegistryOr(PaintingVariants.getRegistry())
+                        .getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(),
+                            getNmsReflection().getIntFromType(value));
                 } else if (value instanceof Boat.Type) {
                     return enumOrdinal(value);
                 }
 
                 if (NmsVersion.v1_20_R4.isSupported()) {
                     if (value instanceof Wolf.Variant) {
-                        return WolfVariants.getRegistry().getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(),
-                            getNmsReflection().getIntFromType(value));
+                        return registryHolder.getRegistryOr(WolfVariants.getRegistry())
+                            .getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(),
+                                getNmsReflection().getIntFromType(value));
                     }
 
                     if (NmsVersion.v1_21_R2.isSupported()) {
@@ -1143,15 +1204,15 @@ public class ReflectionManager {
 
                         if (NmsVersion.v1_21_R4.isSupported()) {
                             if (value instanceof Cow.Variant) {
-                                return CowVariants.getRegistry()
+                                return registryHolder.getRegistryOr(CowVariants.getRegistry())
                                     .getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(),
                                         getNmsReflection().getIntFromType(value));
                             } else if (value instanceof Chicken.Variant) {
-                                return ChickenVariants.getRegistry()
+                                return registryHolder.getRegistryOr(ChickenVariants.getRegistry())
                                     .getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(),
                                         getNmsReflection().getIntFromType(value));
                             } else if (value instanceof Pig.Variant) {
-                                return PigVariants.getRegistry()
+                                return registryHolder.getRegistryOr(PigVariants.getRegistry())
                                     .getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(),
                                         getNmsReflection().getIntFromType(value));
                             }
@@ -1638,12 +1699,20 @@ public class ReflectionManager {
                 Object minecraftDefaultBukkit = convertMetaFromSerialized(metaIndex, data.getValue());
                 Object minecraftDefaultSerialized = data.getValue();
 
-                if (minecraftDefaultBukkit == null) {
-                    minecraftDefaultBukkit = "ld-minecraft-null";
-                }
-
                 if (ourDefaultBukkit == null) {
                     ourDefaultBukkit = "ld-bukkit-null";
+                }
+
+                if (ourDefaultSerialized == null) {
+                    ourDefaultSerialized = "ld-minecraft-null";
+                }
+
+                if (minecraftDefaultBukkit == null) {
+                    minecraftDefaultBukkit = "mc-bukkit-null";
+                }
+
+                if (minecraftDefaultSerialized == null) {
+                    minecraftDefaultSerialized = "mc-minecraft-null";
                 }
 
                 if (minecraftDefaultBukkit.getClass().getSimpleName().equals("CraftItemStack") &&

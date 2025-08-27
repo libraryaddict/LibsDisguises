@@ -21,6 +21,8 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -142,6 +144,11 @@ public abstract class ReflectionManagerAbstract {
     public abstract void addEntityTracker(Object trackedEntity, Object serverPlayer);
 
     public abstract void clearEntityTracker(Object trackedEntity, Object serverPlayer);
+
+    public List<ByteBuf> getRegistryPacketdata() {
+        // This is only implemented in 1.20.1+ servers
+        return new ArrayList<>();
+    }
 
     public boolean setScore(Scoreboard scoreboard, String criteria, String name, int score) {
         Set<Objective> objectives = scoreboard.getObjectivesByCriteria(criteria);

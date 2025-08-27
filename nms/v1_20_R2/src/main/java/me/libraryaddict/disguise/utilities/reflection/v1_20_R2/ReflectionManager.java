@@ -11,8 +11,10 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.configuration.ClientboundRegistryDataPacket;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ClientInformation;
@@ -62,6 +64,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -433,5 +437,19 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     @Override
     public Set getTrackedEntities(Object trackedEntity) {
         return ((ChunkMap.TrackedEntity) trackedEntity).seenBy;
+    }
+
+    @Override
+    public List<ByteBuf> getRegistryPacketdata() {
+        List<ByteBuf> registerBuf = new ArrayList<>();
+        ClientboundRegistryDataPacket packet = new ClientboundRegistryDataPacket(MinecraftServer.getServer().registryAccess());
+
+        ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer();
+        FriendlyByteBuf friendlyByteBuf = new FriendlyByteBuf(buf);
+        packet.write(friendlyByteBuf);
+
+        registerBuf.add(friendlyByteBuf);
+
+        return registerBuf;
     }
 }

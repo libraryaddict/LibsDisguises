@@ -3,18 +3,25 @@ package me.libraryaddict.disguise.utilities.reflection.v1_21_R3;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
+import com.mojang.serialization.DynamicOps;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.SneakyThrows;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistrySynchronization;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.protocol.configuration.ClientboundRegistryDataPacket;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ClientInformation;
@@ -73,6 +80,9 @@ import org.bukkit.scoreboard.Scoreboard;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -476,5 +486,24 @@ public class ReflectionManager extends ReflectionManagerAbstract {
         }
 
         return updated;
+    }
+
+    @Override
+    public List<ByteBuf> getRegistryPacketdata() {
+        DynamicOps<Tag> dynamicOps = MinecraftServer.getServer().registries().compositeAccess().createSerializationContext(NbtOps.INSTANCE);
+        List<ByteBuf> registerBuf = new ArrayList<>();
+
+        RegistrySynchronization.packRegistries(dynamicOps, MinecraftServer.getServer().registries().getAccessFrom(RegistryLayer.WORLDGEN),
+            new HashSet<>(), (resourceKey, list) -> {
+                ClientboundRegistryDataPacket packet = new ClientboundRegistryDataPacket(resourceKey, list);
+                ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer();
+                FriendlyByteBuf friendlyByteBuf = new FriendlyByteBuf(buf);
+
+                ClientboundRegistryDataPacket.STREAM_CODEC.encode(friendlyByteBuf, packet);
+
+                registerBuf.add(buf);
+            });
+
+        return registerBuf;
     }
 }
