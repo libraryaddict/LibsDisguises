@@ -664,6 +664,7 @@ public class DisguiseConfig {
         setNeverUpdatePacketEvents(config.getBoolean("NeverUpdatePacketEvents", config.getBoolean("NeverUpdateProtocolLib", false)));
         setDynamicFilenames(config.getBoolean("DynamicFilenames", true));
         setVerboseLogging(config.getBoolean("VerboseLogging"));
+        setModifyCollisions(config.getBoolean("Scoreboard.Collisions"));
 
         setAutoUpdate(config.getBoolean("AutoUpdate"));
 
@@ -728,7 +729,6 @@ public class DisguiseConfig {
         setLoginPayloadPackets(config.getBoolean("PacketsEnabled.LoginPayload"));
         setMiscDisguisesForLivingEnabled(config.getBoolean("MiscDisguisesForLiving"));
         setModifyBoundingBox(config.getBoolean("ModifyBoundingBox"));
-        setModifyCollisions(config.getBoolean("Scoreboard.Collisions"));
         setScoreboardUpdateHealth(config.getBoolean("Scoreboard.UpdateHealth"));
         setMonstersIgnoreDisguises(config.getBoolean("MonstersIgnoreDisguises"));
         setMovementPacketsEnabled(config.getBoolean("PacketsEnabled.Movement"));
