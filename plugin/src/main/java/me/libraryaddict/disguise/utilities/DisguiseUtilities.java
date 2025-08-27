@@ -1860,15 +1860,7 @@ public class DisguiseUtilities {
         gson = gsonBuilder.create();
     }
 
-    public static void init() {
-        fancyHiddenTabs = NmsVersion.v1_19_R2.isSupported() && Bukkit.getPluginManager().getPlugin("ViaBackwards") == null;
-        savedDisguisesKey = new NamespacedKey(LibsDisguises.getInstance(), "SavedDisguises");
-        selfDisguiseScaleNamespace = new NamespacedKey(LibsDisguises.getInstance(), "Self_Disguise_Scaling");
-        debuggingMode = LibsDisguises.getInstance().isDebuggingBuild();
-        placeholderApi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
-
-        recreateGsonSerializer();
-
+    public static void reload() {
         if (!profileCache.exists()) {
             File old = new File(profileCache.getParentFile(), "GameProfiles");
 
@@ -1879,8 +1871,31 @@ public class DisguiseUtilities {
             }
         }
 
+        cachedNames.clear();
         cachedNames.addAll(Arrays.asList(profileCache.list()));
         cachedNames.remove(sanitySkinCacheFile.getName());
+
+        if (!savedDisguises.exists() && !NmsVersion.v1_14.isSupported()) {
+            savedDisguises.mkdirs();
+        }
+
+        for (Scoreboard board : getAllScoreboards()) {
+            registerAllExtendedNames(board);
+            registerNoName(board);
+            registerColors(board);
+        }
+
+        loadViewPreferences();
+    }
+
+    public static void init() {
+        fancyHiddenTabs = NmsVersion.v1_19_R2.isSupported() && Bukkit.getPluginManager().getPlugin("ViaBackwards") == null;
+        savedDisguisesKey = new NamespacedKey(LibsDisguises.getInstance(), "SavedDisguises");
+        selfDisguiseScaleNamespace = new NamespacedKey(LibsDisguises.getInstance(), "Self_Disguise_Scaling");
+        debuggingMode = LibsDisguises.getInstance().isDebuggingBuild();
+        placeholderApi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
+
+        recreateGsonSerializer();
 
         try {
             loadSanitySkinCache();
@@ -1897,10 +1912,6 @@ public class DisguiseUtilities {
             try (InputStream stream = LibsDisguises.getInstance().getResource("module-info.class")) {
                 invalidFile = stream != null;
             } catch (Throwable e) {
-            }
-
-            if (!savedDisguises.exists() && !NmsVersion.v1_14.isSupported()) {
-                savedDisguises.mkdirs();
             }
 
             if (savedDisguises.exists() && savedDisguises.isDirectory()) {
@@ -1928,11 +1939,9 @@ public class DisguiseUtilities {
 
                 team.unregister();
             }
-
-            registerAllExtendedNames(board);
-            registerNoName(board);
-            registerColors(board);
         }
+
+        reload();
 
         if (NmsVersion.v1_13.isSupported()) {
             Iterator<KeyedBossBar> bars = Bukkit.getBossBars();
@@ -1964,7 +1973,6 @@ public class DisguiseUtilities {
             e.printStackTrace();
         }
 
-        loadViewPreferences();
 
         if (LibsPremium.isPremium()) {
             boolean fetch = true;
@@ -2547,7 +2555,7 @@ public class DisguiseUtilities {
             }
 
             team.setColor(color);
-            team.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
+            team.setOption(Option.COLLISION_RULE, DisguiseConfig.isModifyCollisions() ? OptionStatus.NEVER : OptionStatus.ALWAYS);
         }
     }
 
