@@ -555,7 +555,10 @@ public class LibsDisguises extends JavaPlugin {
     @Override
     public void onDisable() {
         DisguiseUtilities.saveDisguises();
-        ClassMappings.saveMappingsCache(getDataFolder());
+
+        if (ClassMappings.isLoadedCache()) {
+            ClassMappings.saveMappingsCache(getDataFolder());
+        }
 
         reloaded = true;
     }

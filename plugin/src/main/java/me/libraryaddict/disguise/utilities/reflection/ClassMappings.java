@@ -18,17 +18,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ClassMappings {
-    private static final HashMap<String, String> classLocations = new HashMap<>();
+    private static final Map<String, String> classLocations = new HashMap<>();
     private static final String[] packages = getPackages();
     private static boolean updatingCache = false;
     @Getter
+    private static boolean loadedCache;
+    @Getter
     private static final File mappingsFile = new File(DisguiseUtilities.getInternalFolder(), "mappings_cache");
 
-    static {
-        ClassMappings.loadMappingsCache();
-    }
-
     public static String getClass(String packageHint, String className) {
+        if (!loadedCache) {
+            ClassMappings.loadMappingsCache();
+        }
+
         String key = packageHint + "." + className;
         String location = classLocations.get(key);
 
@@ -108,6 +110,10 @@ public class ClassMappings {
     }
 
     public static void saveMappingsCache(File dataFolder) {
+        if (!loadedCache) {
+            return;
+        }
+
         synchronized (classLocations) {
             if (!updatingCache) {
                 return;
@@ -130,6 +136,8 @@ public class ClassMappings {
     }
 
     public static void loadMappingsCache() {
+        loadedCache = true;
+
         if (!getMappingsFile().exists()) {
             return;
         }
