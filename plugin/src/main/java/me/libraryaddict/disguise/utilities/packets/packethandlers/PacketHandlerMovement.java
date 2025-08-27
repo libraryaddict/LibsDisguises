@@ -66,8 +66,8 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
         if (disguise.getWatcher() instanceof GridLockedWatcher && ((GridLockedWatcher) disguise.getWatcher()).isGridLocked()) {
             handleGridLock(disguise, packets, entity, sentPacket, yMod);
             return;
-        } else if (disguise.getType() == DisguiseType.RABBIT && (sentPacket instanceof WrapperPlayServerEntityRelativeMove ||
-            sentPacket instanceof WrapperPlayServerEntityRelativeMoveAndRotation)) {
+        } else if (disguise.getType() == DisguiseType.RABBIT && DisguiseType.getType(entity) != disguise.getType() &&
+            hasMoved(sentPacket)) {
             handleRabbitHop(packets, observer, entity);
         }
 
@@ -77,6 +77,20 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
         } else {
             handleRemainingMovement(disguise, packets, observer, entity, sentPacket, yMod);
         }
+    }
+
+    private static boolean hasMoved(PacketWrapper sentPacket) {
+        if (sentPacket instanceof WrapperPlayServerEntityRelativeMove) {
+            WrapperPlayServerEntityRelativeMove packet = (WrapperPlayServerEntityRelativeMove) sentPacket;
+
+            return packet.getDeltaX() != 0 || packet.getDeltaY() != 0 || packet.getDeltaZ() != 0;
+        } else if (sentPacket instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
+            WrapperPlayServerEntityRelativeMoveAndRotation packet = (WrapperPlayServerEntityRelativeMoveAndRotation) sentPacket;
+
+            return packet.getDeltaX() != 0 || packet.getDeltaY() != 0 || packet.getDeltaZ() != 0;
+        }
+
+        return false;
     }
 
     private void handleRemainingMovement(Disguise disguise, LibsPackets<T> packets, Player observer, Entity entity,
