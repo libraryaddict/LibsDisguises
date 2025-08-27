@@ -31,6 +31,7 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -1050,7 +1051,7 @@ public abstract class Disguise {
         // Stick the disguise in the disguises bin
         DisguiseUtilities.addDisguise(entity.getEntityId(), (TargetedDisguise) this);
 
-        if (!isPlayerDisguise()) {
+        if (!isPlayerDisguise() && getWatcher().getGlowColor() != ChatColor.WHITE) {
             DisguiseUtilities.setGlowColor(this, getWatcher().getGlowColor());
         }
 
