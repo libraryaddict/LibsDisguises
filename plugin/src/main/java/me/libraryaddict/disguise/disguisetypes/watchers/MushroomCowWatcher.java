@@ -12,7 +12,7 @@ public class MushroomCowWatcher extends AgeableWatcher {
     public MushroomCowWatcher(Disguise disguise) {
         super(disguise);
 
-        if (DisguiseConfig.isRandomDisguises()) {
+        if (DisguiseConfig.isRandomDisguises() && NmsVersion.v1_14.isSupported()) {
             setVariant(ReflectionManager.randomEnum(MushroomCow.Variant.class));
         }
     }
