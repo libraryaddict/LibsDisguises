@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.commands.utils;
 
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
@@ -68,7 +69,12 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                 }
 
                 if (!perms.isAllowedDisguise(type)) {
-                    LibsMsg.NO_PERM_DISGUISE.send(sender);
+                    if (perms.getDisabledInConfigDisguises().contains(type)) {
+                        LibsMsg.DISABLED_CONFIG_DISGUISE.send(sender);
+                    } else {
+                        LibsMsg.NO_PERM_DISGUISE.send(sender);
+                    }
+
                     return true;
                 }
 

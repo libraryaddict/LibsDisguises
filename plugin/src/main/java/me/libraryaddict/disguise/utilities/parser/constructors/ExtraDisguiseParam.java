@@ -40,8 +40,10 @@ public abstract class ExtraDisguiseParam<T> {
                                          ArrayList<String> usedOptions, DisguisePerm disguisePerm, T param) throws DisguiseParseException {
         usedOptions.add(getParameterMethod().toLowerCase(Locale.ENGLISH));
 
-        if (!permissions.isAllowedDisguise(disguisePerm, usedOptions)) {
-            throw new DisguiseParseException(LibsMsg.D_PARSE_NOPERM, usedOptions.stream().reduce((first, second) -> second).orElse(null));
+        DisguiseParseException exception = permissions.getReasonNotAllowed(disguisePerm, usedOptions);
+
+        if (exception != null) {
+            throw exception;
         }
 
         String itemName = param == null ? "null" : getParameterAsString(param);

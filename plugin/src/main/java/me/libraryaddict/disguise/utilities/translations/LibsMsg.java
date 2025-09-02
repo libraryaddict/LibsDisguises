@@ -59,6 +59,8 @@ public enum LibsMsg {
     DHELP_OPTIONS_METHOD_SOMEWHAT_SPECIFIC("<aqua>%s</aqua>"),
     DHELP_OPTIONS_METHOD_VERY_SPECIFIC("<yellow>%s</yellow>"),
     DHELP_SHOW("Show"),
+    DISABLED_CONFIG_DISGUISE("<red>That disguise was disabled in the config!</red>"),
+    DISABLED_CONFIG_METHOD("<red>The disguise method %s was disabled in the config!</red>"),
     DISABLED_LIVING_TO_MISC("<red>Can't disguise a living entity as a misc disguise. This has been disabled in the config!"),
     DISGUISECOPY_INTERACT("<red>Right click a disguised entity in the next %s seconds to copy their disguise!"),
     DISGUISED("<red>Now disguised as %s"),

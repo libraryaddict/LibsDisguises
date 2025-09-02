@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Animals;
@@ -92,6 +93,8 @@ public class DisguisePermissions {
      * List of PermissionStorage that the permission holder is able to use
      */
     private final List<PermissionStorage> disguises = new ArrayList<>();
+    @Getter
+    private final Set<DisguiseType> disabledInConfigDisguises = new HashSet<>();
     @Getter
     private boolean isOperator = false;
     private final static Map<String, DisguisePermissions> CONSOLE_PERMISSIONS = new HashMap<>();
@@ -429,7 +432,14 @@ public class DisguisePermissions {
             return;
         }
 
-        disguises.removeIf(storage -> DisguiseConfig.getDisabledDisguises().contains(storage.getDisguise().getType()));
+        disguises.removeIf(storage -> {
+            if (!DisguiseConfig.getDisabledDisguises().contains(storage.getDisguise().getType())) {
+                return false;
+            }
+
+            disabledInConfigDisguises.add(storage.getDisguise().getType());
+            return true;
+        });
     }
 
     private int getInheritance(DisguisePerm disguisePerm, String permissionName) {
@@ -510,14 +520,17 @@ public class DisguisePermissions {
      * @return true if permitted
      */
     public boolean isAllowedDisguise(DisguisePerm disguisePerm, Collection<String> disguiseOptions) {
-        if (this == Bukkit.getConsoleSender()) {
-            return true;
-        }
+        return getReasonNotAllowed(disguisePerm, disguiseOptions) == null;
+    }
 
+    /**
+     * Returns a method that was disabled in config if it was the reason why isAllowedDisguise was false
+     */
+    public DisguiseParseException getReasonNotAllowed(DisguisePerm disguisePerm, Collection<String> disguiseOptions) {
         PermissionStorage storage = getStorage(disguisePerm);
 
         if (storage == null) {
-            return false;
+            return new DisguiseParseException(LibsMsg.NO_PERM_DISGUISE);
         }
 
         // If user cannot use all permitted options naturally
@@ -527,15 +540,38 @@ public class DisguisePermissions {
             // have an invisible wildcard allow
             if (!storage.permittedOptions.isEmpty() || storage.negatedOptions.isEmpty()) {
                 // Check if they're trying to use anything they shouldn't
-                if (!disguiseOptions.stream().allMatch(option -> storage.permittedOptions.contains(option.toLowerCase(Locale.ENGLISH)))) {
-                    return false;
+                for (String option : disguiseOptions) {
+                    String lower = option.toLowerCase(Locale.ENGLISH);
+
+                    if (storage.permittedOptions.contains(lower)) {
+                        continue;
+                    }
+
+                    // Not allowed this method
+                    return new DisguiseParseException(LibsMsg.D_PARSE_NOPERM, option);
                 }
             }
         }
 
         // If the user is using a forbidden option, return false. Otherwise true
-        return disguiseOptions.stream().map(s -> s.toLowerCase(Locale.ENGLISH))
-            .noneMatch(option -> storage.negatedOptions.contains(option) || storage.externalNegatedOptions.contains(option));
+        for (String option : disguiseOptions) {
+            String lower = option.toLowerCase(Locale.ENGLISH);
+
+            // It was because of this
+            if (storage.negatedOptions.contains(lower)) {
+                return new DisguiseParseException(LibsMsg.D_PARSE_NOPERM, option);
+            }
+
+            // It is allowed, so it wasn't this
+            if (!storage.externalNegatedOptions.contains(lower)) {
+                continue;
+            }
+
+            // This method was disabled
+            return new DisguiseParseException(LibsMsg.DISABLED_CONFIG_METHOD, option);
+        }
+
+        return null;
     }
 
     public boolean isAllowedDisguise(DisguisePerm disguisePerm) {

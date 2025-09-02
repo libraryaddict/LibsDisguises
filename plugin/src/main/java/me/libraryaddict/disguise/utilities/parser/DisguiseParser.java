@@ -732,10 +732,13 @@ public class DisguiseParser {
 
     private static void doCheck(CommandSender sender, DisguisePermissions permissions, DisguisePerm disguisePerm,
                                 Collection<String> usedOptions) throws DisguiseParseException {
+        DisguiseParseException exception = permissions.getReasonNotAllowed(disguisePerm, usedOptions);
 
-        if (!permissions.isAllowedDisguise(disguisePerm, usedOptions)) {
-            throw new DisguiseParseException(LibsMsg.D_PARSE_NOPERM, usedOptions.stream().reduce((first, second) -> second).orElse(null));
+        if (exception == null) {
+            return;
         }
+
+        throw exception;
     }
 
     public static DisguisePerm getDisguisePerm(String name) {
@@ -1075,7 +1078,11 @@ public class DisguiseParser {
             }
 
             if (!permissions.isAllowedDisguise(disguisePerm)) {
-                throw new DisguiseParseException(LibsMsg.NO_PERM_DISGUISE);
+                if (permissions.getDisabledInConfigDisguises().contains(disguisePerm.getType())) {
+                    throw new DisguiseParseException(LibsMsg.DISABLED_CONFIG_DISGUISE);
+                } else {
+                    throw new DisguiseParseException(LibsMsg.NO_PERM_DISGUISE);
+                }
             }
         } else {
             disguisePerm = getDisguisePerm(args[0]);
@@ -1128,7 +1135,11 @@ public class DisguiseParser {
             }
 
             if (!permissions.isAllowedDisguise(disguisePerm)) {
-                throw new DisguiseParseException(LibsMsg.NO_PERM_DISGUISE);
+                if (permissions.getDisabledInConfigDisguises().contains(disguisePerm.getType())) {
+                    throw new DisguiseParseException(LibsMsg.DISABLED_CONFIG_DISGUISE);
+                } else {
+                    throw new DisguiseParseException(LibsMsg.NO_PERM_DISGUISE);
+                }
             }
 
             HashMap<String, HashMap<String, Boolean>> disguiseOptions =
