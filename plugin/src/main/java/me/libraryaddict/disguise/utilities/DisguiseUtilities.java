@@ -374,16 +374,17 @@ public class DisguiseUtilities {
             // Move these files to internal/
             for (String oldName : new String[]{"internal.yml", "preferences.json", "mappings_cache"}) {
                 File file = new File(getInternalFolder(), oldName);
-
-                // If the file already exists in /internal
-                if (file.exists()) {
-                    continue;
-                }
-
                 File previous = new File(LibsDisguises.getInstance().getDataFolder(), oldName);
 
                 // If the file doesn't exist in /LibsDisguises
                 if (!previous.exists()) {
+                    continue;
+                }
+
+                // If the file already exists in /internal
+                if (file.exists()) {
+                    // Delete the old as it's clearly a dupe or something
+                    previous.delete();
                     continue;
                 }
 
