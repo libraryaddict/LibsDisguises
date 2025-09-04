@@ -50,6 +50,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.InvocationTargetException;
@@ -994,9 +995,8 @@ public class DisguiseParser {
             params = DisguiseParser.parsePlaceholders(params, target, target);
         }
 
-        DisguiseParser.callMethods(Bukkit.getConsoleSender(), disguise,
-            DisguisePermissions.getPermissions(Bukkit.getConsoleSender(), "disguise"), new DisguisePerm(disguise.getType()),
-            new ArrayList<>(), params, "Disguise");
+        DisguiseParser.callMethods(Bukkit.getConsoleSender(), disguise, null, new DisguisePerm(disguise.getType()), new ArrayList<>(),
+            params, "Disguise");
     }
 
     public static void modifyDisguise(Disguise disguise, String[] params) throws Throwable {
@@ -1004,7 +1004,7 @@ public class DisguiseParser {
     }
 
     public static void modifyDisguise(Disguise disguise, String params) throws Throwable {
-        modifyDisguise(disguise, DisguiseUtilities.split(params));
+        modifyDisguise(disguise, null, params);
     }
 
     public static void modifyDisguise(Disguise disguise, Entity target, String params) throws Throwable {
@@ -1012,12 +1012,16 @@ public class DisguiseParser {
     }
 
     public static Disguise parseDisguise(String disguise) throws Throwable {
-        return parseDisguise(Bukkit.getConsoleSender(), null, disguise);
+        return parseDisguise(null, disguise);
+    }
+
+    public static Disguise parseDisguise(Entity target, String disguise) throws Throwable {
+        return parseDisguise(Bukkit.getConsoleSender(), target, "disguise", DisguiseUtilities.split(disguise), null);
     }
 
     public static Disguise parseDisguise(CommandSender sender, Entity target, String disguise) throws Throwable {
         return parseDisguise(sender, target, "disguise", DisguiseUtilities.split(disguise),
-            DisguisePermissions.getPermissions(Bukkit.getConsoleSender(), "disguise"));
+            DisguisePermissions.getPermissions(sender, "disguise"));
     }
 
     /**
@@ -1027,7 +1031,7 @@ public class DisguiseParser {
      * disguise has been feed a proper disguisetype.
      */
     public static Disguise parseDisguise(CommandSender sender, Entity target, String permNode, String[] args,
-                                         DisguisePermissions permissions) throws Throwable {
+                                         @Nullable DisguisePermissions permissions) throws Throwable {
         if (!Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("DisguiseParser should not be called async!");
         }
@@ -1036,7 +1040,7 @@ public class DisguiseParser {
             DisguiseUtilities.setCommandsUsed();
         }
 
-        if (!permissions.hasPermissions()) {
+        if (permissions != null && !permissions.hasPermissions()) {
             throw new DisguiseParseException(LibsMsg.NO_PERM);
         }
 
@@ -1077,7 +1081,7 @@ public class DisguiseParser {
                 throw new DisguiseParseException(LibsMsg.PARSE_CANT_LOAD);
             }
 
-            if (!permissions.isAllowedDisguise(disguisePerm)) {
+            if (permissions != null && !permissions.isAllowedDisguise(disguisePerm)) {
                 if (permissions.getDisabledInConfigDisguises().contains(disguisePerm.getType())) {
                     throw new DisguiseParseException(LibsMsg.DISABLED_CONFIG_DISGUISE);
                 } else {
@@ -1134,16 +1138,13 @@ public class DisguiseParser {
                 throw new DisguiseParseException(LibsMsg.PARSE_CANT_LOAD);
             }
 
-            if (!permissions.isAllowedDisguise(disguisePerm)) {
+            if (permissions != null && !permissions.isAllowedDisguise(disguisePerm)) {
                 if (permissions.getDisabledInConfigDisguises().contains(disguisePerm.getType())) {
                     throw new DisguiseParseException(LibsMsg.DISABLED_CONFIG_DISGUISE);
                 } else {
                     throw new DisguiseParseException(LibsMsg.NO_PERM_DISGUISE);
                 }
             }
-
-            HashMap<String, HashMap<String, Boolean>> disguiseOptions =
-                DisguisePermissions.getDisguiseOptions(sender, permNode, disguisePerm);
 
             if (disguise == null) {
                 WatcherMethod[] watcherMethods = ParamInfoManager.getDisguiseWatcherMethods(disguisePerm.getWatcherClass(), true);
@@ -1154,6 +1155,10 @@ public class DisguiseParser {
                     String[] argArray = args;
 
                     if (Arrays.stream(watcherMethods).noneMatch(m -> m.getMappedName().equalsIgnoreCase(argArray[1]))) {
+
+                        HashMap<String, HashMap<String, Boolean>> disguiseOptions =
+                            permissions == null ? null : DisguisePermissions.getDisguiseOptions(sender, permNode, disguisePerm);
+
                         for (ExtraDisguiseParam extra : extraDisguiseParams) {
                             if (!extra.isApplicable(disguisePerm.getType(), args[1])) {
                                 continue;
@@ -1170,7 +1175,9 @@ public class DisguiseParser {
                                     args[1], TranslateType.DISGUISE_OPTIONS.reverseGet(TranslateType.DISGUISE_OPTIONS.reverseGet(method)));
                             }
 
-                            extra.checkParameterPermission(sender, permissions, disguiseOptions, usedOptions, disguisePerm, param);
+                            if (permissions != null) {
+                                extra.checkParameterPermission(sender, permissions, disguiseOptions, usedOptions, disguisePerm, param);
+                            }
                             toSkip++;
                             break;
                         }
@@ -1266,12 +1273,13 @@ public class DisguiseParser {
         return disguise;
     }
 
-    public static void callMethods(CommandSender sender, Disguise disguise, DisguisePermissions disguisePermission,
+    public static void callMethods(CommandSender sender, Disguise disguise, @Nullable DisguisePermissions disguisePermission,
                                    DisguisePerm disguisePerm, Collection<String> usedOptions, String[] args, String permNode)
         throws Throwable {
         WatcherMethod[] methods = ParamInfoManager.getDisguiseWatcherMethods(disguise.getWatcher().getClass(), true);
         List<String> list = new ArrayList<>(Arrays.asList(args));
-        HashMap<String, HashMap<String, Boolean>> disguiseOptions = DisguisePermissions.getDisguiseOptions(sender, permNode, disguisePerm);
+        HashMap<String, HashMap<String, Boolean>> disguiseOptions =
+            disguisePermission == null ? null : DisguisePermissions.getDisguiseOptions(sender, permNode, disguisePerm);
 
         for (int argIndex = 0; argIndex < args.length; argIndex++) {
             // This is the method name they provided
@@ -1349,17 +1357,21 @@ public class DisguiseParser {
                 throw new DisguiseParseException(LibsMsg.PARSE_OPTION_NA, methodNameProvided);
             }
 
-            if (!usedOptions.contains(methodToUse.getMappedName().toLowerCase(Locale.ENGLISH))) {
-                usedOptions.add(methodToUse.getMappedName().toLowerCase(Locale.ENGLISH));
+            String lower = methodToUse.getMappedName().toLowerCase(Locale.ENGLISH);
+
+            if (!usedOptions.contains(lower)) {
+                usedOptions.add(lower);
             }
 
-            doCheck(sender, disguisePermission, disguisePerm, usedOptions);
+            if (disguisePermission != null) {
+                doCheck(sender, disguisePermission, disguisePerm, usedOptions);
 
-            if (!disguiseOptions.isEmpty()) {
-                String stringValue = ParamInfoManager.toString(valueToSet);
+                if (!disguiseOptions.isEmpty()) {
+                    String stringValue = ParamInfoManager.toString(valueToSet);
 
-                if (!DisguisePermissions.hasPermissionOption(disguiseOptions, methodToUse.getMappedName(), stringValue)) {
-                    throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_PARAM, stringValue, disguisePerm.toReadable());
+                    if (!DisguisePermissions.hasPermissionOption(disguiseOptions, methodToUse.getMappedName(), stringValue)) {
+                        throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_PARAM, stringValue, disguisePerm.toReadable());
+                    }
                 }
             }
 

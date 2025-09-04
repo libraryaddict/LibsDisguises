@@ -549,7 +549,7 @@ public class DisguiseConfig {
             return null;
         }
 
-        return new HashMap.SimpleEntry(entry.getKey(), DisguiseParser.parseDisguise(Bukkit.getConsoleSender(), target, entry.getValue()));
+        return new HashMap.SimpleEntry(entry.getKey(), DisguiseParser.parseDisguise(target, entry.getValue()));
     }
 
     public static Entry<DisguisePerm, Disguise> getCustomDisguise(CommandSender invoker, Entity target, String disguise) throws Throwable {
@@ -1111,8 +1111,7 @@ public class DisguiseConfig {
         try {
             String[] disguiseArgs = DisguiseUtilities.split(toParse);
 
-            Disguise disguise = DisguiseParser.parseTestDisguise(Bukkit.getConsoleSender(), "disguise", disguiseArgs,
-                DisguiseParser.getPermissions(Bukkit.getConsoleSender(), "disguise"));
+            Disguise disguise = DisguiseParser.parseTestDisguise(Bukkit.getConsoleSender(), "disguise", disguiseArgs, null);
 
             DisguisePerm perm = new DisguisePerm(disguise.getType(), disguiseName);
 
