@@ -156,6 +156,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -280,9 +281,6 @@ public class DisguiseUtilities {
     private static final HashMap<String, ArrayList<Object>> runnables = new HashMap<>();
     @Getter
     private static final HashSet<UUID> selfDisguised = new HashSet<>();
-    private static final File profileCache;
-    private static final File sanitySkinCacheFile;
-    private static final File savedDisguises;
     @Getter
     private static Gson gson;
     @Getter
@@ -326,7 +324,7 @@ public class DisguiseUtilities {
     private static NamespacedKey oldSavedDisguisesKey;
     @Getter
     private static NamespacedKey savedDisguisesKey;
-    private static final Map<Enchantment, EnchantmentType> whitelistedEnchantments = new HashMap<Enchantment, EnchantmentType>();
+    private static final Map<Enchantment, EnchantmentType> whitelistedEnchantments = new HashMap<>();
     @Getter
     private static Enchantment durabilityEnchantment, waterbreathingEnchantment;
     @Getter
@@ -334,8 +332,7 @@ public class DisguiseUtilities {
     @Getter
     private static final MiniMessage miniMessage = MiniMessage.builder().build();
     private static final GsonComponentSerializer internalComponentSerializer = GsonComponentSerializer.gson();
-    private static final io.github.retrooper.packetevents.adventure.serializer.gson.GsonComponentSerializer externalComponentSerializer =
-        io.github.retrooper.packetevents.adventure.serializer.gson.GsonComponentSerializer.gson();
+    private static io.github.retrooper.packetevents.adventure.serializer.gson.GsonComponentSerializer externalComponentSerializer;
     @Getter
     private static NamespacedKey selfDisguiseScaleNamespace;
     /**
@@ -349,31 +346,23 @@ public class DisguiseUtilities {
     @Setter
     private static boolean debuggingMode;
     @Getter
-    private static final File internalFolder, preferencesFile;
-    @Getter
-    private static boolean placeholderApi;
+    private static boolean placeholderApi, runningPaper;
 
     static {
-        if (LibsDisguises.getInstance() == null) {
-            profileCache = null;
-            sanitySkinCacheFile = null;
-            savedDisguises = null;
-            internalFolder = null;
-            preferencesFile = null;
-        } else {
-            profileCache = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins");
-            sanitySkinCacheFile = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins/sanity.json");
-            savedDisguises = new File(LibsDisguises.getInstance().getDataFolder(), "SavedDisguises");
-            runningGeyser = Bukkit.getPluginManager().getPlugin("Geyser-Spigot") != null;
-            internalFolder = new File(LibsDisguises.getInstance().getDataFolder(), "internal");
-            preferencesFile = new File(getInternalFolder(), "preferences.json");
+        // Paper check here so we do not need to load any reflection stuff
+        try {
+            // Check if we enable the paperdisguiselistener
+            runningPaper = Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData") != null;
+        } catch (Exception ignored) {
+            runningPaper = false;
+        }
 
-            // Ensure /internal exists
-            internalFolder.mkdirs();
+        if (LibsDisguises.getInstance() != null) {
+            runningGeyser = Bukkit.getPluginManager().getPlugin("Geyser-Spigot") != null;
 
             // Move these files to internal/
             for (String oldName : new String[]{"internal.yml", "preferences.json", "mappings_cache"}) {
-                File file = new File(getInternalFolder(), oldName);
+                File file = new File(DisguiseFiles.getInternalFolder(), oldName);
                 File previous = new File(LibsDisguises.getInstance().getDataFolder(), oldName);
 
                 // If the file doesn't exist in /LibsDisguises
@@ -439,11 +428,22 @@ public class DisguiseUtilities {
                     whitelistedEnchantments.put(Enchantment.SWIFT_SNEAK, EnchantmentTypes.SWIFT_SNEAK);
                 }
             }
-        }
-    }
 
-    public static boolean isRunningPaper() {
-        return ReflectionManager.isRunningPaper();
+            try {
+                Class c = Class.forName(
+                    new String(Base64.getDecoder().decode("bWUubGlicmFyeWFkZGljdC5kaXNndWlzZS51dGlsaXRpZXMuTGlic1ByZW1pdW0="),
+                        StandardCharsets.UTF_8));
+                Field f = c.getDeclaredField("t1hi2sP3lug4in5IsP6ai7dF8o9r".replaceAll("\\d", ""));
+                f.setAccessible(true);
+                Boolean b1 = (Boolean) f.get(null);
+
+                if (b1 != null && b1) {
+                    runningPaper = false;
+                }
+            } catch (Throwable ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     public static boolean shouldBeHiddenSelfDisguise(com.github.retrooper.packetevents.protocol.item.ItemStack itemStack) {
@@ -727,8 +727,8 @@ public class DisguiseUtilities {
             return;
         }
 
-        File viewPreferences = getPreferencesFile();
-        File viewPreferencesTemp = new File(getInternalFolder(), "preferences-temp.json");
+        File viewPreferences = DisguiseFiles.getPreferencesFile();
+        File viewPreferencesTemp = new File(DisguiseFiles.getInternalFolder(), "preferences-temp.json");
 
         HashMap<String, List<UUID>> map = new HashMap<>();
         map.put("selfdisguise", getViewSelf());
@@ -809,18 +809,20 @@ public class DisguiseUtilities {
     }
 
     public static void loadViewPreferences() {
-        if (!getPreferencesFile().exists()) {
+        File preferences = DisguiseFiles.getPreferencesFile();
+
+        if (!preferences.exists()) {
             return;
         }
 
         HashMap<String, Collection<String>> map;
 
         try {
-            String disguiseText = new String(Files.readAllBytes(getPreferencesFile().toPath()));
+            String disguiseText = new String(Files.readAllBytes(preferences.toPath()));
             map = getGson().fromJson(disguiseText, HashMap.class);
 
             if (map == null) {
-                getPreferencesFile().delete();
+                preferences.delete();
                 return;
             }
 
@@ -835,8 +837,8 @@ public class DisguiseUtilities {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            LibsDisguises.getInstance().getLogger().warning(getPreferencesFile().getName() + " has been deleted as its corrupt");
-            getPreferencesFile().delete();
+            LibsDisguises.getInstance().getLogger().warning(preferences.getName() + " has been deleted as its corrupt");
+            preferences.delete();
         }
     }
 
@@ -1041,6 +1043,8 @@ public class DisguiseUtilities {
             return;
         }
 
+        File savedDisguises = DisguiseFiles.getSavedDisguises();
+
         if (!savedDisguises.exists()) {
             savedDisguises.mkdirs();
         }
@@ -1120,6 +1124,8 @@ public class DisguiseUtilities {
             return new Disguise[0];
         }
 
+        File savedDisguises = DisguiseFiles.getSavedDisguises();
+
         if (!savedDisguises.exists()) {
             if (!NmsVersion.v1_14.isSupported()) {
                 return new Disguise[0];
@@ -1192,6 +1198,8 @@ public class DisguiseUtilities {
         if (!savedDisguiseList.remove(entityUUID)) {
             return;
         }
+
+        File savedDisguises = DisguiseFiles.getSavedDisguises();
 
         if (!savedDisguises.exists()) {
             return;
@@ -1336,6 +1344,8 @@ public class DisguiseUtilities {
     }
 
     public static void loadSanitySkinCache() throws IOException {
+        File sanitySkinCacheFile = DisguiseFiles.getSanitySkinCacheFile();
+
         if (!sanitySkinCacheFile.exists()) {
             return;
         }
@@ -1349,7 +1359,7 @@ public class DisguiseUtilities {
 
     public static void saveSanitySkinCache() {
         try {
-            PrintWriter writer = new PrintWriter(sanitySkinCacheFile);
+            PrintWriter writer = new PrintWriter(DisguiseFiles.getSanitySkinCacheFile());
             writer.write(getGson().toJson(sanitySkinCacheMap));
             writer.close();
         } catch (Exception ex) {
@@ -1368,6 +1378,9 @@ public class DisguiseUtilities {
             if (userProfile == null) {
                 return;
             }
+
+            File profileCache = DisguiseFiles.getProfileCache();
+            File sanitySkinCacheFile = DisguiseFiles.getSanitySkinCacheFile();
 
             if (!profileCache.exists()) {
                 profileCache.mkdirs();
@@ -1618,6 +1631,8 @@ public class DisguiseUtilities {
             return null;
         }
 
+        File profileCache = DisguiseFiles.getProfileCache();
+
         if (!profileCache.exists()) {
             profileCache.mkdirs();
         }
@@ -1859,9 +1874,12 @@ public class DisguiseUtilities {
                 "<optional>(" + jsonSerializationContext.serialize(optional.orElse(null)) + ")"));
 
         gson = gsonBuilder.create();
+        externalComponentSerializer = io.github.retrooper.packetevents.adventure.serializer.gson.GsonComponentSerializer.gson();
     }
 
     public static void reload() {
+        File profileCache = DisguiseFiles.getProfileCache();
+
         if (!profileCache.exists()) {
             File old = new File(profileCache.getParentFile(), "GameProfiles");
 
@@ -1874,7 +1892,9 @@ public class DisguiseUtilities {
 
         cachedNames.clear();
         cachedNames.addAll(Arrays.asList(profileCache.list()));
-        cachedNames.remove(sanitySkinCacheFile.getName());
+        cachedNames.remove(DisguiseFiles.getSanitySkinCacheFile().getName());
+
+        File savedDisguises = DisguiseFiles.getSavedDisguises();
 
         if (!savedDisguises.exists() && !NmsVersion.v1_14.isSupported()) {
             savedDisguises.mkdirs();
@@ -1896,6 +1916,7 @@ public class DisguiseUtilities {
         debuggingMode = LibsDisguises.getInstance().isDebuggingBuild();
         placeholderApi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
 
+        DisguiseFiles.init();
         recreateGsonSerializer();
 
         try {
@@ -1914,6 +1935,8 @@ public class DisguiseUtilities {
                 invalidFile = stream != null;
             } catch (Throwable e) {
             }
+
+            File savedDisguises = DisguiseFiles.getSavedDisguises();
 
             if (savedDisguises.exists() && savedDisguises.isDirectory()) {
                 for (String key : savedDisguises.list()) {
@@ -1973,7 +1996,6 @@ public class DisguiseUtilities {
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-
 
         if (LibsPremium.isPremium()) {
             boolean fetch = true;
@@ -2305,9 +2327,12 @@ public class DisguiseUtilities {
     public static void removeUserProfile(String string) {
         string = string.toLowerCase(Locale.ENGLISH);
 
-        if (string.equalsIgnoreCase(sanitySkinCacheFile.getName())) {
+        if (string.equalsIgnoreCase(DisguiseFiles.getSanitySkinCacheFile().getName())) {
             return;
         }
+
+        File savedDisguises = DisguiseFiles.getSavedDisguises();
+        File profileCache = DisguiseFiles.getProfileCache();
 
         if (sanitySkinCacheMap.containsKey(string)) {
             sanitySkinCacheMap.remove(string);

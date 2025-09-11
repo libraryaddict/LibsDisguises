@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.utilities.reflection;
 import io.papermc.paper.ServerBuildInfo;
 import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.DisguiseFiles;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -19,12 +19,12 @@ import java.util.Map;
 
 public class ClassMappings {
     private static final Map<String, String> classLocations = new HashMap<>();
-    private static final String[] packages = getPackages();
+    private static String[] packages;
     private static boolean updatingCache = false;
     @Getter
     private static boolean loadedCache;
     @Getter
-    private static final File mappingsFile = new File(DisguiseUtilities.getInternalFolder(), "mappings_cache");
+    private static final File mappingsFile = new File(DisguiseFiles.getInternalFolder(), "mappings_cache");
 
     public static String getClass(String packageHint, String className) {
         if (!loadedCache) {
@@ -40,7 +40,7 @@ public class ClassMappings {
 
         location = "???";
 
-        for (String pack : packages) {
+        for (String pack : getPackages()) {
             if (!pack.startsWith(packageHint)) {
                 continue;
             }
@@ -72,7 +72,11 @@ public class ClassMappings {
     }
 
     private static String[] getPackages() {
-        String[] s = {"net.minecraft.server", "net.minecraft.server.$version$", "org.bukkit.craftbukkit.$version$",
+        if (packages != null) {
+            return packages;
+        }
+
+        packages = new String[]{"net.minecraft.server", "net.minecraft.server.$version$", "org.bukkit.craftbukkit.$version$",
             "org.bukkit.craftbukkit.$version$.block.data", "org.bukkit.craftbukkit.$version$.entity",
             "org.bukkit.craftbukkit.$version$.inventory", "org.bukkit.craftbukkit.$version$.util"};
         String replaceStr = "$version$";
@@ -83,11 +87,11 @@ public class ClassMappings {
             replaceStr = "." + replaceStr;
         }
 
-        for (int i = 0; i < s.length; i++) {
-            s[i] = s[i].replace(replaceStr, version);
+        for (int i = 0; i < packages.length; i++) {
+            packages[i] = packages[i].replace(replaceStr, version);
         }
 
-        return s;
+        return packages;
     }
 
     private static String getVersion() {

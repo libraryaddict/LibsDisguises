@@ -109,7 +109,7 @@ public class LibsPremium {
             Class c = cl.loadClass(LibsPremium.class.getName());
 
             /* Fetch the plugin.yml from the jar file */
-            YamlConfiguration config = ReflectionManager.getPluginYAMLEx(file);
+            YamlConfiguration config = DisguiseFiles.getPluginYAMLEx(file);
             /* No checks for null config as the correct error will be thrown on access */
 
             String userId = (String) c.getMethod("getUserID").invoke(null);

@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities.config;
 
 import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.DisguiseFiles;
 import me.libraryaddict.disguise.utilities.reflection.ClassGetter;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -53,7 +54,7 @@ public class ConfigLoader {
         for (String config : configs) {
             try {
                 YamlConfiguration c = new YamlConfiguration();
-                c.loadFromString(ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), config));
+                c.loadFromString(DisguiseFiles.getResourceAsString(LibsDisguises.getInstance().getFile(), config));
 
                 for (String k : c.getKeys(true)) {
                     if (c.isConfigurationSection(k)) {
@@ -110,7 +111,7 @@ public class ConfigLoader {
         try {
             YamlConfiguration savedConfig = YamlConfiguration.loadConfiguration(file);
 
-            String ourConfig = ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), config);
+            String ourConfig = DisguiseFiles.getResourceAsString(LibsDisguises.getInstance().getFile(), config);
             YamlConfiguration internalConfig = new YamlConfiguration();
             internalConfig.loadFromString(ourConfig);
 
@@ -171,7 +172,7 @@ public class ConfigLoader {
             configName = "configs/" + configName;
         }
 
-        String ourConfig = ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), configName);
+        String ourConfig = DisguiseFiles.getResourceAsString(LibsDisguises.getInstance().getFile(), configName);
 
         if (savedConfig == null) {
             try {

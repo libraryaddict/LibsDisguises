@@ -6,7 +6,7 @@ import com.google.gson.Gson;
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.DisguiseFiles;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -141,7 +141,7 @@ public class PacketEventsUpdater {
                 return;
             }
             File file = Paths.get(resource.toURI()).toFile();
-            YamlConfiguration yaml = ReflectionManager.getPluginYAML(file);
+            YamlConfiguration yaml = DisguiseFiles.getPluginYAML(file);
             String pluginName = yaml.getString("name");
 
             if (pluginName != null && pluginName.equalsIgnoreCase("packetevents")) {
@@ -259,7 +259,7 @@ public class PacketEventsUpdater {
             return new ArrayList<>();
         }
 
-        List<File> peJars = ReflectionManager.getFilesByPlugin("packetevents");
+        List<File> peJars = DisguiseFiles.getFilesByPlugin("packetevents");
 
         if (peJars.size() > 1) {
             // Its probably the first file regardless, Bukkit seems to use folder.listFiles() and use the order provided
@@ -272,7 +272,7 @@ public class PacketEventsUpdater {
 
     private File getDestination(String preferredName) {
         // If packetevents is known to the server and fancy plugin updating exists, don't need to run the rest of the logic.
-        if (UpdateChecker.isFancyPluginUpdating() && Bukkit.getPluginManager().getPlugin("packetevents") != null) {
+        if (Bukkit.getPluginManager().getPlugin("packetevents") != null && UpdateChecker.isFancyPluginUpdating()) {
             return new File(Bukkit.getUpdateFolderFile(), preferredName);
         }
 

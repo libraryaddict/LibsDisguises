@@ -81,6 +81,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.TNTWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TameableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TippedArrowWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseFiles;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.LibsPremium;
@@ -144,12 +145,10 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -159,11 +158,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -173,8 +169,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -191,17 +185,10 @@ public class ReflectionManager {
     private static Method propertyName, propertyValue, propertySignature;
     @Getter
     private static boolean mojangMapped;
-    @Getter
-    private static boolean runningPaper;
+    // Defaults to null, resolves to a string when a working backend is found, empty string if no working backend
+    private static String workingBackend = null;
 
     static {
-        try {
-            // Check if we enable the paperdisguiselistener
-            runningPaper = Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData") != null;
-        } catch (Exception ignored) {
-            runningPaper = false;
-        }
-
         // An alternative implemention of https://github.com/PaperMC/Paper/blob/main/paper-server/src/main/java/io/papermc/paper/util/MappingEnvironment.java#L58
         // On versions of MC that this doesn't exist, will be false, on spigot, will be false, on paper 1.20.6+, will be true
         try {
@@ -213,13 +200,17 @@ public class ReflectionManager {
         }
     }
 
+    public static boolean isRunningPaper() {
+        return DisguiseUtilities.isRunningPaper();
+    }
+
     public static void init() {
         try {
             nmsReflection = getReflectionManager(getVersion());
 
             loadAuthlibStuff();
 
-            if (isRunningPaper() && !NmsVersion.v1_17.isSupported()) {
+            if (DisguiseUtilities.isRunningPaper() && !NmsVersion.v1_17.isSupported()) {
                 // Paper, prior to 1.17, used a map
                 // 17+ is handled by the reflection instance.
                 trackedPlayersMap = getNmsField("EntityTrackerEntry", "trackedPlayerMap");
@@ -243,7 +234,14 @@ public class ReflectionManager {
             wrapper.read();
 
             if (wrapper.getRegistryKey() != null) {
-                loadRegistryStuff(cacheKey, wrapper, wrapper.getRegistryKey(), wrapper.getElements());
+                SynchronizedRegistriesHandler.@Nullable RegistryEntry<?> registryEntry =
+                    SynchronizedRegistriesHandler.getRegistryEntry(wrapper.getRegistryKey());
+
+                if (registryEntry == null) {
+                    continue;
+                }
+
+                registryEntry.computeSyncedRegistry(cacheKey, () -> registryEntry.createFromElements(wrapper.getElements(), wrapper));
             } else if (wrapper.getRegistryData() != null) {
                 // For our purposes, this is 1.20.1 to 1.20.4
                 for (NBT tag : wrapper.getRegistryData().getTags().values()) {
@@ -253,25 +251,19 @@ public class ReflectionManager {
                     // extract registry entries
                     NBTList<@NotNull NBTCompound> nbtElements = compound.getCompoundListTagOrNull("value");
 
-                    if (nbtElements == null) {
+                    SynchronizedRegistriesHandler.@Nullable RegistryEntry<?> registryEntry =
+                        SynchronizedRegistriesHandler.getRegistryEntry(key);
+
+                    if (registryEntry == null || nbtElements == null) {
                         continue;
                     }
 
-                    loadRegistryStuff(cacheKey, wrapper, key, WrapperConfigServerRegistryData.RegistryElement.convertNbt(nbtElements));
+                    registryEntry.computeSyncedRegistry(cacheKey,
+                        () -> registryEntry.createFromElements(WrapperConfigServerRegistryData.RegistryElement.convertNbt(nbtElements),
+                            wrapper));
                 }
             }
         }
-    }
-
-    private static void loadRegistryStuff(ClientVersion cacheKey, WrapperConfigServerRegistryData wrapper, ResourceLocation key,
-                                          List<WrapperConfigServerRegistryData.RegistryElement> elements) {
-        SynchronizedRegistriesHandler.@Nullable RegistryEntry<?> registryEntry = SynchronizedRegistriesHandler.getRegistryEntry(key);
-
-        if (registryEntry == null) {
-            return;
-        }
-
-        registryEntry.computeSyncedRegistry(cacheKey, () -> registryEntry.createFromElements(elements, wrapper));
     }
 
     private static void loadAuthlibStuff() throws InvocationTargetException, IllegalAccessException {
@@ -351,107 +343,42 @@ public class ReflectionManager {
         return true;
     }
 
+    @Deprecated
     public static String getResourceAsString(File file, String fileName) {
-        try {
-            return getResourceAsStringEx(file, fileName);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return null;
+        return DisguiseFiles.getResourceAsString(file, fileName);
     }
 
+    @Deprecated
     public static int getJarFileCount(File file) throws IOException {
-        try (JarFile jar = new JarFile(file)) {
-            int count = 0;
-
-            Enumeration<JarEntry> entry = jar.entries();
-
-            while (entry.hasMoreElements()) {
-                if (entry.nextElement().isDirectory()) {
-                    continue;
-                }
-
-                count++;
-            }
-
-            return count;
-        }
+        return DisguiseFiles.getJarFileCount(file);
     }
 
-    @SneakyThrows
+    @Deprecated
     public static String getResourceAsStringEx(File file, String fileName) {
-        try (JarFile jar = new JarFile(file)) {
-            JarEntry entry = jar.getJarEntry(fileName);
-
-            try (InputStream stream = jar.getInputStream(entry)) {
-                return new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
-            }
-        }
+        return DisguiseFiles.getResourceAsStringEx(file, fileName);
     }
 
+    @Deprecated
     public static List<File> getFilesByPlugin(String pluginName) {
-        return getFilesByPlugin(LibsDisguises.getInstance().getDataFolder().getAbsoluteFile().getParentFile(), pluginName);
+        return DisguiseFiles.getFilesByPlugin(pluginName);
     }
 
+    @Deprecated
     public static List<File> getFilesByPlugin(File containingFolder, String pluginName) {
-        List<File> files = new ArrayList<>();
-
-        for (File file : containingFolder.listFiles()) {
-            if (!file.isFile() || !file.getName().toLowerCase(Locale.ENGLISH).endsWith(".jar")) {
-                continue;
-            }
-
-            YamlConfiguration config = null;
-
-            try {
-                config = getPluginYAMLEx(file);
-            } catch (Throwable ex) {
-                if (DisguiseConfig.isVerboseLogging()) {
-                    ex.printStackTrace();
-                }
-            }
-
-            if (config == null) {
-                continue;
-            }
-
-            // If not the right plugin
-            if (!pluginName.equalsIgnoreCase(config.getString("name"))) {
-                continue;
-            }
-
-            files.add(file);
-        }
-
-        return files;
+        return DisguiseFiles.getFilesByPlugin(containingFolder, pluginName);
     }
 
     /**
      * Copied from Bukkit
      */
+    @Deprecated
     public static YamlConfiguration getPluginYAML(File file) {
-        try {
-            return getPluginYAMLEx(file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return DisguiseFiles.getPluginYAML(file);
     }
 
+    @Deprecated
     public static YamlConfiguration getPluginYAMLEx(File file) throws Exception {
-        String s = getResourceAsString(file, "plugin.yml");
-
-        if (s == null) {
-            return null;
-        }
-
-        YamlConfiguration config = new YamlConfiguration();
-
-        config.loadFromString(getResourceAsString(file, "plugin.yml"));
-
-        return config;
+        return DisguiseFiles.getPluginYAMLEx(file);
     }
 
     public static int getNewEntityId() {
@@ -525,21 +452,6 @@ public class ReflectionManager {
             }
 
             minecraftVersion = matcher.group(1);
-
-            try {
-                Class c = Class.forName(
-                    new String(Base64.getDecoder().decode("bWUubGlicmFyeWFkZGljdC5kaXNndWlzZS51dGlsaXRpZXMuTGlic1ByZW1pdW0="),
-                        StandardCharsets.UTF_8));
-                Field f = c.getDeclaredField("t1hi2sP3lug4in5IsP6ai7dF8o9r".replaceAll("\\d", ""));
-                f.setAccessible(true);
-                Boolean b1 = (Boolean) f.get(null);
-
-                if (b1 != null && b1) {
-                    runningPaper = false;
-                }
-            } catch (Throwable ex) {
-                ex.printStackTrace();
-            }
         }
 
         return minecraftVersion;
@@ -846,7 +758,7 @@ public class ReflectionManager {
         Object nmsEntity = getPlayerConnectionOrPlayer(player);
 
         // Add the player to their own entity tracker
-        if (!isRunningPaper() || NmsVersion.v1_17.isSupported()) {
+        if (!DisguiseUtilities.isRunningPaper() || NmsVersion.v1_17.isSupported()) {
             getTrackedPlayers(entityTracker, entityTrackerEntry).add(nmsEntity);
         } else {
             Map<Object, Object> map = ((Map<Object, Object>) trackedPlayersMap.get(entityTrackerEntry));
@@ -858,7 +770,7 @@ public class ReflectionManager {
     public static void removeEntityFromTracked(Object entityTracker, Object entityTrackerEntry, Player player) {
         Object nmsEntity = getPlayerConnectionOrPlayer(player);
 
-        if (!isRunningPaper() || NmsVersion.v1_17.isSupported()) {
+        if (!DisguiseUtilities.isRunningPaper() || NmsVersion.v1_17.isSupported()) {
             getTrackedPlayers(entityTracker, entityTrackerEntry).remove(nmsEntity);
         } else {
             Map<Object, Object> map = ((Map<Object, Object>) trackedPlayersMap.get(entityTrackerEntry));
@@ -933,9 +845,6 @@ public class ReflectionManager {
     public static Float getSoundModifier(Object entity) {
         return getNmsReflection().getSoundModifier(entity);
     }
-
-    // Defaults to null, resolves to a string when a working backend is found, empty string if no working backend
-    private static String workingBackend = null;
 
     /**
      * Gets the UUID of the player, as well as properly capitalized playername
@@ -1834,7 +1743,7 @@ public class ReflectionManager {
     }
 
     private static void setScore(Scoreboard scoreboard, String name, int score, boolean canScheduleTask) {
-        if (canScheduleTask && (!Bukkit.isPrimaryThread() || isRunningPaper())) {
+        if (canScheduleTask && (!Bukkit.isPrimaryThread() || DisguiseUtilities.isRunningPaper())) {
             new BukkitRunnable() {
                 @Override
                 public void run() {

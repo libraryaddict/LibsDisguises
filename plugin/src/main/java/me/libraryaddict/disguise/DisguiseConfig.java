@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.DisguiseFiles;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.config.ConfigLoader;
@@ -17,7 +18,6 @@ import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Bukkit;
@@ -466,7 +466,7 @@ public class DisguiseConfig {
     }
 
     public static void saveInternalConfig() {
-        String internalConfig = ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), "internal/internal.yml");
+        String internalConfig = DisguiseFiles.getResourceAsString(LibsDisguises.getInstance().getFile(), "internal/internal.yml");
 
         // Bisect hosted, server ip, release builds
         for (Object s : new Object[]{isBisectHosted(), getSavedServerIp(), isUsingReleaseBuild(), getLastUpdateRequest(),

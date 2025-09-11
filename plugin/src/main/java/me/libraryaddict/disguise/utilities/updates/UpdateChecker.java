@@ -4,10 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.DisguiseFiles;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.plugin.LibsDisgInfo;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -47,7 +48,7 @@ public class UpdateChecker {
      * Located here instead of DisguiseUtilities as DisguiseUtilities will fail to load if PE is not loaded
      */
     public static boolean isFancyPluginUpdating() {
-        return DisguiseConfig.isDynamicFilenames() && ReflectionManager.isRunningPaper() && NmsVersion.v1_21_R3.isSupported();
+        return DisguiseConfig.isDynamicFilenames() && DisguiseUtilities.isRunningPaper() && NmsVersion.v1_21_R3.isSupported();
     }
 
     /**
@@ -59,7 +60,7 @@ public class UpdateChecker {
             throw new IllegalArgumentException("Expected provided reference '" + downloadedJar + "' to point at an existing File");
         }
 
-        List<File> jarsWithPlugin = ReflectionManager.getFilesByPlugin(downloadedJar.getAbsoluteFile().getParentFile(), pluginName);
+        List<File> jarsWithPlugin = DisguiseFiles.getFilesByPlugin(downloadedJar.getAbsoluteFile().getParentFile(), pluginName);
 
         for (File file : jarsWithPlugin) {
             if (file.getName().equals(downloadedJar.getName())) {
