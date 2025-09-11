@@ -232,6 +232,10 @@ public class ReflectionManager {
      * Not really the optimal solution, but the alternative is that we cannot resolve any of this until a player joins
      */
     public static void tryLoadRegistriesIntoPE() {
+        if (NmsVersion.v1_20_R1.isSupported() && !NmsVersion.v1_21_R1.isSupported()) {
+            return;
+        }
+
         ServerVersion serverVersion = PacketEvents.getAPI().getServerManager().getVersion();
         ClientVersion cacheKey = serverVersion.toClientVersion();
 
