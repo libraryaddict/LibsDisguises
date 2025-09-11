@@ -22,6 +22,7 @@ import com.github.retrooper.packetevents.protocol.entity.sniffer.SnifferState;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfVariant;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfVariants;
 import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
+import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.nbt.NBTList;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
@@ -232,10 +233,6 @@ public class ReflectionManager {
      * Not really the optimal solution, but the alternative is that we cannot resolve any of this until a player joins
      */
     public static void tryLoadRegistriesIntoPE() {
-        if (NmsVersion.v1_20_R1.isSupported() && !NmsVersion.v1_21_R1.isSupported()) {
-            return;
-        }
-
         ServerVersion serverVersion = PacketEvents.getAPI().getServerManager().getVersion();
         ClientVersion cacheKey = serverVersion.toClientVersion();
 
@@ -245,34 +242,36 @@ public class ReflectionManager {
             wrapper.setServerVersion(serverVersion);
             wrapper.read();
 
-            ResourceLocation key;
-            List<WrapperConfigServerRegistryData.RegistryElement> elements;
-
             if (wrapper.getRegistryKey() != null) {
-                key = wrapper.getRegistryKey();
-                elements = wrapper.getElements();
-            } else { // For our purposes, this is 1.20.1 to 1.20.4
-                NBTCompound compound = wrapper.getRegistryData();
-                // extract registry name
-                key = new ResourceLocation(compound.getStringTagValueOrThrow("type"));
-                // extract registry entries
-                NBTList<@NotNull NBTCompound> nbtElements = compound.getCompoundListTagOrNull("value");
+                loadRegistryStuff(cacheKey, wrapper, wrapper.getRegistryKey(), wrapper.getElements());
+            } else if (wrapper.getRegistryData() != null) {
+                // For our purposes, this is 1.20.1 to 1.20.4
+                for (NBT tag : wrapper.getRegistryData().getTags().values()) {
+                    NBTCompound compound = (NBTCompound) tag;
+                    // extract registry name
+                    ResourceLocation key = new ResourceLocation(compound.getStringTagValueOrThrow("type"));
+                    // extract registry entries
+                    NBTList<@NotNull NBTCompound> nbtElements = compound.getCompoundListTagOrNull("value");
 
-                if (nbtElements == null) {
-                    continue;
+                    if (nbtElements == null) {
+                        continue;
+                    }
+
+                    loadRegistryStuff(cacheKey, wrapper, key, WrapperConfigServerRegistryData.RegistryElement.convertNbt(nbtElements));
                 }
-
-                elements = WrapperConfigServerRegistryData.RegistryElement.convertNbt(nbtElements);
             }
-
-            SynchronizedRegistriesHandler.@Nullable RegistryEntry<?> registryEntry = SynchronizedRegistriesHandler.getRegistryEntry(key);
-
-            if (registryEntry == null) {
-                continue;
-            }
-
-            registryEntry.computeSyncedRegistry(cacheKey, () -> registryEntry.createFromElements(elements, wrapper));
         }
+    }
+
+    private static void loadRegistryStuff(ClientVersion cacheKey, WrapperConfigServerRegistryData wrapper, ResourceLocation key,
+                                          List<WrapperConfigServerRegistryData.RegistryElement> elements) {
+        SynchronizedRegistriesHandler.@Nullable RegistryEntry<?> registryEntry = SynchronizedRegistriesHandler.getRegistryEntry(key);
+
+        if (registryEntry == null) {
+            return;
+        }
+
+        registryEntry.computeSyncedRegistry(cacheKey, () -> registryEntry.createFromElements(elements, wrapper));
     }
 
     private static void loadAuthlibStuff() throws InvocationTargetException, IllegalAccessException {
