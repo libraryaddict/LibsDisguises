@@ -1931,9 +1931,12 @@ public class DisguiseUtilities {
         invalidFile = LibsDisguises.getInstance().getFile().getName().toLowerCase(Locale.ENGLISH).matches(".*((crack)|(null)|(leak)).*");
 
         if (LibsPremium.isPremium()) {
-            try (InputStream stream = LibsDisguises.getInstance().getResource("module-info.class")) {
-                invalidFile = stream != null;
-            } catch (Throwable e) {
+            // 1.12 spigot/paper apparently injects this file, so skip that
+            if (!NmsVersion.v1_12.isVersion()) {
+                try (InputStream stream = LibsDisguises.getInstance().getResource("module-info.class")) {
+                    invalidFile = invalidFile || stream != null;
+                } catch (Throwable e) {
+                }
             }
 
             File savedDisguises = DisguiseFiles.getSavedDisguises();
