@@ -26,7 +26,7 @@ public class ClassMappings {
     @Getter
     private static final File mappingsFile = new File(DisguiseFiles.getInternalFolder(), "mappings_cache");
 
-    public static String getClass(String packageHint, String className) {
+    public static String getClass(String packageHint, String className, boolean can404) {
         if (!loadedCache) {
             ClassMappings.loadMappingsCache();
         }
@@ -38,7 +38,7 @@ public class ClassMappings {
             return location;
         }
 
-        location = "???";
+        location = can404 ? "?" : "???";
 
         for (String pack : getPackages()) {
             if (!pack.startsWith(packageHint)) {

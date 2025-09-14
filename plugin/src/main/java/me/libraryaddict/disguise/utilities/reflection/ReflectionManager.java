@@ -671,7 +671,7 @@ public class ReflectionManager {
     }
 
     private static String getLocation(String pack, String className) {
-        return ClassMappings.getClass(pack, className);
+        return ClassMappings.getClass(pack, className, true);
     }
 
     public static Class getNmsClass(String className) {
@@ -684,13 +684,17 @@ public class ReflectionManager {
         return null;
     }
 
-    public static Class getNmsClassIgnoreErrors(String className) {
+    public static Class getNmsClassIgnoreErrors(String className, boolean can404) {
         try {
-            return Class.forName(getLocation("net.minecraft", className));
+            return Class.forName(ClassMappings.getClass("net.minecraft", className, can404));
         } catch (Exception ignored) {
         }
 
         return null;
+    }
+
+    public static Class getNmsClassIgnoreErrors(String className) {
+        return getNmsClassIgnoreErrors(className, false);
     }
 
     public static Constructor getNmsConstructor(Class clazz, Class<?>... parameters) {
@@ -1474,14 +1478,14 @@ public class ReflectionManager {
         } else {
             nmsEntityName = toReadable(disguiseType.name());
 
-            Class nmsClass = getNmsClassIgnoreErrors("Entity" + nmsEntityName);
+            Class nmsClass = getNmsClassIgnoreErrors("Entity" + nmsEntityName, true);
 
             if (nmsClass == null || Modifier.isAbstract(nmsClass.getModifiers())) {
                 String[] split = splitReadable(disguiseType.name());
                 ArrayUtils.reverse(split);
 
                 nmsEntityName = StringUtils.join(split);
-                nmsClass = getNmsClassIgnoreErrors("Entity" + nmsEntityName);
+                nmsClass = getNmsClassIgnoreErrors("Entity" + nmsEntityName, true);
 
                 if (nmsClass == null || Modifier.isAbstract(nmsClass.getModifiers())) {
                     nmsEntityName = null;
