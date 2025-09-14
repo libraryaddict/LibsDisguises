@@ -31,6 +31,7 @@ import me.libraryaddict.disguise.commands.utils.GrabSkinCommand;
 import me.libraryaddict.disguise.commands.utils.SaveDisguiseCommand;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.animations.DisguiseAnimation;
 import me.libraryaddict.disguise.utilities.config.DisguiseCommandConfig;
 import me.libraryaddict.disguise.utilities.listeners.DisguiseListener;
 import me.libraryaddict.disguise.utilities.listeners.DisguiseListener1_18;
@@ -299,6 +300,7 @@ public class LibsDisguises extends JavaPlugin {
 
         verboseLog("Integrating information about entities...");
         ReflectionManager.registerValues();
+        DisguiseAnimation.load();
         verboseLog("Loading disguise parsing information...");
         DisguiseParser.createDefaultMethods();
 

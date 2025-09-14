@@ -229,4 +229,18 @@ public enum DisguiseAnimation {
     public static @Nullable DisguiseAnimation getAnimation(Class<? extends FlagWatcher> clss, int id) {
         return getAnimations(clss).stream().filter(animation -> animation.getStatus() == id).findAny().orElse(null);
     }
+
+    /**
+     * Loads them into memory so that we're not trying to compute this with a possible concurrent modification
+     */
+    public static void load() {
+        for (DisguiseType type : DisguiseType.values()) {
+            if (type.getWatcherClass() == null || animationCache.containsKey(type.getWatcherClass())) {
+                continue;
+            }
+
+            // This loads attackAnimations, and as part of that, it loads animationCache
+            getAttackAnimation(type.getWatcherClass());
+        }
+    }
 }
