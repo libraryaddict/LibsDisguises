@@ -82,6 +82,12 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
     }
 
     protected boolean sendIfNotPremium(CommandSender sender) {
+        if (sender instanceof Player) {
+            DisguiseUtilities.setCommandsUsed();
+        } else {
+            DisguiseUtilities.resetPluginTimer();
+        }
+
         String requiredPacketEvents = PacketEventsUpdater.getMinimumPacketEventsVersion();
         String version = Bukkit.getPluginManager().getPlugin("packetevents").getDescription().getVersion();
 

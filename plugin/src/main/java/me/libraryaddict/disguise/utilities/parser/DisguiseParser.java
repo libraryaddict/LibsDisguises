@@ -1036,10 +1036,6 @@ public class DisguiseParser {
             throw new IllegalStateException("DisguiseParser should not be called async!");
         }
 
-        if (sender instanceof Player) {
-            DisguiseUtilities.setCommandsUsed();
-        }
-
         if (permissions != null && !permissions.hasPermissions()) {
             throw new DisguiseParseException(LibsMsg.NO_PERM);
         }

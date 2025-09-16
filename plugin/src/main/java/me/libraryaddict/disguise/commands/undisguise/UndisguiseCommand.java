@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.undisguise;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.ChatColor;
@@ -25,6 +26,12 @@ public class UndisguiseCommand implements CommandExecutor {
         if (sender.getName().equals("CONSOLE")) {
             LibsMsg.NO_CONSOLE.send(sender);
             return true;
+        }
+
+        if (sender instanceof Player) {
+            DisguiseUtilities.setCommandsUsed();
+        } else {
+            DisguiseUtilities.resetPluginTimer();
         }
 
         if (sender.hasPermission("libsdisguises.undisguise") && !"%%__USER__%%".equals(12345 + "")) {

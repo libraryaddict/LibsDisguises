@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.commands.undisguise;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
@@ -65,6 +66,12 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
                 "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the " +
                 "plugin for non-admin " + "usage!");
             return true;
+        }
+
+        if (sender instanceof Player) {
+            DisguiseUtilities.setCommandsUsed();
+        } else {
+            DisguiseUtilities.resetPluginTimer();
         }
 
         if (!sender.hasPermission("libsdisguises.undisguiseplayer")) {

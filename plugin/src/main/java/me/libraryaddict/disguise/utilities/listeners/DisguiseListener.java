@@ -390,7 +390,7 @@ public class DisguiseListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onSpawn(EntitySpawnEvent event) {
-        DisguiseUtilities.checkFutureDisguises(event.getEntity(), event.isCancelled());
+        DisguiseUtilities.onFutureDisguise(event.getEntity(), event.isCancelled());
     }
 
     @EventHandler

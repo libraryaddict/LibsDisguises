@@ -174,6 +174,8 @@ public class PlayerDisguise extends TargetedDisguise {
                 if (removeDisguise()) {
                     this.nameVisible = nameVisible;
 
+                    DisguiseUtilities.resetPluginTimer();
+
                     if (!startDisguise()) {
                         throw new IllegalStateException("Unable to restart disguise");
                     }
@@ -457,6 +459,8 @@ public class PlayerDisguise extends TargetedDisguise {
             if (userProfile != null) {
                 userProfile = ReflectionManager.getUserProfileWithThisSkin(getUUID(), getProfileName(), getUserProfile());
             }
+
+            DisguiseUtilities.resetPluginTimer();
 
             if (!startDisguise()) {
                 throw new IllegalStateException("Unable to restart disguise");

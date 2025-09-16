@@ -286,7 +286,7 @@ public class DisguiseUtilities {
     @Getter
     private static boolean pluginsUsed, commandsUsed, copyDisguiseCommandUsed, grabSkinCommandUsed, saveDisguiseCommandUsed,
         grabHeadCommandUsed;
-    private static long libsDisguisesCalled;
+    private static long lastInternalDisguiseTrigger;
     private static final Cache<Integer, Long> velocityTimes = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.SECONDS).build();
     private static final HashMap<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
     @Getter
@@ -347,6 +347,10 @@ public class DisguiseUtilities {
     private static boolean debuggingMode;
     @Getter
     private static boolean placeholderApi, runningPaper;
+    @Getter
+    // Uses ticks in 1.19+, real time in older versions
+    private static long lastFutureDisguiseApplied;
+    private static boolean warnedFutureDisguises;
 
     static {
         // Paper check here so we do not need to load any reflection stuff
@@ -899,8 +903,16 @@ public class DisguiseUtilities {
         }
     }
 
+    /**
+     * Terrible workaround for the fact I can't think of how to differnate if a disguise was applied via command, api, or other without
+     * polluting and making confusion.
+     */
+    public static boolean isNonApiUsed() {
+        return lastInternalDisguiseTrigger >= System.currentTimeMillis();
+    }
+
     public static void setPluginsUsed() {
-        if (libsDisguisesCalled > System.currentTimeMillis()) {
+        if (isNonApiUsed()) {
             return;
         }
 
@@ -908,7 +920,7 @@ public class DisguiseUtilities {
     }
 
     public static void resetPluginTimer() {
-        libsDisguisesCalled = System.currentTimeMillis() + 100;
+        lastInternalDisguiseTrigger = System.currentTimeMillis() + 500;
     }
 
     public static void setCommandsUsed() {
@@ -1290,16 +1302,58 @@ public class DisguiseUtilities {
         }
     }
 
-    public static void onFutureDisguise(Entity entity) {
-        checkFutureDisguises(entity, false);
+    public static void warnFutureDisguises(Entity entity) {
+        // If we already warned about this, or decided not to check
+        if (warnedFutureDisguises) {
+            return;
+        }
+
+        // If non-api was used, or the entity wasn't spawned this tick
+        if (isNonApiUsed() || entity.getTicksLived() != 0) {
+            // If 1 hour has elapsed since startup
+            if (System.currentTimeMillis() > LibsDisguises.getInstance().getServerStarted() + 3_600_000) {
+                // Don't bother checking in the future
+                warnedFutureDisguises = true;
+            }
+
+            return;
+        }
+
+        // Generous timer because we don't want to nag when it's just lagging
+        // If future disguises was used recently, then don't continue. We don't warn them when they're doing things properly
+        if (NmsVersion.v1_19_R3.isSupported()) {
+            if (entity.getWorld().getGameTime() - lastFutureDisguiseApplied <= 200) {
+                return;
+            }
+        } else if (System.currentTimeMillis() - lastFutureDisguiseApplied <= 30000) {
+            return;
+        }
+
+        warnedFutureDisguises = true;
+        LibsDisguises.getInstance().getLogger().severe(String.format(
+            "Was an entity (%s) spawned, then immediately disguised by the same code? This is wrong, you should be using DisguiseAPI" +
+                ".disguiseNextEntity(disguise) then spawn the entity. The server doesn't wait before it starts sending packets, " +
+                "disguising it after may be too late. Was this message incorrect? Let the developer of Lib's Disguises know.",
+            entity));
     }
 
-    public static void checkFutureDisguises(Entity entity, boolean failedToSpawn) {
+    public static void onFutureDisguise(Entity entity) {
+        onFutureDisguise(entity, false);
+    }
+
+    public static void onFutureDisguise(Entity entity, boolean failedToSpawn) {
         HashSet<TargetedDisguise> disguises = getFutureDisguises().remove(entity.getEntityId());
 
         if (disguises == null || failedToSpawn) {
             return;
         }
+
+        // Note the last time a future disguise was applied
+        // Use the largest game time, as worlds may have different times. This may cause it not to trigger when it should, but is better
+        // than triggering when it shouldn't.
+        lastFutureDisguiseApplied =
+            NmsVersion.v1_19_R3.isSupported() ? Math.max(entity.getWorld().getGameTime(), lastFutureDisguiseApplied) :
+                System.currentTimeMillis();
 
         for (TargetedDisguise disguise : disguises) {
             disguise.setEntity(entity);
@@ -3913,12 +3967,13 @@ public class DisguiseUtilities {
             entityId = observer.getEntityId();
         }
 
-        if (getFutureDisguises().containsKey(entityId)) {
-            boolean foundEntity = false;
-            Set<TargetedDisguise> disguises = getDisguises().get(entityId);
+        Set<TargetedDisguise> futureDisguises = getDisguises().get(entityId);
 
-            if (disguises != null && !disguises.isEmpty()) {
-                Disguise disguise = disguises.iterator().next();
+        if (futureDisguises != null) {
+            boolean foundEntity = false;
+
+            if (futureDisguises != null && !futureDisguises.isEmpty()) {
+                Disguise disguise = futureDisguises.iterator().next();
 
                 if (disguise.getEntity() != null) {
                     foundEntity = true;

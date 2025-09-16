@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.commands.undisguise;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.commands.interactions.UndisguiseEntityInteraction;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.ChatColor;
@@ -25,6 +26,12 @@ public class UndisguiseEntityCommand implements CommandExecutor {
         if (sender.getName().equals("CONSOLE")) {
             LibsMsg.NO_CONSOLE.send(sender);
             return true;
+        }
+
+        if (sender instanceof Player) {
+            DisguiseUtilities.setCommandsUsed();
+        } else {
+            DisguiseUtilities.resetPluginTimer();
         }
 
         if (!sender.hasPermission("libsdisguises.undisguiseentity")) {

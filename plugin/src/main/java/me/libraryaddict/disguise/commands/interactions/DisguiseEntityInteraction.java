@@ -57,6 +57,8 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
                 }
             }
 
+            DisguiseUtilities.resetPluginTimer();
+
             DisguiseAPI.disguiseEntity(p, entity, disguise);
 
             String disguiseName = disguise.getDisguiseName();
