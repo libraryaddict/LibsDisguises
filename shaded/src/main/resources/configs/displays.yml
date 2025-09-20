@@ -1,25 +1,28 @@
-# This config file is about the names that appear over heads! A fair bit of player disguise stuff is in players.yml however
+# This config file is about the names that appear over heads! A fair bit of player disguise stuff is in players.yml
 
 # This is only called into action when the disguise is constructed using the commands.
-# This is pretty simple. It shows the players displayname (Name as it appears in chat) above their head.
+# This is pretty simple. It shows the players displayname (Name as it appears in chat/tab) above their head.
 # This also overrides any custom name they have set in their disguise options.
-# This does not take effect on player disguises
+# This does not take effect on non-living & player disguises
 # Permission to disable is libsdisguises.hidename
 ShowNamesAboveDisguises: false
 
 # This supports the above option.
 # If this is true, then the name shown above the head appears regardless of if you are looking at the disguise directly or not.
+# This is generally only noticable when names are not rendered with ARMORSTANDS or TEXT_DISPLAY
 NameAboveHeadAlwaysVisible: true
 
 # What should the name be shown as?
 # Two placeholders can be used.
 # %simple% = The very basic name, 'libraryaddict'
-# %complex% = Name will be grabbed from scoreboard or display name if scoreboard fails.
+# %complex% = Name will be grabbed from scoreboard, or display name if scoreboard fails.
+# You can also use PlaceholderAPI, which can be helpful when LD cannot figure out the name itself.
+# This name is only calculated when the disguise is constructed
 NameAboveDisguise: '%complex%'
 
-# If doing ARMORSTANDS in the above option, should CustomNames for non-player disguises be overridden to use armorstands too?
+# If doing ARMORSTANDS in 'PlayerNames', should CustomNames for non-player disguises be overridden to use armorstands too?
 # This allows multiline names if you have purchased the plugin
-# Use \n for a new line, though if you're doing it in a config you may need to use \\n as " and ' are treated differently.
+# Use \n for a new line, though if you're configuring this in a config, you may need to use \\n as " and ' are treated differently.
 OverrideCustomNames: true
 
 # VANILLA - Names are limited to 16 chars but playernames can't be changed without resending disguise
@@ -34,7 +37,7 @@ OverrideCustomNames: true
 #     If server is older than 1.19.4+, this will revert to ARMORSTANDS behavior
 #     Names remain perfectly in sync with the disguised entity, but multi-line names are rendered as a giant text block
 # With ARMORSTANDS/TEXT_DISPLAY and Premium, you can also use multiple lines in the name, use \n as a seperator.
-# It's recommended that you restart the server after changing this setting, or at minimum, reapply disguises to see the changes.
+# It's recommended that you restart the server after changing this setting, or at minimum, re-apply disguises to see the changes.
 # Default is ARMORSTANDS, recommended if you have no issues.
 PlayerNames: ARMORSTANDS
 

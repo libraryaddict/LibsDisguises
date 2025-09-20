@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.commands;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.commands.disguise.DisguiseCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguiseEntityCommand;
@@ -312,6 +313,11 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
 
         if (name.contains("%complex%")) {
             name = name.replace("%complex%", DisguiseUtilities.getDisplayName(player));
+        }
+
+        // Replace placeholders in the name, but only if the name contains a %
+        if (DisguiseUtilities.isPlaceholderApi() && name != null && name.contains("%")) {
+            name = PlaceholderAPI.setPlaceholders(player instanceof Player ? (Player) player : null, name);
         }
 
         return DisguiseUtilities.translateAlternateColorCodes(name);

@@ -4,6 +4,7 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_DisabledMethods;
 import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_DisguiseScaling;
+import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_DisplayConfigDesc;
 import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_DisplayTextNames;
 import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_RenamedFiles;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -79,6 +80,8 @@ public class ConfigMigrator {
         list.add(new ConfigMigration_DisguiseScaling());
         // V.3
         list.add(new ConfigMigration_DisplayTextNames());
+        // V.4
+        list.add(new ConfigMigration_DisplayConfigDesc());
 
         return list;
     }

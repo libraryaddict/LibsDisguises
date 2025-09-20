@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.interactions;
 
 import lombok.AllArgsConstructor;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -11,7 +12,6 @@ import me.libraryaddict.disguise.utilities.LibsEntityInteract;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -49,7 +49,7 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
             if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise() &&
                 !entity.hasPermission("libsdisguises.hidename")) {
                 if (disguise.getWatcher() instanceof LivingWatcher) {
-                    disguise.getWatcher().setCustomName(getDisplayName(entity));
+                    disguise.getWatcher().setCustomName(getDisplayName((Player) entity));
 
                     if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
                         disguise.getWatcher().setCustomNameVisible(true);
@@ -96,11 +96,16 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
         }
     }
 
-    protected String getDisplayName(CommandSender player) {
+    protected String getDisplayName(Player player) {
         String name = DisguiseConfig.getNameAboveDisguise().replace("%simple%", player.getName());
 
         if (name.contains("%complex%")) {
             name = name.replace("%complex%", DisguiseUtilities.getDisplayName(player));
+        }
+
+        // Replace placeholders in the name, but only if the name contains a %
+        if (DisguiseUtilities.isPlaceholderApi() && name != null && name.contains("%")) {
+            name = PlaceholderAPI.setPlaceholders(player, name);
         }
 
         return DisguiseUtilities.translateAlternateColorCodes(name);

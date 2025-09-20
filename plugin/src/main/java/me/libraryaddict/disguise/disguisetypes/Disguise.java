@@ -57,7 +57,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public abstract class Disguise {
-    private static boolean warnedDisguisedAfterSpawn = false;
     /**
      * In use doesn't mean that this disguise is active. It means that Lib's Disguises still stores a reference to
      * the disguise. Though it also means the disguise is active.
