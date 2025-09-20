@@ -1,12 +1,10 @@
 # This config file is about the names that appear over heads! A fair bit of player disguise stuff is in players.yml however
 
 # This is only called into action when the disguise is constructed using the commands.
-# And when the disguise supports that. This will not be used at all for plugins constructing the disguises for instance.
-# Such as prophunt. Its also false because its kind of a retarded feature.
 # This is pretty simple. It shows the players displayname (Name as it appears in chat) above their head.
 # This also overrides any custom name they have set in their disguise options.
 # This does not take effect on player disguises
-# Permission to disable is libsdisguises.disablename
+# Permission to disable is libsdisguises.hidename
 ShowNamesAboveDisguises: false
 
 # This supports the above option.
@@ -37,7 +35,7 @@ OverrideCustomNames: true
 #     Names remain perfectly in sync with the disguised entity, but multi-line names are rendered as a giant text block
 # With ARMORSTANDS/TEXT_DISPLAY and Premium, you can also use multiple lines in the name, use \n as a seperator.
 # It's recommended that you restart the server after changing this setting, or at minimum, reapply disguises to see the changes.
-# Default is ARMORSTANDS
+# Default is ARMORSTANDS, recommended if you have no issues.
 PlayerNames: ARMORSTANDS
 
 # More options in case you want to disable a specific setting of the scoreboard
