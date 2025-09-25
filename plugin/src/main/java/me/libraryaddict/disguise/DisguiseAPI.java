@@ -266,7 +266,10 @@ public class DisguiseAPI {
             return -1;
         }
 
-        if (disguise.getEntity() != null || DisguiseUtilities.getDisguises().containsValue(disguise)) {
+        Disguise finalDisguise = disguise;
+
+        if (disguise.getEntity() != null ||
+            DisguiseUtilities.getFutureDisguises().values().stream().anyMatch(v -> v.contains(finalDisguise))) {
             disguise = disguise.clone();
         }
 
