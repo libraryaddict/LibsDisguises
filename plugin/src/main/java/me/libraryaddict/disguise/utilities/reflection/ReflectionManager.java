@@ -185,8 +185,8 @@ public class ReflectionManager {
     private static Method propertyName, propertyValue, propertySignature;
     @Getter
     private static boolean mojangMapped;
-    // Defaults to null, resolves to a string when a working backend is found, empty string if no working backend
-    private static String workingBackend = null;
+    // Defaults to empty string, resolves to an url when a working backend is found, null if no working backend
+    private static String workingBackend = "";
 
     static {
         // An alternative implemention of https://github.com/PaperMC/Paper/blob/main/paper-server/src/main/java/io/papermc/paper/util/MappingEnvironment.java#L58
@@ -857,48 +857,56 @@ public class ReflectionManager {
         try {
             UserProfile result = null;
 
-            // If the backend has not been decided as a total wipe
-            if (!"".equals(workingBackend)) {
+            // If the backend has not been resolved yet
+            if ("".equals(workingBackend)) {
+                // We'll be monitoring the response codes with this
                 AtomicInteger responseCode = new AtomicInteger(-1);
+                // The backends we know
+                String[] backends = new String[]{"https://api.minecraftservices.com/minecraft/profile/lookup/name/%s",
+                    "https://api.mojang.com/users/profiles/minecraft/%s"};
 
-                // Loop over the two backends we know
-                for (String backend : new String[]{"https://api.minecraftservices.com/minecraft/profile/lookup/name/%s",
-                    "https://api.mojang.com/users/profiles/minecraft/%s"}) {
+                // The resolved backend, null means nothing found
+                String foundBackend = null;
+                // Store variable here so we can monitor if an error may have shown in console
+                int arrayIndex;
 
-                    // If backend has not been verified yet
-                    if (workingBackend == null) {
-                        LibsDisguises.getInstance().getLogger().info(
-                            "Trying to resolve a working backend for fetching names... You may see an error pop in console. This should " +
-                                "only happen 1-2 times per startup");
-                    } else if (!backend.equals(workingBackend)) {
-                        // Else we know what backend we want, and this isn't it
-                        continue;
-                    }
+                for (arrayIndex = 0; arrayIndex < backends.length; arrayIndex++) {
+                    String backend = backends[arrayIndex];
 
                     result = SkinUtils.getUUID(backend, playername, responseCode);
 
-                    // If backend did not 403, then set it and break the loop
-                    if (responseCode.get() != 403) {
-                        workingBackend = backend;
-                        break;
+                    // We expect all 403 to be Mojang misconfigurations, which is what we're trying to avoid
+                    if (responseCode.get() == 403) {
+                        continue;
                     }
+
+                    // If backend did not 403, then set it and break the loop
+                    foundBackend = backend;
+                    break;
                 }
 
-                // If backends are erroring
-                if (responseCode.get() == 403 && result == null) {
-                    // Fall back to internal
-                    workingBackend = "";
+                // We set the variable here, not early so we can avoid unrelated errors preventing a full scan
+                // This may be null, which means no working backends.
+                workingBackend = foundBackend;
+
+                // If we tried more than one backend, we expect at least one error in console
+                // We note it so we avoid confusion
+                if (arrayIndex > 0) {
+                    LibsDisguises.getInstance().getLogger().info(
+                        "You may have seen an error in console, don't be alarmed! That was Lib's Disguises trying to figure out a working" +
+                            " API backend to Mojang.");
                 }
             }
 
-            // If we don't have a backend and the result isn't known, use internal
-            if ("".equals(workingBackend) && result == null) {
+            // If we don't know a backend and the result isn't resolved, use internal
+            if (workingBackend == null && result == null) {
                 LibsProfileLookupCaller callback = new LibsProfileLookupCaller();
 
                 getNmsReflection().injectCallback(playername, callback);
                 result = callback.getUserProfile();
             }
 
+            // If the result is still not resolved, fallback
             if (result == null) {
                 result = getUserProfile(null, playername);
             }
