@@ -72,6 +72,12 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
 
             loop:
             for (Set<TargetedDisguise> disguises : new ArrayList<>(DisguiseUtilities.getDisguises().values())) {
+                // May be a rare issue where an entity is undisguised while the array is being constructed
+                // https://github.com/libraryaddict/LibsDisguises/issues/813#issuecomment-3328587635
+                if (disguises == null) {
+                    continue;
+                }
+
                 for (TargetedDisguise entityDisguise : new ArrayList<>(disguises)) {
                     Entity entity = entityDisguise.getEntity();
 
