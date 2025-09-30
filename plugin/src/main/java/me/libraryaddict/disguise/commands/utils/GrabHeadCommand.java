@@ -2,11 +2,14 @@ package me.libraryaddict.disguise.commands.utils;
 
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.commands.utils.headresolvers.HeadResolver;
+import me.libraryaddict.disguise.commands.utils.headresolvers.LegacyHeadResolver;
+import me.libraryaddict.disguise.commands.utils.headresolvers.PaperHeadResolver;
+import me.libraryaddict.disguise.commands.utils.headresolvers.SpigotHeadResolver;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.SkinUtils;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -17,13 +20,37 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.profile.PlayerProfile;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.lang.reflect.Field;
+import java.util.function.Supplier;
 
 public class GrabHeadCommand implements CommandExecutor {
+    private HeadResolver headResolver;
+
+    public HeadResolver getHeadResolver() {
+        if (headResolver == null) {
+            // Avoid creating the objects until needed
+            for (Supplier<HeadResolver> supplier : new Supplier[]{PaperHeadResolver::new, SpigotHeadResolver::new,
+                LegacyHeadResolver::new}) {
+                HeadResolver resolver = supplier.get();
+
+                if (!resolver.isAvailable()) {
+                    continue;
+                }
+
+                headResolver = resolver;
+                break;
+            }
+
+            if (headResolver == null) {
+                throw new IllegalStateException("No HeadResolver found!");
+            }
+        }
+
+        return headResolver;
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
         if (sender instanceof Player && !sender.isOp() &&
@@ -89,22 +116,18 @@ public class GrabHeadCommand implements CommandExecutor {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
+                        ItemStack skull;
+
+                        if (NmsVersion.v1_13.isSupported()) {
+                            skull = new ItemStack(Material.PLAYER_HEAD);
+                        } else {
+                            // 1.12 does not have PLAYER_HEAD
+                            skull = new ItemStack(Material.valueOf("SKULL_ITEM"), 1, (short) 3);
+                        }
+
                         SkullMeta meta = (SkullMeta) skull.getItemMeta();
 
-                        if (NmsVersion.v1_18.isSupported()) {
-                            PlayerProfile playerProfile = ReflectionManager.createProfile(profile);
-
-                            meta.setOwnerProfile(playerProfile);
-                        } else {
-                            try {
-                                Field field = meta.getClass().getDeclaredField("profile");
-                                field.setAccessible(true);
-                                field.set(meta, ReflectionManager.convertProfile(profile));
-                            } catch (NoSuchFieldException | IllegalAccessException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        getHeadResolver().setProfile(meta, profile);
 
                         skull.setItemMeta(meta);
 
