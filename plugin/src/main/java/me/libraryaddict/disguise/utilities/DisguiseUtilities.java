@@ -153,6 +153,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -277,10 +278,10 @@ public class DisguiseUtilities {
      */
     @Getter
     private static final Map<Integer, HashSet<TargetedDisguise>> futureDisguises = new ConcurrentHashMap<>();
-    private static final HashSet<UUID> savedDisguiseList = new HashSet<>();
-    private static final HashSet<String> cachedNames = new HashSet<>();
-    private static final HashMap<String, String> sanitySkinCacheMap = new LinkedHashMap<>();
-    private static final HashMap<String, ArrayList<Object>> runnables = new HashMap<>();
+    private static final Set<UUID> savedDisguiseList = new HashSet<>();
+    private static final Set<String> cachedNames = new HashSet<>();
+    private static final Map<String, String> sanitySkinCacheMap = new LinkedHashMap<>();
+    private static final Map<String, ArrayList<Object>> runnables = new HashMap<>();
     @Getter
     private static final HashSet<UUID> selfDisguised = new HashSet<>();
     @Getter
@@ -290,7 +291,7 @@ public class DisguiseUtilities {
         grabHeadCommandUsed;
     private static long lastInternalDisguiseTrigger;
     private static final Cache<Integer, Long> velocityTimes = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.SECONDS).build();
-    private static final HashMap<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
+    private static final Map<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
     @Getter
     private static boolean runningGeyser;
     private static MineSkinAPI mineSkinAPI;
@@ -319,7 +320,7 @@ public class DisguiseUtilities {
     @Getter
     private final static ConcurrentHashMap<String, DScoreTeam> teams = new ConcurrentHashMap<>();
     private static boolean criedOverJava16;
-    private static final HashSet<UUID> warnedSkin = new HashSet<>();
+    private static final Set<UUID> warnedSkin = new HashSet<>();
     @Getter
     private static boolean fancyHiddenTabs;
     @Getter
@@ -341,7 +342,7 @@ public class DisguiseUtilities {
      * This is for 1.20.6 only, 1.21 introduces a NamespaceKey
      */
     @Getter
-    private static UUID selfDisguiseScaleUUID = UUID.randomUUID();
+    private static final UUID selfDisguiseScaleUUID = UUID.randomUUID();
     @Getter
     private static Attribute scaleAttribute;
     @Getter
@@ -1437,9 +1438,7 @@ public class DisguiseUtilities {
             File profileCache = DisguiseFiles.getProfileCache();
             File sanitySkinCacheFile = DisguiseFiles.getSanitySkinCacheFile();
 
-            if (!profileCache.exists()) {
-                profileCache.mkdirs();
-            }
+            profileCache.mkdirs();
 
             String saveAs = string.toLowerCase(Locale.ENGLISH);
             String serialized = getGson().toJson(userProfile);
@@ -1707,17 +1706,9 @@ public class DisguiseUtilities {
         }
 
         File profileCache = DisguiseFiles.getProfileCache();
-
-        if (!profileCache.exists()) {
-            profileCache.mkdirs();
-        }
+        profileCache.mkdirs();
 
         File file = new File(profileCache, playerName);
-
-        if (!file.exists()) {
-            cachedNames.remove(playerName);
-            return null;
-        }
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -1725,6 +1716,8 @@ public class DisguiseUtilities {
             reader.close();
 
             return gson.fromJson(cached, UserProfile.class);
+        } catch (FileNotFoundException ex) {
+            cachedNames.remove(playerName);
         } catch (JsonSyntaxException ex) {
             LibsDisguises.getInstance().getLogger().warning("UserProfile " + file.getName() + " had invalid gson and has been deleted");
             cachedNames.remove(playerName);
@@ -2417,11 +2410,9 @@ public class DisguiseUtilities {
             saveSanitySkinCache();
         }
 
-        if (!cachedNames.contains(string) || !profileCache.exists()) {
+        if (!cachedNames.remove(string)) {
             return;
         }
-
-        cachedNames.remove(string);
 
         new File(profileCache, string).delete();
     }
