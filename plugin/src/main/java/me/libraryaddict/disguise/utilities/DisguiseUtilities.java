@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
+import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
 import com.github.retrooper.packetevents.protocol.entity.EntityPositionData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
@@ -14,6 +15,7 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.particle.Particle;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
+import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.protocol.world.Direction;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
@@ -1333,8 +1335,7 @@ public class DisguiseUtilities {
         LibsDisguises.getInstance().getLogger().severe(String.format(
             "Was an entity (%s) spawned, then immediately disguised by the same code? This is wrong, you should be using DisguiseAPI" +
                 ".disguiseNextEntity(disguise) then spawn the entity. The server doesn't wait before it starts sending packets, " +
-                "disguising it after may be too late. Was this message incorrect? Let the developer of Lib's Disguises know.",
-            entity));
+                "disguising it after may be too late. Was this message incorrect? Let the developer of Lib's Disguises know.", entity));
     }
 
     public static void onFutureDisguise(Entity entity) {
@@ -1662,6 +1663,26 @@ public class DisguiseUtilities {
         }
 
         return new TargetedDisguise[0];
+    }
+
+    public static ItemProfile getItemProfile(UserProfile uProfile) {
+        List<ItemProfile.Property> properties = new ArrayList<>();
+
+        for (TextureProperty property : uProfile.getTextureProperties()) {
+            properties.add(new ItemProfile.Property(property.getName(), property.getValue(), property.getSignature()));
+        }
+
+        return new ItemProfile(uProfile.getName(), uProfile.getUUID(), properties);
+    }
+
+    public static UserProfile getUserProfile(ItemProfile iProfile) {
+        List<TextureProperty> properties = new ArrayList<>();
+
+        for (ItemProfile.Property property : iProfile.getProperties()) {
+            properties.add(new TextureProperty(property.getName(), property.getValue(), property.getSignature()));
+        }
+
+        return new UserProfile(iProfile.getId(), iProfile.getName(), properties);
     }
 
     public static UserProfile getUserProfile(String playerName) {
