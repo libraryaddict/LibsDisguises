@@ -156,6 +156,9 @@ public class LibsDisguises extends JavaPlugin {
                 }
             }
 
+            // We call the check here so that it is loaded before other parts of the system can run
+            DisguiseUtilities.isRunningPaper();
+
             try {
                 Class cl = Class.forName("org.bukkit.Server$Spigot");
             } catch (ClassNotFoundException e) {
