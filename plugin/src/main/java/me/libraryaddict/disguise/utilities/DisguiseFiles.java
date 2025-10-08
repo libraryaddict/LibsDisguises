@@ -22,19 +22,19 @@ import java.util.stream.Collectors;
 
 public class DisguiseFiles {
     @Getter
-    private static final File internalFolder, preferencesFile, profileCache, sanitySkinCacheFile, savedDisguises;
+    private static final File internalFolder, preferencesFile, profileCache, sanitySkinCacheFile, savedDisguisesFolder;
 
     static {
         if (LibsDisguises.getInstance() == null) {
             profileCache = null;
             sanitySkinCacheFile = null;
-            savedDisguises = null;
+            savedDisguisesFolder = null;
             internalFolder = null;
             preferencesFile = null;
         } else {
             profileCache = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins");
             sanitySkinCacheFile = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins/sanity.json");
-            savedDisguises = new File(LibsDisguises.getInstance().getDataFolder(), "SavedDisguises");
+            savedDisguisesFolder = new File(LibsDisguises.getInstance().getDataFolder(), "SavedDisguises");
             internalFolder = new File(LibsDisguises.getInstance().getDataFolder(), "internal");
             preferencesFile = new File(getInternalFolder(), "preferences.json");
         }

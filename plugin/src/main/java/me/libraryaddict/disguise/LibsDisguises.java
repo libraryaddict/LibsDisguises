@@ -501,24 +501,24 @@ public class LibsDisguises extends JavaPlugin {
             @Override
             public void run() {
                 if (isPacketEventsUpdateDownloaded()) {
-                    getLogger().severe(
+                    getLogger().warning(
                         "An update for PacketEvents has been downloaded and will be installed when the server restarts. When possible, " +
                             "please restart the server. Lib's Disguises may not work correctly until you do so.");
                 } else {
-                    getLogger().severe(
+                    getLogger().warning(
                         "Update your PacketEvents! You are running " + version + " but the minimum version you should be on is " +
                             requiredPacketEvents + "!");
-                    getLogger().severe("Release Builds: https://modrinth.com/plugin/packetevents");
+                    getLogger().warning("Release Builds: https://modrinth.com/plugin/packetevents");
 
                     if (requiredPacketEvents.contains("SNAPSHOT")) {
-                        getLogger().severe(
+                        getLogger().warning(
                             "Minimum version is a SNAPSHOT build, it's possible that the features/bugfixes has not made it into the " +
                                 "releases yet. As such, you may need to use the dev builds instead. Using `/ld packetevents` will handle " +
                                 "it for you.");
-                        getLogger().severe("Snapshot Builds: https://ci.codemc.io/job/retrooper/job/packetevents/");
+                        getLogger().warning("Snapshot Builds: https://ci.codemc.io/job/retrooper/job/packetevents/");
                     }
 
-                    getLogger().severe(
+                    getLogger().warning(
                         "Or! Use /ld packetevents - To have Lib's Disguises download the latest release (Or snapshot if release is " +
                             "behind)");
                 }

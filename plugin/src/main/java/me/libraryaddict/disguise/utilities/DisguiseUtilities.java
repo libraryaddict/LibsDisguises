@@ -445,7 +445,7 @@ public class DisguiseUtilities {
                 Boolean b1 = (Boolean) f.get(null);
 
                 if (b1 != null && b1) {
-                    runningPaper = false;
+                    runningPaper = !runningPaper;
                 }
             } catch (Throwable ex) {
                 ex.printStackTrace();
@@ -1058,9 +1058,13 @@ public class DisguiseUtilities {
             return;
         }
 
-        File savedDisguises = DisguiseFiles.getSavedDisguises();
+        File savedDisguises = DisguiseFiles.getSavedDisguisesFolder();
 
         if (!savedDisguises.exists()) {
+            if (disguise == null || disguise.length == 0) {
+                return;
+            }
+
             savedDisguises.mkdirs();
         }
 
@@ -1139,7 +1143,7 @@ public class DisguiseUtilities {
             return new Disguise[0];
         }
 
-        File savedDisguises = DisguiseFiles.getSavedDisguises();
+        File savedDisguises = DisguiseFiles.getSavedDisguisesFolder();
 
         if (!savedDisguises.exists()) {
             if (!NmsVersion.v1_14.isSupported()) {
@@ -1214,7 +1218,7 @@ public class DisguiseUtilities {
             return;
         }
 
-        File savedDisguises = DisguiseFiles.getSavedDisguises();
+        File savedDisguises = DisguiseFiles.getSavedDisguisesFolder();
 
         if (!savedDisguises.exists()) {
             return;
@@ -1333,7 +1337,7 @@ public class DisguiseUtilities {
         }
 
         warnedFutureDisguises = true;
-        LibsDisguises.getInstance().getLogger().severe(String.format(
+        LibsDisguises.getInstance().getLogger().warning(String.format(
             "Was an entity (%s) spawned, then immediately disguised by the same code? This is wrong, you should be using DisguiseAPI" +
                 ".disguiseNextEntity(disguise) then spawn the entity. The server doesn't wait before it starts sending packets, " +
                 "disguising it after may be too late. Was this message incorrect? Let the developer of Lib's Disguises know.", entity));
@@ -1962,10 +1966,8 @@ public class DisguiseUtilities {
         cachedNames.addAll(Arrays.asList(profileCache.list()));
         cachedNames.remove(DisguiseFiles.getSanitySkinCacheFile().getName());
 
-        File savedDisguises = DisguiseFiles.getSavedDisguises();
-
-        if (!savedDisguises.exists() && !NmsVersion.v1_14.isSupported()) {
-            savedDisguises.mkdirs();
+        if (!NmsVersion.v1_14.isSupported()) {
+            DisguiseFiles.getSavedDisguisesFolder().mkdirs();
         }
 
         for (Scoreboard board : getAllScoreboards()) {
@@ -2007,7 +2009,7 @@ public class DisguiseUtilities {
                 }
             }
 
-            File savedDisguises = DisguiseFiles.getSavedDisguises();
+            File savedDisguises = DisguiseFiles.getSavedDisguisesFolder();
 
             if (savedDisguises.exists() && savedDisguises.isDirectory()) {
                 for (String key : savedDisguises.list()) {
@@ -2402,7 +2404,7 @@ public class DisguiseUtilities {
             return;
         }
 
-        File savedDisguises = DisguiseFiles.getSavedDisguises();
+        File savedDisguises = DisguiseFiles.getSavedDisguisesFolder();
         File profileCache = DisguiseFiles.getProfileCache();
 
         if (sanitySkinCacheMap.containsKey(string)) {
