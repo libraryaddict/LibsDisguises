@@ -992,7 +992,6 @@ public abstract class Disguise {
         }
 
         DisguiseUtilities.setPluginsUsed();
-        DisguiseUtilities.warnFutureDisguises(getEntity());
 
         if (LibsPremium.isPremium() && isSelfDisguiseVisible() && getEntity() instanceof Player &&
             !getEntity().hasPermission("libsdisguises.selfdisguises")) {
@@ -1067,7 +1066,12 @@ public abstract class Disguise {
         }
 
         // Resend the disguised entity's packet
-        DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
+        int impactedPlayers = DisguiseUtilities.refreshTrackersWithCount((TargetedDisguise) this);
+
+        // Only warn if there was at least one player impacted, otherwise we might be warning on a server that deliberately did not do this
+        if (impactedPlayers > 0) {
+            DisguiseUtilities.warnFutureDisguises(getEntity());
+        }
 
         // Setup a scheduler for a self disguise
         Bukkit.getScheduler()

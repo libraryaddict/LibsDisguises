@@ -2307,17 +2307,25 @@ public class DisguiseUtilities {
         }
     }
 
+    public static void refreshTrackers(final TargetedDisguise disguise) {
+        refreshTrackersWithCount(disguise);
+    }
+
     /**
      * Resends the entity to all the watching players, which is where the magic begins
+     *
+     * @return Number of players affected
      */
-    public static void refreshTrackers(final TargetedDisguise disguise) {
+    public static int refreshTrackersWithCount(final TargetedDisguise disguise) {
         if (!Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("Cannot modify disguises on an async thread");
         }
 
         if (!disguise.getEntity().isValid()) {
-            return;
+            return 0;
         }
+
+        int impactedPlayers = 0;
 
         try {
             if (selfDisguised.contains(disguise.getEntity().getUniqueId()) && disguise.isDisguiseInUse()) {
@@ -2343,6 +2351,7 @@ public class DisguiseUtilities {
                 Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTracker, entityTrackerEntry);
 
                 for (final Object o : trackedPlayers) {
+                    impactedPlayers++;
                     Object p = ReflectionManager.getPlayerFromPlayerConnection(o);
                     Player player = (Player) ReflectionManager.getBukkitEntity(p);
 
@@ -2367,6 +2376,8 @@ public class DisguiseUtilities {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
+        return impactedPlayers;
     }
 
     public static boolean removeDisguise(TargetedDisguise disguise) {
