@@ -49,6 +49,14 @@ public class ParamInfoEnum<T> extends ParamInfo<T> {
 
     @Override
     public String toString(T object) {
+        for (Map.Entry<String, T> entry : getValues().entrySet()) {
+            if (entry.getValue() != object) {
+                continue;
+            }
+
+            return entry.getKey();
+        }
+
         return object.toString();
     }
 

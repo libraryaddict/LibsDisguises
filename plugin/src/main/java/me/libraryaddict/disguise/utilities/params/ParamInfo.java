@@ -3,7 +3,9 @@ package me.libraryaddict.disguise.utilities.params;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Keyed;
+import org.bukkit.NamespacedKey;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -52,8 +54,35 @@ public abstract class ParamInfo<T> {
                 this.getValues().put(((Enum) anEnum).name(), anEnum);
             }
         } else if (possibleValues[0] instanceof Keyed) {
+            // The following code is meant to make it so that minecraft keys are always shortform, and conflicting keys, aka other
+            // sources such as resource packs, do not take priority.
+
+            // The list of minecraft keys that are already in vanilla
+            List<String> defaultMinecraftKeys = new ArrayList<>();
+
+            // Populate the list
             for (T anEnum : possibleValues) {
-                this.getValues().put(((Keyed) anEnum).getKey().getKey(), anEnum);
+                NamespacedKey key = ((Keyed) anEnum).getKey();
+
+                if (!key.getNamespace().equals("minecraft")) {
+                    continue;
+                }
+
+                defaultMinecraftKeys.add(key.getKey());
+            }
+
+            // Iterate over the keys
+            for (T anEnum : possibleValues) {
+                NamespacedKey key = ((Keyed) anEnum).getKey();
+                String toUse = key.getKey();
+
+                // If the key is already in use by minecraft, and the key itself is not the minecraft
+                if (!key.getNamespace().equals("minecraft") && defaultMinecraftKeys.contains(key.getKey())) {
+                    // Use the full namespace of the key
+                    toUse = key.toString();
+                }
+
+                this.getValues().put(toUse, anEnum);
             }
         } else {
             throw new IllegalArgumentException(
