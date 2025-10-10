@@ -1053,6 +1053,7 @@ public class DisguiseParser {
         DisguisePerm disguisePerm;
         String name;
         boolean hasSetCustomName = false;
+        int skipPermissionChecksForFirstXArgs = -1;
 
         if (args[0].startsWith("@")) {
             if (sender.hasPermission("libsdisguises.disguise.disguiseclone")) {
@@ -1111,6 +1112,9 @@ public class DisguiseParser {
 
                 // Fill args with custom disguise instead
                 args = DisguiseUtilities.split(customDisguise.getValue());
+
+                // Don't check these permissions, they are given permission to the custom disguise!
+                skipPermissionChecksForFirstXArgs = args.length;
 
                 // Expand the array for the old args
                 args = Arrays.copyOf(args, args.length + oldArgs.length);
@@ -1171,9 +1175,10 @@ public class DisguiseParser {
                                     args[1], TranslateType.DISGUISE_OPTIONS.reverseGet(TranslateType.DISGUISE_OPTIONS.reverseGet(method)));
                             }
 
-                            if (permissions != null) {
+                            if (permissions != null && skipPermissionChecksForFirstXArgs <= 1) {
                                 extra.checkParameterPermission(sender, permissions, disguiseOptions, usedOptions, disguisePerm, param);
                             }
+
                             toSkip++;
                             break;
                         }
@@ -1256,7 +1261,7 @@ public class DisguiseParser {
         String[] newArgs = new String[args.length - toSkip];
         System.arraycopy(args, toSkip, newArgs, 0, args.length - toSkip);
 
-        callMethods(sender, disguise, permissions, disguisePerm, usedOptions, newArgs, permNode);
+        callMethods(sender, disguise, permissions, disguisePerm, usedOptions, newArgs, permNode, skipPermissionChecksForFirstXArgs);
 
         if (sender instanceof Player && target instanceof Player && ("%%__USER__%%".equals("15" + "92") ||
             LibsPremium.getPluginInformation().isPremium() != LibsPremium.getPluginInformation().isPaid()) &&
@@ -1272,6 +1277,12 @@ public class DisguiseParser {
     public static void callMethods(CommandSender sender, Disguise disguise, @Nullable DisguisePermissions disguisePermission,
                                    DisguisePerm disguisePerm, Collection<String> usedOptions, String[] args, String permNode)
         throws Throwable {
+        callMethods(sender, disguise, disguisePermission, disguisePerm, usedOptions, args, permNode, -1);
+    }
+
+    public static void callMethods(CommandSender sender, Disguise disguise, @Nullable DisguisePermissions disguisePermission,
+                                   DisguisePerm disguisePerm, Collection<String> usedOptions, String[] args, String permNode,
+                                   int skipPermissionChecksOfFirstXArgs) throws Throwable {
         WatcherMethod[] methods = ParamInfoManager.getDisguiseWatcherMethods(disguise.getWatcher().getClass(), true);
         List<String> list = new ArrayList<>(Arrays.asList(args));
         HashMap<String, HashMap<String, Boolean>> disguiseOptions =
@@ -1359,7 +1370,7 @@ public class DisguiseParser {
                 usedOptions.add(lower);
             }
 
-            if (disguisePermission != null) {
+            if (argIndex >= skipPermissionChecksOfFirstXArgs && disguisePermission != null) {
                 doCheck(sender, disguisePermission, disguisePerm, usedOptions);
 
                 if (!disguiseOptions.isEmpty()) {
