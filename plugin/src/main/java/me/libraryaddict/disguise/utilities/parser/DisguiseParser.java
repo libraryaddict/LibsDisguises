@@ -1261,7 +1261,8 @@ public class DisguiseParser {
         String[] newArgs = new String[args.length - toSkip];
         System.arraycopy(args, toSkip, newArgs, 0, args.length - toSkip);
 
-        callMethods(sender, disguise, permissions, disguisePerm, usedOptions, newArgs, permNode, skipPermissionChecksForFirstXArgs);
+        callMethods(sender, disguise, permissions, disguisePerm, usedOptions, newArgs, permNode,
+            skipPermissionChecksForFirstXArgs - toSkip);
 
         if (sender instanceof Player && target instanceof Player && ("%%__USER__%%".equals("15" + "92") ||
             LibsPremium.getPluginInformation().isPremium() != LibsPremium.getPluginInformation().isPaid()) &&
