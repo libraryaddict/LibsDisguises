@@ -180,25 +180,18 @@ tasks.withType<Javadoc>().configureEach {
 
 publishing {
     repositories {
-        // If 'publishToExternalRepo' is false or missing, only publish to local.
-        // Else if this is a snapshot build, use the snapshot repo
-        // Otherwise, use the release repo
-        if (System.getProperty("publishToExternalRepo", "false").equals("false")) {
-            mavenLocal();
-        } else {
-            apply(plugin = "org.hibernate.build.maven-repo-auth")
+        if (System.getenv("NEXUS_USERNAME") != null) {
+            maven {
+                val repoType = if (project.version.toString().endsWith("-SNAPSHOT")) "snapshots" else "releases"
+                url = uri("${System.getenv("NEXUS_PATH")}${repoType}")
 
-            if (project.version.toString().contains("-SNAPSHOT")) {
-                maven {
-                    name = "md_5-snapshots"
-                    url = uri("https://repo.md-5.net/content/repositories/snapshots/")
-                }
-            } else {
-                maven {
-                    name = "md_5-releases"
-                    url = uri("https://repo.md-5.net/content/repositories/releases/")
+                credentials {
+                    username = System.getenv("NEXUS_USERNAME")
+                    password = System.getenv("NEXUS_PASSWORD")
                 }
             }
+        } else {
+            mavenLocal();
         }
     }
 
