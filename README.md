@@ -12,7 +12,7 @@ There are a few features which you need to pay for, but none of it is needed to 
 ### Links
 * Spigot page: <a href="https://www.spigotmc.org/resources/32453/">Link</a>
 * JavaDocs: <a href="https://libraryaddict.github.io/LibsDisguises/javadoc/">Link</a>
-* Jenkins Downloads: <a href="https://ci.md-5.net/job/LibsDisguises/">Link</a>
+* Jenkins Downloads: <a href="https://ci.lib.co.nz/job/LibsDisguises/">Link</a>
 
 ### Gradle
 

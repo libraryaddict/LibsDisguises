@@ -9,7 +9,6 @@ import java.util.jar.JarFile
 
 plugins {
     `maven-publish`
-    id("org.hibernate.build.maven-repo-auth") version "3.0.4" apply false
 }
 
 version = "11.0.9-SNAPSHOT"
@@ -180,14 +179,15 @@ tasks.withType<Javadoc>().configureEach {
 
 publishing {
     repositories {
-        if (System.getenv("NEXUS_USERNAME") != null) {
+        if (System.getenv("MVN_USER") != null) {
             maven {
                 val repoType = if (project.version.toString().endsWith("-SNAPSHOT")) "snapshots" else "releases"
-                url = uri("${System.getenv("NEXUS_PATH")}${repoType}")
+                // Eg: https://mvn.lib.co.nz/repositories/maven-%branch%/
+                url = uri(System.getenv("MVN_PATH").replace("%branch%", repoType))
 
                 credentials {
-                    username = System.getenv("NEXUS_USERNAME")
-                    password = System.getenv("NEXUS_PASSWORD")
+                    username = System.getenv("MVN_USER")
+                    password = System.getenv("MVN_PASS")
                 }
             }
         } else {

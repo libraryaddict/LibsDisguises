@@ -109,7 +109,7 @@ dependencies {
 
     // dependencies that are only used when running the tests
     testRuntimeOnly(rootProject.libs.io.papermc.paper.paper.api)
-    testRuntimeOnly(libs.org.spigotmc.spigot)
+    //testRuntimeOnly(libs.org.spigotmc.spigot)
     testRuntimeOnly(libs.commons.lang.commons.lang)
     testRuntimeOnly(libs.io.netty.netty.buffer)
     testRuntimeOnly(libs.io.netty.netty.codec)

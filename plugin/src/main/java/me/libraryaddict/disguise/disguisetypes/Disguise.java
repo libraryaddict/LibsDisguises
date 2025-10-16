@@ -1035,7 +1035,6 @@ public abstract class Disguise {
             PlayerDisguise disguise = (PlayerDisguise) this;
 
             if (disguise.isDisplayedInTab()) {
-
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (!((TargetedDisguise) this).canSee(player)) {
                         continue;

@@ -27,12 +27,12 @@ public class LDJenkins extends BaseJenkins {
         @Override
         public String getDownload() {
             // Rough thing to stop jar being cached
-            return "https://ci.md-5.net/job/LibsDisguises/lastSuccessfulBuild/artifact/target/LibsDisguises.jar?v=" + System.currentTimeMillis();
+            return "https://ci.lib.co.nz/job/LibsDisguises/lastSuccessfulBuild/artifact/target/LibsDisguises.jar?v=" + System.currentTimeMillis();
         }
     }
 
     public LDJenkins() {
-        super("https://ci.md-5.net/job/LibsDisguises/");
+        super("https://ci.lib.co.nz/job/LibsDisguises/");
     }
 
     private String[] getBadUsers() {
