@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities.reflection;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
+import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
 import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloState;
 import com.github.retrooper.packetevents.protocol.entity.cat.CatVariant;
 import com.github.retrooper.packetevents.protocol.entity.cat.CatVariants;
@@ -13,6 +14,8 @@ import com.github.retrooper.packetevents.protocol.entity.cow.CowVariants;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataType;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
+import com.github.retrooper.packetevents.protocol.entity.data.struct.CopperGolemState;
+import com.github.retrooper.packetevents.protocol.entity.data.struct.WeatheringCopperState;
 import com.github.retrooper.packetevents.protocol.entity.frog.FrogVariant;
 import com.github.retrooper.packetevents.protocol.entity.frog.FrogVariants;
 import com.github.retrooper.packetevents.protocol.entity.pig.PigVariant;
@@ -46,6 +49,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.ProfileResult;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
@@ -183,6 +187,7 @@ public class ReflectionManager {
     private static MinecraftSessionService sessionService;
     private static String minecraftVersion;
     private static Method propertyName, propertyValue, propertySignature;
+    private static Method gameProfileGetId, gameProfileGetName, gameProfileGetProperties;
     @Getter
     private static boolean mojangMapped;
     // Defaults to empty string, resolves to an url when a working backend is found, null if no working backend
@@ -280,6 +285,14 @@ public class ReflectionManager {
             propertyName = Property.class.getMethod("getName");
             propertyValue = Property.class.getMethod("getValue");
             propertySignature = Property.class.getMethod("getSignature");
+        } catch (Exception ignored) {
+        }
+
+        try {
+            // Authlib renamed it to "id()" in later versions
+            gameProfileGetId = GameProfile.class.getMethod("getId");
+            gameProfileGetName = GameProfile.class.getMethod("getName");
+            gameProfileGetProperties = GameProfile.class.getMethod("getProperties");
         } catch (Exception ignored) {
         }
     }
@@ -565,16 +578,23 @@ public class ReflectionManager {
         return getNmsReflection().getMinecraftServer();
     }
 
-    public static GameProfile convertProfile(UserProfile profile) {
-        GameProfile gProfile = new GameProfile(profile.getUUID(), profile.getName());
-        List<TextureProperty> textures = profile.getTextureProperties();
+    @SneakyThrows
+    public static GameProfile convertProfile(UserProfile userProfile) {
+        GameProfile gameProfile = new GameProfile(userProfile.getUUID(), userProfile.getName());
+        List<TextureProperty> textures = userProfile.getTextureProperties();
+        PropertyMap properties;
 
-        for (TextureProperty property : textures) {
-            gProfile.getProperties()
-                .put(property.getName(), new Property(property.getName(), property.getValue(), property.getSignature()));
+        if (gameProfileGetProperties == null) {
+            properties = gameProfile.properties();
+        } else {
+            properties = (PropertyMap) gameProfileGetProperties.invoke(gameProfile);
         }
 
-        return gProfile;
+        for (TextureProperty property : textures) {
+            properties.put(property.getName(), new Property(property.getName(), property.getValue(), property.getSignature()));
+        }
+
+        return gameProfile;
     }
 
     public static PlayerProfile createProfile(UserProfile profile) {
@@ -595,10 +615,24 @@ public class ReflectionManager {
         return getUserProfile(getGameProfile(player));
     }
 
-    public static UserProfile getUserProfile(GameProfile userProfile) {
-        UserProfile uProfile = new UserProfile(userProfile.getId(), userProfile.getName());
+    @SneakyThrows
+    public static UserProfile getUserProfile(GameProfile gameProfile) {
 
-        Collection<Property> textures = userProfile.getProperties().get("textures");
+        UserProfile uProfile;
+
+        if (gameProfileGetId == null) {
+            uProfile = new UserProfile(gameProfile.id(), gameProfile.name());
+        } else {
+            uProfile = new UserProfile((UUID) gameProfileGetId.invoke(gameProfile), (String) gameProfileGetName.invoke(gameProfile));
+        }
+
+        Collection<Property> textures;
+
+        if (gameProfileGetProperties == null) {
+            textures = gameProfile.properties().get("textures");
+        } else {
+            textures = ((PropertyMap) gameProfileGetProperties.invoke(gameProfile)).get("textures");
+        }
 
         if (textures == null || textures.isEmpty()) {
             return uProfile;
@@ -898,6 +932,10 @@ public class ReflectionManager {
                 }
             }
 
+            if (result == null && workingBackend != null) {
+                result = SkinUtils.getUUID(workingBackend, playername);
+            }
+
             // If we don't know a backend and the result isn't resolved, use internal
             if (workingBackend == null && result == null) {
                 LibsProfileLookupCaller callback = new LibsProfileLookupCaller();
@@ -1157,7 +1195,7 @@ public class ReflectionManager {
         } else if (index == MetaIndex.CAT_COLLAR || index == MetaIndex.WOLF_COLLAR) {
             return (int) ((AnimalColor) value).getDyeColor().getWoolData();
         } else if (value instanceof Enum && !(value instanceof SnifferState || value instanceof EntityPose || value instanceof BlockFace ||
-            value instanceof ArmadilloState)) {
+            value instanceof ArmadilloState || value instanceof CopperGolemState || value instanceof WeatheringCopperState)) {
             int v = enumOrdinal(value);
 
             if (index.isByteValues()) {
@@ -1725,7 +1763,7 @@ public class ReflectionManager {
             LibsDisguises.getInstance().getLogger().severe(
                 "Before reporting this error, " + "please make sure you are using the latest version of LibsDisguises and PacketEvents.");
             LibsDisguises.getInstance().getLogger().severe("Development builds are available at (PacketEvents) " +
-                "https://ci.codemc.io/job/retrooper/job/packetevents/ and (LibsDisguises) https://ci.md-5" + ".net/job/LibsDisguises/");
+                "https://ci.codemc.io/job/retrooper/job/packetevents/ and (LibsDisguises) https://ci.lib.co.nz/job/LibsDisguises/");
 
             ex.printStackTrace();
         }
@@ -1846,8 +1884,11 @@ public class ReflectionManager {
                 return EntityDataTypes.COW_VARIANT;
             } else if (index == MetaIndex.MUSHROOM_COW_TYPE && !NmsVersion.v1_21_R4.isSupported()) {
                 return EntityDataTypes.STRING;
+            } else if (index == MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY || index == MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY) {
+                return EntityDataTypes.OPTIONAL_INT;
             } else if (index == MetaIndex.SALMON_VARIANT) {
                 // TODO PacketEvents may add Salmon variant at a future date, also could be doing something redundant here
+                // TODO PacketEvents has now added SalmonVariant, need to support
                 // Such as could be mapping the variant to what we serialize
                 // Doubt it though
                 if (NmsVersion.v1_21_R3.isSupported()) {
@@ -1859,13 +1900,7 @@ public class ReflectionManager {
 
             Type type1 = ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
 
-            if (type1 instanceof Class && Enum.class.isAssignableFrom((Class<?>) type1)) {
-                if (index.isByteValues()) {
-                    return EntityDataTypes.BYTE;
-                }
-
-                return EntityDataTypes.INT;
-            } else if (type1 == ItemStack.class) {
+            if (type1 == ItemStack.class) {
                 return EntityDataTypes.ITEMSTACK;
             } else if (type1 == Integer.class) {
                 return EntityDataTypes.INT;
@@ -1879,6 +1914,18 @@ public class ReflectionManager {
                 return EntityDataTypes.VECTOR3F;
             } else if (type1 == String.class) {
                 return EntityDataTypes.STRING;
+            } else if (type1 == ItemProfile.class) {
+                return EntityDataTypes.RESOLVABLE_PROFILE;
+            } else if (type1 == CopperGolemState.class) {
+                return EntityDataTypes.COPPER_GOLEM_STATE;
+            } else if (type1 == WeatheringCopperState.class) {
+                return EntityDataTypes.WEATHERING_COPPER_STATE;
+            } else if (type1 instanceof Class && Enum.class.isAssignableFrom((Class<?>) type1)) {
+                if (index.isByteValues()) {
+                    return EntityDataTypes.BYTE;
+                }
+
+                return EntityDataTypes.INT;
             }
 
             List<EntityDataType> found = new ArrayList<>();
