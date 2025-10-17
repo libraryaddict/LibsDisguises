@@ -2028,7 +2028,14 @@ public class DisguiseUtilities {
             File savedDisguises = DisguiseFiles.getSavedDisguisesFolder();
 
             if (savedDisguises.exists() && savedDisguises.isDirectory()) {
-                for (String key : savedDisguises.list()) {
+                String[] keys = savedDisguises.list();
+
+                // Delete folder as it's both empty and obsolete
+                if (keys.length == 0 && !NmsVersion.v1_14.isSupported()) {
+                    savedDisguises.delete();
+                }
+
+                for (String key : keys) {
                     try {
                         savedDisguiseList.add(UUID.fromString(key));
                     } catch (Exception ex) {
