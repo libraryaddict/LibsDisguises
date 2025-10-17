@@ -1339,8 +1339,10 @@ public class DisguiseUtilities {
         warnedFutureDisguises = true;
         LibsDisguises.getInstance().getLogger().warning(String.format(
             "Was an entity (%s) spawned, then immediately disguised by the same code? This is wrong, you should be using DisguiseAPI" +
-                ".disguiseNextEntity(disguise) then spawn the entity. The server doesn't wait before it starts sending packets, " +
-                "disguising it after may be too late. Was this message incorrect? Let the developer of Lib's Disguises know.", entity));
+                ".disguiseNextEntity(disguise) then spawn the entity. (Or some other measure to prevent spawn packets being sent before " +
+                "disguising, eg, not actually adding the entity to the world yet) The server doesn't wait before it starts sending " +
+                "packets," + " disguising it after may be too late. Was this message incorrect? Let the developer of Lib's Disguises know.",
+            entity));
     }
 
     public static void onFutureDisguise(Entity entity) {
