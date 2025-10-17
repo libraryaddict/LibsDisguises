@@ -7,7 +7,7 @@ subprojects {
         mavenCentral()
 
         maven {
-            url = uri("https://mvn.lib.co.nz/repository/maven-public/")
+            url = uri("https://mvn.lib.co.nz/spigot/")
         }
 
         maven {
