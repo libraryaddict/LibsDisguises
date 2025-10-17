@@ -1823,7 +1823,7 @@ public class DisguiseUtilities {
         return getProfileFromMojang(playerName, (Object) runnableIfCantReturn, contactMojang);
     }
 
-    private static UserProfile getProfileFromMojang(final String origName, final Object runnable, boolean contactMojang) {
+    private static @Nullable UserProfile getProfileFromMojang(final String origName, final Object runnable, boolean contactMojang) {
         final String playerName = origName.toLowerCase(Locale.ENGLISH);
 
         if (DisguiseConfig.isSaveGameProfiles() && hasUserProfile(playerName, true)) {
@@ -1834,68 +1834,82 @@ public class DisguiseUtilities {
             }
         }
 
-        if (Pattern.matches("\\w{1,16}", origName)) {
-            final Player player = Bukkit.getPlayerExact(playerName);
+        if (!Pattern.matches("\\w{1,16}", origName)) {
+            return ReflectionManager.getUserProfile(null, origName);
+        }
 
-            if (player != null) {
-                UserProfile gameProfile = ReflectionManager.getUserProfile(player);
+        final Player player = Bukkit.getPlayerExact(playerName);
 
-                if (!gameProfile.getTextureProperties().isEmpty()) {
-                    if (DisguiseConfig.isSaveGameProfiles()) {
-                        addUserProfile(playerName, gameProfile);
-                    }
+        if (player != null) {
+            UserProfile gameProfile = ReflectionManager.getUserProfile(player);
 
-                    return gameProfile;
+            if (!gameProfile.getTextureProperties().isEmpty()) {
+                if (DisguiseConfig.isSaveGameProfiles()) {
+                    addUserProfile(playerName, gameProfile);
                 }
+
+                return gameProfile;
             }
+        }
 
-            synchronized (runnables) {
-                if (contactMojang && !runnables.containsKey(playerName)) {
-                    runnables.put(playerName, new ArrayList<>());
-
-                    if (runnable != null) {
-                        runnables.get(playerName).add(runnable);
-                    }
-
-                    Bukkit.getScheduler().runTaskAsynchronously(LibsDisguises.getInstance(), () -> {
-                        try {
-                            final UserProfile gameProfile = lookupUserProfile(origName);
-
-                            Bukkit.getScheduler().runTask(LibsDisguises.getInstance(), () -> {
-                                if (DisguiseConfig.isSaveGameProfiles()) {
-                                    addUserProfile(playerName, gameProfile);
-                                }
-
-                                synchronized (runnables) {
-                                    if (runnables.containsKey(playerName)) {
-                                        for (Object obj : runnables.remove(playerName)) {
-                                            if (obj instanceof Runnable) {
-                                                ((Runnable) obj).run();
-                                            } else if (obj instanceof LibsProfileLookup) {
-                                                ((LibsProfileLookup) obj).onLookup(gameProfile);
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                        } catch (Exception e) {
-                            synchronized (runnables) {
-                                runnables.remove(playerName);
-                            }
-
-                            LibsDisguises.getInstance().getLogger()
-                                .severe("Error when fetching " + playerName + "'s uuid from mojang: " + e.getMessage());
-                        }
-                    });
-                } else if (runnable != null && contactMojang) {
-                    runnables.get(playerName).add(runnable);
-                }
-            }
-
+        if (!contactMojang) {
             return null;
         }
 
-        return ReflectionManager.getUserProfile(null, origName);
+        synchronized (runnables) {
+            List<Object> list = runnables.get(playerName);
+
+            // If list already exists, then don't start a task of our own, just reuse the task
+            if (list != null) {
+                // If this task wants to execute a runnable
+                if (runnable != null) {
+                    // Add to the list
+                    list.add(runnable);
+                }
+
+                // Return null, it'll be updated at a later time
+                return null;
+            }
+
+            runnables.put(playerName, list = new ArrayList<>());
+
+            if (runnable != null) {
+                list.add(runnable);
+            }
+
+            Bukkit.getScheduler().runTaskAsynchronously(LibsDisguises.getInstance(), () -> {
+                try {
+                    final UserProfile gameProfile = lookupUserProfile(origName);
+
+                    Bukkit.getScheduler().runTask(LibsDisguises.getInstance(), () -> {
+                        if (DisguiseConfig.isSaveGameProfiles()) {
+                            addUserProfile(playerName, gameProfile);
+                        }
+
+                        synchronized (runnables) {
+                            if (runnables.containsKey(playerName)) {
+                                for (Object obj : runnables.remove(playerName)) {
+                                    if (obj instanceof Runnable) {
+                                        ((Runnable) obj).run();
+                                    } else if (obj instanceof LibsProfileLookup) {
+                                        ((LibsProfileLookup) obj).onLookup(gameProfile);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } catch (Exception e) {
+                    synchronized (runnables) {
+                        runnables.remove(playerName);
+                    }
+
+                    LibsDisguises.getInstance().getLogger()
+                        .severe("Error when fetching " + playerName + "'s uuid from mojang: " + e.getMessage());
+                }
+            });
+        }
+
+        return null;
     }
 
     public static MineSkinAPI getMineSkinAPI() {
