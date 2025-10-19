@@ -28,10 +28,20 @@ public enum NmsVersion {
     v1_21_R6("1.21.9", "1.21.10"),
     UNSUPPORTED("N/A");
 
+    /**
+     * If this version should work, if false then you can expect no nms
+     * This only, as of writing, applies to minor versions that are old.
+     */
+    private final boolean versionLoadable;
     private final String[] supportedVersions;
 
     NmsVersion(String... minecraftVersions) {
+        this(true, minecraftVersions);
+    }
+
+    NmsVersion(boolean supported, String... minecraftVersions) {
         this.supportedVersions = minecraftVersions;
+        this.versionLoadable = supported;
 
         if (name().startsWith("V")) {
             throw new IllegalArgumentException("Enum " + name() + " starts with a capital V, should be lowercase");
