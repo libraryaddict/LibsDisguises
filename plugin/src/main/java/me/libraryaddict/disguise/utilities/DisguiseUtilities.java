@@ -86,6 +86,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.TextDisplayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.gson.SerializerBlockData;
 import me.libraryaddict.disguise.utilities.gson.SerializerChatComponent;
+import me.libraryaddict.disguise.utilities.gson.SerializerItemProfile;
 import me.libraryaddict.disguise.utilities.gson.SerializerItemStack;
 import me.libraryaddict.disguise.utilities.gson.SerializerMetaIndex;
 import me.libraryaddict.disguise.utilities.gson.SerializerParticle;
@@ -1930,6 +1931,7 @@ public class DisguiseUtilities {
         gsonBuilder.registerTypeAdapter(MetaIndex.class, new SerializerMetaIndex());
         gsonBuilder.registerTypeAdapter(UserProfile.class, new SerializerUserProfile());
         gsonBuilder.registerTypeAdapter(GameProfile.class, new SerializerUserProfile());
+        gsonBuilder.registerTypeAdapter(ItemProfile.class, new SerializerItemProfile());
         gsonBuilder.registerTypeAdapterFactory(new SerializerUserProfileFactory(GameProfile.class, UserProfile.class));
         gsonBuilder.registerTypeAdapter(WrappedBlockState.class, new SerializerWrappedBlockData());
         gsonBuilder.registerTypeAdapter(Component.class, new SerializerChatComponent());
