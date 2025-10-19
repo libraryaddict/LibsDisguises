@@ -28,12 +28,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DisguiseMethods {
-    private final HashMap<Class<? extends FlagWatcher>, List<WatcherMethod>> watcherMethods = new HashMap<>();
-    private final HashMap<Class<? extends Disguise>, List<WatcherMethod>> disguiseMethods = new HashMap<>();
+    private final Map<Class<? extends FlagWatcher>, List<WatcherMethod>> watcherMethods = new HashMap<>();
+    private final Map<Class<? extends Disguise>, List<WatcherMethod>> disguiseMethods = new HashMap<>();
     @Getter
-    private final ArrayList<WatcherMethod> methods = new ArrayList<>();
+    private final List<WatcherMethod> methods = new ArrayList<>();
 
     public List<WatcherMethod> getMethods(Class c) {
         List<WatcherMethod> methods = new ArrayList<>();
@@ -43,7 +44,10 @@ public class DisguiseMethods {
         }
 
         if (c != FlagWatcher.class) {
-            methods.addAll(getMethods(c.getSuperclass()));
+            // Only adds a method if the method name is not being used already
+            methods.addAll(
+                getMethods(c.getSuperclass()).stream().filter(m -> methods.stream().noneMatch(m1 -> m1.getName().equals(m.getName())))
+                    .collect(Collectors.toList()));
         }
 
         return methods;
@@ -82,7 +86,7 @@ public class DisguiseMethods {
         List<String> notedSkippedParamTypes = new ArrayList<>();
 
         try (InputStream stream = LibsDisguises.getInstance().getResource("METHOD_MAPPINGS.txt")) {
-            HashMap<String, Class<? extends FlagWatcher>> classes = new HashMap<>();
+            Map<String, Class<? extends FlagWatcher>> classes = new HashMap<>();
             classes.put(FlagWatcher.class.getSimpleName(), FlagWatcher.class);
 
             for (DisguiseType t : DisguiseType.values()) {
@@ -105,9 +109,12 @@ public class DisguiseMethods {
 
             WatcherInfo[] watcherInfos =
                 new Gson().fromJson(new String(ReflectionManager.readFuzzyFully(stream), StandardCharsets.UTF_8), WatcherInfo[].class);
+            int other = -1;
 
-            for (WatcherInfo info : watcherInfos) {
-                if (!info.isSupported()) {
+            for (int i = 0; i < watcherInfos.length; i++) {
+                WatcherInfo info = watcherInfos[i];
+
+                if (info == null || !info.isSupported()) {
                     continue;
                 }
 
@@ -159,10 +166,19 @@ public class DisguiseMethods {
                         info.isDeprecated() && info.getAdded() == 0, unusableBy, hiddenFor, info.getDescription(),
                         info.isNoVisibleDifference(), info.getAdded(), info.getRemoved());
 
+                if (i % 2 == 0) {
+                    other = i;
+                } else if (i - 1 != other) {
+                    throw new IllegalArgumentException("Expected companion parameter but it was missing");
+                } else {
+                    WatcherMethod setter = methods.get(methods.size() - 1);
+                    m.setCompanionMethod(setter);
+                    setter.setCompanionMethod(m);
+                }
+
                 methods.add(m);
 
-                if (m.getMappedName().startsWith("get") || m.getMappedName().equals("hasPotionEffect") || param == null ||
-                    param == Void.TYPE) {
+                if (m.getMappedName().startsWith("get") || param == null || param == Void.TYPE) {
                     continue;
                 }
 
@@ -254,6 +270,9 @@ public class DisguiseMethods {
                             new boolean[DisguiseType.values().length], null, false, 0, 0);
 
                         methods.add(getMethod);
+
+                        setMethod.setCompanionMethod(getMethod);
+                        getMethod.setCompanionMethod(setMethod);
                         break;
                     } catch (NoSuchMethodException ex) {
                         if (returnType == disguiseClass) {

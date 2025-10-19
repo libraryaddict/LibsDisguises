@@ -617,7 +617,6 @@ public class ReflectionManager {
 
     @SneakyThrows
     public static UserProfile getUserProfile(GameProfile gameProfile) {
-
         UserProfile uProfile;
 
         if (gameProfileGetId == null) {

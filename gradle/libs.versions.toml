@@ -1,6 +1,6 @@
 [versions]
 com-mojang-authlib-old = "3.5.41"
-com-mojang-authlib-new = "6.0.54"
+com-mojang-authlib-new = "7.0.61"
 commons-lang-commons-lang = "2.6"
 io-netty-netty-buffer = "4.1.90.Final"
 io-netty-netty-codec = "4.1.90.Final"
@@ -15,11 +15,11 @@ json-version = "20250517"
 asm-version = "9.8"
 
 net-kyori-adventure-api = "4.17.0"
-com-retro-packetevents = "2.9.4"
+com-retro-packetevents = "2.10.0-SNAPSHOT"
 placeholder-api = "2.11.6"
 
-org-spigotmc-spigot = "1.21.6-R0.1-SNAPSHOT"
-io-papermc-paper-api = "1.21.6-R0.1-SNAPSHOT"
+org-spigotmc-spigot = "1.21.10-R0.1-SNAPSHOT"
+io-papermc-paper-api = "1.21.10-R0.1-SNAPSHOT"
 
 
 [libraries]

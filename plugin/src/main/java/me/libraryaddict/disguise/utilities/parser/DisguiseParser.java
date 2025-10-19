@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.parser;
 
+import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -13,12 +14,15 @@ import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.ModdedDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.AvatarWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BlockDisplayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ItemDisplayWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.MannequinWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.OminousItemSpawnerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.SkinUtils;
@@ -34,7 +38,7 @@ import me.libraryaddict.disguise.utilities.parser.constructors.ItemDisguiseParam
 import me.libraryaddict.disguise.utilities.parser.constructors.ItemFrameDisguiseParam;
 import me.libraryaddict.disguise.utilities.parser.constructors.PlayerDisguiseParam;
 import me.libraryaddict.disguise.utilities.parser.constructors.SplashPotionDisguiseParam;
-import me.libraryaddict.disguise.utilities.parser.constructors.TextDisplayParam;
+import me.libraryaddict.disguise.utilities.parser.constructors.TextDisplayDisguiseParam;
 import me.libraryaddict.disguise.utilities.parser.constructors.WrappedBlockDisguiseParam;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
@@ -42,7 +46,6 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import me.libraryaddict.disguise.utilities.watchers.DisguiseMethods;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -114,7 +117,7 @@ public class DisguiseParser {
 
     public static void createDefaultMethods() {
         try {
-            ArrayList<WatcherMethod> allMethods = ParamInfoManager.getDisguiseMethods().getMethods();
+            List<WatcherMethod> allMethods = ParamInfoManager.getDisguiseMethods().getMethods();
 
             for (DisguiseType type : DisguiseType.values()) {
                 if (type.getEntityType() == null) {
@@ -139,61 +142,21 @@ public class DisguiseParser {
 
                 for (WatcherMethod setMethod : methods) {
                     // Invalidate methods that can't be handled normally
-                    if (setMethod.getName().equals("addPotionEffect")) {
-                        continue;
-                    } else if (setMethod.getName().equals("setSkin") && setMethod.getParam() == String.class) {
-                        continue;
-                    } else if (setMethod.getName().equals("setTarget") && setMethod.getParam() != int.class) {
-                        continue;
-                    } else if ((setMethod.getName().equals("setCustomName") || setMethod.getName().equals("setCustomNameVisible")) &&
-                        disguise.isPlayerDisguise()) {
+                    if (disguise.isPlayerDisguise() &&
+                        (setMethod.getName().equals("setCustomName") || setMethod.getName().equals("setCustomNameVisible"))) {
                         // Player Disguise overrides the behavior of custom name, so we definitely don't want it judged on a global scale
                         continue;
-                    } else if (setMethod.getName().equals("setItemInMainHand") && setMethod.getParam() == Material.class) {
-                        continue;
-                    } else if (setMethod.getName().matches("setArmor") && setMethod.getParam() == ItemStack[].class) {
+                    } else if (setMethod.getCompanionMethod() == null) {
                         continue;
                     }
 
                     String sharedName = setMethod.getMappedName().substring(3); // Remove 'set'
-                    String getPrefix = "get";
 
                     if (sharedName.matches("^Has(Nectar|Stung)$") || sharedName.matches("^Has((Left)|(Right))Horn$")) {
                         sharedName = sharedName.substring(3);
-                        getPrefix = "has";
-                    } else if (setMethod.getParam().isAssignableFrom(boolean.class)) {
-                        getPrefix = "is";
-                    } else {
-                        getPrefix = "get";
                     }
 
-                    String getName = getPrefix + sharedName;
-                    WatcherMethod getMethod = null;
-
-                    for (WatcherMethod m : allMethods) {
-                        if (m.getWatcherClass() != setMethod.getWatcherClass() || m.getParam() != null) {
-                            continue;
-                        }
-
-                        if (!m.getMappedName().equals(getName)) {
-                            continue;
-                        }
-
-                        getMethod = m;
-                        break;
-                    }
-
-                    if (getMethod == null) {
-                        LibsDisguises.getInstance().getLogger().severe(
-                            String.format("No such method '%s' when looking for the companion of '%s' in '%s'", getName,
-                                setMethod.getMappedName(), setMethod.getWatcherClass().getSimpleName()));
-                        continue;
-                    } else if (getMethod.getReturnType() != setMethod.getParam()) {
-                        LibsDisguises.getInstance().getLogger().severe(
-                            String.format("Invalid return type of '%s' when looking for the companion of '%s' in '%s'", getName,
-                                setMethod.getMappedName(), setMethod.getWatcherClass().getSimpleName()));
-                        continue;
-                    }
+                    WatcherMethod getMethod = setMethod.getCompanionMethod();
 
                     if (getMethod.getAdded() != setMethod.getAdded() || getMethod.getRemoved() != setMethod.getRemoved()) {
                         LibsDisguises.getInstance().getLogger().severe(String.format(
@@ -240,14 +203,15 @@ public class DisguiseParser {
         extraDisguiseParams.add(new ItemFrameDisguiseParam());
         extraDisguiseParams.add(new PlayerDisguiseParam());
         extraDisguiseParams.add(new SplashPotionDisguiseParam());
-        extraDisguiseParams.add(new TextDisplayParam());
+        extraDisguiseParams.add(new TextDisplayDisguiseParam());
+        //       extraDisguiseParams.add(new MannequinDisguiseParam());
     }
 
     /**
      * Return the player name, or the contents of setskin
      */
     private static String getSkin(String[] args) {
-        if (args.length < 2 || !args[0].toLowerCase(Locale.ENGLISH).matches("p|player")) {
+        if (args.length < 2 || !args[0].toLowerCase(Locale.ENGLISH).matches("p|player|mannequin")) {
             return null;
         }
 
@@ -262,7 +226,7 @@ public class DisguiseParser {
         return args[1];
     }
 
-    private static void grabSkin(CommandSender sender, String skinFile, PlayerDisguise disguise) {
+    private static void grabSkin(CommandSender sender, String skinFile, AvatarWatcher avatarWatcher) {
         // Only process if they are trying to use a skin pic
         if (skinFile == null || !skinFile.toLowerCase(Locale.ENGLISH).matches(".*\\.png($|\\W.*)")) {
             return;
@@ -320,7 +284,7 @@ public class DisguiseParser {
             return;
         }
 
-        Consumer<UserProfile> consumer = disguise::setSkin;
+        Consumer<UserProfile> consumer = avatarWatcher::setSkin;
         List<Consumer<UserProfile>> list = fetchingSkins.get(skinFile);
 
         if (list != null) {
@@ -468,7 +432,10 @@ public class DisguiseParser {
         return parseToString(disguise, outputSkinData, false);
     }
 
-    public static String parseToString(Disguise disguise, WatcherMethod method) throws Throwable {
+    @Deprecated
+    /**
+     * This method is poorly documented and lacking implementation, this is used only for placeholder parsing
+     */ public static String parseToString(Disguise disguise, WatcherMethod method) throws Throwable {
         // Ensure its a getter
         if (method.getOwner() != null) {
             method = method.getOwner().getGetter();
@@ -484,16 +451,33 @@ public class DisguiseParser {
             ourValue = null;
         }
 
-        if (method.getMappedName().equals("getSkin") && disguise.isPlayerDisguise()) {
-            PlayerDisguise pDisg = (PlayerDisguise) disguise;
-            ourValue = pDisg.getName();
+        if (method.getMappedName().equals("getSkin") && disguise.getType().isAvatar()) {
+            AvatarWatcher avatarWatcher = (AvatarWatcher) disguise.getWatcher();
 
-            if (pDisg.getSkin() != null) {
-                if (pDisg.getSkin().length() <= 32) {
-                    ourValue = pDisg.getSkin();
+            if (disguise.isPlayerDisguise()) {
+                ourValue = ((PlayerDisguise) disguise).getName();
+            }
+
+            String skinName = avatarWatcher.getSkinName();
+
+            if (skinName != null) {
+                if (skinName.length() <= 32) {
+                    ourValue = skinName;
                 }
-            } else if (pDisg.getUserProfile() != null && pDisg.getUserProfile().getName() != null) {
-                ourValue = pDisg.getUserProfile().getName();
+            } else {
+                if (avatarWatcher instanceof PlayerWatcher) {
+                    UserProfile profile = ((PlayerWatcher) avatarWatcher).getSkin();
+
+                    if (profile != null && profile.getName() != null) {
+                        ourValue = profile.getName();
+                    }
+                } else if (avatarWatcher instanceof MannequinWatcher) {
+                    ItemProfile profile = ((MannequinWatcher) avatarWatcher).getSkin();
+
+                    if (profile.getName() != null) {
+                        ourValue = profile.getName();
+                    }
+                }
             }
         }
 
@@ -600,17 +584,34 @@ public class DisguiseParser {
                     ourValue = null;
                 }
 
-                if (setter.getMappedName().equals("setSkin") && !outputSkinData) {
-                    PlayerDisguise pDisg = (PlayerDisguise) disguise;
-                    ourValue = pDisg.getName();
+                // If we do not want a lot of clunky skin
+                if (setter.getMappedName().equals("setSkin") && !outputSkinData && disguise.getType().isAvatar()) {
+                    AvatarWatcher avatarWatcher = (AvatarWatcher) disguise.getWatcher();
 
-                    if (pDisg.getSkin() != null) {
-                        ourValue = pDisg.getSkin();
-                    } else if (pDisg.getUserProfile() != null && pDisg.getUserProfile().getName() != null) {
-                        ourValue = pDisg.getUserProfile().getName();
+                    if (disguise.isPlayerDisguise()) {
+                        ourValue = ((PlayerDisguise) disguise).getName();
                     }
 
-                    if (ourValue.equals(pDisg.getName())) {
+                    if (avatarWatcher.getSkinName() != null) {
+                        ourValue = avatarWatcher.getSkinName();
+                    } else {
+                        if (avatarWatcher instanceof PlayerWatcher) {
+                            UserProfile profile = ((PlayerWatcher) avatarWatcher).getSkin();
+
+                            if (profile != null && profile.getName() != null) {
+                                ourValue = profile.getName();
+                            }
+                        } else if (avatarWatcher instanceof MannequinWatcher) {
+                            ItemProfile profile = ((MannequinWatcher) avatarWatcher).getSkin();
+
+                            if (profile.getName() != null) {
+                                ourValue = profile.getName();
+                            }
+                        }
+                    }
+
+                    // If this would be handled by setName
+                    if (disguise.isPlayerDisguise() && ourValue.equals(((PlayerDisguise) disguise).getName())) {
                         continue;
                     }
                 } else {
@@ -1401,18 +1402,22 @@ public class DisguiseParser {
             handle.invoke(valueToSet);
         }
 
-        if (disguise instanceof PlayerDisguise) {
-            grabSkin(sender, getSkin(args), (PlayerDisguise) disguise);
-        }
+        if (disguise.getType().isAvatar()) {
+            AvatarWatcher avatarWatcher = (AvatarWatcher) disguise.getWatcher();
 
-        if (disguise instanceof PlayerDisguise && args.length > 1) {
-            for (int i = 0; i < args.length - 1; i++) {
-                if (!args[i].equalsIgnoreCase("setSkin")) {
-                    continue;
+            if (disguise.isPlayerDisguise()) {
+                grabSkin(sender, getSkin(args), avatarWatcher);
+            }
+
+            if (args.length > 1) {
+                for (int i = 0; i < args.length - 1; i++) {
+                    if (!args[i].equalsIgnoreCase("setSkin")) {
+                        continue;
+                    }
+
+                    grabSkin(sender, args[i + 1], avatarWatcher);
+                    break;
                 }
-
-                grabSkin(sender, args[i + 1], (PlayerDisguise) disguise);
-                break;
             }
         }
     }

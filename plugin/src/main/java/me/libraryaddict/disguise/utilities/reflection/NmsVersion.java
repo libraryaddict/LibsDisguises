@@ -25,6 +25,7 @@ public enum NmsVersion {
     v1_21_R3("1.21.4"),
     v1_21_R4("1.21.5"),
     v1_21_R5("1.21.6", "1.21.7", "1.21.8"),
+    v1_21_R6("1.21.9", "1.21.10"),
     UNSUPPORTED("N/A");
 
     private final String[] supportedVersions;

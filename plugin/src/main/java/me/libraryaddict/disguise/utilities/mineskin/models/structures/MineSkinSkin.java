@@ -1,11 +1,14 @@
 package me.libraryaddict.disguise.utilities.mineskin.models.structures;
 
+import com.github.retrooper.packetevents.protocol.player.TextureProperty;
+import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import lombok.Getter;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -63,13 +66,14 @@ public class MineSkinSkin {
                 .replaceFirst("$1-$2-$3-$4-$5");
         }
 
-        GameProfile profile = new GameProfile(UUID.fromString(id), StringUtils.stripToNull(getName()) == null ? "Unknown" : getName());
+        UserProfile profile = new UserProfile(UUID.fromString(id), StringUtils.stripToNull(getName()) == null ? "Unknown" : getName());
 
         if (getTexture() != null && getTexture().getData() != null) {
-            Property property = new Property("textures", getTexture().getData().getValue(), getTexture().getData().getSignature());
-            profile.getProperties().put("textures", property);
+            TextureProperty property =
+                new TextureProperty("textures", getTexture().getData().getValue(), getTexture().getData().getSignature());
+            profile.setTextureProperties(Collections.singletonList(property));
         }
 
-        return profile;
+        return ReflectionManager.convertProfile(profile);
     }
 }

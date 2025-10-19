@@ -9,6 +9,7 @@ import java.net.URLDecoder;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -19,17 +20,17 @@ import java.util.jar.JarFile;
 // Code for this taken and slightly modified from
 // https://github.com/ddopson/java-class-enumerator
 public class ClassGetter {
-    public static ArrayList<Class<?>> getClassesForPackage(String pkgname) {
+    public static List<Class<?>> getClassesForPackage(String pkgname) {
         return getClassesForPackage(Entity.class, pkgname);
     }
 
-    public static ArrayList<String> getEntriesForPackage(String pkgname) {
+    public static List<String> getEntriesForPackage(String pkgname) {
         return getEntriesForPackage(Entity.class, pkgname);
     }
 
-    public static ArrayList<Class<?>> getClassesForPackage(Class runFrom, String pkgname) {
-        ArrayList<String> list = getEntriesForPackage(runFrom, pkgname);
-        ArrayList<Class<?>> classList = new ArrayList<>();
+    public static List<Class<?>> getClassesForPackage(Class runFrom, String pkgname) {
+        List<String> list = getEntriesForPackage(runFrom, pkgname);
+        List<Class<?>> classList = new ArrayList<>();
 
         for (String s : list) {
             if (!s.endsWith(".class")) {
@@ -46,8 +47,8 @@ public class ClassGetter {
         return classList;
     }
 
-    public static ArrayList<String> getEntriesForPackage(Class runFrom, String pkgname) {
-        ArrayList<String> classes = new ArrayList<>();
+    public static List<String> getEntriesForPackage(Class runFrom, String pkgname) {
+        List<String> classes = new ArrayList<>();
         // String relPath = pkgname.replace('.', '/');
 
         // Get a File object for the package
@@ -90,7 +91,7 @@ public class ClassGetter {
         }
     }
 
-    private static void processJarfile(URL resource, String pkgname, ArrayList<String> classes) {
+    private static void processJarfile(URL resource, String pkgname, List<String> classes) {
         try {
             String relPath = pkgname.replace('.', '/');
             String resPath = URLDecoder.decode(resource.getPath(), "UTF-8");

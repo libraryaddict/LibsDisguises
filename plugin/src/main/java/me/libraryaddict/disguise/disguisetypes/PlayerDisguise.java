@@ -11,8 +11,8 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.PlayerResolver;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
-import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Bukkit;
@@ -20,13 +20,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 public class PlayerDisguise extends TargetedDisguise {
-    private transient LibsProfileLookup currentLookup;
-    private UserProfile userProfile;
+    private final PlayerResolver skinResolver;
     private String playerName = "Herobrine";
     private String tablistName;
-    private String skinToUse;
     @Getter
     private boolean nameVisible = true;
     /**
@@ -39,6 +39,15 @@ public class PlayerDisguise extends TargetedDisguise {
 
     private PlayerDisguise() {
         super(DisguiseType.PLAYER);
+
+        skinResolver = new PlayerResolver(this, (skinResolved) -> {
+            if (!isDisguiseInUse()) {
+                return;
+            }
+
+            // Refresh disguise
+            refreshDisguise();
+        });
     }
 
     public PlayerDisguise(Player player) {
@@ -57,7 +66,7 @@ public class PlayerDisguise extends TargetedDisguise {
         this();
 
         if (name.equals(skinToUse)) {
-            UserProfile profile = getProfile(skinToUse);
+            UserProfile profile = skinResolver.getProfileFromJson(skinToUse);
 
             if (profile != null) {
                 setName(profile.getName());
@@ -78,7 +87,7 @@ public class PlayerDisguise extends TargetedDisguise {
 
         setName(userProfile.getName());
 
-        this.userProfile = ReflectionManager.getUserProfileWithThisSkin(getUUID(), getProfileName(), userProfile);
+        skinResolver.setSkin(userProfile);
 
         createDisguise();
     }
@@ -87,9 +96,6 @@ public class PlayerDisguise extends TargetedDisguise {
         this();
 
         setName(userProfile.getName());
-
-        this.userProfile = ReflectionManager.getUserProfile(getUUID(), getProfileName());
-
         setSkin(skinToUse);
 
         createDisguise();
@@ -138,19 +144,32 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public boolean hasScoreboardName() {
-        if (!(DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) && isStaticName(getName())) {
+        // I confuse myself with this
+        // If armorstands name and display text names are NOT enabled, and it is a static name, then always return false
+        if (!DisguiseConfig.isArmorstandsName() && !DisguiseConfig.isDisplayTextName() && isStaticName(getName())) {
             return false;
         }
 
+        // Otherwise always return the config setting boolean
         return DisguiseConfig.isScoreboardNames();
     }
 
     /**
      * The actual name that'll be sent in the game profile, not the name that they're known as
      */
+    @ApiStatus.Internal
     public String getProfileName() {
-        return isUpsideDown() ? "Dinnerbone" :
-            isDeadmau5Ears() ? "deadmau5" : hasScoreboardName() ? getScoreboardName().getPlayer() : getName().isEmpty() ? "§r" : getName();
+        if (isUpsideDown()) {
+            return "Dinnerbone";
+        } else if (isDeadmau5Ears()) {
+            return "deadmau5";
+        } else if (hasScoreboardName()) {
+            return getScoreboardName().getPlayer();
+        } else if (getName().isEmpty()) {
+            return "§r";
+        }
+
+        return getName();
     }
 
     public PlayerDisguise setNameVisible(boolean nameVisible) {
@@ -243,10 +262,8 @@ public class PlayerDisguise extends TargetedDisguise {
             disguise.setWatcher(getWatcher().clone(disguise));
         }
 
-        if (currentLookup == null && userProfile != null) {
-            disguise.skinToUse = getSkin();
-            disguise.userProfile =
-                ReflectionManager.getUserProfileWithThisSkin(disguise.getUUID(), getUserProfile().getName(), getUserProfile());
+        if (skinResolver.isSkinFullyResolved()) {
+            disguise.skinResolver.copyResolver(skinResolver);
         } else {
             disguise.setSkin(getSkin());
         }
@@ -263,24 +280,19 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public UserProfile getUserProfile() {
-        if (userProfile == null) {
-            if (getSkin() != null) {
-                userProfile = ReflectionManager.getUserProfile(getUUID(), getProfileName());
-            } else {
-                userProfile =
-                    ReflectionManager.getUserProfileWithThisSkin(getUUID(), getProfileName(), DisguiseUtilities.getProfileFromMojang(this));
-            }
-        }
-
-        return userProfile;
+        return skinResolver.getUserProfile();
     }
 
     public void setGameProfile(GameProfile userProfile) {
         setUserProfile(ReflectionManager.getUserProfile(userProfile));
     }
 
+    /**
+     * This is the same effect as setSkin, if this previously did something you relied on, please let the developer of Lib's Disguises know.
+     */
+    @Deprecated
     public void setUserProfile(UserProfile userProfile) {
-        this.userProfile = ReflectionManager.getUserProfileWithThisSkin(getUUID(), this.getUserProfile().getName(), this.userProfile);
+        skinResolver.setSkin(userProfile);
     }
 
     public String getName() {
@@ -408,9 +420,7 @@ public class PlayerDisguise extends TargetedDisguise {
             setNameVisible(!name.isEmpty(), true);
             playerName = name;
 
-            if (userProfile != null) {
-                userProfile = ReflectionManager.getUserProfileWithThisSkin(getUUID(), getProfileName(), getUserProfile());
-            }
+            skinResolver.ensureUniqueProfile();
         }
 
         DisguiseParser.updateDisguiseName(this);
@@ -456,9 +466,7 @@ public class PlayerDisguise extends TargetedDisguise {
                 scoreboardName = null;
             }
 
-            if (userProfile != null) {
-                userProfile = ReflectionManager.getUserProfileWithThisSkin(getUUID(), getProfileName(), getUserProfile());
-            }
+            skinResolver.ensureUniqueProfile();
 
             DisguiseUtilities.resetPluginTimer();
 
@@ -470,57 +478,12 @@ public class PlayerDisguise extends TargetedDisguise {
         }
     }
 
-    public String getSkin() {
-        return skinToUse;
+    public @Nullable String getSkin() {
+        return skinResolver.getSkin();
     }
 
-    public PlayerDisguise setSkin(String newSkin) {
-        // Attempt to load via json first
-        UserProfile profile = getProfile(newSkin);
-
-        if (profile != null) {
-            return setSkin(profile);
-        }
-
-        // If multiline name, only use the first line as the skin name
-        if (newSkin != null) {
-            String[] split = DisguiseUtilities.splitNewLine(newSkin);
-
-            if (split.length > 0) {
-                newSkin = split[0];
-            }
-        }
-
-        String oldSkin = skinToUse;
-        skinToUse = newSkin;
-
-        if (newSkin == null) {
-            currentLookup = null;
-            userProfile = null;
-            return this;
-        } else if (newSkin.equals(oldSkin) || !isDisguiseInUse()) {
-            return this;
-        }
-
-        currentLookup = new LibsProfileLookup() {
-            @Override
-            public void onLookup(UserProfile userProfile) {
-                if (currentLookup != this || userProfile == null || userProfile.getTextureProperties().isEmpty()) {
-                    return;
-                }
-
-                setSkin(userProfile);
-
-                currentLookup = null;
-            }
-        };
-
-        UserProfile userProfile =
-            DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup, DisguiseConfig.isContactMojangServers());
-
-        if (userProfile != null) {
-            setSkin(userProfile);
-        }
+    public PlayerDisguise setSkin(@Nullable String newSkin) {
+        skinResolver.setSkin(newSkin);
 
         return this;
     }
@@ -532,33 +495,9 @@ public class PlayerDisguise extends TargetedDisguise {
      * @return
      */
     public PlayerDisguise setSkin(UserProfile userProfile) {
-        if (userProfile == null) {
-            this.userProfile = null;
-            this.skinToUse = null;
-            return this;
-        }
-
-        currentLookup = null;
-
-        this.skinToUse = userProfile.getName();
-        this.userProfile = ReflectionManager.getUserProfileWithThisSkin(getUUID(), getProfileName(), userProfile);
-
-        refreshDisguise();
+        skinResolver.setSkin(userProfile);
 
         return this;
-    }
-
-    private UserProfile getProfile(String string) {
-        if (string != null && string.length() > 70 && (string.startsWith("{\"uuid\":") || string.startsWith("{\"id\":")) &&
-            string.endsWith("}") && string.contains(",\"name\":")) {
-            try {
-                return DisguiseUtilities.getGson().fromJson(string, UserProfile.class);
-            } catch (Exception ex) {
-                throw new IllegalStateException("Tried to parse " + string + " to a GameProfile, but it has been formatted incorrectly!");
-            }
-        }
-
-        return null;
     }
 
     private void refreshDisguise() {
@@ -627,14 +566,13 @@ public class PlayerDisguise extends TargetedDisguise {
 
         // Here we're making sure that the userprofile is constructed with the correct UUID, but only if the disguise isn't active yet
 
-        // If disguise is already active, or if entity is null, or userprofile wasn't constructed yet, or the user profile is already set
-        // to the correct uuid
-        if (isDisguiseInUse() || entity == null || userProfile == null || getUUID().equals(userProfile.getUUID())) {
+        // If disguise is already active, or if entity is null
+        if (isDisguiseInUse() || entity == null) {
             return this;
         }
 
-        // Otherwise, recreate the user profile!
-        userProfile = ReflectionManager.getUserProfileWithThisSkin(getUUID(), userProfile.getName(), userProfile);
+        // Otherwise, ask it to ensure the profile is correct!
+        skinResolver.ensureUniqueProfile();
 
         return this;
     }
@@ -680,27 +618,7 @@ public class PlayerDisguise extends TargetedDisguise {
             return false;
         }
 
-        if (skinToUse != null && userProfile == null) {
-            currentLookup = new LibsProfileLookup() {
-                @Override
-                public void onLookup(UserProfile userProfile) {
-                    if (currentLookup != this || userProfile == null || userProfile.getTextureProperties().isEmpty()) {
-                        return;
-                    }
-
-                    setSkin(userProfile);
-
-                    currentLookup = null;
-                }
-            };
-
-            UserProfile userProfile =
-                DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup, DisguiseConfig.isContactMojangServers());
-
-            if (userProfile != null) {
-                setSkin(userProfile);
-            }
-        }
+        skinResolver.lookupSkinIfNeeded();
 
         if (isDynamicName()) {
             String name;

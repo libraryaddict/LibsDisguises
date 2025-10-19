@@ -109,7 +109,7 @@ public class ParamInfoManager {
             return new WatcherMethod[0];
         }
 
-        ArrayList<WatcherMethod> methods = new ArrayList<>(disguiseMethods.getMethods(watcherClass));
+        List<WatcherMethod> methods = new ArrayList<>(disguiseMethods.getMethods(watcherClass));
 
         if (!includeIgnored) {
             methods.removeIf(WatcherMethod::isHideFromTab);

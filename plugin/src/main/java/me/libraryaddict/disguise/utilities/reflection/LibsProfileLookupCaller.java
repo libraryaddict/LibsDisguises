@@ -5,9 +5,16 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
 import lombok.Getter;
 
+import java.util.UUID;
+
 @Getter
 public class LibsProfileLookupCaller implements ProfileLookupCallback {
     private UserProfile userProfile;
+
+    @Override
+    public void onProfileLookupSucceeded(String s, UUID uuid) {
+        userProfile = new UserProfile(uuid, s);
+    }
 
     @Override
     public void onProfileLookupFailed(String s, Exception e) {
@@ -17,7 +24,7 @@ public class LibsProfileLookupCaller implements ProfileLookupCallback {
     public void onProfileLookupFailed(GameProfile gameProfile, Exception arg1) {
     }
 
-    @Override
+    @Deprecated
     public void onProfileLookupSucceeded(GameProfile profile) {
         userProfile = ReflectionManager.getUserProfile(profile);
     }

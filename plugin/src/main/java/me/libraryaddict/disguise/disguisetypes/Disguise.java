@@ -1025,6 +1025,9 @@ public abstract class Disguise {
             getWatcher().setCustomName(name);
         }
 
+        // We fire it before the disguise marks itself as a disguise, this way the watcher values initially sent, are the correct ones if possible
+        getWatcher().onPreDisguiseStart();
+
         disguiseInUse = true;
 
         if (!DisguiseUtilities.isInvalidFile()) {

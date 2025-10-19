@@ -11,9 +11,10 @@ import java.util.Arrays;
 
 @RequiredArgsConstructor
 @Getter
+@Setter
 public class WatcherMethod {
-    @Setter
     private WatcherGetterSetter owner;
+    private WatcherMethod companionMethod;
     private final Class<? extends FlagWatcher> watcherClass;
     private final MethodHandle method;
     private final String mappedName;

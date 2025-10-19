@@ -75,6 +75,8 @@ public enum DisguiseType {
 
     @NmsAddedIn(NmsVersion.v1_13) COD,
 
+    @NmsAddedIn(NmsVersion.v1_21_R6) COPPER_GOLEM,
+
     COW,
 
     @NmsAddedIn(NmsVersion.v1_21_R3) CREAKING,
@@ -179,6 +181,8 @@ public enum DisguiseType {
     @NmsAddedIn(NmsVersion.v1_21_R2) MANGROVE_BOAT,
 
     @NmsAddedIn(NmsVersion.v1_21_R2) MANGROVE_CHEST_BOAT,
+
+    @NmsAddedIn(NmsVersion.v1_21_R6) MANNEQUIN,
 
     @NmsAddedIn(NmsVersion.v1_17) MARKER,
 
@@ -530,6 +534,10 @@ public enum DisguiseType {
 
     public boolean isArtDisplay() {
         return this == DisguiseType.ITEM_FRAME || this == DisguiseType.GLOW_ITEM_FRAME || this == DisguiseType.PAINTING;
+    }
+
+    public boolean isAvatar() {
+        return this == DisguiseType.PLAYER || this == DisguiseType.MANNEQUIN;
     }
 
     public String toReadable() {

@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.sounds;
 
+import com.github.retrooper.packetevents.protocol.entity.data.struct.WeatheringCopperState;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariant;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariants;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.CopperGolemWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class SoundGroup {
@@ -139,6 +142,13 @@ public class SoundGroup {
             WolfSoundVariant variant = ((WolfWatcher) disguise.getWatcher()).getSoundVariant();
 
             variantName = variant.getName().getKey();
+        } else if (NmsVersion.v1_21_R6.isSupported() && disguise.getWatcher() instanceof CopperGolemWatcher) {
+            WeatheringCopperState variant = ((CopperGolemWatcher) disguise.getWatcher()).getOxidation();
+
+            // Only these two variants
+            if (variant == WeatheringCopperState.WEATHERED || variant == WeatheringCopperState.OXIDIZED) {
+                variantName = variant.name().toLowerCase(Locale.ENGLISH);
+            }
         }
 
         String entityName = disguise.getType().name();

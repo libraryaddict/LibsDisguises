@@ -1,6 +1,9 @@
 package me.libraryaddict.disguise.utilities.params;
 
+import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
 import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloState;
+import com.github.retrooper.packetevents.protocol.entity.data.struct.CopperGolemState;
+import com.github.retrooper.packetevents.protocol.entity.data.struct.WeatheringCopperState;
 import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariant;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariants;
@@ -26,6 +29,7 @@ import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoColor;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoComponent;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoDisplayBrightness;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoEulerAngle;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemProfile;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemStack;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemStackArray;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoPacketEvents;
@@ -99,6 +103,7 @@ public class ParamInfoTypes {
      * Constructor values are listed here for continuity
      */
     public List<ParamInfo> getParamInfos() {
+        // If I remember correctly, some of the things in here may matter in the order they're constructed. Annoying.
         List<ParamInfo> paramInfos = new ArrayList<>();
 
         // Register enum types
@@ -226,6 +231,11 @@ public class ParamInfoTypes {
             paramInfos.add(new ParamInfoEnum(Cow.Variant.class, "Cow Variant", "The variant of a cow"));
         }
 
+        if (NmsVersion.v1_21_R6.isSupported()) {
+            paramInfos.add(new ParamInfoEnum(CopperGolemState.class, "Copper Golem State", "The state of a Copper Golem"));
+            paramInfos.add(new ParamInfoEnum(WeatheringCopperState.class, "Weathering Copper State", "The state of oxidizing copper"));
+        }
+
         paramInfos.add(new ParamInfoEnum(DisguiseConfig.NotifyBar.class, "NotifyBar", "Where the disguised indicator should appear"));
         paramInfos.add(new ParamInfoEnum(BarColor.class, "BarColor", "The color of the boss bar"));
         paramInfos.add(new ParamInfoEnum(BarStyle.class, "BarStyle", "The style of the boss bar"));
@@ -247,6 +257,7 @@ public class ParamInfoTypes {
             new ParamInfoBlockPosition(Vector3i.class, "Block Position", "Block Position (num,num,num)", "Three numbers separated by a ,"));
         paramInfos.add(new ParamInfoUserProfile(UserProfile.class, "UserProfile", "Get the userprofile here https://sessionserver.mojang" +
             ".com/session/minecraft/profile/PLAYER_UUID_GOES_HERE?unsigned=false"));
+        paramInfos.add(new ParamInfoItemProfile(ItemProfile.class, "ItemProfile", "ItemProfile as used for mannequins"));
         paramInfos.add(new ParamInfoTime(long.class, "Expiry Time",
             "Set how long the disguise lasts, <Num><Time><Num>... where <Time> is (s/sec)(m/min)(h/hour)(d/day) " +
                 "etc. 30m20secs = 30 minutes, 20 seconds"));

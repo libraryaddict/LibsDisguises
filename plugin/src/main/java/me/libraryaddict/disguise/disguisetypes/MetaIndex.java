@@ -1,7 +1,10 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
 import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloState;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataType;
+import com.github.retrooper.packetevents.protocol.entity.data.struct.CopperGolemState;
+import com.github.retrooper.packetevents.protocol.entity.data.struct.WeatheringCopperState;
 import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.protocol.entity.sniffer.SnifferState;
 import com.github.retrooper.packetevents.protocol.entity.villager.VillagerData;
@@ -30,6 +33,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.AreaEffectCloudWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArmadilloWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArmorStandWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.AvatarWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AxolotlWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BeeWatcher;
@@ -41,6 +45,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.CamelWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ChestedHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ChickenWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.CopperGolemWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CowWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CreakingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CreeperWatcher;
@@ -76,6 +81,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.ItemDisplayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ItemFrameWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LlamaWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.MannequinWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartCommandWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartFurnaceWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
@@ -265,6 +271,12 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_21_R2)
     public static MetaIndex<Boolean> ARROW_IN_GROUND = new MetaIndex<>(ArrowWatcher.class, 3, false);
 
+    @NmsAddedIn(NmsVersion.v1_21_R6)
+    public static MetaIndex<Byte> AVATAR_SKIN = new MetaIndex<>(AvatarWatcher.class, 1, (byte) 127);
+
+    @NmsAddedIn(NmsVersion.v1_21_R6)
+    public static MetaIndex<Byte> AVATAR_HAND = new MetaIndex<>(AvatarWatcher.class, 0, (byte) 1);
+
     @NmsAddedIn(NmsVersion.v1_17)
     public static MetaIndex<Axolotl.Variant> AXOLOTL_VARIANT =
         new MetaIndex<>(AxolotlWatcher.class, 0, NmsVersion.v1_17.isSupported() ? Axolotl.Variant.LUCY : null);
@@ -346,6 +358,11 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_21_R4)
     public static MetaIndex<Chicken.Variant> CHICKEN_VARIANT =
         new MetaIndex<>(ChickenWatcher.class, 0, NmsVersion.v1_21_R4.isSupported() ? Chicken.Variant.TEMPERATE : null);
+
+    public static MetaIndex<WeatheringCopperState> COPPER_GOLEM_OXIDATION =
+        new MetaIndex<>(CopperGolemWatcher.class, 0, WeatheringCopperState.UNAFFECTED);
+
+    public static MetaIndex<CopperGolemState> COPPER_GOLEM_STATE = new MetaIndex<>(CopperGolemWatcher.class, 1, CopperGolemState.IDLE);
 
     @NmsAddedIn(NmsVersion.v1_21_R4)
     public static MetaIndex<Cow.Variant> COW_VARIANT =
@@ -704,6 +721,18 @@ public class MetaIndex<Y> {
      */
     public static MetaIndex<Llama.Color> LLAMA_COLOR = new MetaIndex<>(LlamaWatcher.class, 2, Llama.Color.CREAMY);
 
+    /**
+     * On a mannequin, the skin name we're using is stored in the ItemProfile if it's called by the skin name
+     * If the s
+     */
+    public static MetaIndex<ItemProfile> MANNEQUIN_PROFILE =
+        new MetaIndex<>(MannequinWatcher.class, 0, new ItemProfile(null, null, new ArrayList<>()));
+
+    public static MetaIndex<Boolean> MANNEQUIN_IMMOVABLE = new MetaIndex<>(MannequinWatcher.class, 1, false);
+
+    public static MetaIndex<Optional<Component>> MANNEQUIN_DESCRIPTION =
+        new MetaIndex<>(MannequinWatcher.class, 2, Optional.of(Component.translatable("entity.minecraft.mannequin.label")));
+
     public static MetaIndex<Integer> MINECART_SHAKING_POWER = new MetaIndex<>(MinecartWatcher.class, 0, 0);
 
     public static MetaIndex<Integer> MINECART_SHAKING_DIRECTION = new MetaIndex<>(MinecartWatcher.class, 1, 1);
@@ -814,15 +843,25 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Float> PLAYER_ABSORPTION = new MetaIndex<>(PlayerWatcher.class, 0, 0F);
 
+    @NmsRemovedIn(NmsVersion.v1_21_R6)
     public static MetaIndex<Byte> PLAYER_HAND = new MetaIndex<>(PlayerWatcher.class, 3, (byte) 0);
 
     public static MetaIndex<Integer> PLAYER_SCORE = new MetaIndex<>(PlayerWatcher.class, 1, 0);
 
+    @NmsRemovedIn(NmsVersion.v1_21_R6)
     public static MetaIndex<Byte> PLAYER_SKIN = new MetaIndex<>(PlayerWatcher.class, 2, (byte) 127);
 
-    public static MetaIndex<NBTCompound> PLAYER_LEFT_SHOULDER_ENTITY = new MetaIndex<>(PlayerWatcher.class, 4, new NBTCompound());
+    @NmsRemovedIn(NmsVersion.v1_21_R6)
+    public static MetaIndex<NBTCompound> PLAYER_LEFT_SHOULDER_ENTITY_OLD = new MetaIndex<>(PlayerWatcher.class, 4, new NBTCompound());
 
-    public static MetaIndex<NBTCompound> PLAYER_RIGHT_SHOULDER_ENTITY = new MetaIndex<>(PlayerWatcher.class, 5, new NBTCompound());
+    @NmsRemovedIn(NmsVersion.v1_21_R6)
+    public static MetaIndex<NBTCompound> PLAYER_RIGHT_SHOULDER_ENTITY_OLD = new MetaIndex<>(PlayerWatcher.class, 5, new NBTCompound());
+
+    @NmsAddedIn(NmsVersion.v1_21_R6)
+    public static MetaIndex<Optional<Integer>> PLAYER_LEFT_SHOULDER_ENTITY = new MetaIndex<>(PlayerWatcher.class, 4, Optional.empty());
+
+    @NmsAddedIn(NmsVersion.v1_21_R6)
+    public static MetaIndex<Optional<Integer>> PLAYER_RIGHT_SHOULDER_ENTITY = new MetaIndex<>(PlayerWatcher.class, 5, Optional.empty());
 
     public static MetaIndex<Boolean> POLAR_BEAR_STANDING = new MetaIndex<>(PolarBearWatcher.class, 0, false);
 

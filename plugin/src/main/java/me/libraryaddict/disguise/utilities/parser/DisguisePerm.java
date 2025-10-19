@@ -13,6 +13,7 @@ public class DisguisePerm {
     private String permName;
     @Getter
     private final String regexedName;
+    @Getter
     private boolean customDisguise;
 
     public DisguisePerm(DisguiseType disguiseType) {
@@ -25,10 +26,6 @@ public class DisguisePerm {
         permName = disguisePerm;
         customDisguise = true;
         regexedName = toReadable().replaceAll("[ |_]", "").toLowerCase(Locale.ENGLISH);
-    }
-
-    public boolean isCustomDisguise() {
-        return customDisguise;
     }
 
     public Class getEntityClass() {

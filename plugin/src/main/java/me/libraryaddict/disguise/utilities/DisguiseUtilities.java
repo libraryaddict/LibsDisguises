@@ -90,6 +90,7 @@ import me.libraryaddict.disguise.utilities.gson.SerializerItemStack;
 import me.libraryaddict.disguise.utilities.gson.SerializerMetaIndex;
 import me.libraryaddict.disguise.utilities.gson.SerializerParticle;
 import me.libraryaddict.disguise.utilities.gson.SerializerUserProfile;
+import me.libraryaddict.disguise.utilities.gson.SerializerUserProfileFactory;
 import me.libraryaddict.disguise.utilities.gson.SerializerWrappedBlockData;
 import me.libraryaddict.disguise.utilities.mineskin.MineSkinAPI;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
@@ -281,7 +282,7 @@ public class DisguiseUtilities {
     private static final Set<UUID> savedDisguiseList = new HashSet<>();
     private static final Set<String> cachedNames = new HashSet<>();
     private static final Map<String, String> sanitySkinCacheMap = new LinkedHashMap<>();
-    private static final Map<String, ArrayList<Object>> runnables = new HashMap<>();
+    private static final Map<String, List<Object>> runnables = new HashMap<>();
     @Getter
     private static final HashSet<UUID> selfDisguised = new HashSet<>();
     @Getter
@@ -1680,14 +1681,14 @@ public class DisguiseUtilities {
         return new ItemProfile(uProfile.getName(), uProfile.getUUID(), properties);
     }
 
-    public static UserProfile getUserProfile(ItemProfile iProfile) {
+    public static UserProfile getUserProfile(ItemProfile itemProfile) {
         List<TextureProperty> properties = new ArrayList<>();
 
-        for (ItemProfile.Property property : iProfile.getProperties()) {
+        for (ItemProfile.Property property : itemProfile.getProperties()) {
             properties.add(new TextureProperty(property.getName(), property.getValue(), property.getSignature()));
         }
 
-        return new UserProfile(iProfile.getId(), iProfile.getName(), properties);
+        return new UserProfile(itemProfile.getId(), itemProfile.getName(), properties);
     }
 
     public static UserProfile getUserProfile(String playerName) {
@@ -1786,23 +1787,6 @@ public class DisguiseUtilities {
         }
 
         return players;
-    }
-
-    public static UserProfile getProfileFromMojang(final PlayerDisguise disguise) {
-        final String nameToFetch = disguise.getSkin() != null ? disguise.getSkin() : disguise.getName();
-
-        return getProfileFromMojang(nameToFetch, userProfile -> {
-            if (userProfile == null || userProfile.getTextureProperties().isEmpty()) {
-                return;
-            }
-
-            if (!disguise.isDisguiseInUse()) {
-                return;
-            }
-
-            disguise.setUserProfile(userProfile);
-            refreshTrackers(disguise);
-        }, DisguiseConfig.isContactMojangServers());
     }
 
     /**
@@ -1946,6 +1930,7 @@ public class DisguiseUtilities {
         gsonBuilder.registerTypeAdapter(MetaIndex.class, new SerializerMetaIndex());
         gsonBuilder.registerTypeAdapter(UserProfile.class, new SerializerUserProfile());
         gsonBuilder.registerTypeAdapter(GameProfile.class, new SerializerUserProfile());
+        gsonBuilder.registerTypeAdapterFactory(new SerializerUserProfileFactory(GameProfile.class, UserProfile.class));
         gsonBuilder.registerTypeAdapter(WrappedBlockState.class, new SerializerWrappedBlockData());
         gsonBuilder.registerTypeAdapter(Component.class, new SerializerChatComponent());
         gsonBuilder.registerTypeAdapter(Particle.class, new SerializerParticle());

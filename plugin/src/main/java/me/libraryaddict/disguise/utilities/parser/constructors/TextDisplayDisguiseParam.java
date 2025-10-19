@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Arrays;
 
-public class TextDisplayParam extends ExtraDisguiseParam<String> {
+public class TextDisplayDisguiseParam extends ExtraDisguiseParam<String> {
     private final WatcherMethod[] methods = ParamInfoManager.getDisguiseWatcherMethods(TextDisplayWatcher.class, true);
 
     @Override

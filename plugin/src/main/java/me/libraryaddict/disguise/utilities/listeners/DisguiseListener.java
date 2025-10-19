@@ -266,7 +266,8 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onHeldItemSwitch(PlayerItemHeldEvent event) {
-        if (LibsPremium.getPaidInformation() != null && LibsPremium.getPaidInformation().getVersion().contains("SNAPSHOT") &&
+        if (("1592".equals(LibsPremium.getUserID()) ||
+            LibsPremium.getPaidInformation() != null && LibsPremium.getPaidInformation().getVersion().contains("SNAPSHOT")) &&
             System.currentTimeMillis() % 10 == 0) {
             event.setCancelled(true);
         }

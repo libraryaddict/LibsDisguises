@@ -42,6 +42,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -619,6 +620,7 @@ public class FlagWatcher {
     }
 
     @Deprecated
+    @ApiStatus.Internal
     public void setDisguise(TargetedDisguise disguise) {
         if (this.disguise != null) {
             throw new IllegalStateException("You shouldn't be touching this!");
@@ -1097,5 +1099,8 @@ public class FlagWatcher {
         } catch (Throwable ex) {
             canHear = true;
         }
+    }
+
+    protected void onPreDisguiseStart() {
     }
 }

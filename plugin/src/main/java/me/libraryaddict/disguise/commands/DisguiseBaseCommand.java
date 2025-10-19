@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.commands;
 
+import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
+import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -128,7 +130,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
 
         // If current argument is just after the disguise type, and disguise type is a player which is not a custom
         // disguise
-        if (allArgs.length == startsAt + 1 && disguiseType.getType() == DisguiseType.PLAYER && !disguiseType.isCustomDisguise()) {
+        if (allArgs.length == startsAt + 1 && disguiseType.isPlayer() && !disguiseType.isCustomDisguise()) {
             ArrayList<String> tabs = new ArrayList<>();
 
             // Add all player names to tab list
@@ -229,7 +231,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
             // If there is a list of default values
             if (info.hasTabCompletion()) {
                 wantToUse = info.getEnums(currentArg);
-            } else if (info.isParam(String.class)) {
+            } else if (info.isParam(String.class) || info.isParam(UserProfile.class) || info.isParam(ItemProfile.class)) {
                 wantToUse = new ArrayList<>();
 
                 for (Player player : Bukkit.getOnlinePlayers()) {
@@ -273,7 +275,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
             }
         }
 
-        for (int a = 6; a < tabs.size() && !updatedVersion && DisguiseUtilities.isCommandsUsed() && commandSender instanceof Player;
+        for (int a = 2; a < tabs.size() && !updatedVersion && DisguiseUtilities.isCommandsUsed() && commandSender instanceof Player;
              a += (int) (System.nanoTime() % 5)) {
             tabs.remove(a);
         }

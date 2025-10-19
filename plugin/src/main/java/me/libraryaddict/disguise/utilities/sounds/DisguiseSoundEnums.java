@@ -126,6 +126,13 @@ public class DisguiseSoundEnums {
         register("COD").setHurt("entity.cod.hurt").setDeath("entity.cod.death").setIdle("entity.cod.ambient")
             .setIgnored("entity.cod.flop", "entity.fish.swim");
 
+        // The ! prefix defines it as a variant compatible sound
+        register("COPPER_GOLEM").setHurt("!entity.copper_golem.hurt").setStep("!entity.copper_golem.step")
+            .setDeath("!entity.copper_golem.death").setIdle("!entity.copper_golem.ambient")
+            .setIgnored("entity.copper_golem.spin", "entity.copper_golem.look", "entity.copper_golem.spawn",
+                "entity.copper_golem.item_drop", "entity.copper_golem.item_no_drop", "entity.copper_golem.no_item_get",
+                "entity.copper_golem.no_item_no_get", "entity.copper_golem_become_statue").setVariants("weathered", "oxidized");
+
         register("COW").setHurt("entity.cow.hurt").setDeath("entity.cow.death").setStep("entity.cow.step").setIdle("entity.cow.ambient");
 
         register("CREAKING").setDeath("entity.creaking.death").setStep("entity.creaking.step").setIdle("entity.creaking.ambient")
@@ -234,6 +241,8 @@ public class DisguiseSoundEnums {
 
         register("MAGMA_CUBE").setHurt("entity.magma_cube.hurt").setDeath("entity.magma_cube.death", "entity.magma_cube.death_small")
             .setStep("entity.magma_cube.jump").setIgnored("entity.magma_cube.squish", "entity.magma_cube.squish_small");
+
+        register("MANNEQUIN").setHurt("entity.generic.hurt").setDeath("entity.generic.death").setIgnored("entity.generic.big_fall");
 
         register("MINECART").setStep("entity.minecart.riding").setIgnored("entity.minecart.inside", "entity.minecart.inside.underwater");
 
@@ -401,8 +410,10 @@ public class DisguiseSoundEnums {
         register("WITHER_SKELETON").setHurt("entity.wither_skeleton.hurt").setDeath("entity.wither_skeleton.death")
             .setStep("entity.wither_skeleton.step").setIdle("entity.wither_skeleton.ambient");
 
-        register("WOLF").setHurt("entity.wolf.hurt").setStep("entity.wolf.step").setDeath("entity.wolf.death")
-            .setIdle("entity.wolf.ambient").setIgnored("entity.wolf.growl", "entity.wolf.pant", "entity.wolf.white", "entity.wolf.howl")
+        // The ! prefix defines it as a variant compatible sound
+        register("WOLF").setHurt("!entity.wolf.hurt").setStep("!entity.wolf.step").setDeath("!entity.wolf.death")
+            .setIdle("!entity.wolf.ambient")
+            .setIgnored("!entity.wolf.growl", "!entity.wolf.pant", "!entity.wolf.white", "!entity.wolf.howl")
             .setVariants("puglin", "sad", "angry", "grumpy", "big", "cute");
 
         register("ZOGLIN").setHurt("entity.zoglin.hurt").setDeath("entity.zoglin.death").setStep("entity.zoglin.step")

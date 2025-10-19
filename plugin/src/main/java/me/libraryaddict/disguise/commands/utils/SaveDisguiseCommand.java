@@ -78,9 +78,10 @@ public class SaveDisguiseCommand implements CommandExecutor {
             return true;
         }
 
-        // If going to be doing a player disguise...
-        if (args.length >= 2 && args[0].equalsIgnoreCase("player")) {
-            int i = 2;
+        // If going to be doing an avatar disguise...
+        // We always use 2 params, because mannequin needs 'setSkin' to work
+        if (args.length >= 2 && (args[0].equalsIgnoreCase("player") || args[0].equalsIgnoreCase("mannequin"))) {
+            int i = args[0].equalsIgnoreCase("player") ? 2 : 1;
 
             for (; i < args.length; i++) {
                 if (!args[i].equalsIgnoreCase("setskin")) {
@@ -94,7 +95,7 @@ public class SaveDisguiseCommand implements CommandExecutor {
             // Player Notch = 2 - Add 2
             // player Notch setskin = 2 - Add 1
             // player Notch setskin Notch = 2 - Add 0
-            if (args.length < i + 1) {
+            if (args.length <= i) {
                 args = Arrays.copyOf(args, Math.max(args.length, i + 2));
                 i = args.length - 2;
 

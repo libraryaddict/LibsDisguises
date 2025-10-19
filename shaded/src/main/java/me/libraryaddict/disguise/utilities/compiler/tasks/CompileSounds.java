@@ -49,11 +49,16 @@ public class CompileSounds {
 
                 if (soundValue.contains("*")) {
                     soundValue = String.join(",", getMatchingFields(soundValue));
-                } else if (variant != null) {
-                    // Get the second period, so entity.wolf<.>stuff.stuff
-                    int period = soundValue.indexOf(".", soundValue.indexOf(".") + 2);
+                } else if (soundValue.startsWith("!")) {
+                    // Remove the !, so that we can register the non-variant properly
+                    soundValue = soundValue.substring(1);
 
-                    soundValue = soundValue.substring(0, period) + "_" + variant + soundValue.substring(period);
+                    if (variant != null) {
+                        // Get the second period, so entity.wolf<.>stuff.stuff
+                        int period = soundValue.indexOf(".", soundValue.indexOf(".") + 2);
+
+                        soundValue = soundValue.substring(0, period) + "_" + variant + soundValue.substring(period);
+                    }
                 }
 
                 if (i++ > 0) {

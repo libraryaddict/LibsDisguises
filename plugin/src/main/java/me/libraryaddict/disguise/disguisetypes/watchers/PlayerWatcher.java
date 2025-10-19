@@ -10,17 +10,56 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.entity.Parrot;
-import org.bukkit.inventory.MainHand;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class PlayerWatcher extends LivingWatcher {
+import java.util.Optional;
+
+public class PlayerWatcher extends AvatarWatcher {
     private boolean alwaysShowInTab = DisguiseConfig.isShowDisguisedPlayersInTab();
 
     public PlayerWatcher(Disguise disguise) {
         super(disguise);
+    }
 
-        setData(MetaIndex.PLAYER_SKIN, MetaIndex.PLAYER_SKIN.getDefault());
-        setData(MetaIndex.PLAYER_HAND, (byte) 1); // I may be left handed, but the others are right
+    @Override
+    protected MetaIndex<Byte> getSkinMeta() {
+        if (!NmsVersion.v1_21_R6.isSupported()) {
+            return MetaIndex.PLAYER_SKIN;
+        }
+
+        return super.getSkinMeta();
+    }
+
+    @Override
+    protected MetaIndex<Byte> getHandMeta() {
+        if (!NmsVersion.v1_21_R6.isSupported()) {
+            return MetaIndex.PLAYER_HAND;
+        }
+
+        return super.getHandMeta();
+    }
+
+    public @NotNull UserProfile getSkin() {
+        return ((PlayerDisguise) getDisguise()).getUserProfile();
+    }
+
+    @Override
+    public @Nullable String getSkinName() {
+        return ((PlayerDisguise) getDisguise()).getSkin();
+    }
+
+    @Override
+    public void setSkin(@Nullable String playerName) {
+        ((PlayerDisguise) getDisguise()).setSkin(playerName);
+    }
+
+    @Override
+    @RandomDefaultValue
+    public void setSkin(@Nullable UserProfile profile) {
+        ((PlayerDisguise) getDisguise()).setSkin(profile);
     }
 
     public boolean isDisplayedInTab() {
@@ -68,137 +107,46 @@ public class PlayerWatcher extends LivingWatcher {
         return watcher;
     }
 
-    public MainHand getMainHand() {
-        return MainHand.values()[getData(MetaIndex.PLAYER_HAND)];
-    }
-
-    public void setMainHand(MainHand mainHand) {
-        sendData(MetaIndex.PLAYER_HAND, (byte) mainHand.ordinal());
-    }
-
-    // Bit 0 (0x01): Cape enabled
-    // Bit 1 (0x02): Jacket enabled
-    // Bit 2 (0x04): Left Sleeve enabled
-    // Bit 3 (0x08): Right Sleeve enabled
-    // Bit 4 (0x10): Left Pants Leg enabled
-    // Bit 5 (0x20): Right Pants Leg enabled
-    // Bit 6 (0x40): Hat enabled
-
-    private boolean isSkinFlag(int i) {
-        return (getData(MetaIndex.PLAYER_SKIN) & 1 << i) != 0;
-    }
-
-    public boolean isCapeEnabled() {
-        return isSkinFlag(1);
-    }
-
-    public void setCapeEnabled(boolean enabled) {
-        setSkinFlags(0, enabled);
-
-        sendData(MetaIndex.PLAYER_SKIN);
-    }
-
-    public boolean isJacketEnabled() {
-        return isSkinFlag(1);
-    }
-
-    public void setJacketEnabled(boolean enabled) {
-        setSkinFlags(1, enabled);
-
-        sendData(MetaIndex.PLAYER_SKIN);
-    }
-
-    public boolean isLeftSleeveEnabled() {
-        return isSkinFlag(2);
-    }
-
-    public void setLeftSleeveEnabled(boolean enabled) {
-        setSkinFlags(2, enabled);
-
-        sendData(MetaIndex.PLAYER_SKIN);
-    }
-
-    public boolean isRightSleeveEnabled() {
-        return isSkinFlag(3);
-    }
-
-    public void setRightSleeveEnabled(boolean enabled) {
-        setSkinFlags(3, enabled);
-
-        sendData(MetaIndex.PLAYER_SKIN);
-    }
-
-    public boolean isLeftPantsEnabled() {
-        return isSkinFlag(4);
-    }
-
-    public void setLeftPantsEnabled(boolean enabled) {
-        setSkinFlags(4, enabled);
-
-        sendData(MetaIndex.PLAYER_SKIN);
-    }
-
-    public boolean isRightPantsEnabled() {
-        return isSkinFlag(5);
-    }
-
-    public void setRightPantsEnabled(boolean enabled) {
-        setSkinFlags(5, enabled);
-
-        sendData(MetaIndex.PLAYER_SKIN);
-    }
-
-    public boolean isHatEnabled() {
-        return isSkinFlag(6);
-    }
-
-    public void setHatEnabled(boolean enabled) {
-        setSkinFlags(6, enabled);
-
-        sendData(MetaIndex.PLAYER_SKIN);
-    }
-
-    public UserProfile getSkin() {
-        return ((PlayerDisguise) getDisguise()).getUserProfile();
-    }
-
-    public void setSkin(String playerName) {
-        ((PlayerDisguise) getDisguise()).setSkin(playerName);
-    }
-
-    @RandomDefaultValue
-    public void setSkin(UserProfile profile) {
-        ((PlayerDisguise) getDisguise()).setSkin(profile);
-    }
-
-    private void setSkinFlags(int i, boolean flag) {
-        byte b0 = getData(MetaIndex.PLAYER_SKIN);
-
-        if (flag) {
-            setData(MetaIndex.PLAYER_SKIN, (byte) (b0 | 1 << i));
-        } else {
-            setData(MetaIndex.PLAYER_SKIN, (byte) (b0 & ~(1 << i)));
+    public @Nullable Parrot.Variant getRightShoulderParrot() {
+        if (!NmsVersion.v1_21_R6.isSupported()) {
+            return getParrot(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY_OLD);
         }
+
+        return getData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY).map(integer -> Parrot.Variant.values()[integer]).orElse(null);
     }
 
-    public Parrot.Variant getRightShoulderParrot() {
-        return getParrot(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY);
+    public void setRightShoulderParrot(@Nullable Parrot.Variant variant) {
+        if (!NmsVersion.v1_21_R6.isSupported()) {
+            setParrot(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY_OLD, variant);
+            return;
+        }
+
+        sendData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY, variant == null ? Optional.empty() : Optional.of(variant.ordinal()));
     }
 
-    public void setRightShoulderParrot(Parrot.Variant variant) {
-        setParrot(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY, variant);
+    public @Nullable Parrot.Variant getLeftShoulderParrot() {
+        if (!NmsVersion.v1_21_R6.isSupported()) {
+            return getParrot(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY_OLD);
+        }
+
+        return getData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY).map(integer -> Parrot.Variant.values()[integer]).orElse(null);
     }
 
-    public Parrot.Variant getLeftShoulderParrot() {
-        return getParrot(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY);
-    }
+    public void setLeftShoulderParrot(@Nullable Parrot.Variant variant) {
+        if (!NmsVersion.v1_21_R6.isSupported()) {
+            setParrot(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY_OLD, variant);
+            return;
+        }
 
-    public void setLeftShoulderParrot(Parrot.Variant variant) {
-        setParrot(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY, variant);
+        sendData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY, variant == null ? Optional.empty() : Optional.of(variant.ordinal()));
     }
 
     public boolean isRightShoulderHasParrot() {
-        return getData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY).getStringTagOrNull("id") != null;
+        if (!NmsVersion.v1_21_R6.isSupported()) {
+            return getData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY_OLD).getStringTagOrNull("id") != null;
+        }
+
+        return getData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY).isPresent();
     }
 
     public void setRightShoulderHasParrot(boolean hasParrot) {
@@ -214,7 +162,11 @@ public class PlayerWatcher extends LivingWatcher {
     }
 
     public boolean isLeftShoulderHasParrot() {
-        return getData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY).getStringTagOrNull("id") != null;
+        if (!NmsVersion.v1_21_R6.isSupported()) {
+            return getData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY_OLD).getStringTagOrNull("id") != null;
+        }
+
+        return getData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY).isPresent();
     }
 
     public void setLeftShoulderHasParrot(boolean hasParrot) {
@@ -242,7 +194,7 @@ public class PlayerWatcher extends LivingWatcher {
         return Parrot.Variant.values()[number.getAsInt()];
     }
 
-    private void setParrot(MetaIndex<NBTCompound> meta, Parrot.Variant variant) {
+    private void setParrot(MetaIndex<NBTCompound> meta, @Nullable Parrot.Variant variant) {
         NBTCompound nbt = new NBTCompound();
 
         if (variant != null) {
