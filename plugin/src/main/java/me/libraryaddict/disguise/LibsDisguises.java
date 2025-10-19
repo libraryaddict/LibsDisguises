@@ -232,7 +232,7 @@ public class LibsDisguises extends JavaPlugin {
                 getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is intended for " +
                     Arrays.stream(NmsVersion.values()).filter(v -> v != NmsVersion.UNSUPPORTED).map(NmsVersion::getCompressedVersions)
                         .collect(Collectors.joining(", ")) + "!");
-                getPluginLoader().disablePlugin(this);
+                Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
 
