@@ -88,14 +88,16 @@ loadScripts(document, 'script');</script>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
 <div class="inheritance"><a href="../FlagWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes">me.libraryaddict.disguise.disguisetypes.FlagWatcher</a>
 <div class="inheritance"><a href="LivingWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher</a>
+<div class="inheritance"><a href="AvatarWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">me.libraryaddict.disguise.disguisetypes.watchers.AvatarWatcher</a>
 <div class="inheritance">me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher</div>
+</div>
 </div>
 </div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">PlayerWatcher</span>
-<span class="extends-implements">extends <a href="LivingWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">LivingWatcher</a></span></div>
+<span class="extends-implements">extends <a href="AvatarWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AvatarWatcher</a></span></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -126,11 +128,11 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlayerWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">PlayerWatcher</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#clone(me.libraryaddict.disguise.disguisetypes.Disguise)" class="member-name-link">clone</a><wbr>(<a href="../Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a>&nbsp;disguise)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.bukkit.entity.Parrot.Variant</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getLeftShoulderParrot()" class="member-name-link">getLeftShoulderParrot</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="../MetaIndex.html" title="class in me.libraryaddict.disguise.disguisetypes">MetaIndex</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Byte.html" title="class or interface in java.lang" class="external-link">Byte</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getHandMeta()" class="member-name-link">getHandMeta</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.bukkit.inventory.MainHand</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMainHand()" class="member-name-link">getMainHand</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.bukkit.entity.Parrot.Variant</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getLeftShoulderParrot()" class="member-name-link">getLeftShoulderParrot</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getName()" class="member-name-link">getName</a>()</code></div>
@@ -138,80 +140,46 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.bukkit.entity.Parrot.Variant</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getRightShoulderParrot()" class="member-name-link">getRightShoulderParrot</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.github.retrooper.packetevents.protocol.player.UserProfile</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@NotNull com.github.retrooper.packetevents.protocol.player.UserProfile</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSkin()" class="member-name-link">getSkin</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="../MetaIndex.html" title="class in me.libraryaddict.disguise.disguisetypes">MetaIndex</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Byte.html" title="class or interface in java.lang" class="external-link">Byte</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSkinMeta()" class="member-name-link">getSkinMeta</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSkinName()" class="member-name-link">getSkinName</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">If the skin was retrieved via a username, this is set to indicate the player used</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTablistName()" class="member-name-link">getTablistName</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isCapeEnabled()" class="member-name-link">isCapeEnabled</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isDisplayedInTab()" class="member-name-link">isDisplayedInTab</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isHatEnabled()" class="member-name-link">isHatEnabled</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isJacketEnabled()" class="member-name-link">isJacketEnabled</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isLeftPantsEnabled()" class="member-name-link">isLeftPantsEnabled</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isDisplayedInTab()" class="member-name-link">isDisplayedInTab</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isLeftShoulderHasParrot()" class="member-name-link">isLeftShoulderHasParrot</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isLeftSleeveEnabled()" class="member-name-link">isLeftSleeveEnabled</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNameVisible()" class="member-name-link">isNameVisible</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isRightPantsEnabled()" class="member-name-link">isRightPantsEnabled</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNameVisible()" class="member-name-link">isNameVisible</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isRightShoulderHasParrot()" class="member-name-link">isRightShoulderHasParrot</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isRightSleeveEnabled()" class="member-name-link">isRightSleeveEnabled</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setCapeEnabled(boolean)" class="member-name-link">setCapeEnabled</a><wbr>(boolean&nbsp;enabled)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDisplayedInTab(boolean)" class="member-name-link">setDisplayedInTab</a><wbr>(boolean&nbsp;showPlayerInTab)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setHatEnabled(boolean)" class="member-name-link">setHatEnabled</a><wbr>(boolean&nbsp;enabled)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setLeftShoulderHasParrot(boolean)" class="member-name-link">setLeftShoulderHasParrot</a><wbr>(boolean&nbsp;hasParrot)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setJacketEnabled(boolean)" class="member-name-link">setJacketEnabled</a><wbr>(boolean&nbsp;enabled)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setLeftShoulderParrot(org.bukkit.entity.Parrot.Variant)" class="member-name-link">setLeftShoulderParrot</a><wbr>(org.bukkit.entity.Parrot.Variant&nbsp;variant)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setLeftPantsEnabled(boolean)" class="member-name-link">setLeftPantsEnabled</a><wbr>(boolean&nbsp;enabled)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setName(java.lang.String)" class="member-name-link">setName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setLeftShoulderHasParrot(boolean)" class="member-name-link">setLeftShoulderHasParrot</a><wbr>(boolean&nbsp;hasParrot)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setLeftShoulderParrot(org.bukkit.entity.Parrot.Variant)" class="member-name-link">setLeftShoulderParrot</a><wbr>(org.bukkit.entity.Parrot.Variant&nbsp;variant)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setLeftSleeveEnabled(boolean)" class="member-name-link">setLeftSleeveEnabled</a><wbr>(boolean&nbsp;enabled)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setMainHand(org.bukkit.inventory.MainHand)" class="member-name-link">setMainHand</a><wbr>(org.bukkit.inventory.MainHand&nbsp;mainHand)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setName(java.lang.String)" class="member-name-link">setName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setNameVisible(boolean)" class="member-name-link">setNameVisible</a><wbr>(boolean&nbsp;nameVisible)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setRightPantsEnabled(boolean)" class="member-name-link">setRightPantsEnabled</a><wbr>(boolean&nbsp;enabled)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setNameVisible(boolean)" class="member-name-link">setNameVisible</a><wbr>(boolean&nbsp;nameVisible)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setRightShoulderHasParrot(boolean)" class="member-name-link">setRightShoulderHasParrot</a><wbr>(boolean&nbsp;hasParrot)</code></div>
@@ -220,26 +188,26 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setRightShoulderParrot(org.bukkit.entity.Parrot.Variant)" class="member-name-link">setRightShoulderParrot</a><wbr>(org.bukkit.entity.Parrot.Variant&nbsp;variant)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setRightSleeveEnabled(boolean)" class="member-name-link">setRightSleeveEnabled</a><wbr>(boolean&nbsp;enabled)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSkin(com.github.retrooper.packetevents.protocol.player.UserProfile)" class="member-name-link">setSkin</a><wbr>(@Nullable com.github.retrooper.packetevents.protocol.player.UserProfile&nbsp;profile)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSkin(com.github.retrooper.packetevents.protocol.player.UserProfile)" class="member-name-link">setSkin</a><wbr>(com.github.retrooper.packetevents.protocol.player.UserProfile&nbsp;profile)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSkin(java.lang.String)" class="member-name-link">setSkin</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;playerName)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSkin(java.lang.String)" class="member-name-link">setSkin</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;playerName)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setTablistName(java.lang.String)" class="member-name-link">setTablistName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;tablistName)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setTablistName(java.lang.String)" class="member-name-link">setTablistName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;tablistName)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
+<div class="inherited-list">
+<h3 id="methods-inherited-from-class-me.libraryaddict.disguise.disguisetypes.watchers.AvatarWatcher">Methods inherited from class&nbsp;me.libraryaddict.disguise.disguisetypes.watchers.<a href="AvatarWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AvatarWatcher</a></h3>
+<code><a href="AvatarWatcher.html#getMainHand()">getMainHand</a>, <a href="AvatarWatcher.html#isCapeEnabled()">isCapeEnabled</a>, <a href="AvatarWatcher.html#isHatEnabled()">isHatEnabled</a>, <a href="AvatarWatcher.html#isJacketEnabled()">isJacketEnabled</a>, <a href="AvatarWatcher.html#isLeftPantsEnabled()">isLeftPantsEnabled</a>, <a href="AvatarWatcher.html#isLeftSleeveEnabled()">isLeftSleeveEnabled</a>, <a href="AvatarWatcher.html#isRightPantsEnabled()">isRightPantsEnabled</a>, <a href="AvatarWatcher.html#isRightSleeveEnabled()">isRightSleeveEnabled</a>, <a href="AvatarWatcher.html#setCapeEnabled(boolean)">setCapeEnabled</a>, <a href="AvatarWatcher.html#setHatEnabled(boolean)">setHatEnabled</a>, <a href="AvatarWatcher.html#setJacketEnabled(boolean)">setJacketEnabled</a>, <a href="AvatarWatcher.html#setLeftPantsEnabled(boolean)">setLeftPantsEnabled</a>, <a href="AvatarWatcher.html#setLeftSleeveEnabled(boolean)">setLeftSleeveEnabled</a>, <a href="AvatarWatcher.html#setMainHand(org.bukkit.inventory.MainHand)">setMainHand</a>, <a href="AvatarWatcher.html#setRightPantsEnabled(boolean)">setRightPantsEnabled</a>, <a href="AvatarWatcher.html#setRightSleeveEnabled(boolean)">setRightSleeveEnabled</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher">Methods inherited from class&nbsp;me.libraryaddict.disguise.disguisetypes.watchers.<a href="LivingWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">LivingWatcher</a></h3>
 <code><a href="LivingWatcher.html#addEntityAnimations(me.libraryaddict.disguise.disguisetypes.MetaIndex,byte,byte)">addEntityAnimations</a>, <a href="LivingWatcher.html#addParticle(com.github.retrooper.packetevents.protocol.particle.Particle)">addParticle</a>, <a href="LivingWatcher.html#addPotionEffect(org.bukkit.potion.PotionEffectType)">addPotionEffect</a>, <a href="LivingWatcher.html#getArrowsSticking()">getArrowsSticking</a>, <a href="LivingWatcher.html#getBedPosition()">getBedPosition</a>, <a href="LivingWatcher.html#getHealth()">getHealth</a>, <a href="LivingWatcher.html#getParticles()">getParticles</a>, <a href="LivingWatcher.html#getParticlesColor()">getParticlesColor</a>, <a href="LivingWatcher.html#getPotionEffects()">getPotionEffects</a>, <a href="LivingWatcher.html#getScale()">getScale</a>, <a href="LivingWatcher.html#hasPotionEffect(org.bukkit.potion.PotionEffectType)">hasPotionEffect</a>, <a href="LivingWatcher.html#isMainHandRaised()">isMainHandRaised</a>, <a href="LivingWatcher.html#isOffhandRaised()">isOffhandRaised</a>, <a href="LivingWatcher.html#isPotionParticlesAmbient()">isPotionParticlesAmbient</a>, <a href="LivingWatcher.html#isRightClicking()">isRightClicking</a>, <a href="LivingWatcher.html#isSpinning()">isSpinning</a>, <a href="LivingWatcher.html#removeParticles(com.github.retrooper.packetevents.protocol.particle.Particle...)">removeParticles</a>, <a href="LivingWatcher.html#removePotionEffect(org.bukkit.potion.PotionEffectType)">removePotionEffect</a>, <a href="LivingWatcher.html#setArrowsSticking(int)">setArrowsSticking</a>, <a href="LivingWatcher.html#setBedPosition(com.github.retrooper.packetevents.util.Vector3i)">setBedPosition</a>, <a href="LivingWatcher.html#setHealth(float)">setHealth</a>, <a href="LivingWatcher.html#setMainHandRaised(boolean)">setMainHandRaised</a>, <a href="LivingWatcher.html#setMaxHealth(double)">setMaxHealth</a>, <a href="LivingWatcher.html#setOffhandRaised(boolean)">setOffhandRaised</a>, <a href="LivingWatcher.html#setParticlesColor(org.bukkit.Color)">setParticlesColor</a>, <a href="LivingWatcher.html#setPotionParticlesAmbient(boolean)">setPotionParticlesAmbient</a>, <a href="LivingWatcher.html#setRightClicking(boolean)">setRightClicking</a>, <a href="LivingWatcher.html#setScale(java.lang.Double)">setScale</a>, <a href="LivingWatcher.html#setSpinning(boolean)">setSpinning</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-me.libraryaddict.disguise.disguisetypes.FlagWatcher">Methods inherited from class&nbsp;me.libraryaddict.disguise.disguisetypes.<a href="../FlagWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes">FlagWatcher</a></h3>
-<code><a href="../FlagWatcher.html#convert(org.bukkit.entity.Player,java.util.List)">convert</a>, <a href="../FlagWatcher.html#getArmor()">getArmor</a>, <a href="../FlagWatcher.html#getBoots()">getBoots</a>, <a href="../FlagWatcher.html#getChestplate()">getChestplate</a>, <a href="../FlagWatcher.html#getCustomName()">getCustomName</a>, <a href="../FlagWatcher.html#getData(me.libraryaddict.disguise.disguisetypes.MetaIndex)">getData</a>, <a href="../FlagWatcher.html#getEntityPose()">getEntityPose</a>, <a href="../FlagWatcher.html#getEquipment()">getEquipment</a>, <a href="../FlagWatcher.html#getHelmet()">getHelmet</a>, <a href="../FlagWatcher.html#getItemInMainHand()">getItemInMainHand</a>, <a href="../FlagWatcher.html#getItemInOffHand()">getItemInOffHand</a>, <a href="../FlagWatcher.html#getItemStack(org.bukkit.inventory.EquipmentSlot)">getItemStack</a>, <a href="../FlagWatcher.html#getLeggings()">getLeggings</a>, <a href="../FlagWatcher.html#getTicksFrozen()">getTicksFrozen</a>, <a href="../FlagWatcher.html#getWatchableObjects()">getWatchableObjects</a>, <a href="../FlagWatcher.html#hasCustomName()">hasCustomName</a>, <a href="../FlagWatcher.html#hasValue(me.libraryaddict.disguise.disguisetypes.MetaIndex)">hasValue</a>, <a href="../FlagWatcher.html#isAddEntityAnimations()">isAddEntityAnimations</a>, <a href="../FlagWatcher.html#isBurning()">isBurning</a>, <a href="../FlagWatcher.html#isCustomNameVisible()">isCustomNameVisible</a>, <a href="../FlagWatcher.html#isEntityAnimationsAdded()">isEntityAnimationsAdded</a>, <a href="../FlagWatcher.html#isFlyingWithElytra()">isFlyingWithElytra</a>, <a href="../FlagWatcher.html#isGlowing()">isGlowing</a>, <a href="../FlagWatcher.html#isInvisible()">isInvisible</a>, <a href="../FlagWatcher.html#isNoGravity()">isNoGravity</a>, <a href="../FlagWatcher.html#isPitchLocked()">isPitchLocked</a>, <a href="../FlagWatcher.html#isSleeping()">isSleeping</a>, <a href="../FlagWatcher.html#isSneaking()">isSneaking</a>, <a href="../FlagWatcher.html#isSprinting()">isSprinting</a>, <a href="../FlagWatcher.html#isSwimming()">isSwimming</a>, <a href="../FlagWatcher.html#isYawLocked()">isYawLocked</a>, <a href="../FlagWatcher.html#rebuildWatchableObjects()">rebuildWatchableObjects</a>, <a href="../FlagWatcher.html#sendData(me.libraryaddict.disguise.disguisetypes.MetaIndex...)">sendData</a>, <a href="../FlagWatcher.html#sendData(me.libraryaddict.disguise.disguisetypes.MetaIndex,Y)">sendData</a>, <a href="../FlagWatcher.html#sendItemStack(org.bukkit.inventory.EquipmentSlot,org.bukkit.inventory.ItemStack)">sendItemStack</a>, <a href="../FlagWatcher.html#setArmor(org.bukkit.inventory.ItemStack%5B%5D)">setArmor</a>, <a href="../FlagWatcher.html#setBackupValue(me.libraryaddict.disguise.disguisetypes.MetaIndex,java.lang.Object)">setBackupValue</a>, <a href="../FlagWatcher.html#setBoots(org.bukkit.inventory.ItemStack)">setBoots</a>, <a href="../FlagWatcher.html#setBurning(boolean)">setBurning</a>, <a href="../FlagWatcher.html#setChestplate(org.bukkit.inventory.ItemStack)">setChestplate</a>, <a href="../FlagWatcher.html#setCustomName(java.lang.String)">setCustomName</a>, <a href="../FlagWatcher.html#setCustomNameVisible(boolean)">setCustomNameVisible</a>, <a href="../FlagWatcher.html#setData(me.libraryaddict.disguise.disguisetypes.MetaIndex,Y)">setData</a>, <a href="../FlagWatcher.html#setDisguise(me.libraryaddict.disguise.disguisetypes.TargetedDisguise)">setDisguise</a>, <a href="../FlagWatcher.html#setEntityFlag(int,boolean)">setEntityFlag</a>, <a href="../FlagWatcher.html#setEntityPose(com.github.retrooper.packetevents.protocol.entity.pose.EntityPose)">setEntityPose</a>, <a href="../FlagWatcher.html#setFlyingWithElytra(boolean)">setFlyingWithElytra</a>, <a href="../FlagWatcher.html#setGlowColor(org.bukkit.ChatColor)">setGlowColor</a>, <a href="../FlagWatcher.html#setGlowing(boolean)">setGlowing</a>, <a href="../FlagWatcher.html#setHelmet(org.bukkit.inventory.ItemStack)">setHelmet</a>, <a href="../FlagWatcher.html#setInteralCustomName(java.lang.String)">setInteralCustomName</a>, <a href="../FlagWatcher.html#setInternalCustomNameVisible(boolean)">setInternalCustomNameVisible</a>, <a href="../FlagWatcher.html#setInternalUpsideDown(boolean)">setInternalUpsideDown</a>, <a href="../FlagWatcher.html#setInvisible(boolean)">setInvisible</a>, <a href="../FlagWatcher.html#setItemInHand(org.bukkit.inventory.ItemStack)">setItemInHand</a>, <a href="../FlagWatcher.html#setItemInMainHand(org.bukkit.inventory.ItemStack)">setItemInMainHand</a>, <a href="../FlagWatcher.html#setItemInOffHand(org.bukkit.inventory.ItemStack)">setItemInOffHand</a>, <a href="../FlagWatcher.html#setItemStack(org.bukkit.inventory.EquipmentSlot,org.bukkit.inventory.ItemStack)">setItemStack</a>, <a href="../FlagWatcher.html#setLeggings(org.bukkit.inventory.ItemStack)">setLeggings</a>, <a href="../FlagWatcher.html#setNameYModifier(float)">setNameYModifier</a>, <a href="../FlagWatcher.html#setNoGravity(boolean)">setNoGravity</a>, <a href="../FlagWatcher.html#setPitchLock(java.lang.Float)">setPitchLock</a>, <a href="../FlagWatcher.html#setPitchLocked(boolean)">setPitchLocked</a>, <a href="../FlagWatcher.html#setSleeping(boolean)">setSleeping</a>, <a href="../FlagWatcher.html#setSneaking(boolean)">setSneaking</a>, <a href="../FlagWatcher.html#setSprinting(boolean)">setSprinting</a>, <a href="../FlagWatcher.html#setSwimming(boolean)">setSwimming</a>, <a href="../FlagWatcher.html#setTicksFrozen(int)">setTicksFrozen</a>, <a href="../FlagWatcher.html#setUnsafeData(me.libraryaddict.disguise.disguisetypes.MetaIndex,Y)">setUnsafeData</a>, <a href="../FlagWatcher.html#setUpsideDown(boolean)">setUpsideDown</a>, <a href="../FlagWatcher.html#setYawLock(java.lang.Float)">setYawLock</a>, <a href="../FlagWatcher.html#setYawLocked(boolean)">setYawLocked</a>, <a href="../FlagWatcher.html#setYModifier(float)">setYModifier</a>, <a href="../FlagWatcher.html#updateNameHeight()">updateNameHeight</a>, <a href="../FlagWatcher.html#updatePose()">updatePose</a></code></div>
+<code><a href="../FlagWatcher.html#convert(org.bukkit.entity.Player,java.util.List)">convert</a>, <a href="../FlagWatcher.html#getArmor()">getArmor</a>, <a href="../FlagWatcher.html#getBoots()">getBoots</a>, <a href="../FlagWatcher.html#getChestplate()">getChestplate</a>, <a href="../FlagWatcher.html#getCustomName()">getCustomName</a>, <a href="../FlagWatcher.html#getData(me.libraryaddict.disguise.disguisetypes.MetaIndex)">getData</a>, <a href="../FlagWatcher.html#getEntityPose()">getEntityPose</a>, <a href="../FlagWatcher.html#getEquipment()">getEquipment</a>, <a href="../FlagWatcher.html#getHelmet()">getHelmet</a>, <a href="../FlagWatcher.html#getItemInMainHand()">getItemInMainHand</a>, <a href="../FlagWatcher.html#getItemInOffHand()">getItemInOffHand</a>, <a href="../FlagWatcher.html#getItemStack(org.bukkit.inventory.EquipmentSlot)">getItemStack</a>, <a href="../FlagWatcher.html#getLeggings()">getLeggings</a>, <a href="../FlagWatcher.html#getTicksFrozen()">getTicksFrozen</a>, <a href="../FlagWatcher.html#getWatchableObjects()">getWatchableObjects</a>, <a href="../FlagWatcher.html#hasCustomName()">hasCustomName</a>, <a href="../FlagWatcher.html#hasValue(me.libraryaddict.disguise.disguisetypes.MetaIndex)">hasValue</a>, <a href="../FlagWatcher.html#isAddEntityAnimations()">isAddEntityAnimations</a>, <a href="../FlagWatcher.html#isBurning()">isBurning</a>, <a href="../FlagWatcher.html#isCustomNameVisible()">isCustomNameVisible</a>, <a href="../FlagWatcher.html#isEntityAnimationsAdded()">isEntityAnimationsAdded</a>, <a href="../FlagWatcher.html#isFlyingWithElytra()">isFlyingWithElytra</a>, <a href="../FlagWatcher.html#isGlowing()">isGlowing</a>, <a href="../FlagWatcher.html#isInvisible()">isInvisible</a>, <a href="../FlagWatcher.html#isNoGravity()">isNoGravity</a>, <a href="../FlagWatcher.html#isPitchLocked()">isPitchLocked</a>, <a href="../FlagWatcher.html#isSleeping()">isSleeping</a>, <a href="../FlagWatcher.html#isSneaking()">isSneaking</a>, <a href="../FlagWatcher.html#isSprinting()">isSprinting</a>, <a href="../FlagWatcher.html#isSwimming()">isSwimming</a>, <a href="../FlagWatcher.html#isYawLocked()">isYawLocked</a>, <a href="../FlagWatcher.html#onPreDisguiseStart()">onPreDisguiseStart</a>, <a href="../FlagWatcher.html#rebuildWatchableObjects()">rebuildWatchableObjects</a>, <a href="../FlagWatcher.html#sendData(me.libraryaddict.disguise.disguisetypes.MetaIndex...)">sendData</a>, <a href="../FlagWatcher.html#sendData(me.libraryaddict.disguise.disguisetypes.MetaIndex,Y)">sendData</a>, <a href="../FlagWatcher.html#sendItemStack(org.bukkit.inventory.EquipmentSlot,org.bukkit.inventory.ItemStack)">sendItemStack</a>, <a href="../FlagWatcher.html#setArmor(org.bukkit.inventory.ItemStack%5B%5D)">setArmor</a>, <a href="../FlagWatcher.html#setBackupValue(me.libraryaddict.disguise.disguisetypes.MetaIndex,java.lang.Object)">setBackupValue</a>, <a href="../FlagWatcher.html#setBoots(org.bukkit.inventory.ItemStack)">setBoots</a>, <a href="../FlagWatcher.html#setBurning(boolean)">setBurning</a>, <a href="../FlagWatcher.html#setChestplate(org.bukkit.inventory.ItemStack)">setChestplate</a>, <a href="../FlagWatcher.html#setCustomName(java.lang.String)">setCustomName</a>, <a href="../FlagWatcher.html#setCustomNameVisible(boolean)">setCustomNameVisible</a>, <a href="../FlagWatcher.html#setData(me.libraryaddict.disguise.disguisetypes.MetaIndex,Y)">setData</a>, <a href="../FlagWatcher.html#setDisguise(me.libraryaddict.disguise.disguisetypes.TargetedDisguise)">setDisguise</a>, <a href="../FlagWatcher.html#setEntityFlag(int,boolean)">setEntityFlag</a>, <a href="../FlagWatcher.html#setEntityPose(com.github.retrooper.packetevents.protocol.entity.pose.EntityPose)">setEntityPose</a>, <a href="../FlagWatcher.html#setFlyingWithElytra(boolean)">setFlyingWithElytra</a>, <a href="../FlagWatcher.html#setGlowColor(org.bukkit.ChatColor)">setGlowColor</a>, <a href="../FlagWatcher.html#setGlowing(boolean)">setGlowing</a>, <a href="../FlagWatcher.html#setHelmet(org.bukkit.inventory.ItemStack)">setHelmet</a>, <a href="../FlagWatcher.html#setInteralCustomName(java.lang.String)">setInteralCustomName</a>, <a href="../FlagWatcher.html#setInternalCustomNameVisible(boolean)">setInternalCustomNameVisible</a>, <a href="../FlagWatcher.html#setInternalUpsideDown(boolean)">setInternalUpsideDown</a>, <a href="../FlagWatcher.html#setInvisible(boolean)">setInvisible</a>, <a href="../FlagWatcher.html#setItemInHand(org.bukkit.inventory.ItemStack)">setItemInHand</a>, <a href="../FlagWatcher.html#setItemInMainHand(org.bukkit.inventory.ItemStack)">setItemInMainHand</a>, <a href="../FlagWatcher.html#setItemInOffHand(org.bukkit.inventory.ItemStack)">setItemInOffHand</a>, <a href="../FlagWatcher.html#setItemStack(org.bukkit.inventory.EquipmentSlot,org.bukkit.inventory.ItemStack)">setItemStack</a>, <a href="../FlagWatcher.html#setLeggings(org.bukkit.inventory.ItemStack)">setLeggings</a>, <a href="../FlagWatcher.html#setNameYModifier(float)">setNameYModifier</a>, <a href="../FlagWatcher.html#setNoGravity(boolean)">setNoGravity</a>, <a href="../FlagWatcher.html#setPitchLock(java.lang.Float)">setPitchLock</a>, <a href="../FlagWatcher.html#setPitchLocked(boolean)">setPitchLocked</a>, <a href="../FlagWatcher.html#setSleeping(boolean)">setSleeping</a>, <a href="../FlagWatcher.html#setSneaking(boolean)">setSneaking</a>, <a href="../FlagWatcher.html#setSprinting(boolean)">setSprinting</a>, <a href="../FlagWatcher.html#setSwimming(boolean)">setSwimming</a>, <a href="../FlagWatcher.html#setTicksFrozen(int)">setTicksFrozen</a>, <a href="../FlagWatcher.html#setUnsafeData(me.libraryaddict.disguise.disguisetypes.MetaIndex,Y)">setUnsafeData</a>, <a href="../FlagWatcher.html#setUpsideDown(boolean)">setUpsideDown</a>, <a href="../FlagWatcher.html#setYawLock(java.lang.Float)">setYawLock</a>, <a href="../FlagWatcher.html#setYawLocked(boolean)">setYawLocked</a>, <a href="../FlagWatcher.html#setYModifier(float)">setYModifier</a>, <a href="../FlagWatcher.html#updateNameHeight()">updateNameHeight</a>, <a href="../FlagWatcher.html#updatePose()">updatePose</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
@@ -268,6 +236,70 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="getSkinMeta()">
+<h3>getSkinMeta</h3>
+<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="../MetaIndex.html" title="class in me.libraryaddict.disguise.disguisetypes">MetaIndex</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Byte.html" title="class or interface in java.lang" class="external-link">Byte</a>&gt;</span>&nbsp;<span class="element-name">getSkinMeta</span>()</div>
+<dl class="notes">
+<dt>Overrides:</dt>
+<dd><code><a href="AvatarWatcher.html#getSkinMeta()">getSkinMeta</a></code>&nbsp;in class&nbsp;<code><a href="AvatarWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AvatarWatcher</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getHandMeta()">
+<h3>getHandMeta</h3>
+<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="../MetaIndex.html" title="class in me.libraryaddict.disguise.disguisetypes">MetaIndex</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Byte.html" title="class or interface in java.lang" class="external-link">Byte</a>&gt;</span>&nbsp;<span class="element-name">getHandMeta</span>()</div>
+<dl class="notes">
+<dt>Overrides:</dt>
+<dd><code><a href="AvatarWatcher.html#getHandMeta()">getHandMeta</a></code>&nbsp;in class&nbsp;<code><a href="AvatarWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AvatarWatcher</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSkin()">
+<h3>getSkin</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@NotNull com.github.retrooper.packetevents.protocol.player.UserProfile</span>&nbsp;<span class="element-name">getSkin</span>()</div>
+</section>
+</li>
+<li>
+<section class="detail" id="getSkinName()">
+<h3>getSkinName</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getSkinName</span>()</div>
+<div class="block"><span class="description-from-type-label">Description copied from class:&nbsp;<code><a href="AvatarWatcher.html#getSkinName()">AvatarWatcher</a></code></span></div>
+<div class="block">If the skin was retrieved via a username, this is set to indicate the player used</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="AvatarWatcher.html#getSkinName()">getSkinName</a></code>&nbsp;in class&nbsp;<code><a href="AvatarWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AvatarWatcher</a></code></dd>
+<dt>Returns:</dt>
+<dd>Name of player if it is relevant for skin resolution</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setSkin(java.lang.String)">
+<h3>setSkin</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setSkin</span><wbr><span class="parameters">(@Nullable
+ @Nullable <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;playerName)</span></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="AvatarWatcher.html#setSkin(java.lang.String)">setSkin</a></code>&nbsp;in class&nbsp;<code><a href="AvatarWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AvatarWatcher</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setSkin(com.github.retrooper.packetevents.protocol.player.UserProfile)">
+<h3>setSkin</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setSkin</span><wbr><span class="parameters">(@Nullable
+ @Nullable com.github.retrooper.packetevents.protocol.player.UserProfile&nbsp;profile)</span></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="AvatarWatcher.html#setSkin(com.github.retrooper.packetevents.protocol.player.UserProfile)">setSkin</a></code>&nbsp;in class&nbsp;<code><a href="AvatarWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AvatarWatcher</a></code></dd>
+</dl>
+</section>
+</li>
 <li>
 <section class="detail" id="isDisplayedInTab()">
 <h3>isDisplayedInTab</h3>
@@ -327,141 +359,31 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getMainHand()">
-<h3>getMainHand</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">org.bukkit.inventory.MainHand</span>&nbsp;<span class="element-name">getMainHand</span>()</div>
-</section>
-</li>
-<li>
-<section class="detail" id="setMainHand(org.bukkit.inventory.MainHand)">
-<h3>setMainHand</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setMainHand</span><wbr><span class="parameters">(org.bukkit.inventory.MainHand&nbsp;mainHand)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="isCapeEnabled()">
-<h3>isCapeEnabled</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isCapeEnabled</span>()</div>
-</section>
-</li>
-<li>
-<section class="detail" id="setCapeEnabled(boolean)">
-<h3>setCapeEnabled</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setCapeEnabled</span><wbr><span class="parameters">(boolean&nbsp;enabled)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="isJacketEnabled()">
-<h3>isJacketEnabled</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isJacketEnabled</span>()</div>
-</section>
-</li>
-<li>
-<section class="detail" id="setJacketEnabled(boolean)">
-<h3>setJacketEnabled</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setJacketEnabled</span><wbr><span class="parameters">(boolean&nbsp;enabled)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="isLeftSleeveEnabled()">
-<h3>isLeftSleeveEnabled</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isLeftSleeveEnabled</span>()</div>
-</section>
-</li>
-<li>
-<section class="detail" id="setLeftSleeveEnabled(boolean)">
-<h3>setLeftSleeveEnabled</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setLeftSleeveEnabled</span><wbr><span class="parameters">(boolean&nbsp;enabled)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="isRightSleeveEnabled()">
-<h3>isRightSleeveEnabled</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isRightSleeveEnabled</span>()</div>
-</section>
-</li>
-<li>
-<section class="detail" id="setRightSleeveEnabled(boolean)">
-<h3>setRightSleeveEnabled</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setRightSleeveEnabled</span><wbr><span class="parameters">(boolean&nbsp;enabled)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="isLeftPantsEnabled()">
-<h3>isLeftPantsEnabled</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isLeftPantsEnabled</span>()</div>
-</section>
-</li>
-<li>
-<section class="detail" id="setLeftPantsEnabled(boolean)">
-<h3>setLeftPantsEnabled</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setLeftPantsEnabled</span><wbr><span class="parameters">(boolean&nbsp;enabled)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="isRightPantsEnabled()">
-<h3>isRightPantsEnabled</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isRightPantsEnabled</span>()</div>
-</section>
-</li>
-<li>
-<section class="detail" id="setRightPantsEnabled(boolean)">
-<h3>setRightPantsEnabled</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setRightPantsEnabled</span><wbr><span class="parameters">(boolean&nbsp;enabled)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="isHatEnabled()">
-<h3>isHatEnabled</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isHatEnabled</span>()</div>
-</section>
-</li>
-<li>
-<section class="detail" id="setHatEnabled(boolean)">
-<h3>setHatEnabled</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setHatEnabled</span><wbr><span class="parameters">(boolean&nbsp;enabled)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="getSkin()">
-<h3>getSkin</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.github.retrooper.packetevents.protocol.player.UserProfile</span>&nbsp;<span class="element-name">getSkin</span>()</div>
-</section>
-</li>
-<li>
-<section class="detail" id="setSkin(java.lang.String)">
-<h3>setSkin</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setSkin</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;playerName)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="setSkin(com.github.retrooper.packetevents.protocol.player.UserProfile)">
-<h3>setSkin</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setSkin</span><wbr><span class="parameters">(com.github.retrooper.packetevents.protocol.player.UserProfile&nbsp;profile)</span></div>
-</section>
-</li>
-<li>
 <section class="detail" id="getRightShoulderParrot()">
 <h3>getRightShoulderParrot</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">org.bukkit.entity.Parrot.Variant</span>&nbsp;<span class="element-name">getRightShoulderParrot</span>()</div>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">org.bukkit.entity.Parrot.Variant</span>&nbsp;<span class="element-name">getRightShoulderParrot</span>()</div>
 </section>
 </li>
 <li>
 <section class="detail" id="setRightShoulderParrot(org.bukkit.entity.Parrot.Variant)">
 <h3>setRightShoulderParrot</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setRightShoulderParrot</span><wbr><span class="parameters">(org.bukkit.entity.Parrot.Variant&nbsp;variant)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setRightShoulderParrot</span><wbr><span class="parameters">(@Nullable
+ org.bukkit.entity.Parrot.Variant&nbsp;variant)</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="getLeftShoulderParrot()">
 <h3>getLeftShoulderParrot</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">org.bukkit.entity.Parrot.Variant</span>&nbsp;<span class="element-name">getLeftShoulderParrot</span>()</div>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">org.bukkit.entity.Parrot.Variant</span>&nbsp;<span class="element-name">getLeftShoulderParrot</span>()</div>
 </section>
 </li>
 <li>
 <section class="detail" id="setLeftShoulderParrot(org.bukkit.entity.Parrot.Variant)">
 <h3>setLeftShoulderParrot</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setLeftShoulderParrot</span><wbr><span class="parameters">(org.bukkit.entity.Parrot.Variant&nbsp;variant)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setLeftShoulderParrot</span><wbr><span class="parameters">(@Nullable
+ org.bukkit.entity.Parrot.Variant&nbsp;variant)</span></div>
 </section>
 </li>
 <li>
