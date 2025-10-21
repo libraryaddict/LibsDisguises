@@ -55,6 +55,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 public abstract class Disguise {
     /**
@@ -743,13 +744,14 @@ public abstract class Disguise {
             return false;
         }
 
-        UndisguiseEvent event = new UndisguiseEvent(sender, entity, this, disguiseBeingReplaced);
+        Supplier<Boolean> eventCancellable = () -> getEntity() != null && Bukkit.getWorlds().contains(getEntity().getWorld()) &&
+            (!(getEntity() instanceof Player) || ((Player) getEntity()).isOnline());
+        UndisguiseEvent event = new UndisguiseEvent(sender, entity, this, disguiseBeingReplaced, eventCancellable);
 
         Bukkit.getPluginManager().callEvent(event);
 
-        // Can only continue a disguise that's valid
-        if (event.isCancelled() && getEntity() != null && Bukkit.getWorlds().contains(getEntity().getWorld()) &&
-            (!(getEntity() instanceof Player) || ((Player) getEntity()).isOnline())) {
+        // Can only allow a disguise that's allowed to be cancelled
+        if (event.isCancelled() && event.isCancellable()) {
             return false;
         }
 
@@ -1025,7 +1027,8 @@ public abstract class Disguise {
             getWatcher().setCustomName(name);
         }
 
-        // We fire it before the disguise marks itself as a disguise, this way the watcher values initially sent, are the correct ones if possible
+        // We fire it before the disguise marks itself as a disguise, this way the watcher values initially sent, are the correct ones if
+        // possible
         getWatcher().onPreDisguiseStart();
 
         disguiseInUse = true;
