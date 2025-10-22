@@ -294,7 +294,7 @@ public class LibsDisguises extends JavaPlugin {
         ReflectionManager.tryLoadRegistriesIntoPE();
 
         verboseLog("Creating but not registering the packet listeners...");
-        PacketsManager.init();
+        PacketsManager.getPacketsManager().init();
         verboseLog("Setting up some internal utilities for disguises...");
         DisguiseUtilities.init();
 
@@ -312,7 +312,7 @@ public class LibsDisguises extends JavaPlugin {
     }
 
     private void registerListeners() {
-        PacketsManager.addPacketListeners();
+        PacketsManager.getPacketsManager().addPacketListeners();
 
         listener = new DisguiseListener(this);
         skinHandler = new PlayerSkinHandler();

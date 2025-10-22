@@ -704,7 +704,7 @@ public class DisguiseConfig {
             }
         }
 
-        PacketsManager.setViewDisguisesListener(true);
+        PacketsManager.getPacketsManager().setViewDisguisesListener(true);
 
         setAnimationPacketsEnabled(config.getBoolean("PacketsEnabled.Animation"));
         setCatDyeable(config.getBoolean("DyeableCat"));
@@ -1132,7 +1132,7 @@ public class DisguiseConfig {
      * Is the sound packets caught and modified
      */
     public static boolean isSoundEnabled() {
-        return PacketsManager.isHearDisguisesEnabled();
+        return PacketsManager.getPacketsManager().isHearDisguisesEnabled();
     }
 
     public static void setAnimationPacketsEnabled(boolean enabled) {
@@ -1142,7 +1142,7 @@ public class DisguiseConfig {
 
         animationPacketsEnabled = enabled;
 
-        PacketsManager.setupMainPacketsListener();
+        PacketsManager.getPacketsManager().setupMainPacketsListener();
     }
 
     public static void setCollectPacketsEnabled(boolean enabled) {
@@ -1152,7 +1152,7 @@ public class DisguiseConfig {
 
         collectPacketsEnabled = enabled;
 
-        PacketsManager.setupMainPacketsListener();
+        PacketsManager.getPacketsManager().setupMainPacketsListener();
     }
 
     public static void setEntityStatusPacketsEnabled(boolean enabled) {
@@ -1162,7 +1162,7 @@ public class DisguiseConfig {
 
         entityStatusPacketsEnabled = enabled;
 
-        PacketsManager.setupMainPacketsListener();
+        PacketsManager.getPacketsManager().setupMainPacketsListener();
     }
 
     public static void setEquipmentPacketsEnabled(boolean enabled) {
@@ -1172,7 +1172,7 @@ public class DisguiseConfig {
 
         equipmentPacketsEnabled = enabled;
 
-        PacketsManager.setupMainPacketsListener();
+        PacketsManager.getPacketsManager().setupMainPacketsListener();
     }
 
     /**
@@ -1195,7 +1195,7 @@ public class DisguiseConfig {
     }
 
     private static void updateInventoryListener() {
-        PacketsManager.setInventoryListenerEnabled(isHidingHeldItemFromSelf() || isHidingArmorFromSelf());
+        PacketsManager.getPacketsManager().setInventoryListenerEnabled(isHidingHeldItemFromSelf() || isHidingArmorFromSelf());
     }
 
     public static void setMiscDisguisesForLivingEnabled(boolean enabled) {
@@ -1205,7 +1205,7 @@ public class DisguiseConfig {
 
         miscDisguisesForLivingEnabled = enabled;
 
-        PacketsManager.setupMainPacketsListener();
+        PacketsManager.getPacketsManager().setupMainPacketsListener();
     }
 
     public static void setMovementPacketsEnabled(boolean enabled) {
@@ -1215,14 +1215,14 @@ public class DisguiseConfig {
 
         movementPacketsEnabled = enabled;
 
-        PacketsManager.setupMainPacketsListener();
+        PacketsManager.getPacketsManager().setupMainPacketsListener();
     }
 
     /**
      * Set if the disguises play sounds when hurt
      */
     public static void setSoundsEnabled(boolean isSoundsEnabled) {
-        PacketsManager.setHearDisguisesListener(isSoundsEnabled);
+        PacketsManager.getPacketsManager().setHearDisguisesListener(isSoundsEnabled);
     }
 
     public enum PlayerNameType {

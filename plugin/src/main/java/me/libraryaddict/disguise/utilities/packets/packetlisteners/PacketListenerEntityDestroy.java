@@ -33,11 +33,14 @@ public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
     }
 
     private int[] getToRemove(Player player, int entityId) {
+        Disguise disguise = DisguiseUtilities.getDisguise(player, entityId);
+
+        // Remove from 'is seeing currently'
+        disguise.getInternals().addSeen(player, false);
+
         if (entityId == DisguiseAPI.getSelfDisguiseId()) {
             return null;
         }
-
-        Disguise disguise = DisguiseUtilities.getDisguise(player, entityId);
 
         if (disguise == null) {
             return null;

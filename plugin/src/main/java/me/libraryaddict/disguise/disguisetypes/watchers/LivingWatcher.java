@@ -24,6 +24,7 @@ import org.bukkit.Color;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,15 +98,11 @@ public class LivingWatcher extends FlagWatcher {
         Entity entity = getDisguise().getEntity();
 
         for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
-            double toSend = player == entity && getDisguise().isTallSelfDisguisesScaling() ?
-                Math.min(getDisguise().getInternals().getPrevSelfDisguiseTallScaleMax(), scaleToSend) : scaleToSend;
+            if (getDisguise().getInternals().shouldAvoidSendingPackets(player)) {
+                continue;
+            }
 
-            WrapperPlayServerUpdateAttributes.Property property =
-                new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, toSend, new ArrayList<>());
-
-            WrapperPlayServerUpdateAttributes packet = new WrapperPlayServerUpdateAttributes(
-                player == getDisguise().getEntity() ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId(),
-                Collections.singletonList(property));
+            WrapperPlayServerUpdateAttributes packet = getWrapperPlayServerUpdateAttributes(player, entity, scaleToSend);
 
             if (player == getDisguise().getEntity()) {
                 PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
@@ -113,6 +110,20 @@ public class LivingWatcher extends FlagWatcher {
                 PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
             }
         }
+    }
+
+    private @NotNull WrapperPlayServerUpdateAttributes getWrapperPlayServerUpdateAttributes(Player player, Entity entity,
+                                                                                            double scaleToSend) {
+        double toSend = player == entity && getDisguise().isTallSelfDisguisesScaling() ?
+            Math.min(getDisguise().getInternals().getPrevSelfDisguiseTallScaleMax(), scaleToSend) : scaleToSend;
+
+        WrapperPlayServerUpdateAttributes.Property property =
+            new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, toSend, new ArrayList<>());
+
+        WrapperPlayServerUpdateAttributes packet = new WrapperPlayServerUpdateAttributes(
+            player == getDisguise().getEntity() ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId(),
+            Collections.singletonList(property));
+        return packet;
     }
 
     @NmsAddedIn(NmsVersion.v1_14)
@@ -227,6 +238,10 @@ public class LivingWatcher extends FlagWatcher {
         }
 
         for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
+            if (getDisguise().getInternals().shouldAvoidSendingPackets(player)) {
+                continue;
+            }
+
             WrapperPlayServerUpdateAttributes.Property property =
                 new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_MAX_HEALTH, getMaxHealth(), new ArrayList<>());
             WrapperPlayServerUpdateAttributes packet = new WrapperPlayServerUpdateAttributes(

@@ -10,6 +10,7 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,10 +20,10 @@ import java.util.Map;
 @Getter
 @RequiredArgsConstructor
 @Setter
-public class LibsPackets<T extends PacketWrapper<T>> {
+public class LibsPackets<T extends PacketWrapper<@NotNull T>> {
     @Getter
     private final List<PacketWrapper> packets = new ArrayList<>();
-    private final HashMap<Integer, ArrayList<PacketWrapper>> delayedPacketsMap = new HashMap<>();
+    private final Map<Integer, List<PacketWrapper>> delayedPacketsMap = new HashMap<>();
     @Getter
     private final T originalPacket;
     @Getter
@@ -55,10 +56,10 @@ public class LibsPackets<T extends PacketWrapper<T>> {
     }
 
     public void sendDelayed(final Player observer) {
-        for (Map.Entry<Integer, ArrayList<PacketWrapper>> entry : getDelayedPacketsMap().entrySet()) {
+        for (Map.Entry<Integer, List<PacketWrapper>> entry : getDelayedPacketsMap().entrySet()) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
                 if (!getDisguise().isDisguiseInUse()) {
-                    ArrayList<PacketWrapper> packets = entry.getValue();
+                    List<PacketWrapper> packets = entry.getValue();
 
                     if (packets.stream().noneMatch(p -> p.getPacketTypeData().getPacketType() == PacketType.Play.Server.PLAYER_INFO)) {
                         return;

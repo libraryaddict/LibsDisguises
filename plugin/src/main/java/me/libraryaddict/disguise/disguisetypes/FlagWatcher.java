@@ -910,15 +910,20 @@ public class FlagWatcher {
             list.add(watch);
         }
 
-        if (!list.isEmpty()) {
-            for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
-                int entityId =
-                    player == getDisguise().getEntity() ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId();
+        if (list.isEmpty()) {
+            return;
+        }
 
-                WrapperPlayServerEntityMetadata packet = ReflectionManager.getMetadataPacket(entityId, list);
-
-                PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
+        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
+            if (getDisguise().getInternals().shouldAvoidSendingPackets(player)) {
+                continue;
             }
+
+            int entityId = player == getDisguise().getEntity() ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId();
+
+            WrapperPlayServerEntityMetadata packet = ReflectionManager.getMetadataPacket(entityId, list);
+
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
         }
     }
 

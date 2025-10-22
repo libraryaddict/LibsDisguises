@@ -746,6 +746,7 @@ public abstract class Disguise {
 
         Supplier<Boolean> eventCancellable = () -> getEntity() != null && Bukkit.getWorlds().contains(getEntity().getWorld()) &&
             (!(getEntity() instanceof Player) || ((Player) getEntity()).isOnline());
+
         UndisguiseEvent event = new UndisguiseEvent(sender, entity, this, disguiseBeingReplaced, eventCancellable);
 
         Bukkit.getPluginManager().callEvent(event);

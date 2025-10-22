@@ -2318,7 +2318,7 @@ public class DisguiseUtilities {
     }
 
     public static void refreshTrackers(final TargetedDisguise disguise) {
-        refreshTrackersWithCount(disguise);
+      refreshTrackersWithCount(disguise);
     }
 
     /**
@@ -3478,7 +3478,8 @@ public class DisguiseUtilities {
             return;
         }
 
-        LibsPackets<?> transformed = PacketsManager.getPacketsHandler().transformPacket(packet, disguise, player, player);
+        LibsPackets<?> transformed =
+            PacketsManager.getPacketsManager().getPacketsHandler().transformPacket(packet, disguise, player, player);
 
         if (transformed.isUnhandled()) {
             transformed.addPacket(packet);
@@ -3493,7 +3494,7 @@ public class DisguiseUtilities {
             newPackets.addPacket(p);
         }
 
-        for (Map.Entry<Integer, ArrayList<PacketWrapper>> entry : transformed.getDelayedPacketsMap().entrySet()) {
+        for (Map.Entry<Integer, List<PacketWrapper>> entry : transformed.getDelayedPacketsMap().entrySet()) {
             for (PacketWrapper newPacket : entry.getValue()) {
                 if (newPacket.getPacketTypeData().getPacketType() == PacketType.Play.Server.PLAYER_INFO ||
                     newPacket.getPacketTypeData().getPacketType() == PacketType.Play.Server.DESTROY_ENTITIES) {
@@ -3542,7 +3543,8 @@ public class DisguiseUtilities {
         removeSelfDisguise(disguise);
 
         // If the disguised player can't see themselves. Return
-        if (!disguise.isSelfDisguiseVisible() || !PacketsManager.isViewDisguisesListenerEnabled() || player.getVehicle() != null) {
+        if (!disguise.isSelfDisguiseVisible() || !PacketsManager.getPacketsManager().isViewDisguisesListenerEnabled() ||
+            player.getVehicle() != null) {
             return;
         }
 
@@ -3552,7 +3554,7 @@ public class DisguiseUtilities {
         sendSelfDisguise(player, (TargetedDisguise) disguise);
 
         if (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf()) {
-            if (PacketsManager.isInventoryListenerEnabled()) {
+            if (PacketsManager.getPacketsManager().isInventoryListenerEnabled()) {
                 player.updateInventory();
             }
         }

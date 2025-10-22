@@ -3,8 +3,8 @@ package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.SimplePacketListenerAbstract;
 import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
-import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Server;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import lombok.RequiredArgsConstructor;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
@@ -13,16 +13,14 @@ import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-
+@RequiredArgsConstructor
 public class PacketListenerMain extends SimplePacketListenerAbstract {
-    private final boolean[] listenedPackets = new boolean[Server.values().length];
-
-    public PacketListenerMain(ArrayList<Server> packetsToListen) {
-        for (Server type : packetsToListen) {
-            listenedPackets[type.ordinal()] = true;
-        }
-    }
+    // The packets that are being listened to, this is all-comphrensive
+    private final boolean[] listenedPackets;
+    // The packets that are directly spawn
+    private final boolean[] spawnPackets;
+    // The packets that are to do with conflicting
+    private final boolean[] conflictingTypes;
 
     @Override
     public void onPacketPlaySend(PacketPlaySendEvent event) {
@@ -61,7 +59,8 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
         LibsPackets<?> packets;
 
         try {
-            packets = PacketsManager.getPacketsHandler().transformPacket(wrapper, disguise, observer, disguise.getEntity());
+            packets =
+                PacketsManager.getPacketsManager().getPacketsHandler().transformPacket(wrapper, disguise, observer, disguise.getEntity());
 
             if (disguise.isPlayerDisguise()) {
                 LibsDisguises.getInstance().getSkinHandler().handlePackets(observer, (PlayerDisguise) disguise, packets);
@@ -78,6 +77,16 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
 
         if (packets.shouldCancelPacketEvent()) {
             event.setCancelled(true);
+        }
+
+        // If packet is spawn
+        if (spawnPackets[event.getPacketType().ordinal()]) {
+            // Add to 'is currently seeing'
+            disguise.getInternals().addSeen(observer, true);
+        } else if (conflictingTypes[event.getPacketType().ordinal()] && disguise.getInternals().shouldAvoidSendingPackets(observer)) {
+            // This array is always an entity rewrite packet type
+            event.setCancelled(true);
+            return;
         }
 
         for (PacketWrapper packet : packets.getPackets()) {

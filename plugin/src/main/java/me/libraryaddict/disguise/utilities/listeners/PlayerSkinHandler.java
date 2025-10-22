@@ -25,6 +25,7 @@ import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
+import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
 import org.bukkit.Location;
@@ -89,6 +90,7 @@ public class PlayerSkinHandler implements Listener {
 
             skins.clear();
         }).build();
+    private final boolean[] conflictingTypes = PacketsManager.getPacketsManager().createConflicting(true);
 
     public PlayerSkinHandler() {
         new BukkitRunnable() {
@@ -253,7 +255,7 @@ public class PlayerSkinHandler implements Listener {
     private synchronized void addMetadata(Player player, PlayerSkin skin) throws InvocationTargetException {
         PlayerDisguise disguise = skin.getDisguise().get();
 
-        if (!disguise.isDisguiseInUse()) {
+        if (!disguise.isDisguiseInUse() || disguise.getInternals().shouldAvoidSendingPackets(player)) {
             return;
         }
 
@@ -314,7 +316,13 @@ public class PlayerSkinHandler implements Listener {
             if (disguise.isDisguiseInUse()) {
                 for (Map.Entry<Integer, List<PacketWrapper>> entry : skin.getSleptPackets().entrySet()) {
                     if (entry.getKey() == 0) {
+                        boolean avoidSending = disguise.getInternals().shouldAvoidSendingPackets(player);
+
                         for (PacketWrapper packet : entry.getValue()) {
+                            if (avoidSending && conflictingTypes[((Enum) packet.getPacketTypeData().getPacketType()).ordinal()]) {
+                                continue;
+                            }
+
                             PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
                         }
                     } else {
@@ -325,7 +333,13 @@ public class PlayerSkinHandler implements Listener {
                                     return;
                                 }
 
+                                boolean avoidSending = disguise.getInternals().shouldAvoidSendingPackets(player);
+
                                 for (PacketWrapper packet : entry.getValue()) {
+                                    if (avoidSending && conflictingTypes[((Enum) packet.getPacketTypeData().getPacketType()).ordinal()]) {
+                                        continue;
+                                    }
+
                                     PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
                                 }
                             }

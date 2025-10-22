@@ -23,28 +23,27 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-import java.util.ArrayList;
-
 public class PacketsManager {
-    private static final PacketListenerClientInteract clientInteractEntityListener = new PacketListenerClientInteract();
-    private static final PacketListenerTabList tablistListener = new PacketListenerTabList();
-    private static final PacketListenerClientCustomPayload customPayload = new PacketListenerClientCustomPayload();
-    private static PacketListenerInventory inventoryListener;
     @Getter
-    private static boolean inventoryListenerEnabled;
-    private static PacketListenerMain mainListener;
-    private static PacketListenerSounds soundsListener;
-    private static boolean soundsListenerEnabled;
-    private static PacketListenerViewSelfDisguise viewDisguisesListener;
-    private static PacketListenerVehicleMovement vehicleMovement;
+    private final static PacketsManager packetsManager = new PacketsManager();
+    private final PacketListenerClientInteract clientInteractEntityListener = new PacketListenerClientInteract();
+    private final PacketListenerTabList tablistListener = new PacketListenerTabList();
+    private final PacketListenerClientCustomPayload customPayload = new PacketListenerClientCustomPayload();
+    private PacketListenerInventory inventoryListener;
     @Getter
-    private static boolean viewDisguisesListenerEnabled;
+    private boolean inventoryListenerEnabled;
+    private PacketListenerMain mainListener;
+    private PacketListenerSounds soundsListener;
+    private boolean soundsListenerEnabled;
+    private PacketListenerViewSelfDisguise viewDisguisesListener;
+    private PacketListenerVehicleMovement vehicleMovement;
     @Getter
-    private static PacketsHandler packetsHandler;
+    private boolean viewDisguisesListenerEnabled;
     @Getter
-    private static boolean initialListenersRegistered;
+    private PacketsHandler packetsHandler;
+    private boolean initialListenersRegistered;
 
-    public static void addPacketListeners() {
+    public void addPacketListeners() {
         if (!initialListenersRegistered) {
             // Add a client listener to cancel them interacting with uninteractable disguised entitys.
             // You ain't supposed to be allowed to 'interact' with a item that cannot be clicked.
@@ -67,21 +66,21 @@ public class PacketsManager {
     /**
      * Creates the packet listeners
      */
-    public static void init() {
+    public void init() {
         soundsListener = new PacketListenerSounds();
 
         // Self disguise (/vsd) listener
-        viewDisguisesListener = new PacketListenerViewSelfDisguise();
+        viewDisguisesListener = new PacketListenerViewSelfDisguise(createConflicting(true));
 
         inventoryListener = new PacketListenerInventory();
         packetsHandler = new PacketsHandler();
     }
 
-    public static boolean isHearDisguisesEnabled() {
+    public boolean isHearDisguisesEnabled() {
         return soundsListenerEnabled;
     }
 
-    public static void setInventoryListenerEnabled(boolean enabled) {
+    public void setInventoryListenerEnabled(boolean enabled) {
         if (isInventoryListenerEnabled() == enabled || inventoryListener == null) {
             return;
         }
@@ -117,7 +116,7 @@ public class PacketsManager {
         }
     }
 
-    public static void setHearDisguisesListener(boolean enabled) {
+    public void setHearDisguisesListener(boolean enabled) {
         if (soundsListenerEnabled == enabled) {
             return;
         }
@@ -131,7 +130,7 @@ public class PacketsManager {
         }
     }
 
-    public static void setupMainPacketsListener() {
+    public void setupMainPacketsListener() {
         if (!initialListenersRegistered) {
             return;
         }
@@ -150,64 +149,44 @@ public class PacketsManager {
 
         getPacketsHandler().registerPacketHandlers();
 
-        ArrayList<Server> packetsToListen = new ArrayList<>();
+        boolean[] listenedPackets = new boolean[Server.values().length];
+        boolean[] spawnPackets = new boolean[Server.values().length];
+        boolean[] conflictingPackets = createConflicting(false);
 
-        // Add spawn packets
-        {
-            if (!NmsVersion.v1_20_R2.isSupported()) {
-                packetsToListen.add(Server.SPAWN_PLAYER);
-            }
-
-            packetsToListen.add(Server.SPAWN_EXPERIENCE_ORB);
-            packetsToListen.add(Server.SPAWN_ENTITY);
-
-            if (!NmsVersion.v1_19_R1.isSupported()) {
-                packetsToListen.add(Server.SPAWN_LIVING_ENTITY);
-                packetsToListen.add(Server.SPAWN_PAINTING);
-            }
+        if (!NmsVersion.v1_20_R2.isSupported()) {
+            spawnPackets[Server.SPAWN_PLAYER.ordinal()] = true;
         }
 
-        // Add packets that always need to be enabled to ensure safety
-        {
-            packetsToListen.add(Server.ENTITY_METADATA);
-        }
+        spawnPackets[Server.SPAWN_EXPERIENCE_ORB.ordinal()] = true;
+        spawnPackets[Server.SPAWN_ENTITY.ordinal()] = true;
 
-        if (DisguiseConfig.isCollectPacketsEnabled()) {
-            packetsToListen.add(Server.COLLECT_ITEM);
-        }
-
-        if (DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
-            packetsToListen.add(Server.UPDATE_ATTRIBUTES);
+        if (!NmsVersion.v1_19_R1.isSupported()) {
+            spawnPackets[Server.SPAWN_LIVING_ENTITY.ordinal()] = true;
+            spawnPackets[Server.SPAWN_PAINTING.ordinal()] = true;
         }
 
         // Add movement packets
         if (DisguiseConfig.isMovementPacketsEnabled()) {
-            packetsToListen.add(Server.ENTITY_MOVEMENT);
-            packetsToListen.add(Server.ENTITY_RELATIVE_MOVE_AND_ROTATION);
-            packetsToListen.add(Server.ENTITY_HEAD_LOOK);
-            packetsToListen.add(Server.ENTITY_TELEPORT);
-            packetsToListen.add(Server.ENTITY_RELATIVE_MOVE);
-            packetsToListen.add(Server.ENTITY_VELOCITY);
-            packetsToListen.add(Server.SET_PASSENGERS);
-            packetsToListen.add(Server.ENTITY_POSITION_SYNC);
+            listenedPackets[Server.ENTITY_MOVEMENT.ordinal()] = true;
+            listenedPackets[Server.ENTITY_RELATIVE_MOVE_AND_ROTATION.ordinal()] = true;
+            listenedPackets[Server.ENTITY_HEAD_LOOK.ordinal()] = true;
+            listenedPackets[Server.ENTITY_TELEPORT.ordinal()] = true;
+            listenedPackets[Server.ENTITY_RELATIVE_MOVE.ordinal()] = true;
+            listenedPackets[Server.ENTITY_VELOCITY.ordinal()] = true;
+            listenedPackets[Server.SET_PASSENGERS.ordinal()] = true;
+            listenedPackets[Server.ENTITY_POSITION_SYNC.ordinal()] = true;
         }
 
         // Add equipment packet
         if (DisguiseConfig.isEquipmentPacketsEnabled()) {
-            packetsToListen.add(Server.ENTITY_EQUIPMENT);
+            listenedPackets[Server.ENTITY_EQUIPMENT.ordinal()] = true;
         }
 
-        // Add the packet that ensures if they are sleeping or not
-        if (DisguiseConfig.isAnimationPacketsEnabled()) {
-            packetsToListen.add(Server.ENTITY_ANIMATION);
+        for (int i = 0; i < listenedPackets.length; i++) {
+            listenedPackets[i] |= conflictingPackets[i] || spawnPackets[i];
         }
 
-        // Add the packet that makes sure that entities with armor do not send unpickupable armor on death
-        if (DisguiseConfig.isEntityStatusPacketsEnabled()) {
-            packetsToListen.add(Server.ENTITY_STATUS);
-        }
-
-        mainListener = new PacketListenerMain(packetsToListen);
+        mainListener = new PacketListenerMain(listenedPackets, spawnPackets, createConflicting(true));
 
         PacketEvents.getAPI().getEventManager().registerListener(mainListener);
         PacketEvents.getAPI().getEventManager().registerListener(new PacketListenerEntityDestroy());
@@ -224,7 +203,40 @@ public class PacketsManager {
         }
     }
 
-    public static void setViewDisguisesListener(boolean enabled) {
+    /**
+     * The packets that will potentially kick clients
+     *
+     * @param isntHighPerformance If true, will be used in a way that is not going to drag performance down
+     * @return boolean[] the packets to handle
+     */
+    public boolean[] createConflicting(boolean isntHighPerformance) {
+        boolean[] conflictingPackets = new boolean[Server.values().length];
+
+        // Add packets that always need to be enabled to ensure safety
+        conflictingPackets[Server.ENTITY_METADATA.ordinal()] = true;
+
+        if (isntHighPerformance || DisguiseConfig.isCollectPacketsEnabled()) {
+            conflictingPackets[Server.COLLECT_ITEM.ordinal()] = true;
+        }
+
+        if (isntHighPerformance || DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
+            conflictingPackets[Server.UPDATE_ATTRIBUTES.ordinal()] = true;
+        }
+
+        // Add the packet that ensures if they are sleeping or not
+        if (isntHighPerformance || DisguiseConfig.isAnimationPacketsEnabled()) {
+            conflictingPackets[Server.ENTITY_ANIMATION.ordinal()] = true;
+        }
+
+        // Add the packet that makes sure that entities with armor do not send unpickupable armor on death
+        if (isntHighPerformance || DisguiseConfig.isEntityStatusPacketsEnabled()) {
+            conflictingPackets[Server.ENTITY_STATUS.ordinal()] = true;
+        }
+
+        return conflictingPackets;
+    }
+
+    public void setViewDisguisesListener(boolean enabled) {
         if (viewDisguisesListenerEnabled == enabled) {
             return;
         }

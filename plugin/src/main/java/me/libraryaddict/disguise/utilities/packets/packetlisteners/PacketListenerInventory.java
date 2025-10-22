@@ -40,6 +40,7 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
             if (event.getPacketType() != Client.CLICK_WINDOW && event.getPacketType() != Client.CREATIVE_INVENTORY_ACTION) {
                 return;
             }
+
             if (!Bukkit.isPrimaryThread()) {
                 PacketPlayReceiveEvent cloned = event.clone();
                 new BukkitRunnable() {
@@ -51,7 +52,7 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
                 return;
             }
 
-            final Player player = (Player) event.getPlayer();
+            final Player player = event.getPlayer();
 
             if (player == null || player.getVehicle() != null) {
                 return;
@@ -189,7 +190,7 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
                 return;
             }
 
-            Player player = (Player) event.getPlayer();
+            Player player = event.getPlayer();
 
             if (player == null || player.getVehicle() != null) {
                 return;

@@ -22,6 +22,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -56,16 +58,37 @@ import java.util.concurrent.atomic.AtomicBoolean;
     private final AtomicBoolean refreshingScaling = new AtomicBoolean(false);
     @Getter
     private transient DisguiseRunnable runnable;
+    private final Set<UUID> seesDisguise = new HashSet<>();
 
     public DisguiseInternals(D disguise) {
         this.disguise = disguise;
         scaling = new DisguiseScaling(this);
     }
 
+    /**
+     * If the respective player has been sent the Spawn packets
+     * @param player
+     * @return
+     */
+    public synchronized boolean shouldAvoidSendingPackets(Player player) {
+        return !seesDisguise.contains(player.getUniqueId());
+    }
+
+    public synchronized void addSeen(Player player, boolean isSpawnElseRemove) {
+        if (isSpawnElseRemove) {
+            seesDisguise.add(player.getUniqueId());
+        } else {
+            seesDisguise.remove(player.getUniqueId());
+        }
+    }
+
     protected void createRunnable() {
         if (runnable != null && !runnable.isCancelled()) {
             runnable.cancel();
         }
+
+        // Clear the seen
+        seesDisguise.clear();
 
         // A scheduler to clean up any unused disguises.
         runnable = new DisguiseRunnable(getDisguise());
@@ -74,6 +97,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
     }
 
     protected void cancelRunnable() {
+        // Clear the seen
+        seesDisguise.clear();
         if (runnable == null) {
             return;
         }
