@@ -141,6 +141,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Only allow saves every 2 minutes</div>
 </dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#addSeen(org.bukkit.entity.Player,boolean)" class="member-name-link">addSeen(Player, boolean)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#addUserProfile(java.lang.String,com.github.retrooper.packetevents.protocol.player.UserProfile)" class="member-name-link">addUserProfile(String, UserProfile)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#adjustNamePositions(me.libraryaddict.disguise.disguisetypes.Disguise,java.util.List)" class="member-name-link">adjustNamePositions(Disguise, List&lt;PacketWrapper&gt;)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
@@ -2835,6 +2837,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/CreakingWatcher.html#isBrightEyes()" class="member-name-link">isBrightEyes()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/CreakingWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">CreakingWatcher</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/FlagWatcher.html#isBurning()" class="member-name-link">isBurning()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/FlagWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes">FlagWatcher</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/events/UndisguiseEvent.html#isCancellable()" class="member-name-link">isCancellable()</a> - Method in class me.libraryaddict.disguise.events.<a href="me/libraryaddict/disguise/events/UndisguiseEvent.html" title="class in me.libraryaddict.disguise.events">UndisguiseEvent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/AllayWatcher.html#isCanDuplicate()" class="member-name-link">isCanDuplicate()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/AllayWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AllayWatcher</a></dt>
 <dd>&nbsp;</dd>
@@ -5839,6 +5843,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/SheepWatcher.html#%3Cinit%3E(me.libraryaddict.disguise.disguisetypes.Disguise)" class="member-name-link">SheepWatcher(Disguise)</a> - Constructor for class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/SheepWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">SheepWatcher</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#shouldAvoidSendingPackets(org.bukkit.entity.Player)" class="member-name-link">shouldAvoidSendingPackets(Player)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
+<dd>
+<div class="block">If the respective player has been sent the Spawn packets</div>
+</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#shouldBeHiddenSelfDisguise(com.github.retrooper.packetevents.protocol.item.ItemStack)" class="member-name-link">shouldBeHiddenSelfDisguise(ItemStack)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#shouldBeHiddenSelfDisguise(org.bukkit.inventory.ItemStack)" class="member-name-link">shouldBeHiddenSelfDisguise(ItemStack)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
@@ -6290,6 +6298,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/events/UndisguiseEvent.html" class="type-name-link" title="class in me.libraryaddict.disguise.events">UndisguiseEvent</a> - Class in <a href="me/libraryaddict/disguise/events/package-summary.html">me.libraryaddict.disguise.events</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/events/UndisguiseEvent.html#%3Cinit%3E(org.bukkit.command.CommandSender,org.bukkit.entity.Entity,me.libraryaddict.disguise.disguisetypes.Disguise,boolean)" class="member-name-link">UndisguiseEvent(CommandSender, Entity, Disguise, boolean)</a> - Constructor for class me.libraryaddict.disguise.events.<a href="me/libraryaddict/disguise/events/UndisguiseEvent.html" title="class in me.libraryaddict.disguise.events">UndisguiseEvent</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/events/UndisguiseEvent.html#%3Cinit%3E(org.bukkit.command.CommandSender,org.bukkit.entity.Entity,me.libraryaddict.disguise.disguisetypes.Disguise,boolean,boolean)" class="member-name-link">UndisguiseEvent(CommandSender, Entity, Disguise, boolean, boolean)</a> - Constructor for class me.libraryaddict.disguise.events.<a href="me/libraryaddict/disguise/events/UndisguiseEvent.html" title="class in me.libraryaddict.disguise.events">UndisguiseEvent</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/events/UndisguiseEvent.html#%3Cinit%3E(org.bukkit.command.CommandSender,org.bukkit.entity.Entity,me.libraryaddict.disguise.disguisetypes.Disguise,boolean,java.util.function.Supplier)" class="member-name-link">UndisguiseEvent(CommandSender, Entity, Disguise, boolean, Supplier&lt;Boolean&gt;)</a> - Constructor for class me.libraryaddict.disguise.events.<a href="me/libraryaddict/disguise/events/UndisguiseEvent.html" title="class in me.libraryaddict.disguise.events">UndisguiseEvent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/events/UndisguiseEvent.html#%3Cinit%3E(org.bukkit.entity.Entity,me.libraryaddict.disguise.disguisetypes.Disguise,boolean)" class="member-name-link">UndisguiseEvent(Entity, Disguise, boolean)</a> - Constructor for class me.libraryaddict.disguise.events.<a href="me/libraryaddict/disguise/events/UndisguiseEvent.html" title="class in me.libraryaddict.disguise.events">UndisguiseEvent</a></dt>
 <dd>&nbsp;</dd>

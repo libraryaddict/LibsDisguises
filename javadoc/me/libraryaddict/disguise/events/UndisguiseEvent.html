@@ -124,6 +124,18 @@ implements org.bukkit.event.Cancellable</span></div>
  <a href="../disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a>&nbsp;disguise,
  boolean&nbsp;beingReplaced)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(org.bukkit.command.CommandSender,org.bukkit.entity.Entity,me.libraryaddict.disguise.disguisetypes.Disguise,boolean,boolean)" class="member-name-link">UndisguiseEvent</a><wbr>(org.bukkit.command.CommandSender&nbsp;sender,
+ org.bukkit.entity.Entity&nbsp;entity,
+ <a href="../disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a>&nbsp;disguise,
+ boolean&nbsp;beingReplaced,
+ boolean&nbsp;isCancellable)</code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.bukkit.command.CommandSender,org.bukkit.entity.Entity,me.libraryaddict.disguise.disguisetypes.Disguise,boolean,java.util.function.Supplier)" class="member-name-link">UndisguiseEvent</a><wbr>(org.bukkit.command.CommandSender&nbsp;sender,
+ org.bukkit.entity.Entity&nbsp;entity,
+ <a href="../disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a>&nbsp;disguise,
+ boolean&nbsp;beingReplaced,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;isCancellable)</code></div>
+<div class="col-last even-row-color">&nbsp;</div>
 <div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(org.bukkit.entity.Entity,me.libraryaddict.disguise.disguisetypes.Disguise,boolean)" class="member-name-link">UndisguiseEvent</a><wbr>(org.bukkit.entity.Entity&nbsp;entity,
  <a href="../disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a>&nbsp;disguise,
  boolean&nbsp;beingReplaced)</code></div>
@@ -148,6 +160,9 @@ implements org.bukkit.event.Cancellable</span></div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.bukkit.event.HandlerList</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getHandlers()" class="member-name-link">getHandlers</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isCancellable()" class="member-name-link">isCancellable</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -188,6 +203,26 @@ implements org.bukkit.event.Cancellable</span></div>
  boolean&nbsp;beingReplaced)</span></div>
 </section>
 </li>
+<li>
+<section class="detail" id="&lt;init&gt;(org.bukkit.command.CommandSender,org.bukkit.entity.Entity,me.libraryaddict.disguise.disguisetypes.Disguise,boolean,java.util.function.Supplier)">
+<h3>UndisguiseEvent</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">UndisguiseEvent</span><wbr><span class="parameters">(org.bukkit.command.CommandSender&nbsp;sender,
+ org.bukkit.entity.Entity&nbsp;entity,
+ <a href="../disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a>&nbsp;disguise,
+ boolean&nbsp;beingReplaced,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;isCancellable)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="&lt;init&gt;(org.bukkit.command.CommandSender,org.bukkit.entity.Entity,me.libraryaddict.disguise.disguisetypes.Disguise,boolean,boolean)">
+<h3>UndisguiseEvent</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">UndisguiseEvent</span><wbr><span class="parameters">(org.bukkit.command.CommandSender&nbsp;sender,
+ org.bukkit.entity.Entity&nbsp;entity,
+ <a href="../disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a>&nbsp;disguise,
+ boolean&nbsp;beingReplaced,
+ boolean&nbsp;isCancellable)</span></div>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -200,6 +235,12 @@ implements org.bukkit.event.Cancellable</span></div>
 <section class="detail" id="getEntity()">
 <h3>getEntity</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">org.bukkit.entity.Entity</span>&nbsp;<span class="element-name">getEntity</span>()</div>
+</section>
+</li>
+<li>
+<section class="detail" id="isCancellable()">
+<h3>isCancellable</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isCancellable</span>()</div>
 </section>
 </li>
 <li>
