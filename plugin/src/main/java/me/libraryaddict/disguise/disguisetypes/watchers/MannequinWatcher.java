@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
+import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 
 public class MannequinWatcher extends AvatarWatcher {
@@ -44,7 +46,12 @@ public class MannequinWatcher extends AvatarWatcher {
 
     @Override
     public void setSkin(String playerName) {
-        if (playerName != null && playerName.startsWith("{") && playerName.startsWith("}")) {
+        if (playerName == null) {
+            skinResolver.setSkin(playerName);
+            return;
+        }
+
+        if (playerName.startsWith("{") && playerName.startsWith("}")) {
             // Tries to load it as json
             try {
                 // If valid json, will not error
@@ -55,6 +62,10 @@ public class MannequinWatcher extends AvatarWatcher {
             } catch (Exception ignored) {
                 // It wasn't actually json! Most likely!
             }
+        } else if (playerName.matches("[a-z0-9._-]+:[a-z0-9._/-]+")) {
+            setSkin(
+                new UserProfile(null, null, new ArrayList<>(Collections.singletonList(new TextureProperty("texture", playerName, null)))));
+            return;
         }
 
         skinResolver.setSkin(playerName);
