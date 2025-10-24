@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import java.io.ByteArrayOutputStream
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -48,10 +49,33 @@ tasks {
         outputs.upToDateWhen { false }
 
         filesMatching("plugin.yml") {
+            val gitVersion by lazy {
+                val hashStdout = ByteArrayOutputStream()
+                exec {
+                    commandLine("git", "rev-parse", "--short", "HEAD")
+                    standardOutput = hashStdout
+                }
+                val hash = hashStdout.toString().trim()
+
+                val statusStdout = ByteArrayOutputStream()
+                exec {
+                    commandLine("git", "status", "--porcelain")
+                    standardOutput = statusStdout
+                }
+                val uncommittedCount = statusStdout.toString().trim().lines().count { it.isNotBlank() }
+
+                if (uncommittedCount > 0) {
+                    "$hash~$uncommittedCount"
+                } else {
+                    hash
+                }
+            }
+
             expand(
                 "libsdisguisesVersion" to project(":plugin").version,
                 "timestamp" to DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(LocalDateTime.now()),
-                "buildNumber" to System.getProperty("build.number", "unknown")
+                "buildNumber" to System.getProperty("build.number", "unknown"),
+                "gitVersion" to gitVersion
             )
         }
     }

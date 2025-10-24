@@ -4,6 +4,7 @@ description: A disguise plugin with various disguises.
 version: ${libsdisguisesVersion}
 build-date: ${timestamp}
 build-number: ${buildNumber}
+git-version: ${gitVersion}
 author: libraryaddict
 authors: [ Byteflux, Navid K. ]
 softdepend: [ packetevents, PlaceholderAPI ]

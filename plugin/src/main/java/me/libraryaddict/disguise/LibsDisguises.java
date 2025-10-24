@@ -84,6 +84,8 @@ public class LibsDisguises extends JavaPlugin {
     @Getter
     private String buildDate;
     @Getter
+    private String gitVersion;
+    @Getter
     private boolean reloaded;
     @Getter
     private final UpdateChecker updateChecker = new UpdateChecker();
@@ -372,6 +374,7 @@ public class LibsDisguises extends JavaPlugin {
         YamlConfiguration pluginYml = ReflectionManager.getPluginYAML(getFile());
         buildNumber = StringUtils.stripToNull(pluginYml.getString("build-number"));
         buildDate = StringUtils.stripToNull(pluginYml.getString("build-date"));
+        gitVersion = StringUtils.stripToNull(pluginYml.getString("git-version"));
 
         int fileCount = ReflectionManager.getJarFileCount(getFile());
         int expected = pluginYml.getInt("file-count", fileCount);
@@ -398,28 +401,21 @@ public class LibsDisguises extends JavaPlugin {
     private void logInfo() {
         getLogger().info("File Name: " + getFile().getName());
 
-        String nmsPackageName = ReflectionManager.getNmsPackage();
-
-        if (nmsPackageName.isEmpty()) {
-            nmsPackageName = "{Not package relocated}";
-        }
-
         String minecraft = ReflectionManager.getMinecraftVersion();
 
-        getLogger().info(
-            "Discovered nms version: (Package: " + nmsPackageName + ") (LD: " + ReflectionManager.getVersion() + ") (MC: " + minecraft +
-                ")");
+        getLogger().info("Discovered nms version (LD: " + ReflectionManager.getVersion() + ") (MC: " + minecraft + ")");
 
-        getLogger().info("Jenkins Build: " + (isJenkins() ? "#" : "") + getBuildNo());
+        getLogger().info(String.format("Jenkins Build: %s%s", isJenkins() ? "#" : "", getBuildNo()));
 
-        getLogger().info("Build Date: " + buildDate);
+        getLogger().info("Build Date: " + getBuildDate());
+        getLogger().info("Git Hash: " + getGitVersion());
 
         if (ReflectionManager.getVersion() != null) {
             String recommended = ReflectionManager.getVersion().getRecommendedMinorVersion();
 
             if (!recommended.equals(minecraft)) {
-                getLogger().warning("You are running an outdated version of Minecraft, you are currently using " + minecraft +
-                    ", you should update to a minimum of " + recommended);
+                getLogger().warning("You are running an older minor version of Minecraft, you are currently using " + minecraft +
+                    ", consider updating to " + recommended);
             }
         }
     }
