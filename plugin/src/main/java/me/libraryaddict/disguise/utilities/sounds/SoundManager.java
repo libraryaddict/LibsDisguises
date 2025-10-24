@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.sound.Sounds;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.configuration.ConfigurationSection;
@@ -25,6 +26,29 @@ public class SoundManager {
         loadCustomSounds();
     }
 
+    /**
+     * Always returns default if not set or invalid
+     */
+    private DisguiseSoundCategory getCategory(ConfigurationSection config, String key, String def) {
+        String val = config.getString(key, def);
+
+        if (val == null) {
+            return null;
+        }
+
+        try {
+            return DisguiseSoundCategory.byName(val);
+        } catch (Exception e) {
+            LibsDisguises.getInstance().getLogger().warning("Invalid sound category '" + val + "'");
+        }
+
+        if (def == null) {
+            return null;
+        }
+
+        return DisguiseSoundCategory.byName(def);
+    }
+
     private void loadCustomSounds() {
         File f = new File(LibsDisguises.getInstance().getDataFolder(), "configs/sounds.yml");
 
@@ -42,6 +66,10 @@ public class SoundManager {
 
         YamlConfiguration config = YamlConfiguration.loadConfiguration(f);
 
+        DisguiseConfig.setSoundCategory(getCategory(config, "SoundCategory", "DISGUISE"));
+        DisguiseConfig.setPlayIdleSounds(config.getBoolean("PlayIdleSounds", false));
+        DisguiseConfig.setSoundsEnabled(config.getBoolean("DisguiseSounds", true));
+
         for (String key : config.getKeys(false)) {
             if (!config.isConfigurationSection(key) || key.equals("GroupName")) {
                 continue;
@@ -52,8 +80,11 @@ public class SoundManager {
                 continue;
             }
 
-            SoundGroup group = new SoundGroup(key);
             ConfigurationSection section = config.getConfigurationSection(key);
+
+            DisguiseSoundCategory category = getCategory(section, "Category", null);
+
+            SoundGroup group = new SoundGroup(key, category);
 
             for (SoundGroup.SoundType type : SoundGroup.SoundType.values()) {
                 if (type == SoundGroup.SoundType.CANCEL) {

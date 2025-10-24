@@ -1,13 +1,5 @@
 # This config is for options that should only be touched if you're having compatibility issues with other plugins
 
-# Shall I disguise the sounds?
-# This turns your Player Hurt sound into a MOOOO
-DisguiseSounds: true
-
-# Should the plugin forcibly play idle sounds?
-# This only takes effect if the native entity does not play an idle sound of its own (Eg, player, armorstand)
-PlayIdleSounds: false
-
 # Some players have issues with conflicting plugins where disguised entities will show the wrong armor
 # This should be left alone unless you're trying to solve this issue. Such as MM and stone blocks.
 # When true, the plugin will hide player disguises armor to prevent a minor visual bug for half a second

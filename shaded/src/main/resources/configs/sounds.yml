@@ -3,14 +3,34 @@
 # You can set the sounds to play in config with 'setSoundGroup' and below you can make your own sound groups!
 # The default disguises already have their sound groups and you cannot use their names.
 # This means no 'PLAYER' 'COW' etc
-# This is an example group, 'GroupName' will never be loaded.
 
+# Shall I disguise the sounds?
+# This turns your Player Hurt sound into a MOOOO
+DisguiseSounds: true
+
+# Should the plugin make sure there are idle sounds?
+# This only takes effect if the native entity does not play an idle sound of its own (Eg, player, armorstand)
+PlayIdleSounds: false
+
+# 'SoundCategory' controls how the plugin will assign the sound category for volume controls (on the client)
+# Set 'Category: DISGUISE' etc on the groups to control them individually
+
+# DISGUISE - Default, a cow disguised as a zombie will play hostile category, and is muted if hostile sounds disabled
+# ACTUAL - A cow disguised as a zombie will play ambient category, and is muted if ambient sounds disabled
+# If you want to set a specific sound category, check out the below link for the categories you could use
+# https://jd.papermc.io/paper/1.21.10/org/bukkit/SoundCategory.html as well
+SoundCategory: DISGUISE
+
+# This is an example group, 'GroupName' will never be loaded.
 GroupName:
   # If you don't set one of these options, or it is empty. Then no sound will be played for that sound type
   # So if hurt is missing, it won't play a hurt noise
   # Alternatively, you could use "COW" which refers to the "COW" soundgroup, and loads the category from that!
   # Idle:
   #   - COW
+
+  # The category here obeys the same rules as "SoundCategory"
+  Category: HOSTILE
   Idle:
     - minecraft:some.idle.sound
   Hurt:

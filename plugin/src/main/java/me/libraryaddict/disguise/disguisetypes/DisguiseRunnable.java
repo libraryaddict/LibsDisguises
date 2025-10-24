@@ -133,7 +133,7 @@ public class DisguiseRunnable extends BukkitRunnable {
             }
 
             player.playSound(disguise.getEntity().getLocation(), NmsVersion.v1_16.isSupported() ? idleSound.toString() : idleSound.getKey(),
-                volume, pitch);
+                group.getCategory().getBukkitSoundCategory(disguise), volume, pitch);
         }
     }
 

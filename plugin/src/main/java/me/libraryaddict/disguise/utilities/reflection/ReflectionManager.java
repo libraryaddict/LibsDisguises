@@ -963,6 +963,24 @@ public class ReflectionManager {
         getNmsReflection().setBoundingBox(entity, x, y, z);
     }
 
+    public static org.bukkit.SoundCategory getBukkitSoundCategory(DisguiseType disguiseType) {
+        if (disguiseType == DisguiseType.PLAYER) {
+            return org.bukkit.SoundCategory.PLAYERS;
+        }
+
+        Class<? extends Entity> entityClass = disguiseType.getEntityType().getEntityClass();
+
+        if (Monster.class.isAssignableFrom(entityClass)) {
+            return org.bukkit.SoundCategory.HOSTILE;
+        }
+
+        if (Ambient.class.isAssignableFrom(entityClass)) {
+            return org.bukkit.SoundCategory.AMBIENT;
+        }
+
+        return org.bukkit.SoundCategory.NEUTRAL;
+    }
+
     public static SoundCategory getSoundCategory(DisguiseType disguiseType) {
         if (disguiseType == DisguiseType.PLAYER) {
             return SoundCategory.PLAYER;

@@ -18,6 +18,7 @@ import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundCategory;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Bukkit;
@@ -331,6 +332,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static boolean verboseLogging;
+    @Getter
+    @Setter
+    private static DisguiseSoundCategory soundCategory;
 
     public static boolean isDisplayTextName() {
         return getPlayerNameType() == PlayerNameType.TEXT_DISPLAY;
@@ -654,7 +658,6 @@ public class DisguiseConfig {
         setRandomDisguises(config.getBoolean("RandomDisguiseOptions"));
         setViewDisguises(config.getBoolean("ViewSelfDisguises"));
         setViewSelfDisguisesDefault(config.getBoolean("ViewSelfDisguisesDefault"));
-        setPlayIdleSounds(config.getBoolean("PlayIdleSounds"));
         setScaleSelfDisguises(config.getBoolean("SelfDisguisesScaling"));
         setScaleSelfDisguisesMin(config.getDouble("SelfDisguisesScaleMin"));
         setScaleSelfDisguisesMax(config.getDouble("SelfDisguisesScaleMax"));
@@ -761,7 +764,6 @@ public class DisguiseConfig {
         setRemoveDisguiseBlockBreak(config.getBoolean("UndisguiseOnBlockBreak"));
         setRemoveDisguiseBlockPlace(config.getBoolean("UndisguiseOnBlockPlace"));
         String apiKey = config.getString("MineSkinAPIKey");
-        setSoundsEnabled(config.getBoolean("DisguiseSounds"));
         setUniquePlayerDisguiseUUIDs(config.getBoolean("UniquePlayerUUID"));
         setHideDeathMessages(config.getBoolean("HideDeathMessages"));
 

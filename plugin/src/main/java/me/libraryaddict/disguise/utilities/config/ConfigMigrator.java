@@ -7,6 +7,7 @@ import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_Dis
 import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_DisplayConfigDesc;
 import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_DisplayTextNames;
 import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_RenamedFiles;
+import me.libraryaddict.disguise.utilities.config.migrations.ConfigMigration_Sounds;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -19,6 +20,11 @@ import java.util.Set;
 
 public class ConfigMigrator {
     public interface ConfigMigration {
+
+        default boolean shouldBeDelayed() {
+            return false;
+        }
+
         /**
          * The names of the configs that need to be loaded to import the configs
          * <p>
@@ -82,6 +88,8 @@ public class ConfigMigrator {
         list.add(new ConfigMigration_DisplayTextNames());
         // V.4
         list.add(new ConfigMigration_DisplayConfigDesc());
+        // V.5
+        list.add(new ConfigMigration_Sounds());
 
         return list;
     }
@@ -115,6 +123,24 @@ public class ConfigMigrator {
 
             // This migration is older than the current migration we will be applying
             iterator.remove();
+        }
+
+        boolean delayed = false;
+        iterator = migrations.iterator();
+
+        while (iterator.hasNext()) {
+            ConfigMigration migration = iterator.next();
+
+            if (!delayed && !migration.shouldBeDelayed()) {
+                continue;
+            }
+
+            iterator.remove();
+
+            if (!delayed) {
+                delayed = true;
+                LibsDisguises.getInstance().getLogger().info("Going to delay a migration, maybe next startup? Could be a missing file.");
+            }
         }
 
         if (migrations.isEmpty()) {

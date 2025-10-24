@@ -16,7 +16,6 @@ import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup.SoundType;
 import org.bukkit.Location;
@@ -197,11 +196,12 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             // Well then, api is lacking. May as well send via bukkit methods
             Location loc = entity.getLocation();
             // Namespace was a 1.16 thing, so 1.16+ we will include the 'minecraft:'
-            observer.playSound(loc, NmsVersion.v1_16.isSupported() ? newSound.toString() : newSound.getKey(), volume, pitch);
+            observer.playSound(loc, NmsVersion.v1_16.isSupported() ? newSound.toString() : newSound.getKey(),
+                group.getCategory().getBukkitSoundCategory(disguise), volume, pitch);
             return;
         }
 
-        SoundCategory soundCat = ReflectionManager.getSoundCategory(disguise.getType());
+        SoundCategory soundCat = disguiseSound.getCategory().getSoundCategory(disguise);
 
         if (soundEffect != null) {
             soundEffect.setSound(nSound);
