@@ -1,8 +1,8 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
-import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
+import com.github.retrooper.packetevents.resources.ResourceLocation;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Optional;
 
 public class MannequinWatcher extends AvatarWatcher {
@@ -62,10 +61,13 @@ public class MannequinWatcher extends AvatarWatcher {
             } catch (Exception ignored) {
                 // It wasn't actually json! Most likely!
             }
-        } else if (playerName.matches("[a-z0-9._-]+:[a-z0-9._/-]+")) {
-            setSkin(
-                new UserProfile(null, null, new ArrayList<>(Collections.singletonList(new TextureProperty("texture", playerName, null)))));
-            return;
+        } else if (playerName.contains("/") && playerName.matches("([a-z0-9._-]+:)?[a-z0-9._/-]+")) {
+            try {
+                setSkin(new ItemProfile(null, null, new ArrayList<>(),
+                    new ItemProfile.SkinPatch(new ResourceLocation(playerName), null, null, null)));
+                return;
+            } catch (Exception ignored) {
+            }
         }
 
         skinResolver.setSkin(playerName);
