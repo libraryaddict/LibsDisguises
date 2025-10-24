@@ -46,6 +46,7 @@ import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.configuration.server.WrapperConfigServerRegistryData;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
+import com.google.common.collect.ImmutableMultimap;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.Property;
@@ -580,21 +581,13 @@ public class ReflectionManager {
 
     @SneakyThrows
     public static GameProfile convertProfile(UserProfile userProfile) {
-        GameProfile gameProfile = new GameProfile(userProfile.getUUID(), userProfile.getName());
-        List<TextureProperty> textures = userProfile.getTextureProperties();
-        PropertyMap properties;
+        ImmutableMultimap.Builder<String, Property> builder = ImmutableMultimap.builder();
 
-        if (gameProfileGetProperties == null) {
-            properties = gameProfile.properties();
-        } else {
-            properties = (PropertyMap) gameProfileGetProperties.invoke(gameProfile);
+        for (TextureProperty property : userProfile.getTextureProperties()) {
+            builder.put(property.getName(), new Property(property.getName(), property.getValue(), property.getSignature()));
         }
 
-        for (TextureProperty property : textures) {
-            properties.put(property.getName(), new Property(property.getName(), property.getValue(), property.getSignature()));
-        }
-
-        return gameProfile;
+        return new GameProfile(userProfile.getUUID(), userProfile.getName(), new PropertyMap(builder.build()));
     }
 
     public static PlayerProfile createProfile(UserProfile profile) {
