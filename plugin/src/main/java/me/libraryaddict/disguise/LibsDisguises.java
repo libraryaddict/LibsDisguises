@@ -84,7 +84,7 @@ public class LibsDisguises extends JavaPlugin {
     @Getter
     private String buildDate;
     @Getter
-    private String gitVersion;
+    private String buildHash;
     @Getter
     private boolean reloaded;
     @Getter
@@ -374,7 +374,7 @@ public class LibsDisguises extends JavaPlugin {
         YamlConfiguration pluginYml = ReflectionManager.getPluginYAML(getFile());
         buildNumber = StringUtils.stripToNull(pluginYml.getString("build-number"));
         buildDate = StringUtils.stripToNull(pluginYml.getString("build-date"));
-        gitVersion = StringUtils.stripToNull(pluginYml.getString("git-version"));
+        buildHash = StringUtils.stripToNull(pluginYml.getString("build-hash"));
 
         int fileCount = ReflectionManager.getJarFileCount(getFile());
         int expected = pluginYml.getInt("file-count", fileCount);
@@ -408,7 +408,7 @@ public class LibsDisguises extends JavaPlugin {
         getLogger().info(String.format("Jenkins Build: %s%s", isJenkins() ? "#" : "", getBuildNo()));
 
         getLogger().info("Build Date: " + getBuildDate());
-        getLogger().info("Git Hash: " + getGitVersion());
+        getLogger().info("Build Hash: " + getBuildHash());
 
         if (ReflectionManager.getVersion() != null) {
             String recommended = ReflectionManager.getVersion().getRecommendedMinorVersion();

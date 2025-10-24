@@ -49,7 +49,7 @@ tasks {
         outputs.upToDateWhen { false }
 
         filesMatching("plugin.yml") {
-            val gitVersion by lazy {
+            val buildHash by lazy {
                 val hashStdout = ByteArrayOutputStream()
                 exec {
                     commandLine("git", "rev-parse", "--short", "HEAD")
@@ -75,7 +75,7 @@ tasks {
                 "libsdisguisesVersion" to project(":plugin").version,
                 "timestamp" to DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").format(LocalDateTime.now()),
                 "buildNumber" to System.getProperty("build.number", "unknown"),
-                "gitVersion" to gitVersion
+                "buildHash" to buildHash
             )
         }
     }
