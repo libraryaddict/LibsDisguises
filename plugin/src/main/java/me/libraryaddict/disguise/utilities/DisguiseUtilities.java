@@ -1020,31 +1020,37 @@ public class DisguiseUtilities {
         saveDisguises(owningEntity, DisguiseAPI.getDisguises(owningEntity));
     }
 
-    public static void saveDisguises(Entity owningEntity, Disguise[] disguise) {
+    public static void saveDisguises(Entity owningEntity, Disguise[] disguises) {
+        if (disguises != null) {
+            for (Disguise disguise : disguises) {
+                disguise.getInternals().getRunnable().setPossibleRemoval();
+            }
+        }
+
         if (!LibsPremium.isPremium()) {
             return;
         }
 
         // If the disguises should not be saved
         if (!(owningEntity instanceof Player ? DisguiseConfig.isSavePlayerDisguises() : DisguiseConfig.isSaveEntityDisguises())) {
-            disguise = new Disguise[0];
+            disguises = new Disguise[0];
         }
 
         if (!NmsVersion.v1_14.isSupported()) {
-            saveDisguises(owningEntity.getUniqueId(), disguise);
+            saveDisguises(owningEntity.getUniqueId(), disguises);
             return;
         }
 
         try {
-            if (disguise == null || disguise.length == 0) {
+            if (disguises == null || disguises.length == 0) {
                 owningEntity.getPersistentDataContainer().remove(savedDisguisesKey);
             } else {
                 StringBuilder builder = new StringBuilder();
 
-                for (int i = 0; i < disguise.length; i++) {
-                    builder.append(DisguiseParser.parseToString(disguise[i], true, true));
+                for (int i = 0; i < disguises.length; i++) {
+                    builder.append(DisguiseParser.parseToString(disguises[i], true, true));
 
-                    if (i + 1 < disguise.length) {
+                    if (i + 1 < disguises.length) {
                         builder.append("\n");
                     }
                 }

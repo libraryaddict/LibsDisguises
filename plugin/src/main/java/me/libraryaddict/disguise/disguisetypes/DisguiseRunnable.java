@@ -19,6 +19,7 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -34,6 +35,8 @@ public class DisguiseRunnable extends BukkitRunnable {
     private int ambientSoundTime;
     private SoundGroup ignoredSoundGroup;
     private final Disguise disguise;
+    private int lastTicksLived = -1;
+    private long lastValidCheckPassed;
     final Double vectorY;
     final boolean alwaysSendVelocity;
 
@@ -70,6 +73,15 @@ public class DisguiseRunnable extends BukkitRunnable {
         resetAmbientSoundTime();
     }
 
+    /**
+     * Called when the disguise may be removed shortly
+     */
+    public void setPossibleRemoval() {
+        // Reset the flags, it'll be processed immediately
+        lastValidCheckPassed = 0L;
+        lastTicksLived = 0;
+    }
+
     public void resetAmbientSoundTime() {
         DisguiseValues values = DisguiseValues.getDisguiseValues(disguise.getType());
 
@@ -81,7 +93,7 @@ public class DisguiseRunnable extends BukkitRunnable {
     }
 
     private void playIdleSound() {
-        if (!disguise.isPlayIdleSounds() || !disguise.isReplaceSounds() || !disguise.getEntity().isValid()) {
+        if (!disguise.isPlayIdleSounds() || !disguise.isReplaceSounds()) {
             return;
         }
 
@@ -152,7 +164,7 @@ public class DisguiseRunnable extends BukkitRunnable {
             }
 
             return true;
-        } else if (!disguise.getEntity().isValid()) {
+        } else if (isEntityInvalid()) {
             // If it has been dead for 30+ ticks
             // This is to ensure that this disguise isn't removed while clients think its the real entity
             // The delay is because if it sends the destroy entity packets straight away, then it means no
@@ -167,6 +179,37 @@ public class DisguiseRunnable extends BukkitRunnable {
             return true;
         }
 
+        return false;
+    }
+
+    /**
+     * Helper method to try avoid some lag
+     * Checks ticks lived and if that has changed, then it's being ticked.
+     * However the server may not tick the entity for reasons, such as far away from a player. In which case it won't increment
+     * So we will test for 'isValid' in that scenario every second.
+     */
+    private boolean isEntityInvalid() {
+        // Technically there is 'isTicking' which was added to paper in 1.16(.5?) but that isn't the same thing
+        int ticksLived = disguise.getEntity().getTicksLived();
+
+        // They were ticked just before, they're either dead this very tick, or valid
+        if (lastTicksLived != ticksLived) {
+            lastTicksLived = ticksLived;
+            return false;
+        }
+
+        // If it passed a check in the last second
+        if (lastValidCheckPassed + 1000 > System.currentTimeMillis()) {
+            return false;
+        }
+
+        // If entity isn't valid, then return true, it's invalid
+        if (!disguise.getEntity().isValid()) {
+            return true;
+        }
+
+        // Otherwise set the 'has passed check' and return false
+        lastValidCheckPassed = System.currentTimeMillis();
         return false;
     }
 
@@ -245,9 +288,10 @@ public class DisguiseRunnable extends BukkitRunnable {
         }
 
         Entity entity = disguise.getEntity();
+        boolean onGround = entity.isOnGround();
 
         // If this disguise has velocity sending enabled and the entity is flying.
-        if (!alwaysSendVelocity && entity.isOnGround()) {
+        if (!alwaysSendVelocity && onGround) {
             return;
         }
 
@@ -257,12 +301,12 @@ public class DisguiseRunnable extends BukkitRunnable {
         // head about the
         // if statement.
         // But it doesn't seem to do anything wrong..
-        if (vector.getY() != 0 && !(vector.getY() < 0 && alwaysSendVelocity && entity.isOnGround())) {
+        if (vector.getY() != 0 && !(vector.getY() < 0 && alwaysSendVelocity && onGround)) {
             return;
         }
 
         // If disguise isn't a experience orb, or the entity isn't standing on the ground
-        if (disguise.getType() == DisguiseType.EXPERIENCE_ORB && entity.isOnGround()) {
+        if (disguise.getType() == DisguiseType.EXPERIENCE_ORB && onGround) {
             return;
         }
 
@@ -270,13 +314,14 @@ public class DisguiseRunnable extends BukkitRunnable {
 
         if (disguise.getType() == DisguiseType.WITHER_SKULL && DisguiseConfig.isWitherSkullPacketsEnabled()) {
             Location loc = entity.getLocation();
-            float yaw = DisguiseUtilities.getYaw(disguise.getType(), entity.getType(), loc.getYaw());
-            float pitch = DisguiseUtilities.getPitch(disguise.getType(), entity.getType(), loc.getPitch());
-            lookPacket = new WrapperPlayServerEntityRotation(entity.getEntityId(), yaw, pitch, entity.isOnGround());
+            EntityType type = entity.getType();
+            float yaw = DisguiseUtilities.getYaw(disguise.getType(), type, loc.getYaw());
+            float pitch = DisguiseUtilities.getPitch(disguise.getType(), type, loc.getPitch());
+            lookPacket = new WrapperPlayServerEntityRotation(entity.getEntityId(), yaw, pitch, onGround);
 
-            if (disguise.isSelfDisguiseVisible() && entity instanceof Player) {
+            if (disguise.isSelfDisguiseVisible() && type == EntityType.PLAYER) {
                 WrapperPlayServerEntityRotation selfPacket =
-                    new WrapperPlayServerEntityRotation(DisguiseAPI.getSelfDisguiseId(), yaw, pitch, entity.isOnGround());
+                    new WrapperPlayServerEntityRotation(DisguiseAPI.getSelfDisguiseId(), yaw, pitch, onGround);
 
                 PacketEvents.getAPI().getPlayerManager().sendPacketSilently(entity, selfPacket);
             }

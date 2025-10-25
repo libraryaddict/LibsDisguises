@@ -44,6 +44,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -139,6 +140,7 @@ public abstract class Disguise {
     @Getter
     private boolean scalePlayerToDisguise = DisguiseConfig.isScaleSelfDisguises();
     @Getter
+    @ApiStatus.Internal
     private final DisguiseInternals internals;
 
     public Disguise(DisguiseType disguiseType) {
@@ -682,9 +684,17 @@ public abstract class Disguise {
     /**
      * Internal use
      */
+    @ApiStatus.Internal
     public boolean isRemoveDisguiseOnDeath() {
-        return getEntity() == null ||
-            (getEntity() instanceof Player ? !isKeepDisguiseOnPlayerDeath() : getEntity().isDead() || !getEntity().isValid());
+        if (getEntity() == null) {
+            return true;
+        }
+
+        if (getEntity() instanceof Player) {
+            return !isKeepDisguiseOnPlayerDeath();
+        }
+
+        return getEntity().isDead() || !getEntity().isValid();
     }
 
     @Deprecated
