@@ -3,7 +3,6 @@ package me.libraryaddict.disguise.commands.utils.headresolvers;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.mojang.authlib.GameProfile;
 import lombok.SneakyThrows;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -16,7 +15,7 @@ public class SpigotHeadResolver implements HeadResolver {
     @Override
     public boolean isAvailable() {
         // Only checked available in 1.18.2
-        return NmsVersion.v1_18.isSupported();
+        return NmsVersion.v1_18_R1.isSupported();
     }
 
     @SneakyThrows

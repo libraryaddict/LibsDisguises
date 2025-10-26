@@ -3053,7 +3053,7 @@ public class DisguiseUtilities {
                     bitSet.set(0, potionEffect.isAmbient());
                 }
 
-                if (NmsVersion.v1_18.isSupported()) {
+                if (NmsVersion.v1_18_R1.isSupported()) {
                     bitSet.set(1, potionEffect.hasParticles());
                 }
 

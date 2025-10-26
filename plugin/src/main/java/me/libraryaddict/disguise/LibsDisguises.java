@@ -229,11 +229,17 @@ public class LibsDisguises extends JavaPlugin {
 
             // No point logging this one
             someMoreLogging();
+            NmsVersion nmsVersion = ReflectionManager.getVersion();
 
-            if (ReflectionManager.getVersion() == null) {
+            if (nmsVersion == null || nmsVersion == NmsVersion.UNSUPPORTED) {
                 getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is intended for " +
-                    Arrays.stream(NmsVersion.values()).filter(v -> v != NmsVersion.UNSUPPORTED).map(NmsVersion::getCompressedVersions)
+                    Arrays.stream(NmsVersion.values()).filter(v -> !v.isDeprecated()).map(NmsVersion::getCompressedVersions)
                         .collect(Collectors.joining(", ")) + "!");
+                Bukkit.getPluginManager().disablePlugin(this);
+                return;
+            } else if (!nmsVersion.isVersionLoadable()) {
+                getLogger().severe(
+                    "Please update to a minimum of " + nmsVersion.getRecommendedMinorVersion() + " to continue using this plugin.");
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
@@ -323,7 +329,7 @@ public class LibsDisguises extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(getSkinHandler(), LibsDisguises.getInstance());
         }
 
-        if (NmsVersion.v1_18.isSupported()) {
+        if (NmsVersion.v1_18_R1.isSupported()) {
             Bukkit.getPluginManager().registerEvents(new DisguiseListener1_18(), this);
         }
 
@@ -402,20 +408,25 @@ public class LibsDisguises extends JavaPlugin {
         getLogger().info("File Name: " + getFile().getName());
 
         String minecraft = ReflectionManager.getMinecraftVersion();
+        NmsVersion version = ReflectionManager.getVersion();
 
-        getLogger().info("Discovered nms version (LD: " + ReflectionManager.getVersion() + ") (MC: " + minecraft + ")");
+        getLogger().info("Discovered nms version (LD: " + version + ") (MC: " + minecraft + ")");
 
         getLogger().info(String.format("Jenkins Build: %s%s", isJenkins() ? "#" : "", getBuildNo()));
 
         getLogger().info("Build Date: " + getBuildDate());
         getLogger().info("Build Hash: " + getBuildHash());
 
-        if (ReflectionManager.getVersion() != null) {
-            String recommended = ReflectionManager.getVersion().getRecommendedMinorVersion();
+        if (version != null) {
+            String recommended = version.getRecommendedMinorVersion();
 
             if (!recommended.equals(minecraft)) {
                 getLogger().warning("You are running an older minor version of Minecraft, you are currently using " + minecraft +
                     ", consider updating to " + recommended);
+
+                if (version.isDeprecated()) {
+                    getLogger().warning("Your version of Minecraft will not be supported in the future.");
+                }
             }
         }
     }
