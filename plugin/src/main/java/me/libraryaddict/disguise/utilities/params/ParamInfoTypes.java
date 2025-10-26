@@ -44,6 +44,7 @@ import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoVector3f
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoWrappedBlockData;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundCategory;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Art;
@@ -130,6 +131,10 @@ public class ParamInfoTypes {
         paramInfos.add(new ParamInfoComponent(Component.class, "Component", "A kyori adventure text component"));
         paramInfos.add(new ParamInfoEnum(DisguiseAnimation.class, "Disguise Animation",
             "Every animation that Mojang has added to entities, not all of them will work"));
+        paramInfos.add(new ParamInfoEnum(DisguiseSoundCategory.class, "Sound Category",
+            "The sound category the sounds from this disguise will play under, not set when global default",
+            Arrays.stream(DisguiseSoundCategory.values()).filter(DisguiseSoundCategory::isAvailable)
+                .toArray(DisguiseSoundCategory[]::new)));
 
         Material[] materials = getMaterials();
 

@@ -309,7 +309,7 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
-        if (!DisguiseConfig.isSaveEntityDisguises() || NmsVersion.v1_18.isSupported()) {
+        if (!DisguiseConfig.isSaveEntityDisguises() || NmsVersion.v1_18_R1.isSupported()) {
             return;
         }
 
@@ -347,7 +347,7 @@ public class DisguiseListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onChunkLoad(ChunkLoadEvent event) {
-        if (!DisguiseConfig.isSaveEntityDisguises() || NmsVersion.v1_18.isSupported()) {
+        if (!DisguiseConfig.isSaveEntityDisguises() || NmsVersion.v1_18_R1.isSupported()) {
             return;
         }
 

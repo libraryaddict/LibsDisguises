@@ -197,11 +197,11 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             Location loc = entity.getLocation();
             // Namespace was a 1.16 thing, so 1.16+ we will include the 'minecraft:'
             observer.playSound(loc, NmsVersion.v1_16.isSupported() ? newSound.toString() : newSound.getKey(),
-                group.getCategory().getBukkitSoundCategory(disguise), volume, pitch);
+                disguise.getEffectiveSoundCategory().getBukkitSoundCategory(disguise), volume, pitch);
             return;
         }
 
-        SoundCategory soundCat = disguiseSound.getCategory().getSoundCategory(disguise);
+        SoundCategory soundCat = disguise.getEffectiveSoundCategory().getSoundCategory(disguise);
 
         if (soundEffect != null) {
             soundEffect.setSound(nSound);

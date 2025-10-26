@@ -15,6 +15,7 @@ import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherInfo;
+import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundCategory;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 
@@ -199,7 +200,7 @@ public class DisguiseMethods {
         List<String> extraMethods = new ArrayList<>(
             Arrays.asList("setSelfDisguiseVisible", "setHideHeldItemFromSelf", "setHideArmorFromSelf", "setHearSelfDisguise",
                 "setReplaceSounds", "setHidePlayer", "setExpires", "setNotifyBar", "setBossBarColor", "setBossBarStyle", "setDynamicName",
-                "setSoundGroup", "setDisguiseName", "setDeadmau5Ears", "setTallSelfDisguise", "setPlayIdleSounds"));
+                "setSoundGroup", "setDisguiseName", "setDeadmau5Ears", "setTallSelfDisguise", "setPlayIdleSounds", "setSoundCategory"));
 
         // Methods hidden by default, mainly so it doesn't throw an exception if used
         // This means that any options in this will be set in a disguise, but it won't be copied when a disguise is parsed to string
@@ -244,6 +245,10 @@ public class DisguiseMethods {
                         break;
                     case "setTallSelfDisguise":
                         cl = DisguiseConfig.TallSelfDisguise.class;
+                        break;
+                    case "setSoundCategory":
+                        cl = DisguiseSoundCategory.class;
+                        break;
                     default:
                         break;
                 }

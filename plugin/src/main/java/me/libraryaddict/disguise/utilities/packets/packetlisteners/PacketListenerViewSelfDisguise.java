@@ -308,7 +308,8 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
             return;
         }
 
-        observer.playSound(observer.getLocation(), sound.toString(), group.getCategory().getBukkitSoundCategory(disguise), 1f, 1f);
+        observer.playSound(observer.getLocation(), sound.toString(), disguise.getEffectiveSoundCategory().getBukkitSoundCategory(disguise),
+            1f, 1f);
     }
 
     private void handleDamage(Disguise disguise, PacketPlaySendEvent event, Player observer) {
@@ -330,7 +331,8 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
             return;
         }
 
-        observer.playSound(observer.getLocation(), sound.toString(), group.getCategory().getBukkitSoundCategory(disguise), 1f, 1f);
+        observer.playSound(observer.getLocation(), sound.toString(), disguise.getEffectiveSoundCategory().getBukkitSoundCategory(disguise),
+            1f, 1f);
     }
 
     private void handleVelocity(PacketPlaySendEvent event, Player observer) {
