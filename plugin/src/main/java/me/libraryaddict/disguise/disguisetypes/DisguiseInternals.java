@@ -82,7 +82,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
         }
     }
 
-    protected void createRunnable() {
+    protected void onDisguiseStart() {
         if (runnable != null && !runnable.isCancelled()) {
             runnable.cancel();
         }

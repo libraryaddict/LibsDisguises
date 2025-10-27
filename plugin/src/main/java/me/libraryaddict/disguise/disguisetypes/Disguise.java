@@ -1061,7 +1061,7 @@ public abstract class Disguise {
         disguiseInUse = true;
 
         if (!DisguiseUtilities.isInvalidFile()) {
-            getInternals().createRunnable();
+            getInternals().onDisguiseStart();
         }
 
         if (this instanceof PlayerDisguise) {
