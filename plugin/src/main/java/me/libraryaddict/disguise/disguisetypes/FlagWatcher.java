@@ -703,9 +703,7 @@ public class FlagWatcher {
     }
 
     public void setBurning(boolean setBurning) {
-        setEntityFlag(0, setBurning);
-
-        sendData(MetaIndex.ENTITY_META);
+        sendEntityFlag(0, setBurning);
     }
 
     public boolean isCustomNameVisible() {
@@ -741,8 +739,7 @@ public class FlagWatcher {
 
     @MethodIgnoredBy(value = {}, group = MethodGroupType.NO_LOOK)
     public void setFlyingWithElytra(boolean flying) {
-        setEntityFlag(7, flying);
-        sendData(MetaIndex.ENTITY_META);
+        sendEntityFlag(7, flying);
     }
 
     public boolean isGlowing() {
@@ -750,8 +747,7 @@ public class FlagWatcher {
     }
 
     public void setGlowing(boolean glowing) {
-        setEntityFlag(6, glowing);
-        sendData(MetaIndex.ENTITY_META);
+        sendEntityFlag(6, glowing);
     }
 
     public void setGlowColor(ChatColor glowColor) {
@@ -777,8 +773,7 @@ public class FlagWatcher {
     }
 
     public void setInvisible(boolean setInvis) {
-        setEntityFlag(5, setInvis);
-        sendData(MetaIndex.ENTITY_META);
+        sendEntityFlag(5, setInvis);
     }
 
     public boolean isNoGravity() {
@@ -813,8 +808,7 @@ public class FlagWatcher {
             return;
         }
 
-        setEntityFlag(4, setRightClicking);
-        sendData(MetaIndex.ENTITY_META);
+        sendEntityFlag(4, setRightClicking);
     }
 
     public boolean isSneaking() {
@@ -823,8 +817,7 @@ public class FlagWatcher {
 
     @MethodOnlyUsedBy(value = {DisguiseType.PLAYER})
     public void setSneaking(boolean setSneaking) {
-        setEntityFlag(1, setSneaking);
-        sendData(MetaIndex.ENTITY_META);
+        sendEntityFlag(1, setSneaking);
 
         if (getDisguise().isPlayerDisguise()) {
             updateNameHeight();
@@ -840,8 +833,7 @@ public class FlagWatcher {
     }
 
     public void setSprinting(boolean setSprinting) {
-        setEntityFlag(3, setSprinting);
-        sendData(MetaIndex.ENTITY_META);
+        sendEntityFlag(3, setSprinting);
     }
 
     public void rebuildWatchableObjects() {
@@ -939,11 +931,17 @@ public class FlagWatcher {
         backupEntityValues.put(no.getIndex(), value);
     }
 
-    private boolean getEntityFlag(int byteValue) {
+    protected boolean getEntityFlag(int byteValue) {
         return (getData(MetaIndex.ENTITY_META) & 1 << byteValue) != 0;
     }
 
+    protected void sendEntityFlag(int byteValue, boolean flag) {
+        setEntityFlag(byteValue, flag);
+        sendData(MetaIndex.ENTITY_META);
+    }
+
     protected void setEntityFlag(int byteValue, boolean flag) {
+        // Technically there's also 7 'fallflying' but that has no visible effect
         modifiedEntityAnimations[byteValue] = true;
 
         byte b0 = getData(MetaIndex.ENTITY_META);
@@ -1017,7 +1015,7 @@ public class FlagWatcher {
             return;
         }
 
-        setEntityFlag(4, swimming);
+        sendEntityFlag(4, swimming);
 
         updatePose();
     }
