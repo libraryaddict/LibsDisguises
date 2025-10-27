@@ -103,7 +103,6 @@ import org.bukkit.Color;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Sound;
 import org.bukkit.TreeSpecies;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
@@ -516,7 +515,13 @@ public class ReflectionManager {
 
     public static ReflectionManagerAbstract getReflectionManager(NmsVersion nmsVersion) {
         try {
-            Class<?> aClass = Class.forName("me.libraryaddict.disguise.utilities.reflection." + nmsVersion.name() + ".ReflectionManager");
+            String packageName = nmsVersion.name();
+
+            if (!packageName.contains("_R")) {
+                packageName += "_R1";
+            }
+
+            Class<?> aClass = Class.forName("me.libraryaddict.disguise.utilities.reflection." + packageName + ".ReflectionManager");
             Object o = aClass.getConstructor().newInstance();
 
             return (ReflectionManagerAbstract) o;
@@ -987,10 +992,6 @@ public class ReflectionManager {
         }
 
         return SoundCategory.NEUTRAL;
-    }
-
-    public static String getSoundString(Sound sound) {
-        return getNmsReflection().getSoundString(sound);
     }
 
     public static <T> T convertMetaFromSerialized(MetaIndex<T> index, Object value) {

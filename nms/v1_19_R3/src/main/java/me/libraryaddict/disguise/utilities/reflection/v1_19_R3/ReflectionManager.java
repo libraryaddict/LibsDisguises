@@ -8,69 +8,48 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.SneakyThrows;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.flag.FeatureFlagSet;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Sound;
-import org.bukkit.World;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_19_R3.CraftArt;
-import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_19_R3.CraftSound;
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_19_R3.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ReflectionManager extends ReflectionManagerAbstract {
+public class ReflectionManager extends ReflectionReusedNms {
     private Field dataItemsField;
     private final Field trackedEntityField;
-    private final AtomicInteger entityCounter;
-    private final Method entityDefaultSoundMethod;
     private final Method itemMetaDeserialize;
 
-    public ReflectionManager() throws Exception {
+    @SneakyThrows
+    public ReflectionManager() {
+        super();
+
         for (Field f : SynchedEntityData.class.getDeclaredFields()) {
             if (Modifier.isStatic(f.getModifiers()) || !Int2ObjectMap.class.isAssignableFrom(f.getType())) {
                 continue;
@@ -96,17 +75,6 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     }
 
     @Override
-    public int getAmbientSoundInterval(Entity entity) {
-        Object nmsEntity = getNmsEntity(entity);
-
-        if (!(nmsEntity instanceof Mob)) {
-            return -1;
-        }
-
-        return ((Mob) nmsEntity).getAmbientSoundInterval();
-    }
-
-    @Override
     public boolean hasInvul(Entity entity) {
         net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
 
@@ -115,32 +83,6 @@ public class ReflectionManager extends ReflectionManagerAbstract {
         } else {
             return nmsEntity.isInvulnerableTo(nmsEntity.damageSources().generic());
         }
-    }
-
-    @Override
-    public int getIncrementedStateId(Player player) {
-        ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
-        return serverPlayer.containerMenu.incrementStateId(); // TODO Check correct container
-    }
-
-    @Override
-    public int getNewEntityId() {
-        return getNewEntityId(true);
-    }
-
-    @Override
-    public int getNewEntityId(boolean increment) {
-        if (increment) {
-            return entityCounter.incrementAndGet();
-        } else {
-            // Add 1 as we didn't increment the counter and thus this is currently pointing to the last entity id used
-            return entityCounter.get() + 1;
-        }
-    }
-
-    @Override
-    public ServerGamePacketListenerImpl getPlayerConnectionOrPlayer(Player player) {
-        return ((CraftPlayer) player).getHandle().connection;
     }
 
     @Override
@@ -172,33 +114,6 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     }
 
     @Override
-    public double[] getBoundingBox(Entity entity) {
-        AABB aabb = ((CraftEntity) entity).getHandle().getBoundingBox();
-
-        return new double[]{aabb.maxX - aabb.minX, aabb.maxY - aabb.minY, aabb.maxZ - aabb.minZ};
-    }
-
-    @Override
-    public ServerPlayer getPlayerFromPlayerConnection(Object nmsEntity) {
-        return ((ServerPlayerConnection) nmsEntity).getPlayer();
-    }
-
-    @Override
-    public Entity getBukkitEntity(Object nmsEntity) {
-        return ((net.minecraft.world.entity.Entity) nmsEntity).getBukkitEntity();
-    }
-
-    @Override
-    public ItemStack getBukkitItem(Object nmsItem) {
-        return CraftItemStack.asBukkitCopy((net.minecraft.world.item.ItemStack) nmsItem);
-    }
-
-    @Override
-    public ItemStack getCraftItem(ItemStack bukkitItem) {
-        return CraftItemStack.asCraftCopy(bukkitItem);
-    }
-
-    @Override
     public ChunkMap.TrackedEntity getEntityTracker(Entity target) {
         ServerLevel world = ((CraftWorld) target.getWorld()).getHandle();
         ServerChunkCache chunkSource = world.getChunkSource();
@@ -218,21 +133,6 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     }
 
     @Override
-    public DedicatedServer getMinecraftServer() {
-        return ((CraftServer) Bukkit.getServer()).getServer();
-    }
-
-    @Override
-    public Object getNmsEntity(Entity entity) {
-        return ((CraftEntity) entity).getHandle();
-    }
-
-    @Override
-    public double getPing(Player player) {
-        return player.getPing();
-    }
-
-    @Override
     public float[] getSize(Entity entity) {
         net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
         EntityDimensions dimensions = nmsEntity.getDimensions(net.minecraft.world.entity.Pose.STANDING);
@@ -245,42 +145,9 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     }
 
     @Override
-    public Float getSoundModifier(Object entity) {
-        // Default is 1.0F on EntityLiving
-        if (!(entity instanceof net.minecraft.world.entity.LivingEntity)) {
-            return 0.0f;
-        } else {
-            try {
-                return (Float) entityDefaultSoundMethod.invoke(entity);
-            } catch (InvocationTargetException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return 0f;
-    }
-
-    @Override
     public void injectCallback(String playername, ProfileLookupCallback callback) {
         Agent agent = Agent.MINECRAFT;
         getMinecraftServer().getProfileRepository().findProfilesByNames(new String[]{playername}, agent, callback);
-    }
-
-    @Override
-    public void setBoundingBox(Entity entity, double x, double y, double z) {
-        Location loc = entity.getLocation();
-        ((CraftEntity) entity).getHandle().setBoundingBox(
-            new AABB(loc.getX() - x / 2, loc.getY(), loc.getZ() - z / 2, loc.getX() + x / 2, loc.getY() + y, loc.getZ() + z / 2));
-    }
-
-    @Override
-    public String getSoundString(Sound sound) {
-        return CraftSound.getSoundEffect(sound).getLocation().toString(); // TODO
-    }
-
-    @Override
-    public Material getMaterial(String name) {
-        return CraftMagicNumbers.INSTANCE.getMaterial(name, CraftMagicNumbers.INSTANCE.getDataVersion());
     }
 
     @Override
@@ -291,12 +158,6 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     @Override
     public ResourceLocation createMinecraftKey(String name) {
         return new ResourceLocation(name);
-    }
-
-    @Override
-    public net.minecraft.world.entity.EntityType getEntityType(EntityType entityType) {
-        return net.minecraft.world.entity.EntityType.byString(
-            entityType.getName() == null ? entityType.name().toLowerCase(Locale.ENGLISH) : entityType.getName()).orElse(null);
     }
 
     @Override
@@ -316,40 +177,8 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     }
 
     @Override
-    public int getEntityTypeId(EntityType entityType) {
-        return getEntityTypeId(getEntityType(entityType));
-    }
-
-    @Override
     public Object getEntityType(NamespacedKey name) {
         return BuiltInRegistries.ENTITY_TYPE.get(CraftNamespacedKey.toMinecraft(name));
-    }
-
-    @Override
-    public int getCombinedIdByBlockData(BlockData data) {
-        BlockState state = ((CraftBlockData) data).getState();
-        return Block.getId(state);
-    }
-
-    @Override
-    public int getCombinedIdByItemStack(ItemStack itemStack) {
-        Block block = CraftMagicNumbers.getBlock(itemStack.getType());
-        return Block.getId(block.defaultBlockState());
-    }
-
-    @Override
-    public BlockData getBlockDataByCombinedId(int id) {
-        return CraftBlockData.fromData(Block.stateById(id));
-    }
-
-    @Override
-    public ItemStack getItemStackByCombinedId(int id) {
-        return new ItemStack(CraftMagicNumbers.getMaterial(Block.stateById(id).getBlock()));
-    }
-
-    @Override
-    public ServerLevel getWorldServer(World w) {
-        return ((CraftWorld) w).getHandle();
     }
 
     @Override
@@ -382,11 +211,6 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     }
 
     @Override
-    public GameProfile getProfile(Player player) {
-        return ((CraftPlayer) player).getProfile();
-    }
-
-    @Override
     public <T> int getIntFromType(T type) {
         if (type instanceof Art) {
             return BuiltInRegistries.PAINTING_VARIANT.getId(CraftArt.BukkitToNotch((Art) type).value());
@@ -402,20 +226,5 @@ public class ReflectionManager extends ReflectionManagerAbstract {
         }
 
         return super.getTypeFromInt(typeClass, typeId);
-    }
-
-    @Override
-    public void addEntityTracker(Object trackedEntity, Object serverPlayer) {
-        ((ChunkMap.TrackedEntity) trackedEntity).updatePlayer((ServerPlayer) serverPlayer);
-    }
-
-    @Override
-    public void clearEntityTracker(Object trackedEntity, Object serverPlayer) {
-        ((ChunkMap.TrackedEntity) trackedEntity).removePlayer((ServerPlayer) serverPlayer);
-    }
-
-    @Override
-    public Set getTrackedEntities(Object trackedEntity) {
-        return ((ChunkMap.TrackedEntity) trackedEntity).seenBy;
     }
 }

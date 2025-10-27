@@ -9,7 +9,6 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import io.netty.buffer.ByteBuf;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
@@ -71,8 +70,6 @@ public abstract class ReflectionManagerAbstract {
     public abstract void injectCallback(String playername, ProfileLookupCallback callback);
 
     public abstract void setBoundingBox(Entity entity, double x, double y, double z);
-
-    public abstract String getSoundString(Sound sound);
 
     public abstract ByteBuf getDataWatcherValues(Entity entity);
 
@@ -168,4 +165,9 @@ public abstract class ReflectionManagerAbstract {
     public String getVariant(Entity entity, VersionedRegistry<? extends MappedEntity> registry) {
         return null;
     }
+
+    /**
+     * Set the impulse flag on the entity so that the tracker updates it. Meant for use with entities that need more frequent movements
+     */
+    public abstract void setImpulse(Entity entity);
 }

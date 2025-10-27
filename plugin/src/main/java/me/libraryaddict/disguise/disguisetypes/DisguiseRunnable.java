@@ -1,8 +1,11 @@
 package me.libraryaddict.disguise.disguisetypes;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.entity.EntityPositionData;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.Vector3d;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityPositionSync;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMove;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityVelocity;
@@ -21,6 +24,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -37,8 +41,8 @@ public class DisguiseRunnable extends BukkitRunnable {
     private final Disguise disguise;
     private int lastTicksLived = -1;
     private long lastValidCheckPassed;
-    final Double vectorY;
-    final boolean alwaysSendVelocity;
+    private final Double vectorY;
+    private final boolean alwaysSendVelocity, needsToUpdateMovementFrequently;
 
     public DisguiseRunnable(Disguise disguise) {
         this.disguise = disguise;
@@ -55,6 +59,10 @@ public class DisguiseRunnable extends BukkitRunnable {
                 alwaysSendVelocity = false;
                 break;
         }
+
+        // If entity is a projectile, and the disguise is not
+        needsToUpdateMovementFrequently = NmsVersion.v1_21_R4.isSupported() && disguise.getEntity() instanceof Projectile &&
+            !Projectile.class.isAssignableFrom(disguise.getType().getEntityClass());
 
         // Where refresh rate is in ticks, exp is in here due to a fire exploit + stop it glitching out so much
         switch (disguise.getType()) {
@@ -259,29 +267,58 @@ public class DisguiseRunnable extends BukkitRunnable {
             return;
         }
 
-        doVelocity(vectorY, alwaysSendVelocity);
+        doVelocity();
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
-            for (Player player : DisguiseUtilities.getTrackingPlayers(disguise)) {
-                if (disguise.getEntity() != player) {
-                    WrapperPlayServerEntityRelativeMove packet =
-                        new WrapperPlayServerEntityRelativeMove(disguise.getEntity().getEntityId(), 0, 0, 0, true);
-
-                    PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
-                    continue;
-                } else if (!disguise.isSelfDisguiseVisible() || !(disguise.getEntity() instanceof Player)) {
-                    continue;
-                }
-
-                WrapperPlayServerEntityRelativeMove selfPacket =
-                    new WrapperPlayServerEntityRelativeMove(DisguiseAPI.getSelfDisguiseId(), 0, 0, 0, true);
-
-                PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, selfPacket);
-            }
+            doExpMovements();
+        } else if (needsToUpdateMovementFrequently && disguise.getEntity().getVelocity().lengthSquared() > 0) {
+            ReflectionManager.getNmsReflection().setImpulse(disguise.getEntity());
         }
     }
 
-    private void doVelocity(Double vectorY, boolean alwaysSendVelocity) {
+    private void doExpMovements() {
+        for (Player player : DisguiseUtilities.getTrackingPlayers(disguise)) {
+            WrapperPlayServerEntityRelativeMove packet;
+
+            if (disguise.getEntity() != player) {
+                packet = new WrapperPlayServerEntityRelativeMove(disguise.getEntity().getEntityId(), 0, 0, 0, true);
+            } else if (disguise.isSelfDisguiseVisible() && disguise.getEntity() instanceof Player) {
+                packet = new WrapperPlayServerEntityRelativeMove(DisguiseAPI.getSelfDisguiseId(), 0, 0, 0, true);
+            } else {
+                continue;
+            }
+
+            PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
+        }
+    }
+
+    private void doProjectileMovements() {
+        if (!needsToUpdateMovementFrequently || disguise.getEntity().getVelocity().lengthSquared() == 0) {
+            return;
+        }
+
+        Location loc = disguise.getEntity().getLocation();
+
+        for (Player player : DisguiseUtilities.getTrackingPlayers(disguise)) {
+            int entityId;
+
+            if (disguise.getEntity() != player) {
+                entityId = disguise.getEntity().getEntityId();
+            } else if (disguise.isSelfDisguiseVisible() && disguise.getEntity() instanceof Player) {
+                entityId = DisguiseAPI.getSelfDisguiseId();
+            } else {
+                continue;
+            }
+
+            PacketWrapper packet = new WrapperPlayServerEntityPositionSync(entityId,
+                new EntityPositionData(new Vector3d(loc.getX(), loc.getY(), loc.getZ()), Vector3d.zero(), loc.getYaw(), loc.getPitch()),
+                true);
+
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
+        }
+    }
+
+    private void doVelocity() {
         // If the vectorY isn't 0. Cos if it is. Then it doesn't want to send any vectors.
         if (vectorY == null || !disguise.isVelocitySent()) {
             return;

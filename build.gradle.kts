@@ -1,5 +1,6 @@
 plugins {
     `java-library`
+    id("org.jetbrains.gradle.plugin.idea-ext") version "1.3"
 }
 
 subprojects {
@@ -32,6 +33,7 @@ subprojects {
     }
 
     apply(plugin = "java-library")
+    apply(plugin = "org.jetbrains.gradle.plugin.idea-ext")
 
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8

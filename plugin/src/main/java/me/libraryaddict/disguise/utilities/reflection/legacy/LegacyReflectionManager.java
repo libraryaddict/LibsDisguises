@@ -668,21 +668,6 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
     }
 
     @Override
-    public String getSoundString(Sound sound) {
-        try {
-            if (soundGetMethod == null) {
-                return soundEffectGetKey.get(soundEffectGetMethod.invoke(null, sound)).toString();
-            }
-
-            return (String) soundGetMethod.invoke(null, sound);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    @Override
     public ByteBuf getDataWatcherValues(Entity entity) {
         try {
             Object datawatcher = getDatawatcher.invoke(getNmsEntity(entity));
@@ -1054,6 +1039,11 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
     @Override
     public void clearEntityTracker(Object trackedEntity, Object serverPlayer) {
         clearEntityTracker.invoke(trackedEntity, serverPlayer);
+    }
+
+    @Override
+    public void setImpulse(Entity entity) {
+        throw new IllegalStateException("Not supported on this version");
     }
 
     @SneakyThrows
