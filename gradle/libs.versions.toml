@@ -13,6 +13,7 @@ junit-jupiter-version = "5.9.3"
 mockito-version = "5.12.0"
 json-version = "20250517"
 asm-version = "9.8"
+proguard-version = "7.8.0"
 
 net-kyori-adventure-api = "4.17.0"
 com-retro-packetevents = "2.10.0-SNAPSHOT"
@@ -44,6 +45,7 @@ mockito = { module = "org.mockito:mockito-core", version.ref = "mockito-version"
 placeholder-api = { module = "me.clip:placeholderapi", version.ref = "placeholder-api" }
 org-json = { module = "org.json:json", version.ref = "json-version" }
 org-ow2-asm = { module = "org.ow2.asm:asm", version.ref = "asm-version" }
+com-guardsquare-proguard = { module = "com.guardsquare:proguard-gradle", version.ref = "proguard-version" }
 
 [plugins]
 shadowjar = { id = "com.github.johnrengelman.shadow", version.ref = "shadowjar-version" }

@@ -13,10 +13,11 @@ tasks {
     build {
         dependsOn("shadowJar")
         dependsOn("run")
+        //dependsOn(getByName("proguard"))
         dependsOn(getByName("jenkins"))
     }
 
-    task("publish") {
+    register("publish") {
         dependsOn("build")
     }
 
@@ -30,7 +31,45 @@ tasks {
         mustRunAfter(shadowJar)
     }
 
-    task("jenkins") {
+    register<proguard.gradle.ProGuardTask>("proguard") {
+        verbose()
+
+        // Alternatively put your config in a separate file
+        // configuration("config.pro")
+
+        // Use the jar task output as a input jar. This will automatically add the necessary task dependency.
+        injars(named("shadowJar"))
+
+        outjars("build/proguard-obfuscated.jar")
+
+        val javaHome = System.getProperty("java.home")
+        // Automatically handle the Java version of this build.
+        if (System.getProperty("java.version").startsWith("1.")) {
+            // Before Java 9, the runtime classes were packaged in a single jar file.
+            libraryjars("$javaHome/lib/rt.jar")
+        } else {
+            // As of Java 9, the runtime classes are packaged in modular jmod files.
+            libraryjars(
+                // filters must be specified first, as a map
+                mapOf(
+                    "jarfilter" to "!**.jar",
+                    "filter" to "!module-info.class"
+                ),
+                "$javaHome/jmods/java.base.jmod"
+            )
+        }
+
+        allowaccessmodification()
+        dontwarn()
+        dontnote()
+        dontobfuscate()
+        dontshrink()
+        dontpreverify()
+
+        printmapping("build/proguard-mapping.txt")
+    }
+
+    register("jenkins") {
         mustRunAfter("run")
 
         doLast {
@@ -50,18 +89,14 @@ tasks {
 
         filesMatching("plugin.yml") {
             val buildHash by lazy {
-                val hashStdout = ByteArrayOutputStream()
-                exec {
+                val hashStdout = providers.exec {
                     commandLine("git", "rev-parse", "--short", "HEAD")
-                    standardOutput = hashStdout
                 }
                 val hash = hashStdout.toString().trim()
 
-                val statusStdout = ByteArrayOutputStream()
-                exec {
+                val statusStdout = providers.exec {
                     commandLine("git", "status", "--porcelain")
-                    standardOutput = statusStdout
-                }
+                }.result.get()
                 val uncommittedCount = statusStdout.toString().trim().lines().count { it.isNotBlank() }
 
                 if (uncommittedCount > 0) {
@@ -143,4 +178,10 @@ dependencies {
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
+}
+
+buildscript {
+    dependencies {
+        classpath(libs.com.guardsquare.proguard)
+    }
 }
