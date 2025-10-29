@@ -582,7 +582,18 @@ public class ReflectionManager {
             builder.put(property.getName(), new Property(property.getName(), property.getValue(), property.getSignature()));
         }
 
-        return new GameProfile(userProfile.getUUID(), userProfile.getName(), new PropertyMap(builder.build()));
+        GameProfile profile;
+
+        if (gameProfileGetProperties == null) {
+            profile = new GameProfile(userProfile.getUUID(), userProfile.getName(), new PropertyMap(builder.build()));
+        } else {
+            // Previously it did not use an immutable map and we can directly modify it
+            // Previously, we couldn't pass a PropertyMap in constructor
+            profile = new GameProfile(userProfile.getUUID(), userProfile.getName());
+            ((PropertyMap) gameProfileGetProperties.invoke(profile)).putAll(builder.build());
+        }
+
+        return profile;
     }
 
     public static PlayerProfile createProfile(UserProfile profile) {

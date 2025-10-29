@@ -78,7 +78,7 @@ public class SkinUtils {
                         public void run() {
                             if (response == null) {
                                 return;
-                            } else if (response.getGameProfile() == null) {
+                            } else if (!response.hasGameProfile()) {
                                 callback.onError(LibsMsg.SKIN_API_FAIL);
                                 return;
                             }
@@ -109,7 +109,7 @@ public class SkinUtils {
                     public void run() {
                         if (response == null) {
                             return;
-                        } else if (response.getGameProfile() == null) {
+                        } else if (!response.hasGameProfile()) {
                             callback.onError(LibsMsg.SKIN_API_FAIL);
                         }
 

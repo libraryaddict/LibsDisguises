@@ -15,6 +15,10 @@ public class MineSkinQueueResponse extends MineSkinResponse {
     private MineSkinRateLimit rateLimit;
     private MineSkinUsage usage;
 
+    public boolean hasGameProfile() {
+        return skin != null;
+    }
+
     public GameProfile getGameProfile() {
         if (skin == null) {
             return null;
