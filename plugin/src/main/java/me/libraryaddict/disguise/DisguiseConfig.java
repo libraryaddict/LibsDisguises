@@ -617,6 +617,11 @@ public class DisguiseConfig {
     private static ConfigLoader getConfig() {
         ConfigLoader configLoader = new ConfigLoader();
         configLoader.saveMissingConfigs();
+        // TODO This actually doesn't load the config with any new modifications to the configs on the first run...
+        // Pretty sure the logic here was the configs that change that behavior
+        // But couldn't we do something like setting the defaults in our configs? Although, I've avoided that. Might be a reason
+        // Regardless, should revisit the logic and determine if any configs (including historical) would be broken by this
+        // One obvious scenario is the config migrations, they should always be applied first.
 
         return configLoader;
     }
