@@ -157,7 +157,6 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -271,7 +270,8 @@ public class ReflectionManager {
         }
     }
 
-    private static void loadAuthlibStuff() throws InvocationTargetException, IllegalAccessException {
+    @SuppressWarnings("JavaReflectionMemberAccess")
+    private static void loadAuthlibStuff() {
         sessionService = getNmsReflection().getMinecraftSessionService();
 
         // I don't think authlib is always going to be in sync enough that we can trust this to a specific nms version
@@ -539,15 +539,7 @@ public class ReflectionManager {
     }
 
     public static Constructor getCraftConstructor(Class clazz, Class<?>... parameters) {
-        try {
-            Constructor declaredConstructor = clazz.getDeclaredConstructor(parameters);
-            declaredConstructor.setAccessible(true);
-            return declaredConstructor;
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return getNmsConstructor(clazz, parameters);
     }
 
     public static Constructor getCraftConstructor(String className, Class<?>... parameters) {
@@ -819,16 +811,7 @@ public class ReflectionManager {
     }
 
     public static Method getCraftMethod(Class<?> clazz, String methodName, Class<?>... parameters) {
-        try {
-            Method declaredMethod = clazz.getDeclaredMethod(methodName, parameters);
-            declaredMethod.setAccessible(true);
-
-            return declaredMethod;
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return getNmsMethod(clazz, methodName, parameters);
     }
 
     public static Method getNmsMethod(Class<?> clazz, String methodName, Class<?>... parameters) {
@@ -1899,10 +1882,7 @@ public class ReflectionManager {
             } else if (index == MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY || index == MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY) {
                 return EntityDataTypes.OPTIONAL_INT;
             } else if (index == MetaIndex.SALMON_VARIANT) {
-                // TODO PacketEvents may add Salmon variant at a future date, also could be doing something redundant here
-                // TODO PacketEvents has now added SalmonVariant, need to support
-                // Such as could be mapping the variant to what we serialize
-                // Doubt it though
+                // Don't think packetevents will be adding a data types for salmon
                 if (NmsVersion.v1_21_R3.isSupported()) {
                     return EntityDataTypes.INT;
                 } else {
@@ -2000,10 +1980,10 @@ public class ReflectionManager {
             return clss.getEnumConstants();
         }
 
-        return (T[]) Bukkit.getRegistry((Class<Keyed>) clss).stream().toArray((i) -> (T[]) Array.newInstance(clss, i));
+        return Bukkit.getRegistry((Class<Keyed>) clss).stream().toArray((i) -> (T[]) Array.newInstance(clss, i));
     }
 
-    public static <T extends MappedEntity> T randomRegistry(VersionedRegistry<T> registry) {
+    public static <T extends MappedEntity> T randomRegistry(VersionedRegistry<@NotNull T> registry) {
         int rnd = DisguiseUtilities.getRandom().nextInt(registry.size());
 
         Iterator<T> iterator = registry.getEntries().iterator();
