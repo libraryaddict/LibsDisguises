@@ -51,6 +51,12 @@ abstract class ReflectionReusedNms extends ReflectionManagerAbstract {
         craftMagicNumbers = (UnsafeValues) CraftMagicNumbers.class.getField("INSTANCE").get(null);
     }
 
+    /**
+     * Impulse is set when the entity has made a tiny movement and should notify the clients (based on my understanding)
+     * This method is created so that we can ensure that there is consistent smooth movement packets
+     *
+     * @param entity
+     */
     @Override
     public final void setImpulse(Entity entity) {
         ((CraftEntity) entity).getHandle().hasImpulse = true;

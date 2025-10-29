@@ -335,6 +335,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static DisguiseSoundCategory soundCategory;
+    @Getter
+    @Setter
+    private static boolean tickProjectilesFaster;
 
     public static boolean isDisplayTextName() {
         return getPlayerNameType() == PlayerNameType.TEXT_DISPLAY;
@@ -668,6 +671,7 @@ public class DisguiseConfig {
         setDynamicFilenames(config.getBoolean("DynamicFilenames", true));
         setVerboseLogging(config.getBoolean("VerboseLogging"));
         setModifyCollisions(config.getBoolean("Scoreboard.Collisions"));
+        setTickProjectilesFaster(config.getBoolean("Ticker.Projectiles"));
 
         setAutoUpdate(config.getBoolean("AutoUpdate"));
 

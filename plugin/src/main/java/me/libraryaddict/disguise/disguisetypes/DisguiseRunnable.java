@@ -1,11 +1,8 @@
 package me.libraryaddict.disguise.disguisetypes;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.protocol.entity.EntityPositionData;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.Vector3d;
-import com.github.retrooper.packetevents.wrapper.PacketWrapper;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityPositionSync;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMove;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityVelocity;
@@ -271,7 +268,8 @@ public class DisguiseRunnable extends BukkitRunnable {
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
             doExpMovements();
-        } else if (needsToUpdateMovementFrequently && disguise.getEntity().getVelocity().lengthSquared() > 0) {
+        } else if (DisguiseConfig.isTickProjectilesFaster() && needsToUpdateMovementFrequently &&
+            disguise.getEntity().getVelocity().lengthSquared() > 0) {
             ReflectionManager.getNmsReflection().setImpulse(disguise.getEntity());
         }
     }
@@ -289,32 +287,6 @@ public class DisguiseRunnable extends BukkitRunnable {
             }
 
             PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
-        }
-    }
-
-    private void doProjectileMovements() {
-        if (!needsToUpdateMovementFrequently || disguise.getEntity().getVelocity().lengthSquared() == 0) {
-            return;
-        }
-
-        Location loc = disguise.getEntity().getLocation();
-
-        for (Player player : DisguiseUtilities.getTrackingPlayers(disguise)) {
-            int entityId;
-
-            if (disguise.getEntity() != player) {
-                entityId = disguise.getEntity().getEntityId();
-            } else if (disguise.isSelfDisguiseVisible() && disguise.getEntity() instanceof Player) {
-                entityId = DisguiseAPI.getSelfDisguiseId();
-            } else {
-                continue;
-            }
-
-            PacketWrapper packet = new WrapperPlayServerEntityPositionSync(entityId,
-                new EntityPositionData(new Vector3d(loc.getX(), loc.getY(), loc.getZ()), Vector3d.zero(), loc.getYaw(), loc.getPitch()),
-                true);
-
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
         }
     }
 

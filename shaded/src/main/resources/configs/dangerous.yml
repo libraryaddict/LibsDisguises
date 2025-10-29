@@ -20,6 +20,17 @@ TablistRemoveDelay: 3
 # Default is 5 seconds
 PlayerDisguisesTablistExpiresMove: 100
 
+Ticker:
+  # This setting controls if Lib's Disguises will tell Minecraft to send more packet updates of every tiny movement.
+  # Used on 1.21.5+ when a projectile is disguised as a non-projectile, to ensure that the movement looks smoother, as
+  # normal projectiles expect the client to render the movement, while other entities expect the server to tell the
+  # client of the movement.
+  # Which means, clients would see a disguised arrow only moving every few seconds.
+  # The above may apply to more non-living entities, but it's mainly projectiles we're concerned about.
+  # A projectile that has no velocity, will be ignored. Unless a projectile is not vanilla, it shouldn't matter.
+  # To restore vanilla functionality, set this to false. Lib's Disguises has default 'true'
+  Projectiles: true
+
 # What disguise types are default to OP only, because they are prone to abuse.
 # By default, this contains TEXT_DISPLAY, ITEM_DISPLAY, BLOCK_DISPLAY and INTERACTION
 DisabledDisguises:
