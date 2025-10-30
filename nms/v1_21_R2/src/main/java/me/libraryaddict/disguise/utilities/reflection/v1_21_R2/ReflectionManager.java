@@ -19,7 +19,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.configuration.ClientboundRegistryDataPacket;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ClientInformation;
@@ -40,6 +39,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_21_R2.CraftArt;
+import org.bukkit.craftbukkit.v1_21_R2.CraftRegistry;
 import org.bukkit.craftbukkit.v1_21_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R2.entity.CraftCat;
 import org.bukkit.craftbukkit.v1_21_R2.entity.CraftEntity;
@@ -234,16 +234,16 @@ public class ReflectionManager extends ReflectionReusedNms {
     @Override
     public <T> int getIntFromType(T type) {
         if (type instanceof Art) {
-            return MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.PAINTING_VARIANT)
+            return CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.PAINTING_VARIANT)
                 .getIdOrThrow(CraftArt.bukkitToMinecraft((Art) type));
         } else if (type instanceof Frog.Variant) {
-            return MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.FROG_VARIANT)
+            return CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.FROG_VARIANT)
                 .getIdOrThrow(CraftFrog.CraftVariant.bukkitToMinecraft((Frog.Variant) type));
         } else if (type instanceof Cat.Type) {
-            return MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.CAT_VARIANT)
+            return CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.CAT_VARIANT)
                 .getIdOrThrow(CraftCat.CraftType.bukkitToMinecraft((Cat.Type) type));
         } else if (type instanceof Wolf.Variant) {
-            return MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.WOLF_VARIANT)
+            return CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.WOLF_VARIANT)
                 .getIdOrThrow(CraftWolf.CraftVariant.bukkitToMinecraft((Wolf.Variant) type));
         }
 
@@ -254,16 +254,16 @@ public class ReflectionManager extends ReflectionReusedNms {
     public <T> T getTypeFromInt(Class<T> typeClass, int typeId) {
         if (typeClass == Art.class) {
             return (T) CraftArt.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.PAINTING_VARIANT).get(typeId).get());
+                CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.PAINTING_VARIANT).get(typeId).get());
         } else if (typeClass == Frog.Variant.class) {
             return (T) CraftFrog.CraftVariant.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.FROG_VARIANT).get(typeId).get());
+                CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.FROG_VARIANT).get(typeId).get());
         } else if (typeClass == Cat.Type.class) {
             return (T) CraftCat.CraftType.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.CAT_VARIANT).get(typeId).get());
+                CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.CAT_VARIANT).get(typeId).get());
         } else if (typeClass == Wolf.Variant.class) {
             return (T) CraftWolf.CraftVariant.minecraftHolderToBukkit(
-                MinecraftServer.getDefaultRegistryAccess().lookupOrThrow(Registries.WOLF_VARIANT).get(typeId).get());
+                CraftRegistry.getMinecraftRegistry().lookupOrThrow(Registries.WOLF_VARIANT).get(typeId).get());
         }
 
         return super.getTypeFromInt(typeClass, typeId);
@@ -294,10 +294,10 @@ public class ReflectionManager extends ReflectionReusedNms {
 
     @Override
     public List<ByteBuf> getRegistryPacketdata() {
-        DynamicOps<Tag> dynamicOps = MinecraftServer.getServer().registries().compositeAccess().createSerializationContext(NbtOps.INSTANCE);
+        DynamicOps<Tag> dynamicOps = getMinecraftServer().registries().compositeAccess().createSerializationContext(NbtOps.INSTANCE);
         List<ByteBuf> registerBuf = new ArrayList<>();
 
-        RegistrySynchronization.packRegistries(dynamicOps, MinecraftServer.getServer().registries().getAccessFrom(RegistryLayer.WORLDGEN),
+        RegistrySynchronization.packRegistries(dynamicOps, getMinecraftServer().registries().getAccessFrom(RegistryLayer.WORLDGEN),
             new HashSet<>(), (resourceKey, list) -> {
                 ClientboundRegistryDataPacket packet = new ClientboundRegistryDataPacket(resourceKey, list);
                 ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer();

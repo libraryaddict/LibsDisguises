@@ -1,15 +1,15 @@
-// Code copied from https://github.com/Shopkeepers/Shopkeepers/tree/master
+// Original code copied from https://github.com/Shopkeepers/Shopkeepers/tree/master
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
+configurations {
+    specialSource
+}
 
-    configurations.create('specialSource')
+repositories {
+    mavenCentral()
+}
 
-    dependencies {
-        specialSource 'net.md-5:SpecialSource:1.11.4:shaded'
-    }
+dependencies {
+    specialSource 'net.md-5:SpecialSource:1.11.4:shaded'
 }
 
 // Spigot server code remapping: https://www.spigotmc.org/threads/spigot-bungeecord-1-17-1-17-1.510208/
@@ -31,11 +31,6 @@ def findInGradleCache = { group, module, version, fileName ->
     return result;
 }
 
-
-def specialSource = buildscript.configurations.specialSource.resolvedConfiguration.getFirstLevelModuleDependencies().find {
-    it.moduleGroup == 'net.md-5' && it.moduleName == 'SpecialSource'
-}.moduleArtifacts.first().file.path
-
 // Converts from Mojang's mappings to Minecraft's obfuscated mappings.
 ext.remapMojangToObfuscated = { inputFile, outputFile, craftbukkitVersion ->
     def remappedMojang = findInGradleCache("org.spigotmc", "spigot", craftbukkitVersion, "spigot-${craftbukkitVersion}-remapped-mojang.jar")
@@ -45,16 +40,11 @@ ext.remapMojangToObfuscated = { inputFile, outputFile, craftbukkitVersion ->
     println '  Input: ' + inputFile.path
     println '  Output: ' + outputFile.path
     println '  CraftBukkit version: ' + craftbukkitVersion
-    def classpathSeparator = System.properties['path.separator']
-    exec {
-        commandLine 'java',
-                '-cp', "${specialSource}${classpathSeparator}${remappedMojang}".replace('{craftbukkitVersion}', craftbukkitVersion),
-                'net.md_5.specialsource.SpecialSource',
-                '--live',
-                '-i', inputFile.path,
-                '-o', outputFile.path,
-                '-m', mojangMappings,
-                '--reverse'
+
+    project.javaexec {
+        classpath = configurations.specialSource + files(remappedMojang)
+        mainClass = 'net.md_5.specialsource.SpecialSource'
+        args '--live', '-i', inputFile.path, '-o', outputFile.path, '-m', mojangMappings, '--reverse'
     }
 }
 
@@ -67,15 +57,11 @@ ext.remapObfuscatedToSpigot = { inputFile, outputFile, craftbukkitVersion ->
     println '  Input: ' + inputFile.path
     println '  Output: ' + outputFile.path
     println '  CraftBukkit version: ' + craftbukkitVersion
-    def classpathSeparator = System.properties['path.separator']
-    exec {
-        commandLine 'java',
-                '-cp', "${specialSource}${classpathSeparator}${remappedObf}".replace('{craftbukkitVersion}', craftbukkitVersion),
-                'net.md_5.specialsource.SpecialSource',
-                '--live',
-                '-i', inputFile.path,
-                '-o', outputFile.path,
-                '-m', spigotMappings
+
+    project.javaexec {
+        classpath = configurations.specialSource + files(remappedObf)
+        mainClass = 'net.md_5.specialsource.SpecialSource'
+        args '--live', '-i', inputFile.path, '-o', outputFile.path, '-m', spigotMappings
     }
 }
 

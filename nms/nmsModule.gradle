@@ -35,14 +35,10 @@ dependencies {
 // Define the directory for the generated sources.
 def generatedSourcesDir = file("$buildDir/generated/java/main")
 
-task generateSharedNmsSources(type: Copy) {
+task generateSharedNmsSources(type: Sync) {
     // The task considered outdated if files change.
     inputs.files(project(':nms').sourceSets.main.java)
     outputs.dir(generatedSourcesDir)
-
-    doFirst {
-        delete(generatedSourcesDir)
-    }
 
     from project(':nms').sourceSets.main.java
     into generatedSourcesDir

@@ -16,7 +16,6 @@ import net.minecraft.world.phys.AABB;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.UnsafeValues;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
@@ -39,16 +38,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * The code that uses versioned imports
  */
+@SuppressWarnings("deprecation")
 abstract class ReflectionReusedNms extends ReflectionManagerAbstract {
     protected AtomicInteger entityCounter;
     protected Method entityDefaultSoundMethod;
-    protected UnsafeValues craftMagicNumbers;
+    private final CraftMagicNumbers craftMagicNumbers;
 
     @SneakyThrows
     public ReflectionReusedNms() {
         super();
 
-        craftMagicNumbers = (UnsafeValues) CraftMagicNumbers.class.getField("INSTANCE").get(null);
+        craftMagicNumbers = (CraftMagicNumbers) CraftMagicNumbers.class.getField("INSTANCE").get(null);
     }
 
     /**

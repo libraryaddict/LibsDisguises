@@ -21,7 +21,7 @@ public class DisguiseTypesTest {
 
         Assertions.assertSame(entityType.name(),
             disguiseType.getEntityType() == null ? disguiseType.name() : disguiseType.getEntityType().name(),
-            entityType.name() + " (" + entityType.getName() + ") has no DisguiseType registered!");
+            entityType.name() + " has no DisguiseType registered!");
     }
 
     @ParameterizedTest
@@ -58,7 +58,7 @@ public class DisguiseTypesTest {
             String name = enums.getName();
 
             if (last != null && last.compareTo(name) >= 0) {
-                Assertions.fail("Name ordering for DisguiseSoundEnums is out of order, last: " + last + ", name: " + name );
+                Assertions.fail("Name ordering for DisguiseSoundEnums is out of order, last: " + last + ", name: " + name);
             }
 
             last = name;

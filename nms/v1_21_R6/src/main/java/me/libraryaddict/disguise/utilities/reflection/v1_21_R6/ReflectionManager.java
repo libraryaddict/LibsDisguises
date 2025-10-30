@@ -23,7 +23,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.configuration.ClientboundRegistryDataPacket;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ClientInformation;
@@ -353,10 +352,10 @@ public class ReflectionManager extends ReflectionReusedNms {
 
     @Override
     public List<ByteBuf> getRegistryPacketdata() {
-        DynamicOps<Tag> dynamicOps = MinecraftServer.getServer().registries().compositeAccess().createSerializationContext(NbtOps.INSTANCE);
+        DynamicOps<Tag> dynamicOps = getMinecraftServer().registries().compositeAccess().createSerializationContext(NbtOps.INSTANCE);
         List<ByteBuf> registerBuf = new ArrayList<>();
 
-        RegistrySynchronization.packRegistries(dynamicOps, MinecraftServer.getServer().registries().getAccessFrom(RegistryLayer.WORLDGEN),
+        RegistrySynchronization.packRegistries(dynamicOps, getMinecraftServer().registries().getAccessFrom(RegistryLayer.WORLDGEN),
             new HashSet<>(), (resourceKey, list) -> {
                 ClientboundRegistryDataPacket packet = new ClientboundRegistryDataPacket(resourceKey, list);
                 ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer();

@@ -13,7 +13,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.configuration.ClientboundRegistryDataPacket;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerChunkCache;
@@ -250,7 +249,7 @@ public class ReflectionManager extends ReflectionReusedNms {
     @Override
     public List<ByteBuf> getRegistryPacketdata() {
         List<ByteBuf> registerBuf = new ArrayList<>();
-        ClientboundRegistryDataPacket packet = new ClientboundRegistryDataPacket(MinecraftServer.getServer().registryAccess());
+        ClientboundRegistryDataPacket packet = new ClientboundRegistryDataPacket(getMinecraftServer().registryAccess());
 
         ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer();
         FriendlyByteBuf friendlyByteBuf = new FriendlyByteBuf(buf);
