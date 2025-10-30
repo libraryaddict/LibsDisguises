@@ -527,7 +527,7 @@ public class DisguiseUtilities {
     }
 
     public static String serialize(Component component) {
-        return AdventureSerializer.getGsonSerializer().serialize(component);
+        return AdventureSerializer.serializer().gson().serialize(component);
     }
 
     public static void doSkinUUIDWarning(CommandSender sender) {

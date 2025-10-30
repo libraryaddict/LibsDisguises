@@ -15,7 +15,7 @@ public class ParamInfoComponent extends ParamInfo<Component> {
     @Override
     public Component fromString(String string) throws DisguiseParseException {
         try {
-            return AdventureSerializer.getGsonSerializer().deserialize(string);
+            return AdventureSerializer.serializer().gson().deserialize(string);
         } catch (JsonParseException ex) {
             // Lets assume it's not gson
             return DisguiseUtilities.getAdventureChat(string);
@@ -24,6 +24,6 @@ public class ParamInfoComponent extends ParamInfo<Component> {
 
     @Override
     public String toString(Component object) {
-        return AdventureSerializer.getGsonSerializer().serialize(object);
+        return AdventureSerializer.serializer().gson().serialize(object);
     }
 }
