@@ -4,7 +4,6 @@ import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.plugin.BisectHosting;
 import me.libraryaddict.disguise.utilities.plugin.LibsDisgInfo;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.FileUtil;
 
@@ -105,42 +104,57 @@ public class LibsPremium {
     }
 
     public static LibsDisgInfo getInformation(File file) throws Exception {
+        return getInformation(file, false);
+    }
+
+    public static LibsDisgInfo getInformation(File file, boolean suppressErrors) throws Exception {
+        /* Fetch the plugin.yml from the jar file */
+        YamlConfiguration config = DisguiseFiles.getPluginYAMLEx(file);
+        /* No checks for null config as the correct error will be thrown on access */
+
+        String pluginBuildDate = "??/??/????";
+
+        /* If plugin.yml contains a build-date */
+        if (config.contains("build-date")) {
+            pluginBuildDate = config.getString("build-date");
+        }
+
+        String pluginBuildNumber = "???";
+
+        /* If plugin.yml contains a jenkins build number */
+        if (config.contains("build-number")) {
+            pluginBuildNumber = config.getString("build-number");
+
+            /* If build number is composed of purely numbers, prepend with # for readability */
+            if (pluginBuildNumber.matches("\\d+")) {
+                pluginBuildNumber = "#" + pluginBuildNumber;
+            }
+        }
+
+        String pluginVersion = config.getString("version");
+        String userId, downloadId, resourceId;
+
         try (URLClassLoader cl = new URLClassLoader(new URL[]{file.toURI().toURL()})) {
             Class c = cl.loadClass(LibsPremium.class.getName());
 
-            /* Fetch the plugin.yml from the jar file */
-            YamlConfiguration config = DisguiseFiles.getPluginYAMLEx(file);
-            /* No checks for null config as the correct error will be thrown on access */
-
-            String userId = (String) c.getMethod("getUserID").invoke(null);
-            String downloadId = (String) c.getMethod("getDownloadID").invoke(null);
-            String resourceId = (String) c.getMethod("getResourceID").invoke(null);
-            Boolean premium = isPremium(resourceId, userId);
-
-            String pluginBuildDate = "??/??/????";
-
-            /* If plugin.yml contains a build-date */
-            if (config.contains("build-date")) {
-                pluginBuildDate = config.getString("build-date");
+            userId = (String) c.getMethod("getUserID").invoke(null);
+            downloadId = (String) c.getMethod("getDownloadID").invoke(null);
+            resourceId = (String) c.getMethod("getResourceID").invoke(null);
+        } catch (Throwable throwable) {
+            if (!suppressErrors) {
+                throw throwable;
             }
 
-            String pluginBuildNumber = "???";
+            userId = getUserID();
+            downloadId = getDownloadID();
+            resourceId = getResourceID();
 
-            /* If plugin.yml contains a jenkins build number */
-            if (config.contains("build-number")) {
-                pluginBuildNumber = config.getString("build-number");
-
-                /* If build number is composed of purely numbers, prepend with # for readability */
-                if (pluginBuildNumber.matches("\\d+")) {
-                    pluginBuildNumber = "#" + pluginBuildNumber;
-                }
-            }
-
-            String pluginVersion = config.getString("version");
-
-            return new LibsDisgInfo(file.length(), userId, resourceId, downloadId, premium, pluginVersion, pluginBuildNumber,
-                pluginBuildDate);
+            throwable.printStackTrace();
         }
+
+        Boolean premium = isPremium(resourceId, userId);
+
+        return new LibsDisgInfo(file.length(), userId, resourceId, downloadId, premium, pluginVersion, pluginBuildNumber, pluginBuildDate);
     }
 
     private static void doSecondaryCheck(String version) {
@@ -256,7 +270,7 @@ public class LibsPremium {
 
         try {
             pluginInformation = getInformation(file);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             String pluginBuildDate = "??/??/????";
 
             YamlConfiguration config = new YamlConfiguration();
