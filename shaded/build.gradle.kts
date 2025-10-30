@@ -1,18 +1,16 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import java.io.ByteArrayOutputStream
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 plugins {
     java
     alias(libs.plugins.shadowjar)
-    application
 }
 
 tasks {
     build {
         dependsOn("shadowJar")
-        dependsOn("run")
+        dependsOn("compileShadedFiles")
         //dependsOn(getByName("proguard"))
         dependsOn(getByName("jenkins"))
     }
@@ -27,8 +25,11 @@ tasks {
         exclude("META-INF/**")
     }
 
-    getByName("run") {
+    register<JavaExec>("compileShadedFiles") {
         mustRunAfter(shadowJar)
+        mainClass.set("me.libraryaddict.disguise.utilities.compiler.CompileShadedFiles")
+        classpath = sourceSets.main.get().runtimeClasspath
+        jvmArgs = listOf("-Djar.path=" + named<ShadowJar>("shadowJar").get().archiveFile.get().asFile.absolutePath)
     }
 
     register<proguard.gradle.ProGuardTask>("proguard") {
@@ -70,7 +71,7 @@ tasks {
     }
 
     register("jenkins") {
-        mustRunAfter("run")
+        mustRunAfter("compileShadedFiles")
 
         doLast {
             copy {
@@ -114,13 +115,6 @@ tasks {
             )
         }
     }
-}
-
-application {
-    mainClass = "me.libraryaddict.disguise.utilities.compiler.CompileShadedFiles"
-    applicationDefaultJvmArgs = listOf(
-        "-Djar.path=" + tasks.named<ShadowJar>("shadowJar").get().archiveFile.get().asFile.absolutePath
-    )
 }
 
 testing {
