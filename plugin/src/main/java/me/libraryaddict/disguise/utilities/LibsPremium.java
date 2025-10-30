@@ -271,6 +271,8 @@ public class LibsPremium {
         try {
             pluginInformation = getInformation(file);
         } catch (Throwable e) {
+            LibsDisguises.getInstance().getLogger().warning(
+                "Failed to look up info on the running plugin, Lib's Disguises is now falling back to older file information format.");
             String pluginBuildDate = "??/??/????";
 
             YamlConfiguration config = new YamlConfiguration();
