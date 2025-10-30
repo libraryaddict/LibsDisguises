@@ -15,6 +15,7 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsed
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -99,37 +100,6 @@ public class CompileMethods {
                     // At 19/10/2025, this only hit `getItemStack`, `getMetadata`, `hasValue`
                     continue;
                 }
-
-                /*List<Method> methodsByName =
-                    methodsMap.computeIfAbsent(method.getName() + Arrays.toString(method.getParameterTypes()), (k) -> new ArrayList<>());
-
-                for (Method baserMethod : methodsByName) {
-                    // If the method's owner is not a superclass of the current class
-                    if (!baserMethod.getDeclaringClass().isAssignableFrom(currentClass)) {
-                        continue;
-                    }
-
-                    Annotation[] currentAnnotations = baserMethod.getAnnotations();
-
-                    for (Annotation a : currentAnnotations) {
-                        // If the annotation is present
-                        if (method.isAnnotationPresent(a.annotationType())) {
-                            Annotation a1 = method.getAnnotation(a.annotationType());
-
-                            // If they are the exact same
-                            if (a.equals(a1)) {
-                                continue;
-                            }
-                        }
-
-                        System.err.printf(
-                            "The method %s on class %s has the annotation '%s' but the method in %s does not. Was this a mistake?%n",
-                            baserMethod.getName(), baserMethod.getDeclaringClass().getSimpleName(), a.annotationType().getSimpleName(),
-                            currentClass.getSimpleName());
-                    }
-                }
-
-                methodsByName.add(method);*/
 
                 int added = -1;
                 int removed = -1;
@@ -230,19 +200,7 @@ public class CompileMethods {
                     continue;
                 }
 
-                String getPrefix;
-                String sharedName = info.getMethod().substring(3); // Remove 'set'
-
-                if (sharedName.matches("^Has(Nectar|Stung)$") || sharedName.matches("^Has((Left)|(Right))Horn$")) {
-                    sharedName = sharedName.substring(3);
-                    getPrefix = "has";
-                } else if (info.getParam().equalsIgnoreCase("boolean")) {
-                    getPrefix = "is";
-                } else {
-                    getPrefix = "get";
-                }
-
-                String getName = getPrefix + sharedName;
+                String getName = getMethodName(info);
 
                 WatcherInfo watcherInfo =
                     classMethods.stream().filter(i -> i.getMethod().equals(getName) && Objects.equals(info.getParam(), i.getReturnType()))
@@ -272,6 +230,22 @@ public class CompileMethods {
         }
 
         return new Gson().toJson(methods).getBytes(StandardCharsets.UTF_8);
+    }
+
+    private static @NotNull String getMethodName(WatcherInfo info) {
+        String getPrefix;
+        String sharedName = info.getMethod().substring(3); // Remove 'set'
+
+        if (sharedName.matches("^Has(Nectar|Stung)$") || sharedName.matches("^Has((Left)|(Right))Horn$")) {
+            sharedName = sharedName.substring(3);
+            getPrefix = "has";
+        } else if (info.getParam().equalsIgnoreCase("boolean")) {
+            getPrefix = "is";
+        } else {
+            getPrefix = "get";
+        }
+
+        return getPrefix + sharedName;
     }
 
     private String getDescriptorForClass(final Class c) {

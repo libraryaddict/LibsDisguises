@@ -64,7 +64,9 @@ public class DisguiseMethods {
         for (Map.Entry<Class<? extends FlagWatcher>, List<WatcherMethod>> entry : watcherMethods.entrySet()) {
             for (WatcherMethod method : entry.getValue()) {
                 // We want to only validate remapped methods
+                // TODO Validate this, it's been broken for a while and no issues has seemingly arisen...
                 if (method.getMappedName().equals(method.getMappedName())) {
+                //if (method.getName().equals(method.getMappedName())) {
                     continue;
                 }
 

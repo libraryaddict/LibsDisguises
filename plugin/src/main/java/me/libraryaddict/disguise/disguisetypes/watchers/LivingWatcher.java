@@ -120,10 +120,9 @@ public class LivingWatcher extends FlagWatcher {
         WrapperPlayServerUpdateAttributes.Property property =
             new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, toSend, new ArrayList<>());
 
-        WrapperPlayServerUpdateAttributes packet = new WrapperPlayServerUpdateAttributes(
+        return new WrapperPlayServerUpdateAttributes(
             player == getDisguise().getEntity() ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId(),
             Collections.singletonList(property));
-        return packet;
     }
 
     @NmsAddedIn(NmsVersion.v1_14)
@@ -151,16 +150,6 @@ public class LivingWatcher extends FlagWatcher {
     public void setHealth(float health) {
         sendData(MetaIndex.LIVING_HEALTH, health);
     }
-
-    /*@NmsAddedIn(val = NmsVersion.v1_13)
-    public MainHand getMainHand() {
-        return getHandFlag(0) ? MainHand.RIGHT : MainHand.LEFT;
-    }
-
-    @NmsAddedIn(val = NmsVersion.v1_13)
-    public void setMainHand(MainHand hand) {
-        setHandFlag(0, hand == MainHand.RIGHT);
-    }*/
 
     private boolean getHandFlag(int byteValue) {
         return (getData(MetaIndex.LIVING_META) & 1 << byteValue) != 0;

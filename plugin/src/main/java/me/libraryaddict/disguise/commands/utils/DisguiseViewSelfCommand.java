@@ -20,7 +20,7 @@ import java.util.UUID;
  * @author Navid
  */
 public class DisguiseViewSelfCommand implements CommandExecutor {
-    private List<Map.Entry<UUID, Long>> warnedTall = new ArrayList<>();
+    private final List<Map.Entry<UUID, Long>> warnedTall = new ArrayList<>();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

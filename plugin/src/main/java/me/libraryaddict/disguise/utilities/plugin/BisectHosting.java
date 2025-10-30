@@ -37,7 +37,7 @@ public class BisectHosting {
             DisguiseConfig.setBisectHosted(hostedBy, parsedIP);
         }
 
-        if (!hostedBy && !DisguiseConfig.getSavedServerIp().equals("")) {
+        if (!hostedBy && !DisguiseConfig.getSavedServerIp().isEmpty()) {
             // Just a small message for those who tried to enable it
             LibsDisguises.getInstance().getLogger().severe("Check for BisectHosting failed! Connection error?");
             DisguiseConfig.setBisectHosted(hostedBy, parsedIP);

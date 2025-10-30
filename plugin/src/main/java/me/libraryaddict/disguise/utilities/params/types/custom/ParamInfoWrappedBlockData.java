@@ -274,7 +274,7 @@ public class ParamInfoWrappedBlockData extends ParamInfo {
             if (v.equalsIgnoreCase(parseSplit.get(parseSplit.size() - 1))) {
                 set = new HashSet<>();
                 // Only add a comma if they could do more values
-                if (handled.size() < bData.getData().keySet().size()) {
+                if (handled.size() < bData.getData().size()) {
                     set.add(v + ",");
                 }
 

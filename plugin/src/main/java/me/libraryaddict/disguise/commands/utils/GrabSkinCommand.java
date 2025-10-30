@@ -86,7 +86,7 @@ public class GrabSkinCommand implements CommandExecutor {
 
         String name = tempName;
 
-        if (name != null && name.replaceAll("[_a-zA-Z \\d-@#]", "").length() > 0) {
+        if (name != null && !name.replaceAll("[_a-zA-Z \\d-@#]", "").isEmpty()) {
             LibsMsg.SKIN_API_INVALID_NAME.send(sender);
             return true;
         }

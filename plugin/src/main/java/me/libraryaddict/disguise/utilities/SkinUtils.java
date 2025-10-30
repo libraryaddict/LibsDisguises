@@ -242,13 +242,7 @@ public class SkinUtils {
         }
 
         if (DisguiseUtilities.getMineSkinAPI().nextRequestIn() > 0) {
-            String message = LibsMsg.SKIN_API_TIMER.get(DisguiseUtilities.getMineSkinAPI().nextRequestIn());
-
-//            if (!DisguiseUtilities.getMineSkinAPI().isMentionedApiKey()) {
-//                message += " " + LibsMsg.SKIN_API_SUGGEST_KEY.get();
-//            }
-
-            return message;
+            return LibsMsg.SKIN_API_TIMER.get(DisguiseUtilities.getMineSkinAPI().nextRequestIn());
         }
 
         return null;

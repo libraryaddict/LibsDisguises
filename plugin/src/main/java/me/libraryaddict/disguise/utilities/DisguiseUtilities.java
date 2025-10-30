@@ -2016,7 +2016,7 @@ public class DisguiseUtilities {
             if (!NmsVersion.v1_12.isVersion()) {
                 try (InputStream stream = LibsDisguises.getInstance().getResource("module-info.class")) {
                     invalidFile = invalidFile || stream != null;
-                } catch (Throwable e) {
+                } catch (Throwable ignored) {
                 }
             }
 
@@ -4165,41 +4165,7 @@ public class DisguiseUtilities {
                     default:
                         return yMod + 0.4;
                 }
-                // Not sure why, but tested with 1.13, 1.20 & 1.21 and the 0.7 offset just looks weird.
-/*            case ARROW:
-            case SPECTRAL_ARROW:
-            case BOAT:
-            case EGG:
-            case ENDER_PEARL:
-            case ENDER_SIGNAL:
-            case FIREWORK:
-            case PAINTING:
-            case SMALL_FIREBALL:
-            case SNOWBALL:
-            case SPLASH_POTION:
-            case THROWN_EXP_BOTTLE:
-            case WITHER_SKULL:
-            case ACACIA_BOAT:
-            case ACACIA_CHEST_BOAT:
-            case BAMBOO_RAFT:
-            case BAMBOO_CHEST_RAFT:
-            case BIRCH_BOAT:
-            case BIRCH_CHEST_BOAT:
-            case CHERRY_BOAT:
-            case CHERRY_CHEST_BOAT:
-            case DARK_OAK_BOAT:
-            case DARK_OAK_CHEST_BOAT:
-            case JUNGLE_BOAT:
-            case JUNGLE_CHEST_BOAT:
-            case MANGROVE_BOAT:
-            case MANGROVE_CHEST_BOAT:
-            case OAK_BOAT:
-            case OAK_CHEST_BOAT:
-            case PALE_OAK_BOAT:
-            case PALE_OAK_CHEST_BOAT:
-            case SPRUCE_BOAT:
-            case SPRUCE_CHEST_BOAT:
-                return yMod + 0.7;*/
+                // Not sure why, but tested with 1.13, 1.20 & 1.21 and the old 0.7 offset just looks weird. (git history to see enums)
             case DROPPED_ITEM:
                 return yMod + 0.13;
             default:

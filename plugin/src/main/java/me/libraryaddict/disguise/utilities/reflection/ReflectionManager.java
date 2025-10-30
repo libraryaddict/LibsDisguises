@@ -1039,24 +1039,7 @@ public class ReflectionManager {
             return (T) DisguiseUtilities.toBukkitItemStack((com.github.retrooper.packetevents.protocol.item.ItemStack) value);
         } else if (index.isBlock() || index.isBlockOpt()) {
             return (T) ReflectionManager.getWrappedBlockStateByCombinedId((int) value);
-           /* BlockData data = getBlockDataByCombinedId((int) value);
-
-            return (T) SpigotConversionUtil.fromBukkitBlockData(data);*/
-        } /*else if (index.isBlockOpt()) {
-            if (NmsVersion.v1_13.isSupported()) {
-                BlockData data = getBlockDataByCombinedId((int) value);
-
-                return (T) SpigotConversionUtil.fromBukkitBlockData(data);
-            }
-
-            if ((int) value == 0) {
-                return (T) Optional.empty();
-            }
-
-            MaterialData mData = SpigotReflectionUtil.getBlockDataByCombinedId((int) value);
-
-            return (T) Optional.of(SpigotConversionUtil.fromBukkitMaterialData(mData));
-        }*/ else if (index == MetaIndex.AREA_EFFECT_CLOUD_COLOR) {
+        } else if (index == MetaIndex.AREA_EFFECT_CLOUD_COLOR) {
             return (T) Color.fromRGB((int) value);
         } else if (index == MetaIndex.PARROT_VARIANT) {
             return (T) fromEnum(Parrot.Variant.class, (int) value);

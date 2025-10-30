@@ -27,7 +27,7 @@ public class PacketListenerClientCustomPayload extends SimplePacketListenerAbstr
             return;
         }
 
-        Player player = (Player) event.getPlayer();
+        Player player = event.getPlayer();
 
         if (player == null) {
             return;

@@ -252,7 +252,7 @@ public class PlayerSkinHandler implements Listener {
         }
     }
 
-    private synchronized void addMetadata(Player player, PlayerSkin skin) throws InvocationTargetException {
+    private synchronized void addMetadata(Player player, PlayerSkin skin) {
         PlayerDisguise disguise = skin.getDisguise().get();
 
         if (!disguise.isDisguiseInUse() || disguise.getInternals().shouldAvoidSendingPackets(player)) {
@@ -268,7 +268,7 @@ public class PlayerSkinHandler implements Listener {
         PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, metaPacket);
     }
 
-    private synchronized void addTeleport(Player player, PlayerSkin skin) throws InvocationTargetException {
+    private synchronized void addTeleport(Player player, PlayerSkin skin) {
         PlayerDisguise disguise = skin.getDisguise().get();
 
         Location loc =
@@ -312,74 +312,66 @@ public class PlayerSkinHandler implements Listener {
             return;
         }
 
-        try {
-            if (disguise.isDisguiseInUse()) {
-                for (Map.Entry<Integer, List<PacketWrapper>> entry : skin.getSleptPackets().entrySet()) {
-                    if (entry.getKey() == 0) {
-                        boolean avoidSending = disguise.getInternals().shouldAvoidSendingPackets(player);
+        if (disguise.isDisguiseInUse()) {
+            for (Map.Entry<Integer, List<PacketWrapper>> entry : skin.getSleptPackets().entrySet()) {
+                if (entry.getKey() == 0) {
+                    boolean avoidSending = disguise.getInternals().shouldAvoidSendingPackets(player);
 
-                        for (PacketWrapper packet : entry.getValue()) {
-                            if (avoidSending && conflictingTypes[((Enum) packet.getPacketTypeData().getPacketType()).ordinal()]) {
-                                continue;
-                            }
-
-                            PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
+                    for (PacketWrapper packet : entry.getValue()) {
+                        if (avoidSending && conflictingTypes[((Enum) packet.getPacketTypeData().getPacketType()).ordinal()]) {
+                            continue;
                         }
-                    } else {
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                if (!disguise.isDisguiseInUse()) {
-                                    return;
-                                }
 
-                                boolean avoidSending = disguise.getInternals().shouldAvoidSendingPackets(player);
-
-                                for (PacketWrapper packet : entry.getValue()) {
-                                    if (avoidSending && conflictingTypes[((Enum) packet.getPacketTypeData().getPacketType()).ordinal()]) {
-                                        continue;
-                                    }
-
-                                    PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
-                                }
-                            }
-                        }.runTaskLater(LibsDisguises.getInstance(), entry.getKey());
+                        PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
                     }
-                }
-
-                if (skin.isSleepPackets()) {
-                    addTeleport(player, skin);
-
+                } else {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            try {
-                                addMetadata(player, skin);
-                            } catch (InvocationTargetException e) {
-                                e.printStackTrace();
+                            if (!disguise.isDisguiseInUse()) {
+                                return;
+                            }
+
+                            boolean avoidSending = disguise.getInternals().shouldAvoidSendingPackets(player);
+
+                            for (PacketWrapper packet : entry.getValue()) {
+                                if (avoidSending && conflictingTypes[((Enum) packet.getPacketTypeData().getPacketType()).ordinal()]) {
+                                    continue;
+                                }
+
+                                PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
                             }
                         }
-                    }.runTask(LibsDisguises.getInstance());
+                    }.runTaskLater(LibsDisguises.getInstance(), entry.getKey());
                 }
+            }
 
-                if ((DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) && disguise.isNameVisible() &&
-                    disguise.getMultiNameLength() > 0) {
-                    List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(disguise, player, new String[0]);
+            if (skin.isSleepPackets()) {
+                addTeleport(player, skin);
 
-                    for (PacketWrapper p : packets) {
-                        PacketEvents.getAPI().getPlayerManager().sendPacket(player, p);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        addMetadata(player, skin);
                     }
+                }.runTask(LibsDisguises.getInstance());
+            }
+
+            if ((DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) && disguise.isNameVisible() &&
+                disguise.getMultiNameLength() > 0) {
+                List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(disguise, player, new String[0]);
+
+                for (PacketWrapper p : packets) {
+                    PacketEvents.getAPI().getPlayerManager().sendPacket(player, p);
                 }
             }
+        }
 
-            if (skin.isDoTabList()) {
-                PacketWrapper packetContainer =
-                    DisguiseUtilities.createTablistPacket(disguise, WrapperPlayServerPlayerInfo.Action.REMOVE_PLAYER);
+        if (skin.isDoTabList()) {
+            PacketWrapper packetContainer =
+                DisguiseUtilities.createTablistPacket(disguise, WrapperPlayServerPlayerInfo.Action.REMOVE_PLAYER);
 
-                PacketEvents.getAPI().getPlayerManager().sendPacket(player, packetContainer);
-            }
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packetContainer);
         }
     }
 

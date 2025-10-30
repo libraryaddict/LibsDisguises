@@ -26,7 +26,7 @@ public class ParamInfoTime extends ParamInfo {
         // If disguise expires X ticks afterwards
         if (DisguiseConfig.isDynamicExpiry()) {
             time *= 20;
-        } else if (!DisguiseConfig.isDynamicExpiry()) { // If disguise expires at a set time
+        } else { // If disguise expires at a set time
             time *= 1000; // Multiply for milliseconds
             time += System.currentTimeMillis(); // Add current time to expiry time
         }
@@ -37,13 +37,5 @@ public class ParamInfoTime extends ParamInfo {
     @Override
     public String toString(Object object) {
         return object.toString();
-    }
-
-    /**
-     * Is the values it returns all it can do?
-     */
-    @Override
-    public boolean isCustomValues() {
-        return true;
     }
 }

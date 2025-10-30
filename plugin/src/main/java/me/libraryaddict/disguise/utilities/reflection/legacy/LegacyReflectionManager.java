@@ -80,9 +80,6 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
     private static Method itemAsBukkitMethod;
     private static Method getServerMethod;
     private static Method getNmsEntityMethod;
-    private static Method soundGetMethod;
-    private static Method soundEffectGetMethod;
-    private static Field soundEffectGetKey;
     private static Method entityTypesAMethod;
     private static Method craftBlockDataGetState;
     private static Method magicGetBlock;
@@ -142,15 +139,6 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
         itemAsBukkitMethod = getCraftMethod(craftItemClass, "asBukkitCopy", getNmsClass("ItemStack"));
 
         getNmsEntityMethod = getCraftMethod("CraftEntity", "getHandle");
-
-        Class craftSound = getCraftClass("CraftSound");
-
-        try {
-            soundGetMethod = craftSound.getMethod("getSound", Sound.class);
-        } catch (Exception ex) {
-            soundEffectGetMethod = getCraftMethod("CraftSound", "getSoundEffect", Sound.class);
-            soundEffectGetKey = getNmsField("SoundEffect", "b");
-        }
 
         getBlockData = getNmsMethod(getNmsClass("Block"), "getBlockData");
 
@@ -1025,7 +1013,7 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
     }
 
     @Override
-    protected Object getTrackerEntryFromTracker(Object tracker) throws Exception {
+    protected Object getTrackerEntryFromTracker(Object tracker) {
         throw new IllegalStateException("Method shouldn't be invoked");
     }
 

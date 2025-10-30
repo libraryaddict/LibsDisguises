@@ -432,10 +432,11 @@ public class DisguiseParser {
         return parseToString(disguise, outputSkinData, false);
     }
 
-    @Deprecated
     /**
      * This method is poorly documented and lacking implementation, this is used only for placeholder parsing
-     */ public static String parseToString(Disguise disguise, WatcherMethod method) throws Throwable {
+     */
+    @Deprecated
+    public static String parseToString(Disguise disguise, WatcherMethod method) throws Throwable {
         // Ensure its a getter
         if (method.getOwner() != null) {
             method = method.getOwner().getGetter();
@@ -807,7 +808,7 @@ public class DisguiseParser {
         }
 
         if (entity instanceof Entity) {
-            if (((Entity) entity).getCustomName() != null && ((Entity) entity).getCustomName().length() > 0) {
+            if (((Entity) entity).getCustomName() != null && !((Entity) entity).getCustomName().isEmpty()) {
                 return ((Entity) entity).getCustomName();
             }
         }

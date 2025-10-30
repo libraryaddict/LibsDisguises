@@ -2,13 +2,7 @@ package me.libraryaddict.disguise.disguisetypes;
 
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
-import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-
-import java.lang.invoke.MethodHandle;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -34,59 +28,6 @@ public class DisguiseCloneTest {
                 } else {
                     disguise = new MiscDisguise(type);
                 }
-
-               /* for (Map.Entry<WatcherMethod, Map.Entry<WatcherMethod, Object>> entry : DisguiseParser.getMethodDefaults().entrySet()) {
-                    Object dValue = entry.getValue().getValue();
-
-                    if (dValue instanceof String) {
-                        dValue = "NewString";
-                    } else if (dValue instanceof Float) {
-                        dValue = ((float) dValue) + 1;
-                    } else if (dValue instanceof Double) {
-                        dValue = ((double) dValue) + 1;
-                    } else if (dValue instanceof Long) {
-                        dValue = ((long) dValue) + 1;
-                    } else if (dValue instanceof Integer) {
-                        dValue = ((int) dValue) + 1;
-                    } else if (dValue instanceof Byte) {
-                        dValue = ((byte) dValue) + 1;
-                    } else if (dValue instanceof Short) {
-                        dValue = ((short) dValue) + 1;
-                    } else if (dValue instanceof ItemStack) {
-                        dValue = new ItemStack(Material.DIAMOND_BLOCK);
-                    } else if (dValue instanceof Boolean) {
-                        dValue = !((Boolean) dValue);
-                    } else if (dValue instanceof Enum) {
-                        Object[] vals = dValue.getClass().getEnumConstants();
-
-                        for (int i = 0; i < vals.length; i++) {
-                            if (vals[i] == dValue) {
-                                continue;
-                            }
-
-                            dValue = vals[i];
-                            break;
-                        }
-                    } else {
-                        continue;
-                    }
-
-                    WatcherMethod m = entry.getKey();
-
-                    Object invokeWith = disguise;
-
-                    if (FlagWatcher.class.isAssignableFrom(entry.getKey().getWatcherClass())) {
-                        invokeWith = disguise.getWatcher();
-                    }
-
-                    try {
-                        MethodHandle handle = entry.getKey().getMethod();
-                        handle.bindTo(invokeWith);
-                        handle.invoke(dValue);
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                    }
-                }*/
 
                 Disguise cloned = disguise.clone();
                 String dString = DisguiseUtilities.getGson().toJson(disguise);

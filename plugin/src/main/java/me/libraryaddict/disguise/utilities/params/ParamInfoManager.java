@@ -46,16 +46,6 @@ public class ParamInfoManager {
             return getParamInfoSoundGroup();
         }
 
-        // Enderman can't hold non-blocks
-        /*if (method.getWatcherClass() == EndermanWatcher.class && method.getMappedName().equalsIgnoreCase("setItemInMainHand")) {
-            return getParamInfoItemBlock();
-        }
-
-        if (method.getWatcherClass() == FallingBlockWatcher.class &&
-            (method.getParam() == Material.class || method.getParam() == ItemStack.class)) {
-            return getParamInfoItemBlock();
-        }*/
-
         return getParamInfo(method.getParam());
     }
 

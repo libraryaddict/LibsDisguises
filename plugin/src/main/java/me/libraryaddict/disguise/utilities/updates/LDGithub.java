@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class LDGithub {
     @Getter
     @AllArgsConstructor
-    private class GithubUpdate implements DisguiseUpdate {
+    private static class GithubUpdate implements DisguiseUpdate {
         private String version;
         private String[] changelog;
         private String download;
@@ -40,9 +40,9 @@ public class LDGithub {
     }
 
     @Getter
-    private class GithubData {
+    private static class GithubData {
         @Getter
-        class Asset {
+        static class Asset {
             String browser_download_url;
             String name;
             String content_type;
@@ -132,7 +132,7 @@ public class LDGithub {
                 }
 
                 GithubUpdate update =
-                    new GithubUpdate(gitData.getTag_name().replace("v", ""), gitData.getBody().split("(\\r|\\n)+"), download);
+                    new GithubUpdate(gitData.getTag_name().replace("v", ""), gitData.getBody().split("([\\r\\n])+"), download);
 
                 if (Objects.equals(update.getVersion(), ourVersion)) {
                     DisguiseConfig.setLastGithubUpdateETag(con.getHeaderField("ETag"));

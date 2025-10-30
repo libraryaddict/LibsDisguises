@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class LDDebugPlayer implements LDCommand {
-    public class DebugInteraction implements LibsEntityInteract {
+    public static class DebugInteraction implements LibsEntityInteract {
         @Override
         public void onInteract(Player player, Entity entity) {
             Disguise disguise = DisguiseAPI.getDisguise(player, entity);

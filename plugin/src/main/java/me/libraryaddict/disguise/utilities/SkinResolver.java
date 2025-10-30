@@ -149,40 +149,6 @@ public class SkinResolver {
         lookupSkinByName();
     }
 
-    /**
-     * @param string The string to parse, format expected is `skin name:{profile data}
-     * @return Entry<> is null if this is not the syntax
-     * Skin Name is null if skin name was not included
-     * Profile is null if profile was not resolved properly
-     * Both can be null
-     */
-    /*private @Nullable Map.Entry<@Nullable String, @Nullable UserProfile> getSkinAndProfileFromJson(String string) {
-        Matcher match = skinAndProfilePattern.matcher(string);
-
-        if (!match.find()) {
-            return null;
-        }
-
-        String skin = match.group(1);
-        String profile = match.group(2);
-
-        if (profile.length() <= 70) {
-            return null;
-        }
-
-        UserProfile uProfile = parseProfile(profile);
-
-        if (uProfile == null) {
-            return null;
-        }
-
-        if (loadSkinUUID.equals(uProfile.getUUID())) {
-            uProfile = null;
-        }
-
-        return new AbstractMap.SimpleEntry<>(skin, uProfile);
-    }*/
-
     public UserProfile getProfileFromJson(String string) {
         if (string == null || string.length() <= 70) {
             return null;

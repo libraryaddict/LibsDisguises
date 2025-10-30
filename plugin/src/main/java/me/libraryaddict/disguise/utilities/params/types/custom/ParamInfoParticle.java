@@ -287,9 +287,7 @@ public class ParamInfoParticle extends ParamInfoEnum {
             return enums;
         }
 
-        newEnums.forEach(s -> {
-            enums.add(startsWith + ":" + s);
-        });
+        newEnums.forEach(s -> enums.add(startsWith + ":" + s));
 
         return enums;
     }

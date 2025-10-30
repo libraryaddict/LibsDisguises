@@ -227,10 +227,6 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
         return itemStack;
     }
 
-    public boolean isParam(Class paramClass) {
-        return getParamClass().isAssignableFrom(paramClass);
-    }
-
     /**
      * Is the values it returns all it can do?
      */

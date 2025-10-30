@@ -137,7 +137,7 @@ public class MineSkinAPI {
         return StringUtils.isNotBlank(apiKey);
     }
 
-    private void addConnectionHeaders(HttpURLConnection connection) throws IOException {
+    private void addConnectionHeaders(HttpURLConnection connection) {
         connection.setConnectTimeout(19000);
         connection.setReadTimeout(19000);
         connection.setDoOutput(true);

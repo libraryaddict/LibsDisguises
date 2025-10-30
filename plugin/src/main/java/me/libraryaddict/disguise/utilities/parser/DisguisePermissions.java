@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.parser;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -46,6 +47,7 @@ public class DisguisePermissions {
     private static class ParsedPermission {
         private final Vector<DisguisePerm> disguisePerm;
         private final HashMap<String, Boolean> options;
+        @Setter
         @Getter
         private boolean negated;
         /**
@@ -69,10 +71,6 @@ public class DisguisePermissions {
 
         public boolean isDisguise(DisguisePerm perm) {
             return disguisePerm.contains(perm);
-        }
-
-        public void setNegated(boolean negated) {
-            this.negated = negated;
         }
     }
 

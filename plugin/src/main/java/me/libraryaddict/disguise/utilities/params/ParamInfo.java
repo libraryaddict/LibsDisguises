@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.params;
 
+import lombok.Getter;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Keyed;
@@ -21,6 +22,7 @@ public abstract class ParamInfo<T> {
     /**
      * Used for translations, namely ItemStack and it's 'Glowing' and 'null' counterparts
      */
+    @Getter
     private String[] otherValues;
     private final String description;
 
@@ -104,10 +106,6 @@ public abstract class ParamInfo<T> {
 
     public boolean canTranslateValues() {
         return getValues() != null;
-    }
-
-    public String[] getOtherValues() {
-        return this.otherValues;
     }
 
     public void setOtherValues(String... otherValues) {

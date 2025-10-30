@@ -281,11 +281,6 @@ public class UpdateChecker {
             if (isFancyPluginUpdating() && result.getVersion() != null && result.getVersion().contains(".")) {
                 String version = result.getVersion();
 
-                // If this is a jenkins build, and there's a build number which is at least 2 digits
-                /*if (version.contains("SNAPSHOT") && result.getBuildNumber() != null && result.getBuildNumber().matches("#?\\d{2,}")) {
-                    version += "-b" + result.getBuildNumber().replace("#", "");
-                }*/
-
                 File newName = new File(Bukkit.getUpdateFolderFile(), "LibsDisguises-" + version + ".jar");
 
                 if (!newName.exists()) {

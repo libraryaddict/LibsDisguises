@@ -23,20 +23,6 @@ public class MetricsInitalizer {
 
         String version = plugin.getDescription().getVersion();
 
-        /*
-        // If a release build, attach build number
-        if (!plugin.isReleaseBuild() || !LibsPremium.isPremium()) {
-            version += "-";
-
-            // 9.7.0-SNAPSHOT-b30
-            if (plugin.isNumberedBuild()) {
-                version += "b";
-            }
-            // else 9.7.0-SNAPSHOT-unknown
-
-            version += plugin.getBuildNo();
-        }*/
-
         Metrics metrics = new Metrics(plugin, version);
         final String premiumType;
 
@@ -222,13 +208,6 @@ public class MetricsInitalizer {
                 return DisguiseConfig.isViewDisguises() ? "Yes" : "No";
             }
         });
-
-        /*metrics.addCustomChart(new Metrics.SimplePie("commands") {
-            @Override
-            public String getValue() {
-                return DisguiseConfig.isDisableCommands() ? "Enabled" : "Disabled";
-            }
-        });*/
 
         metrics.addCustomChart(new Metrics.SimplePie("spigot") {
             @Override

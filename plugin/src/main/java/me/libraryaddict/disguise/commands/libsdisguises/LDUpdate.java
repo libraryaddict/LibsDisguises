@@ -85,18 +85,6 @@ public class LDUpdate implements LDCommand {
                     return;
                 }
 
-                /*if (!finalWantsDownload) {
-                    if (updateResult != null) {
-                        updateResult.send(sender);
-                    } else {
-                        for (String msg : checker.getUpdateMessage()) {
-                            DisguiseUtilities.sendMessage(sender, msg);
-                        }
-                    }
-
-                    return;
-                }*/
-
                 LibsDisgInfo result = checker.doUpdate();
 
                 if (result == null) {

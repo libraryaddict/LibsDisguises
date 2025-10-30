@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import java.security.InvalidParameterException;
 
 public class MiscDisguise extends TargetedDisguise {
-    private int id = -1, data = 0;
+    private int data = 0;
 
     public MiscDisguise(DisguiseType disguiseType) {
         this(disguiseType, -1, disguiseType.getDefaultData());
@@ -90,7 +90,6 @@ public class MiscDisguise extends TargetedDisguise {
     private void apply(int id, ItemStack itemStack) {
         createDisguise();
 
-        this.id = getType().getTypeId();
         this.data = getType().getDefaultData();
 
         switch (getType()) {

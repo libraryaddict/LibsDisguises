@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.commands.utils;
 
-import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
@@ -34,100 +33,99 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
             if (args.length == 0) {
                 sendCommandUsage(sender, null);
                 return true;
-            } else {
-                ParamInfo help = null;
+            }
 
-                for (ParamInfo s : ParamInfoManager.getParamInfos()) {
-                    String name = s.getName().replaceAll(" ", "");
+            ParamInfo help = null;
 
-                    if (args[0].equalsIgnoreCase(name) || args[0].equalsIgnoreCase(name + "s")) {
-                        help = s;
-                        break;
-                    }
+            for (ParamInfo s : ParamInfoManager.getParamInfos()) {
+                String name = s.getName().replaceAll(" ", "");
+
+                if (args[0].equalsIgnoreCase(name) || args[0].equalsIgnoreCase(name + "s")) {
+                    help = s;
+                    break;
                 }
+            }
 
-                if (help != null) {
-                    if (help.hasTabCompletion() && help.canTranslateValues()) {
-                        LibsMsg.DHELP_HELP4.send(sender, help.getName(),
-                            StringUtils.join(help.getEnums(""), LibsMsg.DHELP_HELP4_SEPERATOR.get()));
+            if (help != null) {
+                if (help.hasTabCompletion() && help.canTranslateValues()) {
+                    LibsMsg.DHELP_HELP4.send(sender, help.getName(),
+                        StringUtils.join(help.getEnums(""), LibsMsg.DHELP_HELP4_SEPERATOR.get()));
+                } else {
+                    if (!help.getName().equals(help.getDescriptiveName())) {
+                        LibsMsg.DHELP_HELP6.send(sender, help.getName(), help.getDescriptiveName(), help.getDescription());
                     } else {
-                        if (!help.getName().equals(help.getDescriptiveName())) {
-                            LibsMsg.DHELP_HELP6.send(sender, help.getName(), help.getDescriptiveName(), help.getDescription());
-                        } else {
-                            LibsMsg.DHELP_HELP5.send(sender, help.getName(), help.getDescription());
-                        }
+                        LibsMsg.DHELP_HELP5.send(sender, help.getName(), help.getDescription());
                     }
-
-                    return true;
-                }
-
-                DisguisePerm type = DisguiseParser.getDisguisePerm(args[0]);
-
-                if (type == null) {
-                    LibsMsg.DHELP_CANTFIND.send(sender, args[0]);
-                    return true;
-                }
-
-                if (!perms.isAllowedDisguise(type)) {
-                    if (perms.getDisabledInConfigDisguises().contains(type)) {
-                        LibsMsg.DISABLED_CONFIG_DISGUISE.send(sender);
-                    } else {
-                        LibsMsg.NO_PERM_DISGUISE.send(sender);
-                    }
-
-                    return true;
-                }
-
-                ArrayList<String> methods = new ArrayList<>();
-                Class watcher = type.getWatcherClass();
-                int ignored = 0;
-
-                try {
-                    for (WatcherMethod method : ParamInfoManager.getDisguiseWatcherMethods(watcher)) {
-                        if (method.isHidden(type.getType())) {
-                            continue;
-                        }
-
-                        if (args.length < 2 || !args[1].equalsIgnoreCase(LibsMsg.DHELP_SHOW.get())) {
-                            if (!perms.isAllowedDisguise(type, Collections.singleton(method.getMappedName().toLowerCase(Locale.ENGLISH)))) {
-                                ignored++;
-                                continue;
-                            }
-                        }
-
-                        ParamInfo info = ParamInfoManager.getParamInfo(method);
-
-                        int value = ParamInfoManager.getValue(method);
-                        LibsMsg methodC = LibsMsg.DHELP_OPTIONS_METHOD_VERY_SPECIFIC;
-
-                        if (value == 1) {
-                            methodC = LibsMsg.DHELP_OPTIONS_METHOD_SOMEWHAT_SPECIFIC;
-                        } else if (value == 2) {
-                            methodC = LibsMsg.DHELP_OPTIONS_METHOD_GENERIC;
-                        }
-
-                        String str =
-                            LibsMsg.DHELP_OPTIONS_METHOD.get(methodC.get(TranslateType.DISGUISE_OPTIONS.get(method.getMappedName())),
-                                info.getName());
-
-                        methods.add(str);
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-
-                if (methods.isEmpty()) {
-                    methods.add(LibsMsg.DHELP_NO_OPTIONS.get());
-                }
-
-                LibsMsg.DHELP_OPTIONS.send(sender, type.toReadable(), StringUtils.join(methods, LibsMsg.DHELP_OPTIONS_JOINER.getRaw()));
-
-                if (ignored > 0) {
-                    LibsMsg.NO_PERMS_USE_OPTIONS.send(sender, ignored);
                 }
 
                 return true;
             }
+
+            DisguisePerm type = DisguiseParser.getDisguisePerm(args[0]);
+
+            if (type == null) {
+                LibsMsg.DHELP_CANTFIND.send(sender, args[0]);
+                return true;
+            }
+
+            if (!perms.isAllowedDisguise(type)) {
+                if (perms.getDisabledInConfigDisguises().contains(type)) {
+                    LibsMsg.DISABLED_CONFIG_DISGUISE.send(sender);
+                } else {
+                    LibsMsg.NO_PERM_DISGUISE.send(sender);
+                }
+
+                return true;
+            }
+
+            ArrayList<String> methods = new ArrayList<>();
+            Class watcher = type.getWatcherClass();
+            int ignored = 0;
+
+            try {
+                for (WatcherMethod method : ParamInfoManager.getDisguiseWatcherMethods(watcher)) {
+                    if (method.isHidden(type.getType())) {
+                        continue;
+                    }
+
+                    if (args.length < 2 || !args[1].equalsIgnoreCase(LibsMsg.DHELP_SHOW.get())) {
+                        if (!perms.isAllowedDisguise(type, Collections.singleton(method.getMappedName().toLowerCase(Locale.ENGLISH)))) {
+                            ignored++;
+                            continue;
+                        }
+                    }
+
+                    ParamInfo info = ParamInfoManager.getParamInfo(method);
+
+                    int value = ParamInfoManager.getValue(method);
+                    LibsMsg methodC = LibsMsg.DHELP_OPTIONS_METHOD_VERY_SPECIFIC;
+
+                    if (value == 1) {
+                        methodC = LibsMsg.DHELP_OPTIONS_METHOD_SOMEWHAT_SPECIFIC;
+                    } else if (value == 2) {
+                        methodC = LibsMsg.DHELP_OPTIONS_METHOD_GENERIC;
+                    }
+
+                    String str = LibsMsg.DHELP_OPTIONS_METHOD.get(methodC.get(TranslateType.DISGUISE_OPTIONS.get(method.getMappedName())),
+                        info.getName());
+
+                    methods.add(str);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            if (methods.isEmpty()) {
+                methods.add(LibsMsg.DHELP_NO_OPTIONS.get());
+            }
+
+            LibsMsg.DHELP_OPTIONS.send(sender, type.toReadable(), StringUtils.join(methods, LibsMsg.DHELP_OPTIONS_JOINER.getRaw()));
+
+            if (ignored > 0) {
+                LibsMsg.NO_PERMS_USE_OPTIONS.send(sender, ignored);
+            }
+
+            return true;
         }
 
         LibsMsg.NO_PERM.send(sender);

@@ -126,11 +126,7 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
                     if (clickedItem != null && !clickedItem.isEmpty()) {
                         // Rather than predict the clients actions
                         // Lets just update the entire inventory..
-                        Bukkit.getScheduler().runTask(LibsDisguises.getInstance(), new Runnable() {
-                            public void run() {
-                                player.updateInventory();
-                            }
-                        });
+                        Bukkit.getScheduler().runTask(LibsDisguises.getInstance(), player::updateInventory);
                     }
 
                     return;

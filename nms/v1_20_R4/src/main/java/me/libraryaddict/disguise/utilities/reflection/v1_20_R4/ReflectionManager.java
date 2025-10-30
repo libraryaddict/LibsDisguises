@@ -110,7 +110,7 @@ public class ReflectionManager extends ReflectionReusedNms {
         Optional<net.minecraft.world.entity.EntityType<?>> optional =
             net.minecraft.world.entity.EntityType.byString(entityName.toLowerCase(Locale.ENGLISH));
 
-        if (!optional.isPresent()) {
+        if (optional.isEmpty()) {
             return null;
         }
 

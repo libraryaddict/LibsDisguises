@@ -27,10 +27,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@RequiredArgsConstructor
 /**
  * Not intended to be used by external plugins
- */ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.DisguiseScalingInternals {
+ */
+@RequiredArgsConstructor
+public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.DisguiseScalingInternals {
     @Getter(AccessLevel.PRIVATE)
     private final D disguise;
     /**
@@ -67,6 +68,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
     /**
      * If the respective player has been sent the Spawn packets
+     *
      * @param player
      * @return
      */

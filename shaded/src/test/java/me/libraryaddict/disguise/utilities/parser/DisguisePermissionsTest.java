@@ -247,13 +247,13 @@ public class DisguisePermissionsTest {
         DisguisePermissions permissions = createPermissions("Disguise", false, "libsdisguises.disguise.falling_block.setCustomName",
             "libsdisguises.disguise.valid.falling_block.setblock");
 
-        assertFalse(permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), Arrays.asList("setBurning")),
+        assertFalse(permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), List.of("setBurning")),
             "The falling block disguise should not allow setBurning");
 
-        assertTrue(permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), Arrays.asList("setcustomname")),
+        assertTrue(permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), List.of("setcustomname")),
             "The falling block disguise should allow setCustomName");
 
-        assertTrue(permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), Arrays.asList("setBlock")),
+        assertTrue(permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), List.of("setBlock")),
             "The falling block disguise should allow setBlock");
     }
 
@@ -264,10 +264,10 @@ public class DisguisePermissionsTest {
         assertFalse(permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK)),
             "The falling block disguise should not be allowed");
 
-        assertFalse(permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), Arrays.asList("setBurning")),
+        assertFalse(permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), List.of("setBurning")),
             "The falling block disguise should not allow setBurning");
 
-        assertFalse(permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), Arrays.asList("setBlock")),
+        assertFalse(permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), List.of("setBlock")),
             "The falling block disguise should not allow setBlock");
     }
 

@@ -48,11 +48,11 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
     public String toString(Object object) {
         ItemStack[] stacks = (ItemStack[]) object;
 
-        String returns = "";
+        StringBuilder returns = new StringBuilder();
 
         for (int i = 0; i < stacks.length; i++) {
             if (i > 0) {
-                returns += ",";
+                returns.append(",");
             }
 
             if (stacks[i] == null) {
@@ -66,10 +66,10 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
                 return DisguiseUtilities.getGson().toJson(object);
             }
 
-            returns += toString;
+            returns.append(toString);
         }
 
-        return returns;
+        return returns.toString();
     }
 
     @Override
@@ -77,7 +77,7 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
         if (string.startsWith("[") && string.endsWith("]")) {
             try {
                 return DisguiseUtilities.getGson().fromJson(string, ItemStack[].class);
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
             }
         }
 
@@ -143,13 +143,5 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
         split.add(builder.toString());
 
         return split;
-    }
-
-    /**
-     * Is the values it returns all it can do?
-     */
-    @Override
-    public boolean isCustomValues() {
-        return true;
     }
 }

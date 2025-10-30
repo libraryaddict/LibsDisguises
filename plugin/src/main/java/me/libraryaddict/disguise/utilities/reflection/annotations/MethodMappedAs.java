@@ -19,14 +19,4 @@ public @interface MethodMappedAs {
      * The full method name
      */
     String value();
-
-    /**
-     * If this NmsVersion is supported, this mapping applies
-     */
-    //NmsVersion mappingAdded() default NmsVersion.UNSUPPORTED;
-
-    /**
-     * If this NmsVersion is supported, this mapping is removed
-     */
-   // NmsVersion mappingRemoved() default NmsVersion.UNSUPPORTED;
 }

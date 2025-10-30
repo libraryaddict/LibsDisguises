@@ -22,16 +22,14 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.file.Files;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class LDUploadLogs implements LDCommand {
-    class MCLogs {
+    static class MCLogs {
         boolean success;
         String id;
         String url;
@@ -41,8 +39,8 @@ public class LDUploadLogs implements LDCommand {
     private long lastUsed;
 
     @Data
-    public class GuestPaste {
-        private String name = null;
+    public static class GuestPaste {
+        private String name;
         private final String text;
 
         public GuestPaste(String name, String text) {
@@ -57,9 +55,6 @@ public class LDUploadLogs implements LDCommand {
             try {
                 con.setRequestMethod("POST");
                 con.setRequestProperty("User-Agent", "Mozilla/5.0");
-
-                List<SimpleEntry<String, String>> params = new LinkedList<>();
-                params.add(new SimpleEntry<>("api_paste_code", text));
 
                 StringBuilder output = new StringBuilder();
 

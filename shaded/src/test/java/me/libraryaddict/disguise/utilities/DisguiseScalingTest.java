@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 public class DisguiseScalingTest {
     @Getter
     @Setter
-    class DisguiseScalingImpl implements DisguiseScaling.DisguiseScalingInternals {
+    static class DisguiseScalingImpl implements DisguiseScaling.DisguiseScalingInternals {
         // The Double's are null by default to represent that the the plugin never tried to send the scaling
         // Exposed for testing, the scale that the self disguise will use
         private Double sentTinyFigureScale = null;
@@ -90,7 +90,7 @@ public class DisguiseScalingTest {
     @Getter
     @Setter
     @Accessors(chain = true)
-    class ScalingTestResults {
+    static class ScalingTestResults {
         // The doubles are NaN to represent that they are not set
         // We will compare null = not sent
         // And not-null = sent with value
@@ -100,7 +100,7 @@ public class DisguiseScalingTest {
     }
 
     @BeforeAll
-    static void setUpBeforeClass() throws Exception {
+    static void setUpBeforeClass() {
         DisguiseConfig.setScaleSelfDisguisesMin(0);
         DisguiseConfig.setScaleSelfDisguisesMax(50);
     }

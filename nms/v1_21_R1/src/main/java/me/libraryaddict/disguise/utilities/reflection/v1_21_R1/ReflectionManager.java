@@ -111,7 +111,7 @@ public class ReflectionManager extends ReflectionReusedNms {
         }
 
         net.minecraft.world.entity.EntityType<?> entityType = optional.get();
-        ServerLevel world = getWorldServer(Bukkit.getWorlds().get(0));
+        ServerLevel world = getWorldServer(Bukkit.getWorlds().getFirst());
         net.minecraft.world.entity.Entity entity;
         if (entityType == net.minecraft.world.entity.EntityType.PLAYER) {
             GameProfile gameProfile = new GameProfile(new UUID(0, 0), "Steve");

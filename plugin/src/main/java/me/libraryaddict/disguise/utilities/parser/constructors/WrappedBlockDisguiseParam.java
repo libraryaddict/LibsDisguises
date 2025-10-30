@@ -23,9 +23,4 @@ public class WrappedBlockDisguiseParam extends BlockStateDisguiseParam {
             return false;
         }
     }
-
-    @Override
-    public String getParameterMethod() {
-        return "setBlock";
-    }
 }

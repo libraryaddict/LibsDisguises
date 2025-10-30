@@ -238,12 +238,6 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
             return;
         }
 
-       /* if (!LibsPremium.getPluginInformation().isPremium() || LibsPremium.getPaidInformation() != null ||
-            LibsPremium.getPluginInformation().getBuildNumber().matches("#\\d+")) {
-
-            event.setPacket(packet = packet.deepClone());
-        }*/
-
         for (EntityData data : metadata.getEntityMetadata()) {
             if (data.getIndex() != 0) {
                 continue;

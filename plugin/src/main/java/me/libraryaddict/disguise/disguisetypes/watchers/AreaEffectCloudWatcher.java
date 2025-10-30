@@ -76,7 +76,7 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
             // Item crack, block crack, block dust, falling dust
             int particleId = getData(MetaIndex.AREA_EFFECT_PARTICLE_OLD);
 
-            return new com.github.retrooper.packetevents.protocol.particle.Particle<ParticleData>(
+            return new com.github.retrooper.packetevents.protocol.particle.Particle<>(
                 (ParticleType<ParticleData>) ParticleTypes.getById(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion(),
                     particleId));
         }

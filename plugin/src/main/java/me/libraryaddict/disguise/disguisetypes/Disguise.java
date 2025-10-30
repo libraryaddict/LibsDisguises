@@ -332,17 +332,6 @@ public abstract class Disguise {
             for (int i = oldLen; i < armorstandIds.length; i++) {
                 armorstandIds[i] = ReflectionManager.getNewEntityId();
             }
-          /*  // If required armorstands is greater, then recreate the array but append the existing ids
-            int[] newIds = new int[desiredlength];
-            int diff = desiredlength - armorstandIds.length;
-            System.arraycopy(armorstandIds, 0, newIds, diff, armorstandIds.length);
-            armorstandIds = newIds;
-
-            for (int i = 0; i < diff; i++) {
-                newIds[i] = ReflectionManager.getNewEntityId();
-            }
-
-            armorstandIds = newIds;*/
         }
 
         return armorstandIds;
@@ -1233,12 +1222,6 @@ public abstract class Disguise {
         }
 
         // No validation as there are some animation codes that overlap, and there's no hard reason not to try mismatch
-        /*if (!ReflectionManager.isAssignableFrom(animation.getWatcher(), getType().getWatcherClass())) {
-            throw new IllegalArgumentException(
-                String.format("Cannot use %s on the disguise type %s! %s does not extend %s", animation.name(), getType().name(),
-                    getType().getWatcherClass().getSimpleName(), animation.getWatcher().getSimpleName()));
-        }*/
-
         int entityId = getEntity().getEntityId();
         int count = 0;
 

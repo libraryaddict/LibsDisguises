@@ -37,7 +37,7 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
             return;
         }
 
-        Player observer = (Player) event.getPlayer();
+        Player observer = event.getPlayer();
 
         // If the player is temporary
         if (observer == null) {
