@@ -111,7 +111,9 @@ public class PlayerDisguise extends TargetedDisguise {
             return getWatcher().isSneaking() ? 1.5 : 1.8;
         }
 
-        return getEntity() instanceof Player && getEntity().isSneaking() ? 1.5 : 1.8;
+        // Cast isn't
+        //noinspection RedundantCast
+        return getEntity() instanceof Player && ((Player) getEntity()).isSneaking() ? 1.5 : 1.8;
     }
 
     @Deprecated
