@@ -111,7 +111,10 @@ public class PlayerDisguise extends TargetedDisguise {
             return getWatcher().isSneaking() ? 1.5 : 1.8;
         }
 
-        return getEntity() instanceof Player && getEntity().isSneaking() ? 1.5 : 1.8;
+        // We need to cast to ensure that runtime starts looking in Player, not Entity, otherwise we'll run into a missing method exception.
+        // Paper added isSneaking to Entity in 1.18, so in old versions of paper, or all versions of spigot, this is problematic.
+        //noinspection RedundantCast
+        return getEntity() instanceof Player && ((Player) getEntity()).isSneaking() ? 1.5 : 1.8;
     }
 
     @Deprecated
