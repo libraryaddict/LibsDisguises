@@ -761,7 +761,7 @@ public class ReflectionManager {
     @SneakyThrows
     public static Set getClonedTrackedPlayers(Object entityTracker, Object entityTrackerEntry) {
         // Copy before iterating to prevent ConcurrentModificationException
-        return (Set) new HashSet(getTrackedPlayers(entityTracker, entityTrackerEntry)).clone();
+        return new HashSet(getTrackedPlayers(entityTracker, entityTrackerEntry));
     }
 
     @SneakyThrows

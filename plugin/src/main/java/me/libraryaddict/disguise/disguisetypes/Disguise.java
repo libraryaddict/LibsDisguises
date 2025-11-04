@@ -53,11 +53,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -778,9 +779,24 @@ public abstract class Disguise {
         // If this disguise hasn't a entity set
         if (getEntity() == null) {
             // Loop through the disguises because it could be used with a unknown entity id.
-            Map<Integer, HashSet<TargetedDisguise>> future = DisguiseUtilities.getFutureDisguises();
+            Map<Integer, Set<TargetedDisguise>> future = DisguiseUtilities.getFutureDisguises();
 
-            DisguiseUtilities.getFutureDisguises().keySet().removeIf(id -> future.get(id).remove(this) && future.get(id).isEmpty());
+            Iterator<Set<TargetedDisguise>> iterator = DisguiseUtilities.getFutureDisguises().values().iterator();
+
+            // Find the first set that contains this disguise, then remove it, and if it's now empty, remove it from future disguises
+            while (iterator.hasNext()) {
+                Set<TargetedDisguise> disguises = iterator.next();
+
+                if (!disguises.remove(this)) {
+                    continue;
+                }
+
+                if (disguises.isEmpty()) {
+                    iterator.remove();
+                }
+
+                break;
+            }
 
             return true;
         }
@@ -903,9 +919,11 @@ public abstract class Disguise {
             MetaIndex backup = null;
 
             for (MetaIndex flagType : disguiseFlags) {
-                if (flagType.getIndex() == flag.getIndex()) {
-                    backup = flagType;
+                if (flagType.getIndex() != flag.getIndex()) {
+                    continue;
                 }
+
+                backup = flagType;
             }
 
             getWatcher().setBackupValue(flag, backup == null ? null : backup.getDefault());

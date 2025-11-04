@@ -19,14 +19,29 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup.SoundType;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.Set;
 
 public class PacketListenerSounds extends SimplePacketListenerAbstract {
+    /**
+     * If the entity is within range of the threshold
+     */
+    private boolean isNearby(Vector3i packetLocation, Location entityLocation, int threshold) {
+        if (Math.abs(packetLocation.getX() - (int) (entityLocation.getX() * 8)) > threshold) {
+            return false;
+        }
+
+        if (Math.abs(packetLocation.getY() - (int) (entityLocation.getY() * 8)) > threshold) {
+            return false;
+        }
+
+        return Math.abs(packetLocation.getZ() - (int) (entityLocation.getZ() * 8)) <= threshold;
+    }
+
     @Override
     public void onPacketPlaySend(PacketPlaySendEvent event) {
         if (event.isCancelled()) {
@@ -68,19 +83,14 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             ResourceLocation soundKey = sound.getSoundId();
 
             Vector3i loc = soundEffect.getEffectPosition();
+            World world = observer.getWorld();
 
             loop:
-            for (Set<TargetedDisguise> disguises : new ArrayList<>(DisguiseUtilities.getDisguises().values())) {
-                // May be a rare issue where an entity is undisguised while the array is being constructed
-                // https://github.com/libraryaddict/LibsDisguises/issues/813#issuecomment-3328587635
-                if (disguises == null) {
-                    continue;
-                }
-
-                for (TargetedDisguise entityDisguise : new ArrayList<>(disguises)) {
+            for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
+                for (TargetedDisguise entityDisguise : disguises) {
                     Entity entity = entityDisguise.getEntity();
 
-                    if (entity == null || entity.getWorld() != observer.getWorld()) {
+                    if (entity == null || entity.getWorld() != world) {
                         continue;
                     }
 
@@ -88,13 +98,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
                         continue;
                     }
 
-                    Location eLoc = entity.getLocation();
-
-                    int[] entCords = new int[]{(int) (eLoc.getX() * 8), (int) (eLoc.getY() * 8), (int) (eLoc.getZ() * 8)};
-
-                    // If entity is within 0.25 blocks of the sound, because the packet isn't immediate..
-                    if (Math.abs(loc.getX() - entCords[0]) > 2 || Math.abs(loc.getY() - entCords[1]) > 2 ||
-                        Math.abs(loc.getZ() - entCords[2]) > 2) {
+                    if (!isNearby(loc, entity.getLocation(), 2)) {
                         continue;
                     }
 

@@ -189,6 +189,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -266,26 +267,26 @@ public class DisguiseUtilities {
     @Getter
     public static final Random random = new Random();
     private static final LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<>();
-    private static final List<Integer> isNoInteract = new ArrayList<>();
-    private static final List<Integer> isSpecialInteract = new ArrayList<>();
+    private static final Set<Integer> isNoInteract = ConcurrentHashMap.newKeySet();
+    private static final Set<Integer> isSpecialInteract = ConcurrentHashMap.newKeySet();
     /**
      * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
      */
     @Getter
-    private static final Map<Integer, Set<TargetedDisguise>> disguises = new HashMap<>();
+    private static final Map<Integer, Set<TargetedDisguise>> disguises = new ConcurrentHashMap<>();
     /**
      * Disguises which are stored ready for a entity to be seen by a player Preferably, disguises in this should only
      * stay in for
      * a max of a second.
      */
     @Getter
-    private static final Map<Integer, HashSet<TargetedDisguise>> futureDisguises = new ConcurrentHashMap<>();
+    private static final Map<Integer, Set<TargetedDisguise>> futureDisguises = new ConcurrentHashMap<>();
     private static final Set<UUID> savedDisguiseList = new HashSet<>();
     private static final Set<String> cachedNames = new HashSet<>();
     private static final Map<String, String> sanitySkinCacheMap = new LinkedHashMap<>();
     private static final Map<String, List<Object>> runnables = new HashMap<>();
     @Getter
-    private static final HashSet<UUID> selfDisguised = new HashSet<>();
+    private static final Set<UUID> selfDisguised = ConcurrentHashMap.newKeySet();
     @Getter
     private static Gson gson;
     @Getter
@@ -293,7 +294,6 @@ public class DisguiseUtilities {
         grabHeadCommandUsed;
     private static long lastInternalDisguiseTrigger;
     private static final Cache<Integer, Long> velocityTimes = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.SECONDS).build();
-    private static final Map<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
     @Getter
     private static boolean runningGeyser;
     private static MineSkinAPI mineSkinAPI;
@@ -899,15 +899,11 @@ public class DisguiseUtilities {
     }
 
     public static boolean isNotInteractable(int entityId) {
-        synchronized (isNoInteract) {
-            return isNoInteract.contains(entityId);
-        }
+        return isNoInteract.contains(entityId);
     }
 
     public static boolean isSpecialInteract(int entityId) {
-        synchronized (isSpecialInteract) {
-            return isSpecialInteract.contains(entityId);
-        }
+        return isSpecialInteract.contains(entityId);
     }
 
     /**
@@ -950,22 +946,24 @@ public class DisguiseUtilities {
         int disguisesSaved = 0;
 
         for (Set<TargetedDisguise> list : getDisguises().values()) {
-            for (TargetedDisguise disg : list) {
-                if (disg.getEntity() == null) {
-                    continue;
-                }
+            TargetedDisguise disguise = list.stream().filter(d -> d.getEntity() != null).findAny().orElse(null);
 
-                if (disg.getEntity() instanceof Player ? !DisguiseConfig.isSavePlayerDisguises() :
-                    !DisguiseConfig.isSaveEntityDisguises()) {
-                    // Save empty array, clear any saved disguises
-                    saveDisguises(disg.getEntity(), new Disguise[0]);
-                    break;
-                }
+            if (disguise == null) {
+                continue;
+            }
 
-                disguisesSaved++;
-                saveDisguises(disg.getEntity(), list.toArray(new Disguise[0]));
+            // If disguise is a player, use the player config setting, otherwise use the normal entity setting
+            // If the setting has disguise saving disabled
+            if (disguise.getEntity() instanceof Player ? !DisguiseConfig.isSavePlayerDisguises() :
+                !DisguiseConfig.isSaveEntityDisguises()) {
+                // Save empty array, clear any saved disguises
+                saveDisguises(disguise.getEntity(), new Disguise[0]);
                 break;
             }
+
+            disguisesSaved++;
+            saveDisguises(disguise.getEntity(), list.toArray(new Disguise[0]));
+            break;
         }
 
         LibsDisguises.getInstance().getLogger().info("Saved " + disguisesSaved + " disguises.");
@@ -1259,36 +1257,40 @@ public class DisguiseUtilities {
         return false;
     }
 
-    public static void addDisguise(Integer entityId, TargetedDisguise disguise) {
-        if (!getDisguises().containsKey(entityId)) {
-            getDisguises().put(entityId, new HashSet<>());
+    private static void addNoInteract(Disguise disguise) {
+        Entity entity = disguise.getEntity();
 
-            if (disguise.getEntity() != null) {
-                synchronized (isNoInteract) {
-                    Entity entity = disguise.getEntity();
+        if (entity == null) {
+            return;
+        }
 
-                    if (getEntityItem() == entity.getType()) {
-                        isNoInteract.add(entity.getEntityId());
-                    } else {
-                        switch (entity.getType()) {
-                            case EXPERIENCE_ORB:
-                            case ARROW:
-                            case SPECTRAL_ARROW:
-                                isNoInteract.add(entity.getEntityId());
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
+        int entityId = entity.getEntityId();
 
-                synchronized (isSpecialInteract) {
-                    if (disguise.getEntity() instanceof Wolf && disguise.getType() != DisguiseType.WOLF) {
-                        isSpecialInteract.add(entityId);
-                    }
-                }
+        if (getEntityItem() == entity.getType()) {
+            isNoInteract.add(entityId);
+        } else {
+            switch (entity.getType()) {
+                case EXPERIENCE_ORB:
+                case ARROW:
+                case SPECTRAL_ARROW:
+                    isNoInteract.add(entityId);
+                    break;
+                default:
+                    break;
             }
         }
+
+        if (entity instanceof Wolf && disguise.getType() != DisguiseType.WOLF) {
+            isSpecialInteract.add(entityId);
+        }
+    }
+
+    public static void addDisguise(Integer entityId, TargetedDisguise disguise) {
+        getDisguises().computeIfAbsent(entityId, (k) -> {
+            addNoInteract(disguise);
+
+            return ConcurrentHashMap.newKeySet(1);
+        }).add(disguise);
 
         if ("a%%__USER__%%a".equals("a12345a") || (LibsPremium.getUserID().matches("\\d+") &&
             !("" + Integer.parseInt(LibsPremium.getUserID())).equals(LibsPremium.getUserID()))) {
@@ -1308,8 +1310,6 @@ public class DisguiseUtilities {
                 }
             }
         }
-
-        getDisguises().get(entityId).add(disguise);
 
         checkConflicts(disguise, null);
 
@@ -1359,7 +1359,7 @@ public class DisguiseUtilities {
     }
 
     public static void onFutureDisguise(Entity entity, boolean failedToSpawn) {
-        HashSet<TargetedDisguise> disguises = getFutureDisguises().remove(entity.getEntityId());
+        Set<TargetedDisguise> disguises = getFutureDisguises().remove(entity.getEntityId());
 
         if (disguises == null || failedToSpawn) {
             return;
@@ -1379,16 +1379,14 @@ public class DisguiseUtilities {
     }
 
     public static void addFutureDisguise(final int entityId, final TargetedDisguise disguise) {
-        if (!getFutureDisguises().containsKey(entityId)) {
-            getFutureDisguises().put(entityId, new HashSet<>());
-        }
-
-        getFutureDisguises().get(entityId).add(disguise);
+        getFutureDisguises().computeIfAbsent(entityId, k -> ConcurrentHashMap.newKeySet(1)).add(disguise);
 
         final BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
-                if (!getFutureDisguises().containsKey(entityId) || !getFutureDisguises().get(entityId).contains(disguise)) {
+                Set<TargetedDisguise> disguises = getFutureDisguises().get(entityId);
+
+                if (disguises == null || !disguises.contains(disguise)) {
                     return;
                 }
 
@@ -1403,9 +1401,9 @@ public class DisguiseUtilities {
                     }
                 }
 
-                getFutureDisguises().get(entityId).remove(disguise);
+                disguises.remove(disguise);
 
-                if (getFutureDisguises().get(entityId).isEmpty()) {
+                if (disguises.isEmpty()) {
                     getFutureDisguises().remove(entityId);
                 }
             }
@@ -1487,7 +1485,13 @@ public class DisguiseUtilities {
             return;
         }
 
-        Iterator<TargetedDisguise> disguiseItel = getDisguises().get(disguise.getEntity().getEntityId()).iterator();
+        Set<TargetedDisguise> disguises = getDisguises().get(disguise.getEntity().getEntityId());
+
+        if (disguises == null) {
+            return;
+        }
+
+        Iterator<TargetedDisguise> disguiseItel = disguises.iterator();
 
         // Iterate through the disguises
         while (disguiseItel.hasNext()) {
@@ -1649,33 +1653,39 @@ public class DisguiseUtilities {
     public static TargetedDisguise getDisguise(Player observer, Entity entity) {
         int entityId = entity.getEntityId();
 
-        if (futureDisguises.containsKey(entityId)) {
-            for (TargetedDisguise disguise : futureDisguises.remove(entityId)) {
+        futureDisguises.computeIfPresent(entityId, (k, values) -> {
+            for (TargetedDisguise disguise : values) {
                 addDisguise(entity.getEntityId(), disguise);
             }
+
+            return null;
+        });
+
+        Set<TargetedDisguise> disguises = getDisguises().get(entityId);
+
+        if (disguises == null) {
+            return null;
         }
 
-        if (getDisguises().containsKey(entityId)) {
-            for (TargetedDisguise disguise : getDisguises().get(entityId)) {
-                if (!disguise.canSee(observer)) {
-                    continue;
-                }
-
-                return disguise;
+        for (TargetedDisguise disguise : disguises) {
+            if (!disguise.canSee(observer)) {
+                continue;
             }
+
+            return disguise;
         }
 
         return null;
     }
 
     public static TargetedDisguise[] getDisguises(Integer entityId) {
-        if (getDisguises().containsKey(entityId)) {
-            Set<TargetedDisguise> disguises = getDisguises().get(entityId);
+        Set<TargetedDisguise> disguises = getDisguises().get(entityId);
 
-            return disguises.toArray(new TargetedDisguise[0]);
+        if (disguises == null) {
+            return new TargetedDisguise[0];
         }
 
-        return new TargetedDisguise[0];
+        return disguises.toArray(new TargetedDisguise[0]);
     }
 
     public static ItemProfile getItemProfile(UserProfile uProfile) {
@@ -1746,16 +1756,22 @@ public class DisguiseUtilities {
     }
 
     public static TargetedDisguise getMainDisguise(Integer entityId) {
+        Set<TargetedDisguise> disguises = getDisguises().get(entityId);
+
+        if (disguises == null) {
+            return null;
+        }
+
         TargetedDisguise toReturn = null;
 
-        if (getDisguises().containsKey(entityId)) {
-            for (TargetedDisguise disguise : getDisguises().get(entityId)) {
-                if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
-                    return disguise;
-                }
-
-                toReturn = disguise;
+        for (TargetedDisguise disguise : disguises) {
+            // If this disguise can be said to be the main disguise
+            if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
+                return disguise;
             }
+
+            // We always reference the last disguise to be added
+            toReturn = disguise;
         }
 
         return toReturn;
@@ -2204,8 +2220,13 @@ public class DisguiseUtilities {
     }
 
     public static boolean isDisguiseInUse(Disguise disguise) {
-        return disguise.getEntity() != null && getDisguises().containsKey(disguise.getEntity().getEntityId()) &&
-            getDisguises().get(disguise.getEntity().getEntityId()).contains(disguise);
+        if (disguise == null || disguise.getEntity() == null) {
+            return false;
+        }
+
+        Set<TargetedDisguise> disguises = getDisguises().get(disguise.getEntity().getEntityId());
+
+        return disguises != null && disguises.contains(disguise);
     }
 
     /**
@@ -2400,30 +2421,34 @@ public class DisguiseUtilities {
 
     public static boolean removeDisguise(TargetedDisguise disguise) {
         int entityId = disguise.getEntity().getEntityId();
+        AtomicBoolean wasDisguiseRemoved = new AtomicBoolean(false);
 
-        if (getDisguises().containsKey(entityId) && getDisguises().get(entityId).remove(disguise)) {
-            if (getDisguises().get(entityId).isEmpty()) {
-                getDisguises().remove(entityId);
+        getDisguises().computeIfPresent(entityId, (key, disguises) -> {
+            // Set the atomic boolean to true if the disguise was previously active
+            wasDisguiseRemoved.set(disguises.remove(disguise));
 
-                if (disguise.getEntity() != null) {
-                    synchronized (isNoInteract) {
-                        isNoInteract.remove((Object) disguise.getEntity().getEntityId());
-                    }
-
-                    synchronized (isSpecialInteract) {
-                        isSpecialInteract.remove((Object) disguise.getEntity().getEntityId());
-                    }
-                }
-            }
-
-            if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS && disguise.isModifyBoundingBox()) {
+            // If the disguise was removed and the bounding box was modified
+            if (wasDisguiseRemoved.get() && disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS &&
+                disguise.isModifyBoundingBox()) {
                 doBoundingBox(disguise);
             }
 
-            return true;
-        }
+            // If disguises are still in use here
+            if (!disguises.isEmpty()) {
+                return disguises;
+            }
 
-        return false;
+            // If entity exists
+            if (disguise.getEntity() != null) {
+                isNoInteract.remove(entityId);
+                isSpecialInteract.remove(entityId);
+            }
+
+            // Return null to remove from map
+            return null;
+        });
+
+        return wasDisguiseRemoved.get();
     }
 
     public static void removeUserProfile(String string) {
@@ -3535,14 +3560,19 @@ public class DisguiseUtilities {
         Entity e = disguise.getEntity();
 
         // If the disguises entity is null, or the disguised entity isn't a player; return
-        if (!(e instanceof Player) || !getDisguises().containsKey(e.getEntityId()) ||
-            !getDisguises().get(e.getEntityId()).contains(disguise)) {
+        if (!(e instanceof Player)) {
+            return;
+        }
+
+        Set<TargetedDisguise> disguises = getDisguises().get(e.getEntityId());
+
+        if (disguises == null || !disguises.contains(disguise)) {
             return;
         }
 
         Player player = (Player) e;
 
-        // Check if he can even see this..
+        // Check if the player can see this
         if (!((TargetedDisguise) disguise).canSee(player)) {
             return;
         }
@@ -4006,62 +4036,66 @@ public class DisguiseUtilities {
         return getClampedScale(modifiedScale);
     }
 
+    private static void findFutureDisguise(Player observer, int entityId) {
+        if (Bukkit.isPrimaryThread()) {
+            findEntities(observer, entityId);
+            return;
+        }
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                try {
+                    findEntities(observer, entityId);
+                } finally {
+                    latch.countDown();
+                }
+            }
+        }.runTask(LibsDisguises.getInstance());
+
+        try {
+            boolean mainThreadSuccess = latch.await(5, TimeUnit.SECONDS);
+
+            if (!mainThreadSuccess) {
+                LibsDisguises.getInstance().getLogger().info(String.format(
+                    "Packet processing was paused on '%s' for a \"future\" disguise, but took too long waiting for the main " +
+                        "thread. The disguise may not have " + "been applied properly.", observer.getName()));
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static Disguise getDisguise(Player observer, int entityId) {
         // If the entity ID is the same as self disguises' id, then it needs to be set to the observers id
         if (entityId == DisguiseAPI.getSelfDisguiseId()) {
             entityId = observer.getEntityId();
         }
 
-        Set<TargetedDisguise> futureDisguises = getDisguises().get(entityId);
+        // Set the disguises active for this entity id
+        Set<TargetedDisguise> disguises = getDisguises().get(entityId);
 
-        if (futureDisguises != null) {
-            boolean foundEntity = false;
+        // If there is a future disguise for this entity id
+        if (getFutureDisguises().containsKey(entityId)) {
+            Disguise disguise;
 
-            if (futureDisguises != null && !futureDisguises.isEmpty()) {
-                Disguise disguise = futureDisguises.iterator().next();
-
-                if (disguise.getEntity() != null) {
-                    foundEntity = true;
-
-                    onFutureDisguise(disguise.getEntity());
-                }
+            // If the disguises is not null, and we found a disguise that has the entity set
+            if (disguises != null &&
+                (disguise = disguises.stream().filter(d -> d != null && d.getEntity() != null).findAny().orElse(null)) != null) {
+                // Handle the future disguises
+                onFutureDisguise(disguise.getEntity());
+            } else {
+                // Otherwise perform blocking operation to find a future disguise
+                findFutureDisguise(observer, entityId);
             }
 
-            if (!foundEntity) {
-                if (Bukkit.isPrimaryThread()) {
-                    findEntities(observer, entityId);
-                } else {
-                    int id = entityId;
-                    CountDownLatch latch = new CountDownLatch(1);
-
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                findEntities(observer, id);
-                            } finally {
-                                latch.countDown();
-                            }
-                        }
-                    }.runTask(LibsDisguises.getInstance());
-
-                    try {
-                        boolean mainThreadSuccess = latch.await(5, TimeUnit.SECONDS);
-
-                        if (!mainThreadSuccess) {
-                            LibsDisguises.getInstance().getLogger().info(String.format(
-                                "Packet processing was paused on '%s' for a \"future\" disguise, but took too long waiting for the main " +
-                                    "thread. The disguise may not have " + "been applied properly.", observer.getName()));
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+            // Update the reference as it may have been (re)created
+            disguises = getDisguises().get(entityId);
         }
 
-        TargetedDisguise[] disguises = getDisguises(entityId);
-
+        // If there was a future disguise, we've updated our reference to be up to date, so this should be safe
         if (disguises == null) {
             return null;
         }

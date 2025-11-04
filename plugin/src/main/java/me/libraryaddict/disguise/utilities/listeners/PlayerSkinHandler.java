@@ -38,11 +38,10 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class PlayerSkinHandler implements Listener {
@@ -51,7 +50,7 @@ public class PlayerSkinHandler implements Listener {
     public static class PlayerSkin {
         private final long firstPacketSent = System.currentTimeMillis();
         private final WeakReference<PlayerDisguise> disguise;
-        private final HashMap<Integer, List<PacketWrapper>> sleptPackets = new HashMap<>();
+        private final Map<Integer, List<PacketWrapper>> sleptPackets = new ConcurrentHashMap<>();
         @Setter
         private boolean doTabList = true;
         @Setter

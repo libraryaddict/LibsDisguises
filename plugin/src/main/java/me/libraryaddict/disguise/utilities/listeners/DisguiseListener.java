@@ -446,11 +446,7 @@ public class DisguiseListener implements Listener {
                     targetedDisguise.addPlayer(p);
                 }*/
 
-                if (!targetedDisguise.canSee(p)) {
-                    continue;
-                }
-
-                if (!(targetedDisguise instanceof PlayerDisguise)) {
+                if (!targetedDisguise.canSee(p) || !(targetedDisguise instanceof PlayerDisguise)) {
                     continue;
                 }
 

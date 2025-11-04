@@ -32,6 +32,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacketHandler<T> {
     private final boolean invalid = LibsPremium.getUserID().matches("\\d+") && Integer.parseInt(LibsPremium.getUserID()) < 2;
@@ -234,7 +235,7 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
                     iterator.remove();
                 }
             } else {
-                entity.setMetadata("LibsRabbitHop", new FixedMetadataValue(LibsDisguises.getInstance(), rabbitHops = new HashMap<>()));
+                entity.setMetadata("LibsRabbitHop", new FixedMetadataValue(LibsDisguises.getInstance(), rabbitHops = new ConcurrentHashMap<>()));
             }
 
             long lastHop =

@@ -96,10 +96,12 @@ public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerE
                 list = disguise.getWatcher().convert(observer, list);
             } else {
                 for (WatcherValue obj : disguise.getWatcher().getWatchableObjects()) {
-                    if (obj.getIndex() == toUse.getIndex()) {
-                        list.add(obj);
-                        break;
+                    if (obj.getIndex() != toUse.getIndex()) {
+                        continue;
                     }
+
+                    list.add(obj);
+                    break;
                 }
             }
 

@@ -14,11 +14,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ClassMappings {
-    private static final Map<String, String> classLocations = new HashMap<>();
+    private static final Map<String, String> classLocations = new ConcurrentHashMap<>();
     private static String[] packages;
     private static boolean updatingCache = false;
     @Getter

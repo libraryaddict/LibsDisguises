@@ -23,7 +23,7 @@ public class PlaceholderDisguisesActive implements DPlaceholder {
     public String parse(@Nullable Disguise disguise, String[] args) {
         Map<Integer, Set<TargetedDisguise>> disguises = DisguiseUtilities.getDisguises();
 
-        // Hmm, thread safety
+        // Hmm, thread safety, or more specifically, the world + radius...
         return null;
     }
 }
