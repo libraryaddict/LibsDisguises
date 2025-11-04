@@ -65,8 +65,12 @@ public enum AnimalColor {
             return getColorByMaterial(itemStack.getType());
         }
 
-        if (itemStack.getType().name().matches("(WOOL)|(CARPET)|(INK_SACK?)")) {
+        if (itemStack.getType().name().matches("(WOOL)|(CARPET)")) {
             return getColorByWool(itemStack.getDurability());
+        }
+
+        if (itemStack.getType().name().matches("INK_SACK?")) {
+            return getColorByDye(itemStack.getDurability());
         }
 
         return null;
