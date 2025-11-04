@@ -34,6 +34,6 @@ public class TippedArrowWatcher extends ArrowWatcher {
     @RandomDefaultValue
     @MethodDescription("The color of the tipped arrow's head")
     public void setColor(Color color) {
-        sendData(MetaIndex.TIPPED_ARROW_COLOR, color.asRGB());
+        sendData(MetaIndex.TIPPED_ARROW_COLOR, color != null ? color.asRGB() : null);
     }
 }

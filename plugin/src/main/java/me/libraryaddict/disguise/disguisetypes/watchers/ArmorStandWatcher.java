@@ -137,6 +137,6 @@ public class ArmorStandWatcher extends LivingWatcher {
     }
 
     private void setPose(MetaIndex<Vector3f> type, EulerAngle vector) {
-        sendData(type, new Vector3f((float) vector.getX(), (float) vector.getY(), (float) vector.getZ()));
+        sendData(type, vector != null ? new Vector3f((float) vector.getX(), (float) vector.getY(), (float) vector.getZ()) : null);
     }
 }

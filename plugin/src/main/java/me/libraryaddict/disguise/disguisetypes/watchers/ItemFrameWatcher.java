@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemFrameWatcher extends HangingWatcher {
@@ -11,20 +10,14 @@ public class ItemFrameWatcher extends HangingWatcher {
     }
 
     public ItemStack getItem() {
-        if (getData(MetaIndex.ITEMFRAME_ITEM) == null) {
-            return new ItemStack(Material.AIR);
-        }
-
         return getData(MetaIndex.ITEMFRAME_ITEM);
     }
 
     public void setItem(ItemStack newItem) {
-        if (newItem == null) {
-            newItem = new ItemStack(Material.AIR);
+        if (newItem != null) {
+            newItem = newItem.clone();
+            newItem.setAmount(1);
         }
-
-        newItem = newItem.clone();
-        newItem.setAmount(1);
 
         sendData(MetaIndex.ITEMFRAME_ITEM, newItem);
     }

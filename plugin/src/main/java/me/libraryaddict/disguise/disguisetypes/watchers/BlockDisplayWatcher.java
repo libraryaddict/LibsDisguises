@@ -80,6 +80,10 @@ public class BlockDisplayWatcher extends DisplayWatcher implements GridLockedWat
     public void setTranslation(Vector3f translation) {
         super.setTranslation(translation);
 
+        if (translation == null) {
+            return;
+        }
+
         // Detect if this is centered or not, if its not centered, we don't want to ruin their settings
         Vector3f scale = getScale();
 

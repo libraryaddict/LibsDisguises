@@ -59,6 +59,8 @@ public class FlagWatcher {
     private boolean addEntityAnimations = DisguiseConfig.isAddEntityAnimations();
     /**
      * If this object is used, it represents that this entity should not have any metadata sent for the retrospective id
+     * <p>
+     * As of time of writing, Lib's Disguises does not use this, and does not check for it to ensure non-nullability on getters
      */
     protected static final Object DONT_SEND = new Object();
     /**
@@ -752,7 +754,11 @@ public class FlagWatcher {
     }
 
     public void setGlowColor(ChatColor glowColor) {
-        if (getGlowColor() == glowColor || glowColor == null || !glowColor.isColor()) {
+        if (glowColor == null) {
+            glowColor = ChatColor.WHITE;
+        }
+
+        if (getGlowColor() == glowColor || !glowColor.isColor()) {
             return;
         }
 

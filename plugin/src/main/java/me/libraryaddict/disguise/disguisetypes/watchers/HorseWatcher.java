@@ -76,6 +76,6 @@ public class HorseWatcher extends AbstractHorseWatcher {
             }
         }
 
-        sendData(MetaIndex.HORSE_ARMOR, value);
+        sendData(MetaIndex.HORSE_ARMOR, item != null ? value : null);
     }
 }

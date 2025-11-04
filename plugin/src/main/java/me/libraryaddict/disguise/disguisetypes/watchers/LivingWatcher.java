@@ -132,15 +132,13 @@ public class LivingWatcher extends FlagWatcher {
 
     @NmsAddedIn(NmsVersion.v1_14)
     public void setBedPosition(Vector3i blockPosition) {
-        Optional<Vector3i> optional;
+        sendData(MetaIndex.LIVING_BED_POSITION, blockPosition != null ? Optional.of(blockPosition) : null);
+    }
 
-        if (blockPosition != null) {
-            optional = Optional.of(blockPosition);
-        } else {
-            optional = Optional.empty();
-        }
-
-        sendData(MetaIndex.LIVING_BED_POSITION, optional);
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    @NmsAddedIn(NmsVersion.v1_14)
+    public void setBedPosition(Optional<Vector3i> blockPosition) {
+        sendData(MetaIndex.LIVING_BED_POSITION, blockPosition);
     }
 
     public float getHealth() {
@@ -218,9 +216,22 @@ public class LivingWatcher extends FlagWatcher {
         setHandFlag(2, setSpinning);
     }
 
+    /**
+     * The max health shown on an entity.
+     * <p>
+     * Note that currently, removing this will not actually send the max health update
+     *
+     * @param newHealth Health to show, set to less than 0 to revert back to normal
+     */
     public void setMaxHealth(double newHealth) {
-        this.maxHealth = newHealth;
-        this.maxHealthSet = true;
+        if (newHealth < 0) {
+            maxHealth = 0;
+            maxHealthSet = false;
+            // TODO Actually remove our 'max health' modification, can refer to the attribute listener
+        } else {
+            this.maxHealth = newHealth;
+            this.maxHealthSet = true;
+        }
 
         if (!getDisguise().isDisguiseInUse() || getDisguise().getWatcher() != this) {
             return;
@@ -254,14 +265,14 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     @NmsAddedIn(NmsVersion.v1_20_R4)
-    public void addParticle(Particle<? extends ParticleData> particle) {
+    public void addParticle(@NotNull Particle<? extends ParticleData> particle) {
         getData(MetaIndex.LIVING_PARTICLES).add(particle);
         sendData(MetaIndex.LIVING_PARTICLES);
     }
 
     @SafeVarargs
     @NmsAddedIn(NmsVersion.v1_20_R4)
-    public final void removeParticles(Particle<? extends ParticleData>... particles) {
+    public final void removeParticles(@NotNull Particle<? extends ParticleData>... particles) {
         for (Particle<? extends ParticleData> particle : particles) {
             getData(MetaIndex.LIVING_PARTICLES).remove(particle);
         }
@@ -287,13 +298,18 @@ public class LivingWatcher extends FlagWatcher {
         potionEffects.clear();
 
         if (NmsVersion.v1_20_R4.isSupported()) {
+            if (color == null) {
+                sendData(MetaIndex.LIVING_PARTICLES, null);
+                return;
+            }
+
             List<Particle<?>> particles = new ArrayList<>(getData(MetaIndex.LIVING_PARTICLES));
             particles.removeIf(d -> d.getType() == ParticleTypes.ENTITY_EFFECT);
             particles.add(new Particle<>(ParticleTypes.ENTITY_EFFECT, new ParticleColorData(color.asRGB())));
 
             sendData(MetaIndex.LIVING_PARTICLES, particles);
         } else {
-            sendData(MetaIndex.LIVING_POTIONS, color.asRGB());
+            sendData(MetaIndex.LIVING_POTIONS, color != null ? color.asRGB() : null);
         }
     }
 
@@ -352,7 +368,9 @@ public class LivingWatcher extends FlagWatcher {
     @Deprecated
     @NmsRemovedIn(NmsVersion.v1_20_R4)
     public void addPotionEffect(PotionEffectType potionEffect) {
-        if (!hasPotionEffect(potionEffect)) {
+        if (potionEffect == null) {
+            potionEffects.clear();
+        } else if (!hasPotionEffect(potionEffect)) {
             potionEffects.add(potionEffect.getName());
         }
 
@@ -362,7 +380,9 @@ public class LivingWatcher extends FlagWatcher {
     @Deprecated
     @NmsRemovedIn(NmsVersion.v1_20_R4)
     public void removePotionEffect(PotionEffectType potionEffect) {
-        if (hasPotionEffect(potionEffect)) {
+        if (potionEffect == null) {
+            potionEffects.clear();
+        } else if (hasPotionEffect(potionEffect)) {
             potionEffects.remove(potionEffect.getName());
         }
 

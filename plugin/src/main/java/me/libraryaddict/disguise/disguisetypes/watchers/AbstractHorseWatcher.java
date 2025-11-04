@@ -19,6 +19,7 @@ public abstract class AbstractHorseWatcher extends AgeableWatcher {
         super(disguise);
     }
 
+    @NmsRemovedIn(NmsVersion.v1_19_R3)
     public UUID getOwner() {
         return getData(MetaIndex.HORSE_OWNER).orElse(null);
     }
@@ -26,7 +27,14 @@ public abstract class AbstractHorseWatcher extends AgeableWatcher {
     @NmsRemovedIn(NmsVersion.v1_19_R3)
     @MethodDescription
     public void setOwner(UUID uuid) {
-        sendData(MetaIndex.HORSE_OWNER, Optional.of(uuid));
+        sendData(MetaIndex.HORSE_OWNER, uuid != null ? Optional.of(uuid) : Optional.empty());
+    }
+
+    @NmsRemovedIn(NmsVersion.v1_19_R3)
+    @MethodDescription
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public void setOwner(Optional<UUID> owner) {
+        sendData(MetaIndex.HORSE_OWNER, owner);
     }
 
     /**

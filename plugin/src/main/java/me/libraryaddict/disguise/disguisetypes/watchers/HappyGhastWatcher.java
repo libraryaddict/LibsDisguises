@@ -30,13 +30,13 @@ public class HappyGhastWatcher extends AgeableWatcher {
     }
 
     public void setHarnessed(boolean isHarnesed) {
-        Material material = Material.BROWN_HARNESS;
+        Material material = isHarnesed ? Material.BROWN_HARNESS : Material.AIR;
 
         if (isHarnesed && DisguiseConfig.isRandomDisguises()) {
             material = ReflectionManager.randomEnum(AnimalColor.class).getHarnessColor();
         }
 
-        setItemStack(EquipmentSlot.BODY, new ItemStack(isHarnesed ? material : Material.AIR));
+        setItemStack(EquipmentSlot.BODY, new ItemStack(material));
     }
 
     public DyeColor getHarnessColor() {
@@ -52,14 +52,17 @@ public class HappyGhastWatcher extends AgeableWatcher {
     }
 
     public void setHarnessColor(DyeColor color) {
-        Material material = Material.AIR;
+        if (color == null) {
+            setItemStack(EquipmentSlot.BODY, null);
+            return;
+        }
 
-        if (color != null) {
-            material = AnimalColor.getColor(color).getHarnessColor();
+        AnimalColor animalColor = AnimalColor.getColor(color);
 
-            if (material == null) {
-                material = Material.BROWN_HARNESS;
-            }
+        Material material = Material.BROWN_HARNESS;
+
+        if (animalColor != null && animalColor.getHarnessColor() != null) {
+            material = animalColor.getHarnessColor();
         }
 
         setItemStack(EquipmentSlot.BODY, new ItemStack(material));

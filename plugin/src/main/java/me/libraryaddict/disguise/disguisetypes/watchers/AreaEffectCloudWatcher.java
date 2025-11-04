@@ -88,7 +88,7 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
         if (NmsVersion.v1_13.isSupported()) {
             sendData(MetaIndex.AREA_EFFECT_PARTICLE, particle);
         } else {
-            setParticleType((Particle) SpigotConversionUtil.toBukkitParticle(particle.getType()));
+            setParticleType(particle != null ? (Particle) SpigotConversionUtil.toBukkitParticle(particle.getType()) : null);
         }
     }
 
@@ -105,10 +105,10 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
     @MethodDescription("What particle type is this Area Effect Cloud using?")
     public void setParticleType(Particle particle) {
         if (NmsVersion.v1_13.isSupported()) {
-            setParticle(
-                new com.github.retrooper.packetevents.protocol.particle.Particle(SpigotConversionUtil.fromBukkitParticle(particle)));
+            setParticle(particle != null ?
+                new com.github.retrooper.packetevents.protocol.particle.Particle(SpigotConversionUtil.fromBukkitParticle(particle)) : null);
         } else {
-            sendData(MetaIndex.AREA_EFFECT_PARTICLE_OLD, ReflectionManager.enumOrdinal(particle));
+            sendData(MetaIndex.AREA_EFFECT_PARTICLE_OLD, particle != null ? ReflectionManager.enumOrdinal(particle) : null);
         }
     }
 }

@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.GolemCrack;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 
@@ -19,29 +20,25 @@ public class IronGolemWatcher extends InsentientWatcher {
 
     @NmsAddedIn(NmsVersion.v1_16)
     public void setCracks(GolemCrack cracks) {
-        if (cracks == getCracks() || cracks == null) {
+        if (cracks == getCracks()) {
             return;
         }
 
         this.cracks = cracks;
 
-        switch (cracks) {
-            case HEALTH_25:
-                setHealth(24);
-                break;
-            case HEALTH_50:
-                setHealth(49);
-                break;
-            case HEALTH_75:
-                setHealth(74);
-                break;
-            case HEALTH_100:
-                setHealth(100);
-                break;
-        }
+        if (cracks == null) {
+            sendData(MetaIndex.LIVING_HEALTH, null);
 
-        if (!isMaxHealthSet() || getMaxHealth() != 100) {
-            setMaxHealth(100);
+            if (isMaxHealthSet() && getMaxHealth() == 100) {
+                // Resets the health, but will require the max health attribute to be sent
+                setMaxHealth(-1);
+            }
+        } else {
+            setHealth(cracks.getHealthShown());
+
+            if (!isMaxHealthSet() || getMaxHealth() != 100) {
+                setMaxHealth(100);
+            }
         }
     }
 

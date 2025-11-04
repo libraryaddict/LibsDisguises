@@ -58,7 +58,7 @@ public class TextDisplayWatcher extends DisplayWatcher {
     }
 
     public void setBackgroundColor(Color color) {
-        sendData(MetaIndex.TEXT_DISPLAY_BACKGROUND_COLOR, color == null ? -1 : color.asARGB());
+        sendData(MetaIndex.TEXT_DISPLAY_BACKGROUND_COLOR, color != null ? color.asARGB() : null);
     }
 
     public byte getTextOpacity() {
@@ -108,6 +108,11 @@ public class TextDisplayWatcher extends DisplayWatcher {
     }
 
     public void setAlignment(TextDisplay.TextAlignment alignment) {
+        if (alignment == null) {
+            sendData(MetaIndex.TEXT_DISPLAY_FLAGS, null);
+            return;
+        }
+
         switch (alignment.ordinal()) {
             case 0:
                 this.setFlag(8, false);

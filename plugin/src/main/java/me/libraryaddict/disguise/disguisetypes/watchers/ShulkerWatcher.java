@@ -28,11 +28,16 @@ public class ShulkerWatcher extends InsentientWatcher {
     }
 
     public Vector3i getAttachmentPosition() {
-        return getData(MetaIndex.SHULKER_ATTACHED).orElse(Vector3i.zero());
+        return getData(MetaIndex.SHULKER_ATTACHED).orElse(null);
     }
 
-    public void setAttachmentPosition(Vector3i pos) {
-        sendData(MetaIndex.SHULKER_ATTACHED, Optional.ofNullable(pos));
+    public void setAttachmentPosition(Vector3i attachmentPosition) {
+        sendData(MetaIndex.SHULKER_ATTACHED, attachmentPosition != null ? Optional.of(attachmentPosition) : null);
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public void setAttachmentPosition(Optional<Vector3i> attachmentPosition) {
+        sendData(MetaIndex.SHULKER_ATTACHED, attachmentPosition);
     }
 
     public int getShieldHeight() {
@@ -69,6 +74,6 @@ public class ShulkerWatcher extends InsentientWatcher {
             return;
         }
 
-        sendData(MetaIndex.SHULKER_COLOR, newColor == null ? (byte) 16 : newColor.getWoolData());
+        sendData(MetaIndex.SHULKER_COLOR, newColor != null ? newColor.getWoolData() : null);
     }
 }

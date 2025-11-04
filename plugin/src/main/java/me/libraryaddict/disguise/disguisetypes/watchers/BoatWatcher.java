@@ -96,7 +96,7 @@ public class BoatWatcher extends FlagWatcher {
     @Deprecated
     public void setBoatType(TreeSpecies boatType) {
         if (NmsVersion.v1_19_R1.isSupported()) {
-            setType(ParamInfoBoatType.getTypeFromSpecies(boatType));
+            setType(boatType != null ? ParamInfoBoatType.getTypeFromSpecies(boatType) : null);
             return;
         }
 

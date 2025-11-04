@@ -7,6 +7,8 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -24,12 +26,10 @@ public class FireworkWatcher extends FlagWatcher {
     }
 
     public void setFirework(ItemStack newItem) {
-        if (newItem == null) {
-            newItem = new ItemStack(Material.AIR);
+        if (newItem != null) {
+            newItem = newItem.clone();
+            newItem.setAmount(1);
         }
-
-        newItem = newItem.clone();
-        newItem.setAmount(1);
 
         sendData(MetaIndex.FIREWORK_ITEM, newItem);
     }
@@ -44,8 +44,13 @@ public class FireworkWatcher extends FlagWatcher {
         sendData(MetaIndex.FIREWORK_SHOT_AT_ANGLE, shotAtAngle);
     }
 
+    /**
+     * Exposed as it's not clear if the Optional is empty or set to 0
+     *
+     * @return Optional as set on disguise or default optional
+     */
     @NmsAddedIn(NmsVersion.v1_14)
-    public Optional<Integer> getAttachedEntityOpt() {
+    public @NotNull Optional<Integer> getAttachedEntityOpt() {
         return getData(MetaIndex.FIREWORK_ATTACHED_ENTITY);
     }
 
@@ -54,15 +59,18 @@ public class FireworkWatcher extends FlagWatcher {
     }
 
     public void setAttachedEntity(int entityId) {
-        setAttachedEntity(entityId == 0 ? Optional.empty() : Optional.of(entityId));
+        //noinspection OptionalAssignedToNull
+        setAttachedEntity(entityId > 0 ? Optional.of(entityId) : null);
     }
 
     @NmsAddedIn(NmsVersion.v1_14)
-    public void setAttachedEntity(Optional<Integer> entityId) {
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public void setAttachedEntity(@Nullable Optional<Integer> entityId) {
         if (NmsVersion.v1_14.isSupported()) {
             sendData(MetaIndex.FIREWORK_ATTACHED_ENTITY, entityId);
         } else {
-            sendData(MetaIndex.FIREWORK_ATTACHED_ENTITY_OLD, entityId.orElse(0));
+            //noinspection OptionalAssignedToNull
+            sendData(MetaIndex.FIREWORK_ATTACHED_ENTITY_OLD, entityId != null ? entityId.orElse(0) : null);
         }
     }
 }

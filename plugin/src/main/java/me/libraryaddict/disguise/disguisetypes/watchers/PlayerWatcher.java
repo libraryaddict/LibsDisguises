@@ -107,6 +107,11 @@ public class PlayerWatcher extends AvatarWatcher {
         return watcher;
     }
 
+    /**
+     * Gets the parrot displayed on the right shoulder, this will always be null unless it was set on the disguise
+     *
+     * @return The parrot on the disguise
+     */
     public @Nullable Parrot.Variant getRightShoulderParrot() {
         if (!NmsVersion.v1_21_R6.isSupported()) {
             return getParrot(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY_OLD);
@@ -115,15 +120,31 @@ public class PlayerWatcher extends AvatarWatcher {
         return getData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY).map(integer -> Parrot.Variant.values()[integer]).orElse(null);
     }
 
+    /**
+     * Sets the parrot to be shown on the shoulder.
+     * To hide the parrot, use setRightShoulderHasParrot
+     *
+     * @param variant If null, will pasthrough the underlying entity if it is a player, otherwise no parrot
+     */
     public void setRightShoulderParrot(@Nullable Parrot.Variant variant) {
         if (!NmsVersion.v1_21_R6.isSupported()) {
-            setParrot(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY_OLD, variant);
+            if (variant == null) {
+                sendData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY_OLD, null);
+            } else {
+                setParrot(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY_OLD, variant);
+            }
+
             return;
         }
 
-        sendData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY, variant == null ? Optional.empty() : Optional.of(variant.ordinal()));
+        sendData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY, variant != null ? Optional.of(variant.ordinal()) : null);
     }
 
+    /**
+     * Gets the parrot displayed on the right shoulder, this will always be null unless it was set on the disguise
+     *
+     * @return The parrot on the disguise
+     */
     public @Nullable Parrot.Variant getLeftShoulderParrot() {
         if (!NmsVersion.v1_21_R6.isSupported()) {
             return getParrot(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY_OLD);
@@ -132,13 +153,24 @@ public class PlayerWatcher extends AvatarWatcher {
         return getData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY).map(integer -> Parrot.Variant.values()[integer]).orElse(null);
     }
 
+    /**
+     * Sets the parrot to be shown on the shoulder.
+     * To hide the parrot, use setLeftShoulderHasParrot
+     *
+     * @param variant If null, will pasthrough the underlying entity if it is a player, otherwise no parrot
+     */
     public void setLeftShoulderParrot(@Nullable Parrot.Variant variant) {
         if (!NmsVersion.v1_21_R6.isSupported()) {
-            setParrot(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY_OLD, variant);
+            if (variant == null) {
+                sendData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY_OLD, null);
+            } else {
+                setParrot(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY_OLD, variant);
+            }
+
             return;
         }
 
-        sendData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY, variant == null ? Optional.empty() : Optional.of(variant.ordinal()));
+        sendData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY, variant != null ? Optional.of(variant.ordinal()) : null);
     }
 
     public boolean isRightShoulderHasParrot() {

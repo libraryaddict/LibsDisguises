@@ -33,7 +33,13 @@ public class CatWatcher extends TameableWatcher {
     }
 
     public DyeColor getCollarColor() {
-        return getData(MetaIndex.CAT_COLLAR).getDyeColor();
+        AnimalColor color = getData(MetaIndex.CAT_COLLAR);
+
+        if (color == null) {
+            return null;
+        }
+
+        return color.getDyeColor();
     }
 
     @Deprecated
@@ -56,7 +62,7 @@ public class CatWatcher extends TameableWatcher {
             return;
         }
 
-        sendData(MetaIndex.CAT_COLLAR, AnimalColor.getColorByWool(newColor.getWoolData()));
+        sendData(MetaIndex.CAT_COLLAR, AnimalColor.getColor(newColor));
     }
 
     public boolean isLyingDown() {

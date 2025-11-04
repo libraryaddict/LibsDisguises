@@ -44,18 +44,13 @@ public class MinecartWatcher extends FlagWatcher {
                 id = ReflectionManager.getCombinedIdByItemStack(item);
             }
 
-            sendData(MetaIndex.MINECART_BLOCK_NEW, ReflectionManager.getWrappedBlockStateByCombinedId(id));
+            sendData(MetaIndex.MINECART_BLOCK_NEW, item != null ? ReflectionManager.getWrappedBlockStateByCombinedId(id) : null);
             return;
         }
 
-        setData(MetaIndex.MINECART_BLOCK, ReflectionManager.getCombinedIdByItemStack(item));
-
-        if (!NmsVersion.v1_21_R4.isSupported()) {
-            setData(MetaIndex.MINECART_BLOCK_VISIBLE, item != null && item.getType() != Material.AIR);
-            sendData(MetaIndex.MINECART_BLOCK, MetaIndex.MINECART_BLOCK_VISIBLE);
-        } else {
-            sendData(MetaIndex.MINECART_BLOCK);
-        }
+        setData(MetaIndex.MINECART_BLOCK, item != null ? ReflectionManager.getCombinedIdByItemStack(item) : null);
+        setData(MetaIndex.MINECART_BLOCK_VISIBLE, item != null ? item.getType() != Material.AIR : null);
+        sendData(MetaIndex.MINECART_BLOCK, MetaIndex.MINECART_BLOCK_VISIBLE);
     }
 
     public WrappedBlockState getBlock() {
@@ -67,18 +62,14 @@ public class MinecartWatcher extends FlagWatcher {
     }
 
     public void setBlock(WrappedBlockState state) {
-        if (state == null) {
-            state = WrappedBlockState.getByGlobalId(0);
-        }
-
         if (NmsVersion.v1_21_R4.isSupported()) {
             sendData(MetaIndex.MINECART_BLOCK_NEW, state);
             return;
         }
 
         setData(MetaIndex.MINECART_BLOCK,
-            state.getType() == StateTypes.AIR ? 0 : ReflectionManager.getCombinedIdByWrappedBlockState(state));
-        setData(MetaIndex.MINECART_BLOCK_VISIBLE, state.getGlobalId() != 0 && state.getType() != StateTypes.AIR);
+            state != null ? (state.getType() == StateTypes.AIR ? 0 : ReflectionManager.getCombinedIdByWrappedBlockState(state)) : null);
+        setData(MetaIndex.MINECART_BLOCK_VISIBLE, state != null ? state.getGlobalId() != 0 && state.getType() != StateTypes.AIR : null);
 
         sendData(MetaIndex.MINECART_BLOCK, MetaIndex.MINECART_BLOCK_VISIBLE);
     }
@@ -97,25 +88,26 @@ public class MinecartWatcher extends FlagWatcher {
     @NmsAddedIn(NmsVersion.v1_13)
     @Deprecated
     public void setBlockData(BlockData data) {
-        if (data == null || data.getMaterial() == Material.AIR || !data.getMaterial().isBlock()) {
+        if (data == null || !data.getMaterial().isBlock()) {
+            setBlock(null);
+            return;
+        }
+
+        if (data.getMaterial() == Material.AIR) {
             setBlock(WrappedBlockState.getByGlobalId(0));
             return;
         }
 
+        int combinedId = ReflectionManager.getCombinedIdByBlockData(data);
+
         if (NmsVersion.v1_21_R4.isSupported()) {
-            sendData(MetaIndex.MINECART_BLOCK_NEW,
-                ReflectionManager.getWrappedBlockStateByCombinedId(ReflectionManager.getCombinedIdByBlockData(data)));
+            sendData(MetaIndex.MINECART_BLOCK_NEW, ReflectionManager.getWrappedBlockStateByCombinedId(combinedId));
             return;
         }
 
-        setData(MetaIndex.MINECART_BLOCK, ReflectionManager.getCombinedIdByBlockData(data));
-
-        if (!NmsVersion.v1_21_R4.isSupported()) {
-            setData(MetaIndex.MINECART_BLOCK_VISIBLE, data != null && data.getMaterial() != Material.AIR);
-            sendData(MetaIndex.MINECART_BLOCK, MetaIndex.MINECART_BLOCK_VISIBLE);
-        } else {
-            sendData(MetaIndex.MINECART_BLOCK);
-        }
+        setData(MetaIndex.MINECART_BLOCK, combinedId);
+        setData(MetaIndex.MINECART_BLOCK_VISIBLE, true);
+        sendData(MetaIndex.MINECART_BLOCK, MetaIndex.MINECART_BLOCK_VISIBLE);
     }
 
     @Deprecated

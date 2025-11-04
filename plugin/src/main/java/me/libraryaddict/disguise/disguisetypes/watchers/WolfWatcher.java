@@ -57,7 +57,7 @@ public class WolfWatcher extends TameableWatcher {
 
     @Deprecated
     public void setCollarColor(AnimalColor color) {
-        setCollarColor(color.getDyeColor());
+        setCollarColor(color != null ? color.getDyeColor() : null);
     }
 
     @MethodDescription("The color of the wolf's collar")
@@ -75,7 +75,7 @@ public class WolfWatcher extends TameableWatcher {
             return;
         }
 
-        sendData(MetaIndex.WOLF_COLLAR, AnimalColor.getColorByWool(newColor.getWoolData()));
+        sendData(MetaIndex.WOLF_COLLAR, AnimalColor.getColor(newColor));
     }
 
     public boolean isBegging() {

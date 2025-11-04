@@ -22,6 +22,10 @@ public class ParamInfoBoatType extends ParamInfoEnum<Boat.Type> {
     }
 
     public static TreeSpecies getSpeciesFromType(Boat.Type boatType) {
+        if (boatType == null) {
+            return null;
+        }
+
         switch (boatType) {
             case SPRUCE:
                 return TreeSpecies.REDWOOD;
@@ -39,6 +43,10 @@ public class ParamInfoBoatType extends ParamInfoEnum<Boat.Type> {
     }
 
     public static Boat.Type getTypeFromSpecies(TreeSpecies species) {
+        if (species == null) {
+            return null;
+        }
+
         switch (species) {
             case REDWOOD:
                 return Boat.Type.SPRUCE;

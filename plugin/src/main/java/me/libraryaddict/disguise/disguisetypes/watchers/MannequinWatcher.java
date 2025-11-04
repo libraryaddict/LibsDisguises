@@ -76,15 +76,7 @@ public class MannequinWatcher extends AvatarWatcher {
     @Override
     public void setSkin(@Nullable UserProfile profile) {
         // We handle as UserProfile for consistency, and because packetevents lets us...
-        ItemProfile itemProfile;
-
-        if (profile == null) {
-            itemProfile = new ItemProfile(null, null, new ArrayList<>());
-        } else {
-            itemProfile = DisguiseUtilities.getItemProfile(profile);
-        }
-
-        setSkin(itemProfile);
+        setSkin(profile != null ? DisguiseUtilities.getItemProfile(profile) : null);
     }
 
     public @NotNull ItemProfile getSkin() {
@@ -93,10 +85,6 @@ public class MannequinWatcher extends AvatarWatcher {
 
     @RandomDefaultValue
     public void setSkin(@Nullable ItemProfile profile) {
-        if (profile == null) {
-            profile = new ItemProfile(null, null, new ArrayList<>());
-        }
-
         sendData(MetaIndex.MANNEQUIN_PROFILE, profile);
     }
 
@@ -105,6 +93,11 @@ public class MannequinWatcher extends AvatarWatcher {
     }
 
     public void setDescription(@Nullable Component description) {
-        setData(MetaIndex.MANNEQUIN_DESCRIPTION, Optional.ofNullable(description));
+        setData(MetaIndex.MANNEQUIN_DESCRIPTION, description != null ? Optional.of(description) : null);
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public void setDescription(@Nullable Optional<Component> description) {
+        setData(MetaIndex.MANNEQUIN_DESCRIPTION, description);
     }
 }

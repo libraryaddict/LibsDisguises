@@ -420,6 +420,10 @@ public abstract class Disguise {
     }
 
     public void setNotifyBar(DisguiseConfig.NotifyBar bar) {
+        if (bar == null) {
+            bar = DisguiseConfig.getNotifyBar();
+        }
+
         if (getNotifyBar() == bar) {
             return;
         }
@@ -434,6 +438,10 @@ public abstract class Disguise {
     }
 
     public void setBossBarColor(BarColor color) {
+        if (color == null) {
+            color = DisguiseConfig.getBossBarColor();
+        }
+
         if (getBossBarColor() == color) {
             return;
         }
@@ -444,6 +452,10 @@ public abstract class Disguise {
     }
 
     public void setBossBarStyle(BarStyle style) {
+        if (style == null) {
+            style = DisguiseConfig.getBossBarStyle();
+        }
+
         if (getBossBarStyle() == style) {
             return;
         }
@@ -454,6 +466,14 @@ public abstract class Disguise {
     }
 
     public void setBossBar(BarColor color, BarStyle style) {
+        if (color == null) {
+            color = DisguiseConfig.getBossBarColor();
+        }
+
+        if (style == null) {
+            style = DisguiseConfig.getBossBarStyle();
+        }
+
         this.bossBarColor = color;
         this.bossBarStyle = style;
 

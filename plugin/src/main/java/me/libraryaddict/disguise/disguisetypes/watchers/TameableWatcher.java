@@ -11,12 +11,17 @@ public class TameableWatcher extends AgeableWatcher {
         super(disguise);
     }
 
-    public Optional<UUID> getOwner() {
-        return getData(MetaIndex.TAMEABLE_OWNER);
+    public UUID getOwner() {
+        return getData(MetaIndex.TAMEABLE_OWNER).orElse(null);
     }
 
     public void setOwner(UUID owner) {
-        sendData(MetaIndex.TAMEABLE_OWNER, Optional.of(owner));
+        sendData(MetaIndex.TAMEABLE_OWNER, owner != null ? Optional.of(owner) : null);
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public void setOwner(Optional<UUID> owner) {
+        sendData(MetaIndex.TAMEABLE_OWNER, owner);
     }
 
     public boolean isSitting() {

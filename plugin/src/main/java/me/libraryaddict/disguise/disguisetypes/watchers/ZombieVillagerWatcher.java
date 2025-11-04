@@ -69,10 +69,10 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
     @MethodDescription("The profession of the villager")
     public void setProfession(Profession profession) {
         if (NmsVersion.v1_14.isSupported()) {
-            setVillagerData(new VillagerData(VillagerTypes.getByName(ReflectionManager.keyedName(getType())),
-                VillagerProfessions.getByName(ReflectionManager.keyedName(profession)), getLevel()));
+            setVillagerData(profession != null ? new VillagerData(VillagerTypes.getByName(ReflectionManager.keyedName(getType())),
+                VillagerProfessions.getByName(ReflectionManager.keyedName(profession)), getLevel()) : null);
         } else {
-            sendData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION_OLD, ReflectionManager.enumOrdinal(profession) - 1);
+            sendData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION_OLD, profession != null ? ReflectionManager.enumOrdinal(profession) - 1 : null);
         }
     }
 
@@ -85,8 +85,8 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
     @Deprecated
     @NmsAddedIn(NmsVersion.v1_14)
     public void setType(Villager.Type type) {
-        setVillagerData(new VillagerData(VillagerTypes.getByName(ReflectionManager.keyedName(type)),
-            VillagerProfessions.getByName(ReflectionManager.keyedName(getProfession())), getLevel()));
+        setVillagerData(type != null ? new VillagerData(VillagerTypes.getByName(ReflectionManager.keyedName(type)),
+            VillagerProfessions.getByName(ReflectionManager.keyedName(getProfession())), getLevel()) : null);
     }
 
     @NmsAddedIn(NmsVersion.v1_14)

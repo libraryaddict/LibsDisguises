@@ -20,8 +20,14 @@ public class EnderCrystalWatcher extends FlagWatcher {
         return getData(MetaIndex.ENDER_CRYSTAL_BEAM).orElse(null);
     }
 
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public void setBeamTarget(Optional<Vector3i> position) {
+        sendData(MetaIndex.ENDER_CRYSTAL_BEAM, position);
+    }
+
     public void setBeamTarget(Vector3i position) {
-        sendData(MetaIndex.ENDER_CRYSTAL_BEAM, position == null ? Optional.empty() : Optional.of(position));
+        sendData(MetaIndex.ENDER_CRYSTAL_BEAM, position != null ? Optional.of(position) : null);
     }
 
     public boolean isShowBottom() {

@@ -69,7 +69,7 @@ public class TropicalFishWatcher extends FishWatcher {
 
     @RandomDefaultValue
     public void setPatternColor(DyeColor dyeColor) {
-        setVariant(getData(dyeColor, getBodyColor(), getPattern()));
+        setVariant(dyeColor != null ? getData(dyeColor, getBodyColor(), getPattern()) : -1);
     }
 
     private int getData(final DyeColor patternColor, final DyeColor bodyColor, final TropicalFish.Pattern type) {
@@ -82,7 +82,7 @@ public class TropicalFishWatcher extends FishWatcher {
 
     @RandomDefaultValue
     public void setBodyColor(DyeColor dyeColor) {
-        setVariant(getData(getPatternColor(), dyeColor, getPattern()));
+        setVariant(dyeColor != null ? getData(getPatternColor(), dyeColor, getPattern()) : -1);
     }
 
     public TropicalFish.Pattern getPattern() {
@@ -91,7 +91,7 @@ public class TropicalFishWatcher extends FishWatcher {
 
     @RandomDefaultValue
     public void setPattern(TropicalFish.Pattern pattern) {
-        setVariant(getData(getPatternColor(), getBodyColor(), pattern));
+        setVariant(pattern != null ? getData(getPatternColor(), getBodyColor(), pattern) : -1);
     }
 
     @Deprecated
@@ -101,6 +101,6 @@ public class TropicalFishWatcher extends FishWatcher {
 
     @Deprecated
     public void setVariant(int variant) {
-        sendData(MetaIndex.TROPICAL_FISH_VARIANT, variant);
+        sendData(MetaIndex.TROPICAL_FISH_VARIANT, variant >= 0 ? variant : null);
     }
 }

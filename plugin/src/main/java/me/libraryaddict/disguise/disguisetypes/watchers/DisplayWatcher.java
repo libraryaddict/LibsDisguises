@@ -24,15 +24,28 @@ public abstract class DisplayWatcher extends FlagWatcher {
     // Because BlockDisplayWatcher modifies this on startup..
     @RandomDefaultValue
     public void setTransformation(Transformation transformation) {
-        org.joml.Vector3f trans = transformation.getTranslation();
-        Quaternionf rl = transformation.getLeftRotation();
-        Quaternionf rr = transformation.getRightRotation();
-        org.joml.Vector3f scale = transformation.getScale();
+        Vector3f displayTranslation = null;
+        Quaternion4f leftRotation = null;
+        Quaternion4f rightRotation = null;
+        Vector3f scalef = null;
 
-        setData(MetaIndex.DISPLAY_TRANSLATION, new Vector3f(trans.x, trans.y, trans.z));
-        setData(MetaIndex.DISPLAY_LEFT_ROTATION, new Quaternion4f(rl.x, rl.y, rl.z, rl.w));
-        setData(MetaIndex.DISPLAY_RIGHT_ROTATION, new Quaternion4f(rr.x, rr.y, rr.z, rr.w));
-        setData(MetaIndex.DISPLAY_SCALE, new Vector3f(scale.x, scale.y, scale.z));
+        if (transformation != null) {
+
+            org.joml.Vector3f trans = transformation.getTranslation();
+            Quaternionf rl = transformation.getLeftRotation();
+            Quaternionf rr = transformation.getRightRotation();
+            org.joml.Vector3f scale = transformation.getScale();
+
+            displayTranslation = new Vector3f(trans.x, trans.y, trans.z);
+            leftRotation = new Quaternion4f(rl.x, rl.y, rl.z, rl.w);
+            rightRotation = new Quaternion4f(rr.x, rr.y, rr.z, rr.w);
+            scalef = new Vector3f(scale.x, scale.y, scale.z);
+        }
+
+        setData(MetaIndex.DISPLAY_TRANSLATION, displayTranslation);
+        setData(MetaIndex.DISPLAY_LEFT_ROTATION, leftRotation);
+        setData(MetaIndex.DISPLAY_RIGHT_ROTATION, rightRotation);
+        setData(MetaIndex.DISPLAY_SCALE, scalef);
 
         sendData(MetaIndex.DISPLAY_TRANSLATION, MetaIndex.DISPLAY_LEFT_ROTATION, MetaIndex.DISPLAY_RIGHT_ROTATION, MetaIndex.DISPLAY_SCALE);
     }
@@ -46,7 +59,7 @@ public abstract class DisplayWatcher extends FlagWatcher {
     // Because BlockDisplayWatcher modifies this on startup..
     @RandomDefaultValue
     public void setTranslation(org.joml.Vector3f translation) {
-        sendData(MetaIndex.DISPLAY_TRANSLATION, new Vector3f(translation.x, translation.y, translation.z));
+        sendData(MetaIndex.DISPLAY_TRANSLATION, translation != null ? new Vector3f(translation.x, translation.y, translation.z) : null);
     }
 
     public org.joml.Vector3f getScale() {
@@ -56,7 +69,7 @@ public abstract class DisplayWatcher extends FlagWatcher {
     }
 
     public void setScale(org.joml.Vector3f scale) {
-        sendData(MetaIndex.DISPLAY_SCALE, new Vector3f(scale.x, scale.y, scale.z));
+        sendData(MetaIndex.DISPLAY_SCALE, scale != null ? new Vector3f(scale.x, scale.y, scale.z) : null);
     }
 
     public Quaternionf getLeftRotation() {
@@ -66,7 +79,8 @@ public abstract class DisplayWatcher extends FlagWatcher {
     }
 
     public void setLeftRotation(Quaternionf rotation) {
-        sendData(MetaIndex.DISPLAY_LEFT_ROTATION, new Quaternion4f(rotation.x, rotation.y, rotation.z, rotation.w));
+        sendData(MetaIndex.DISPLAY_LEFT_ROTATION,
+            rotation != null ? new Quaternion4f(rotation.x, rotation.y, rotation.z, rotation.w) : null);
     }
 
     public Quaternionf getRightRotation() {
@@ -76,7 +90,8 @@ public abstract class DisplayWatcher extends FlagWatcher {
     }
 
     public void setRightRotation(Quaternionf rotation) {
-        sendData(MetaIndex.DISPLAY_RIGHT_ROTATION, new Quaternion4f(rotation.x, rotation.y, rotation.z, rotation.w));
+        sendData(MetaIndex.DISPLAY_RIGHT_ROTATION,
+            rotation != null ? new Quaternion4f(rotation.x, rotation.y, rotation.z, rotation.w) : null);
     }
 
     public int getInterpolationDuration() {
@@ -142,7 +157,8 @@ public abstract class DisplayWatcher extends FlagWatcher {
     // Because TextDisplayWatcher modifies this on startup..
     @RandomDefaultValue
     public void setBillboard(Display.Billboard billboard) {
-        sendData(MetaIndex.DISPLAY_BILLBOARD_RENDER_CONSTRAINTS, (byte) ReflectionManager.enumOrdinal(billboard));
+        sendData(MetaIndex.DISPLAY_BILLBOARD_RENDER_CONSTRAINTS,
+            billboard != null ? (byte) ReflectionManager.enumOrdinal(billboard) : null);
     }
 
     public Color getGlowColorOverride() {
@@ -151,7 +167,7 @@ public abstract class DisplayWatcher extends FlagWatcher {
     }
 
     public void setGlowColorOverride(Color color) {
-        sendData(MetaIndex.DISPLAY_GLOW_COLOR_OVERRIDE, color == null ? -1 : color.asARGB());
+        sendData(MetaIndex.DISPLAY_GLOW_COLOR_OVERRIDE, color != null ? color.asARGB() : null);
     }
 
     public Display.Brightness getBrightness() {
@@ -169,7 +185,7 @@ public abstract class DisplayWatcher extends FlagWatcher {
 
     public void setBrightness(Display.Brightness brightness) {
         sendData(MetaIndex.DISPLAY_BRIGHTNESS_OVERRIDE,
-            brightness == null ? -1 : brightness.getBlockLight() << 4 | brightness.getSkyLight() << 20);
+            brightness != null ? brightness.getBlockLight() << 4 | brightness.getSkyLight() << 20 : null);
     }
 
     public int getTeleportDuration() {

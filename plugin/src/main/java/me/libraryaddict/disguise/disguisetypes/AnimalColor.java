@@ -121,7 +121,7 @@ public enum AnimalColor {
             return color;
         }
 
-        return null;
+        return getColorByWool(dyeColor.getWoolData());
     }
 
     private final DyeColor dyeColor;

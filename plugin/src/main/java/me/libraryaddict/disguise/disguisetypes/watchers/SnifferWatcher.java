@@ -15,6 +15,6 @@ public class SnifferWatcher extends AgeableWatcher {
     }
 
     public void setSnifferState(Sniffer.State state) {
-        sendData(MetaIndex.SNIFFER_STATE, SnifferState.valueOf(state.name()));
+        sendData(MetaIndex.SNIFFER_STATE, state != null ? SnifferState.valueOf(state.name()) : null);
     }
 }
