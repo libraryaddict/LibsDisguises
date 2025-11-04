@@ -140,7 +140,7 @@ loadScripts(document, 'script');</script>
  byte&nbsp;entityValue)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addParticle(com.github.retrooper.packetevents.protocol.particle.Particle)" class="member-name-link">addParticle</a><wbr>(com.github.retrooper.packetevents.protocol.particle.Particle&lt;? extends com.github.retrooper.packetevents.protocol.particle.data.ParticleData&gt;&nbsp;particle)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addParticle(com.github.retrooper.packetevents.protocol.particle.Particle)" class="member-name-link">addParticle</a><wbr>(@NotNull com.github.retrooper.packetevents.protocol.particle.Particle&lt;? extends com.github.retrooper.packetevents.protocol.particle.data.ParticleData&gt;&nbsp;particle)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#addPotionEffect(org.bukkit.potion.PotionEffectType)" class="member-name-link">addPotionEffect</a><wbr>(org.bukkit.potion.PotionEffectType&nbsp;potionEffect)</code></div>
@@ -196,7 +196,7 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isSpinning()" class="member-name-link">isSpinning</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeParticles(com.github.retrooper.packetevents.protocol.particle.Particle...)" class="member-name-link">removeParticles</a><wbr>(com.github.retrooper.packetevents.protocol.particle.Particle&lt;? extends com.github.retrooper.packetevents.protocol.particle.data.ParticleData&gt;...&nbsp;particles)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeParticles(com.github.retrooper.packetevents.protocol.particle.Particle...)" class="member-name-link">removeParticles</a><wbr>(@NotNull com.github.retrooper.packetevents.protocol.particle.Particle&lt;? extends com.github.retrooper.packetevents.protocol.particle.data.ParticleData&gt;...&nbsp;particles)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#removePotionEffect(org.bukkit.potion.PotionEffectType)" class="member-name-link">removePotionEffect</a><wbr>(org.bukkit.potion.PotionEffectType&nbsp;potionEffect)</code></div>
@@ -210,34 +210,39 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setBedPosition(com.github.retrooper.packetevents.util.Vector3i)" class="member-name-link">setBedPosition</a><wbr>(com.github.retrooper.packetevents.util.Vector3i&nbsp;blockPosition)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setHealth(float)" class="member-name-link">setHealth</a><wbr>(float&nbsp;health)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setBedPosition(java.util.Optional)" class="member-name-link">setBedPosition</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;com.github.retrooper.packetevents.util.Vector3i&gt;&nbsp;blockPosition)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setMainHandRaised(boolean)" class="member-name-link">setMainHandRaised</a><wbr>(boolean&nbsp;setRightClicking)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setHealth(float)" class="member-name-link">setHealth</a><wbr>(float&nbsp;health)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setMaxHealth(double)" class="member-name-link">setMaxHealth</a><wbr>(double&nbsp;newHealth)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setMainHandRaised(boolean)" class="member-name-link">setMainHandRaised</a><wbr>(boolean&nbsp;setRightClicking)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setOffhandRaised(boolean)" class="member-name-link">setOffhandRaised</a><wbr>(boolean&nbsp;setLeftClicking)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setMaxHealth(double)" class="member-name-link">setMaxHealth</a><wbr>(double&nbsp;newHealth)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">The max health shown on an entity.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setOffhandRaised(boolean)" class="member-name-link">setOffhandRaised</a><wbr>(boolean&nbsp;setLeftClicking)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setParticlesColor(org.bukkit.Color)" class="member-name-link">setParticlesColor</a><wbr>(org.bukkit.Color&nbsp;color)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setParticlesColor(org.bukkit.Color)" class="member-name-link">setParticlesColor</a><wbr>(org.bukkit.Color&nbsp;color)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setPotionParticlesAmbient(boolean)" class="member-name-link">setPotionParticlesAmbient</a><wbr>(boolean&nbsp;particles)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setPotionParticlesAmbient(boolean)" class="member-name-link">setPotionParticlesAmbient</a><wbr>(boolean&nbsp;particles)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#setRightClicking(boolean)" class="member-name-link">setRightClicking</a><wbr>(boolean&nbsp;rightClicking)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#setRightClicking(boolean)" class="member-name-link">setRightClicking</a><wbr>(boolean&nbsp;rightClicking)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span></div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setScale(java.lang.Double)" class="member-name-link">setScale</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>&nbsp;viewScale)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSpinning(boolean)" class="member-name-link">setSpinning</a><wbr>(boolean&nbsp;setSpinning)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setScale(java.lang.Double)" class="member-name-link">setScale</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link">Double</a>&nbsp;viewScale)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSpinning(boolean)" class="member-name-link">setSpinning</a><wbr>(boolean&nbsp;setSpinning)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -307,6 +312,12 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="setBedPosition(java.util.Optional)">
+<h3>setBedPosition</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setBedPosition</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;com.github.retrooper.packetevents.util.Vector3i&gt;&nbsp;blockPosition)</span></div>
+</section>
+</li>
+<li>
 <section class="detail" id="getHealth()">
 <h3>getHealth</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">getHealth</span>()</div>
@@ -366,6 +377,13 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="setMaxHealth(double)">
 <h3>setMaxHealth</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setMaxHealth</span><wbr><span class="parameters">(double&nbsp;newHealth)</span></div>
+<div class="block">The max health shown on an entity.
+ <p>
+ Note that currently, removing this will not actually send the max health update</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>newHealth</code> - Health to show, set to less than 0 to revert back to normal</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -383,14 +401,16 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="addParticle(com.github.retrooper.packetevents.protocol.particle.Particle)">
 <h3>addParticle</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addParticle</span><wbr><span class="parameters">(com.github.retrooper.packetevents.protocol.particle.Particle&lt;? extends com.github.retrooper.packetevents.protocol.particle.data.ParticleData&gt;&nbsp;particle)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addParticle</span><wbr><span class="parameters">(@NotNull
+ @NotNull com.github.retrooper.packetevents.protocol.particle.Particle&lt;? extends com.github.retrooper.packetevents.protocol.particle.data.ParticleData&gt;&nbsp;particle)</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="removeParticles(com.github.retrooper.packetevents.protocol.particle.Particle...)">
 <h3>removeParticles</h3>
 <div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/SafeVarargs.html" title="class or interface in java.lang" class="external-link">@SafeVarargs</a>
-</span><span class="modifiers">public final</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">removeParticles</span><wbr><span class="parameters">(com.github.retrooper.packetevents.protocol.particle.Particle&lt;? extends com.github.retrooper.packetevents.protocol.particle.data.ParticleData&gt;...&nbsp;particles)</span></div>
+</span><span class="modifiers">public final</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">removeParticles</span><wbr><span class="parameters">(@NotNull
+ @NotNull com.github.retrooper.packetevents.protocol.particle.Particle&lt;? extends com.github.retrooper.packetevents.protocol.particle.data.ParticleData&gt;...&nbsp;particles)</span></div>
 </section>
 </li>
 <li>
