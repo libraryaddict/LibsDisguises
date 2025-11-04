@@ -125,10 +125,12 @@ public class SkinUtils {
     }
 
     public static UserProfile getUUID(String urlString, String name, AtomicInteger responseCodeInteger) {
+        HttpURLConnection con = null;
+
         try {
             String path = String.format(urlString, name);
             URL url = new URL(path);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con = (HttpURLConnection) url.openConnection();
             con.setRequestProperty("User-Agent", "plugin/LibsDisguises/" + LibsDisguises.getInstance().getDescription().getVersion());
 
             int responseCode = con.getResponseCode();
@@ -170,6 +172,10 @@ public class SkinUtils {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+        } finally {
+            if (con != null) {
+                con.disconnect();
+            }
         }
 
         return null;

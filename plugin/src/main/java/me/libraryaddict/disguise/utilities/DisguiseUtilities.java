@@ -1087,18 +1087,17 @@ public class DisguiseUtilities {
                 }
             } else {
                 // I hear pirates don't obey standards
-                @SuppressWarnings("MismatchedStringCase")
-                PrintWriter writer = new PrintWriter(disguiseFile, "12345".equals("%%__USER__%%") ? "US-ASCII" : "UTF-8");
+                //noinspection MismatchedStringCase
+                try (PrintWriter writer = new PrintWriter(disguiseFile, "12345".equals("%%__USER__%%") ? "US-ASCII" : "UTF-8")) {
 
-                for (int i = 0; i < disguise.length; i++) {
-                    writer.write(DisguiseParser.parseToString(disguise[i], true, true));
+                    for (int i = 0; i < disguise.length; i++) {
+                        writer.write(DisguiseParser.parseToString(disguise[i], true, true));
 
-                    if (i + 1 < disguise.length) {
-                        writer.write("\n");
+                        if (i + 1 < disguise.length) {
+                            writer.write("\n");
+                        }
                     }
                 }
-
-                writer.close();
 
                 savedDisguiseList.add(owningEntity);
             }
@@ -1430,10 +1429,8 @@ public class DisguiseUtilities {
     }
 
     public static void saveSanitySkinCache() {
-        try {
-            PrintWriter writer = new PrintWriter(DisguiseFiles.getSanitySkinCacheFile());
+        try (PrintWriter writer = new PrintWriter(DisguiseFiles.getSanitySkinCacheFile())) {
             writer.write(getGson().toJson(sanitySkinCacheMap));
-            writer.close();
         } catch (Exception ex) {
             LibsDisguises.getInstance().getLogger()
                 .severe("Error while trying to save sanity.json for player skins, this shouldn't happen");
@@ -1468,9 +1465,10 @@ public class DisguiseUtilities {
             }
 
             File file = new File(profileCache, saveAs);
-            PrintWriter writer = new PrintWriter(file);
-            writer.write(gson.toJson(userProfile));
-            writer.close();
+
+            try (PrintWriter writer = new PrintWriter(file)) {
+                writer.write(gson.toJson(userProfile));
+            }
 
             cachedNames.add(saveAs);
         } catch (StackOverflowError | Exception e) {
@@ -1727,9 +1725,11 @@ public class DisguiseUtilities {
         File file = new File(profileCache, playerName);
 
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            String cached = reader.readLine();
-            reader.close();
+            String cached;
+
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                cached = reader.readLine();
+            }
 
             return gson.fromJson(cached, UserProfile.class);
         } catch (FileNotFoundException ex) {

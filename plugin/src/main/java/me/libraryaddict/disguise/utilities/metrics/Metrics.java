@@ -15,6 +15,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -278,28 +279,38 @@ public class Metrics {
         if (Bukkit.isPrimaryThread()) {
             throw new IllegalAccessException("This method must not be called from the main thread!");
         }
-        HttpsURLConnection connection = (HttpsURLConnection) new URL(bStatsUrl).openConnection();
 
-        // Compress the data to save bandwidth
-        byte[] compressedData = compress(data.toString());
+        HttpURLConnection connection = null;
 
-        // Add headers
-        connection.setRequestMethod("POST");
-        connection.addRequestProperty("Accept", "application/json");
-        connection.addRequestProperty("Connection", "close");
-        connection.addRequestProperty("Content-Encoding", "gzip"); // We gzip our request
-        connection.addRequestProperty("Content-Length", String.valueOf(compressedData.length));
-        connection.setRequestProperty("Content-Type", "application/json"); // We send our data in JSON format
-        connection.setRequestProperty("User-Agent", "MC-Server/" + B_STATS_VERSION);
+        try {
+            connection = (HttpsURLConnection) new URL(bStatsUrl).openConnection();
 
-        // Send data
-        connection.setDoOutput(true);
-        DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
-        outputStream.write(compressedData);
-        outputStream.flush();
-        outputStream.close();
+            // Compress the data to save bandwidth
+            byte[] compressedData = compress(data.toString());
 
-        connection.getInputStream().close(); // We don't care about the response - Just send our data :)
+            // Add headers
+            connection.setRequestMethod("POST");
+            connection.addRequestProperty("Accept", "application/json");
+            connection.addRequestProperty("Connection", "close");
+            connection.addRequestProperty("Content-Encoding", "gzip"); // We gzip our request
+            connection.addRequestProperty("Content-Length", String.valueOf(compressedData.length));
+            connection.setRequestProperty("Content-Type", "application/json"); // We send our data in JSON format
+            connection.setRequestProperty("User-Agent", "MC-Server/" + B_STATS_VERSION);
+
+            // Send data
+            connection.setDoOutput(true);
+
+            try (DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream())) {
+                outputStream.write(compressedData);
+                outputStream.flush();
+            }
+
+            connection.getInputStream().close(); // We don't care about the response - Just send our data :)
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
     }
 
     /**
@@ -313,11 +324,12 @@ public class Metrics {
         if (str == null) {
             return null;
         }
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        GZIPOutputStream gzip = new GZIPOutputStream(outputStream);
-        gzip.write(str.getBytes(StandardCharsets.UTF_8));
-        gzip.close();
-        return outputStream.toByteArray();
+
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); GZIPOutputStream gzip = new GZIPOutputStream(outputStream)) {
+            gzip.write(str.getBytes(StandardCharsets.UTF_8));
+
+            return outputStream.toByteArray();
+        }
     }
 
     /**

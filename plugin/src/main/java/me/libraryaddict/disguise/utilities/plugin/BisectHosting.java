@@ -47,18 +47,26 @@ public class BisectHosting {
     }
 
     private String getFinalURL(String url) throws IOException {
-        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
-        con.setInstanceFollowRedirects(false);
-        // Short as this shouldn't take long
-        con.setReadTimeout(2500);
-        con.setConnectTimeout(2500);
-        con.connect();
-        con.getInputStream();
+        HttpURLConnection con = null;
 
-        if (con.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM || con.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
-            return con.getHeaderField("Location");
+        try {
+            con = (HttpURLConnection) new URL(url).openConnection();
+            con.setInstanceFollowRedirects(false);
+            // Short as this shouldn't take long
+            con.setReadTimeout(2500);
+            con.setConnectTimeout(2500);
+            con.connect();
+            con.getInputStream();
+
+            if (con.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM || con.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
+                return con.getHeaderField("Location");
+            }
+
+            return url;
+        } finally {
+            if (con != null) {
+                con.disconnect();
+            }
         }
-
-        return url;
     }
 }

@@ -97,25 +97,23 @@ public class ClassGetter {
             String resPath = URLDecoder.decode(resource.getPath(), "UTF-8");
             String jarPath = resPath.replaceFirst("\\.jar!.*", ".jar").replaceFirst("file:", "");
 
-            JarFile jarFile = new JarFile(jarPath);
+            try (JarFile jarFile = new JarFile(jarPath)) {
+                Enumeration<JarEntry> entries = jarFile.entries();
 
-            Enumeration<JarEntry> entries = jarFile.entries();
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+                    String entryName = entry.getName();
+                    String className = null;
 
-            while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-                String entryName = entry.getName();
-                String className = null;
+                    if (entryName.startsWith(relPath) && entryName.length() > (relPath.length() + "/".length())) {
+                        className = entryName.replace('\\', '/');
+                    }
 
-                if (entryName.startsWith(relPath) && entryName.length() > (relPath.length() + "/".length())) {
-                    className = entryName.replace('\\', '/');
-                }
-
-                if (className != null) {
-                    classes.add(className);
+                    if (className != null) {
+                        classes.add(className);
+                    }
                 }
             }
-
-            jarFile.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }

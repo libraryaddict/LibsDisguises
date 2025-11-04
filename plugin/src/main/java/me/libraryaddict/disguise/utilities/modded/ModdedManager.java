@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -18,6 +19,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +38,7 @@ public class ModdedManager {
     private static final Cache<String, ArrayList<String>> forgeMods =
         CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
 
+    @SneakyThrows
     public ModdedManager(ArrayList<String> channels) {
         if (getEntities().isEmpty()) {
             return;
@@ -59,69 +62,68 @@ public class ModdedManager {
         ByteBufHelper.writeBytes(buff, string.getBytes(StandardCharsets.UTF_8));
     }
 
-    private void createPayloads(ArrayList<String> channels) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        DataOutputStream output = new DataOutputStream(stream);
+    private void createPayloads(ArrayList<String> channels) throws IOException {
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream(); DataOutputStream output = new DataOutputStream(stream)) {
 
-        // Packet id 1
-        ByteBufHelper.writeVarInt(output, 1);
-        // We have no mods to declare
-        ByteBufHelper.writeVarInt(output, 0);
+            // Packet id 1
+            ByteBufHelper.writeVarInt(output, 1);
+            // We have no mods to declare
+            ByteBufHelper.writeVarInt(output, 0);
 
-        // We want to declare some channels
-        ByteBufHelper.writeVarInt(output, channels.size());
+            // We want to declare some channels
+            ByteBufHelper.writeVarInt(output, channels.size());
 
-        for (String channel : channels) {
-            // Here's the channel name
-            writeString(output, channel.substring(0, channel.indexOf("|")));
-            // Here's the channel version, yes <Client Mod> we're using your version!
-            writeString(output, channel.substring(channel.indexOf("|") + 1));
+            for (String channel : channels) {
+                // Here's the channel name
+                writeString(output, channel.substring(0, channel.indexOf("|")));
+                // Here's the channel version, yes <Client Mod> we're using your version!
+                writeString(output, channel.substring(channel.indexOf("|") + 1));
+            }
+
+            // We want to declare some entities. Wait. No we don't?
+            // Weird, am I missing something..
+            ByteBufHelper.writeVarInt(output, 0);
+
+            // Only this one thx
+            // s.serializeString(output, "minecraft:entity_type");
+
+            fmlHandshake = stream.toByteArray();
         }
 
-        // We want to declare some entities. Wait. No we don't?
-        // Weird, am I missing something..
-        ByteBufHelper.writeVarInt(output, 0);
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream(); DataOutputStream output = new DataOutputStream(stream)) {
+            // Packet id 3
+            ByteBufHelper.writeVarInt(output, 3);
 
-        // Only this one thx
-        // s.serializeString(output, "minecraft:entity_type");
+            // What registry we're modifying
+            writeString(output, "minecraft:entity_type");
+            // Yes... We're doing custom data
+            ByteBufHelper.writeVarInt(output, 1);
 
-        fmlHandshake = stream.toByteArray();
+            // We have this many entities
+            ByteBufHelper.writeVarInt(output, entities.size());
 
-        stream = new ByteArrayOutputStream();
-        output = new DataOutputStream(stream);
+            // Write the entity names and ids
+            for (Map.Entry<NamespacedKey, ModdedEntity> entry : entities.entrySet()) {
+                // We are registering librarymod:librarian
+                writeString(output, entry.getKey().toString());
+                // It's got the type ID of 85
+                ByteBufHelper.writeVarInt(output, entry.getValue().getTypeId());
+            }
 
-        // Packet id 3
-        ByteBufHelper.writeVarInt(output, 3);
+            // Sir, we do not want to declare aliases
+            ByteBufHelper.writeVarInt(output, 0);
 
-        // What registry we're modifying
-        writeString(output, "minecraft:entity_type");
-        // Yes... We're doing custom data
-        ByteBufHelper.writeVarInt(output, 1);
+            // Or overrides
+            ByteBufHelper.writeVarInt(output, 0);
 
-        // We have this many entities
-        ByteBufHelper.writeVarInt(output, entities.size());
+            // No.. Not even blocked
+            ByteBufHelper.writeVarInt(output, 0);
 
-        // Write the entity names and ids
-        for (Map.Entry<NamespacedKey, ModdedEntity> entry : entities.entrySet()) {
-            // We are registering librarymod:librarian
-            writeString(output, entry.getKey().toString());
-            // It's got the type ID of 85
-            ByteBufHelper.writeVarInt(output, entry.getValue().getTypeId());
+            // Or dummied. What is dummied anyways. What are these others?
+            ByteBufHelper.writeVarInt(output, 0);
+
+            fmlRegistries = stream.toByteArray();
         }
-
-        // Sir, we do not want to declare aliases
-        ByteBufHelper.writeVarInt(output, 0);
-
-        // Or overrides
-        ByteBufHelper.writeVarInt(output, 0);
-
-        // No.. Not even blocked
-        ByteBufHelper.writeVarInt(output, 0);
-
-        // Or dummied. What is dummied anyways. What are these others?
-        ByteBufHelper.writeVarInt(output, 0);
-
-        fmlRegistries = stream.toByteArray();
     }
 
     public static void registerModdedEntity(NamespacedKey name, ModdedEntity entity, boolean register) {
