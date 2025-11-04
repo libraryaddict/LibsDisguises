@@ -489,15 +489,7 @@ public class ReflectionManager {
         if (craftbukkitVersion == null) {
             craftbukkitVersion = Bukkit.getServer().getClass().getPackage().getName();
 
-            String mcVersion = getMinecraftVersion();
-
-            for (NmsVersion v : NmsVersion.values()) {
-                if (!v.isMinecraftVersion(mcVersion)) {
-                    continue;
-                }
-
-                version = v;
-            }
+            version = NmsVersion.getByVersion(getMinecraftVersion());
         }
 
         return craftbukkitVersion;

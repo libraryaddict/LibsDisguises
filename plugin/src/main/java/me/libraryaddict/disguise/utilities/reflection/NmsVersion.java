@@ -148,4 +148,16 @@ public enum NmsVersion {
 
         return string + "]";
     }
+
+    public static NmsVersion getByVersion(String minecraftVersion) {
+        for (NmsVersion version : NmsVersion.values()) {
+            if (!version.isMinecraftVersion(minecraftVersion)) {
+                continue;
+            }
+
+            return version;
+        }
+
+        return null;
+    }
 }

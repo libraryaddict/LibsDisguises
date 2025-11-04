@@ -67,6 +67,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class LibsDisguises extends JavaPlugin {
@@ -110,53 +112,10 @@ public class LibsDisguises extends JavaPlugin {
 
             instance = this;
 
-            Plugin plugin = Bukkit.getPluginManager().getPlugin("packetevents");
-
             DisguiseConfig.loadInternalConfig();
             DisguiseConfig.loadPreConfig();
 
-            // Skipping the isPacketEventsOutdated check cos DisguiseConfig wouldn't be loaded
-            if (plugin == null || PacketEventsUpdater.isPacketEventsOutdated()) {
-                // I don't think anyone will ever see this plugin message, DisguiseConfig isn't loaded at this point
-                if (DisguiseConfig.isNeverUpdatePacketEvents()) {
-                    getLogger().warning(
-                        "Defined in plugins/LibsDisguises/configs/sanity.yml, you have requested that Lib's Disguises never updates or " +
-                            "installs PacketEvents. Please do not report any issues with this plugin.");
-                } else if (!DisguiseConfig.isAutoUpdate()) {
-                    getLogger().warning(
-                        "Defined in plugins/LibsDisguises/configs/libsdisguises.yml, you have requested that Lib's Disguises never auto " +
-                            "updates, which includes PacketEvents. Please do not report any issues with this plugin.");
-                } else {
-                    String reason = getPacketEventsFailedReason(plugin);
-
-                    getLogger().warning(
-                        "An issue occured when trying to load PacketEvents: " + reason + ". Lib's Disguises will attempt to update it.");
-
-                    try {
-                        PacketEventsUpdater updater = new PacketEventsUpdater();
-                        boolean attempt = updater.doUpdate();
-
-                        if (!attempt) {
-                            getLogger().severe(
-                                "PacketEvents download has failed, please install PacketEvents manually from https://www.spigotmc" +
-                                    ".org/resources/packetevents-api.80279/");
-                        } else if (plugin == null) {
-                            getLogger().info("PacketEvents downloaded and stuck in plugins folder! Now trying to load it!");
-                            plugin = Bukkit.getPluginManager().loadPlugin(updater.getDestination());
-                            plugin.onLoad();
-
-                            Bukkit.getPluginManager().enablePlugin(plugin);
-                        } else {
-                            getLogger().severe("Please restart the server to complete the PacketEvents update!");
-                        }
-                    } catch (Exception e) {
-                        getLogger().severe(
-                            "Looks like PacketEvents's site may be down! Try download it manually from https://www.spigotmc" +
-                                ".org/resources/packetevents-api.80279/");
-                        e.printStackTrace();
-                    }
-                }
-            }
+            loadPacketEvents();
 
             // We call the check here so that it is loaded before other parts of the system can run
             DisguiseUtilities.isRunningPaper();
@@ -196,6 +155,72 @@ public class LibsDisguises extends JavaPlugin {
             }
 
             throw throwable;
+        }
+    }
+
+    private void loadPacketEvents() {
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("packetevents");
+
+        // Skipping the isPacketEventsOutdated check cos DisguiseConfig wouldn't be loaded
+        if (plugin != null && !PacketEventsUpdater.isPacketEventsOutdated()) {
+            return;
+        }
+
+        if (DisguiseConfig.isNeverUpdatePacketEvents()) {
+            getLogger().warning(
+                "Defined in plugins/LibsDisguises/configs/sanity.yml, you have requested that Lib's Disguises never updates or " +
+                    "installs PacketEvents. Please do not report any issues with this plugin.");
+            return;
+        } else if (!DisguiseConfig.isAutoUpdate()) {
+            getLogger().warning(
+                "Defined in plugins/LibsDisguises/configs/libsdisguises.yml, you have requested that Lib's Disguises never auto " +
+                    "updates, which includes PacketEvents. Please do not report any issues with this plugin.");
+            return;
+        }
+
+        Matcher matcher = Pattern.compile(" \\(MC: ([^)]+?)\\)").matcher(Bukkit.getVersion());
+
+        if (!matcher.find()) {
+            getLogger().severe("Skipping PacketEvents check, unable to determine Minecraft version.");
+            return;
+        }
+
+        String mcVersion = matcher.group(1);
+        NmsVersion version = NmsVersion.valueOf(mcVersion);
+
+        if (version == null || !version.isVersionLoadable()) {
+            getLogger().severe(
+                String.format("Skipping PacketEvents validation, this version of Minecraft (%s) does not appear to be supported.", mcVersion));
+            return;
+        }
+
+        String reason = getPacketEventsFailedReason(plugin);
+
+        getLogger().warning(
+            "An issue occured when trying to load PacketEvents: " + reason + ". Lib's Disguises will attempt to update it.");
+
+        try {
+            PacketEventsUpdater updater = new PacketEventsUpdater();
+            boolean attempt = updater.doUpdate();
+
+            if (!attempt) {
+                getLogger().severe("PacketEvents download has failed, please install PacketEvents manually from https://www.spigotmc" +
+                    ".org/resources/packetevents-api.80279/ or https://modrinth.com/plugin/packetevents");
+                return;
+            } else if (plugin != null) {
+                getLogger().severe("Please restart the server to complete the PacketEvents update!");
+                return;
+            }
+
+            getLogger().info("PacketEvents downloaded and stuck in plugins folder! Now trying to load it!");
+            plugin = Bukkit.getPluginManager().loadPlugin(updater.getDestination());
+            plugin.onLoad();
+
+            Bukkit.getPluginManager().enablePlugin(plugin);
+        } catch (Exception e) {
+            getLogger().severe("Looks like PacketEvents's site may be down! Try download it manually from https://www.spigotmc" +
+                ".org/resources/packetevents-api.80279/ or https://modrinth.com/plugin/packetevents");
+            e.printStackTrace();
         }
     }
 
