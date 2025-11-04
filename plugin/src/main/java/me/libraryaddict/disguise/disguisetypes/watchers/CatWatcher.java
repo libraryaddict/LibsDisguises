@@ -43,6 +43,11 @@ public class CatWatcher extends TameableWatcher {
 
     @MethodDescription("What's the Cat's collar color?")
     public void setCollarColor(DyeColor newColor) {
+        if (newColor == null) {
+            sendData(MetaIndex.CAT_COLLAR, null);
+            return;
+        }
+
         if (!isTamed()) {
             setTamed(true);
         }

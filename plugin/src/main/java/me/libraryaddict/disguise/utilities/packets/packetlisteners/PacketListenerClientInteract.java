@@ -11,6 +11,7 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CatWatcher;
@@ -21,6 +22,7 @@ import me.libraryaddict.disguise.events.DisguiseInteractEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Player;
@@ -181,7 +183,6 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
     }
 
     private void doCarpetable(Player observer, Disguise disguise) {
-
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -228,17 +229,24 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
                     if (disguise.getType() == DisguiseType.SHEEP) {
                         SheepWatcher watcher = (SheepWatcher) disguise.getWatcher();
 
-                        watcher.setColor(DisguiseConfig.isSheepDyeable() ? color.getDyeColor() : watcher.getColor());
+                        DyeColor toSet = DisguiseConfig.isSheepDyeable() ? color.getDyeColor() :
+                            watcher.hasValue(MetaIndex.SHEEP_WOOL) ? watcher.getColor() : null;
+
+                        watcher.setColor(toSet);
                         break;
                     } else if (disguise.getType() == DisguiseType.WOLF) {
                         WolfWatcher watcher = (WolfWatcher) disguise.getWatcher();
+                        DyeColor toSet = DisguiseConfig.isWolfDyeable() ? color.getDyeColor() :
+                            watcher.hasValue(MetaIndex.WOLF_COLLAR) ? watcher.getCollarColor() : null;
 
-                        watcher.setCollarColor(DisguiseConfig.isWolfDyeable() ? color.getDyeColor() : watcher.getCollarColor());
+                        watcher.setCollarColor(toSet);
                         break;
                     } else if (disguise.getType() == DisguiseType.CAT) {
                         CatWatcher watcher = (CatWatcher) disguise.getWatcher();
+                        DyeColor toSet = DisguiseConfig.isCatDyeable() ? color.getDyeColor() :
+                            watcher.hasValue(MetaIndex.CAT_COLLAR) ? watcher.getCollarColor() : null;
 
-                        watcher.setCollarColor(DisguiseConfig.isCatDyeable() ? color.getDyeColor() : watcher.getCollarColor());
+                        watcher.setCollarColor(toSet);
                         break;
                     }
                 }

@@ -62,6 +62,11 @@ public class WolfWatcher extends TameableWatcher {
 
     @MethodDescription("The color of the wolf's collar")
     public void setCollarColor(DyeColor newColor) {
+        if (newColor == null) {
+            sendData(MetaIndex.WOLF_COLLAR, null);
+            return;
+        }
+
         if (!isTamed()) {
             setTamed(true);
         }

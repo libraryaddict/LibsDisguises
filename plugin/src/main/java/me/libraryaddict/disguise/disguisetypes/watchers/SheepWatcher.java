@@ -26,6 +26,11 @@ public class SheepWatcher extends AgeableWatcher {
     }
 
     public void setColor(DyeColor color) {
+        if (color == null) {
+            sendData(MetaIndex.SHEEP_WOOL, null);
+            return;
+        }
+
         byte b0 = getData(MetaIndex.SHEEP_WOOL);
 
         sendData(MetaIndex.SHEEP_WOOL, (byte) (b0 & 240 | color.getWoolData() & 15));
