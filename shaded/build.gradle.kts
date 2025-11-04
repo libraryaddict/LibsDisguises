@@ -92,13 +92,13 @@ tasks {
             val buildHash by lazy {
                 val hashStdout = providers.exec {
                     commandLine("git", "rev-parse", "--short", "HEAD")
-                }
-                val hash = hashStdout.toString().trim()
+                }.standardOutput
+                val hash = hashStdout.asText.get().trim()
 
                 val statusStdout = providers.exec {
                     commandLine("git", "status", "--porcelain")
-                }.result.get()
-                val uncommittedCount = statusStdout.toString().trim().lines().count { it.isNotBlank() }
+                }.standardOutput
+                val uncommittedCount = statusStdout.asText.get().trim().lines().count { it.isNotBlank() }
 
                 if (uncommittedCount > 0) {
                     "$hash~$uncommittedCount"
