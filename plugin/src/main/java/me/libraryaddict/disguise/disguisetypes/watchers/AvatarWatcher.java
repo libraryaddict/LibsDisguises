@@ -21,7 +21,7 @@ public abstract class AvatarWatcher extends LivingWatcher {
     }
 
     public void setMainHand(MainHand mainHand) {
-        sendData(getHandMeta(), (byte) mainHand.ordinal());
+        sendData(getHandMeta(), mainHand != null ? (byte) mainHand.ordinal() : null);
     }
 
     protected MetaIndex<Byte> getSkinMeta() {

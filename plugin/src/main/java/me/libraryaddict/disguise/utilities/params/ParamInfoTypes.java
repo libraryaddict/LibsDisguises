@@ -108,7 +108,8 @@ public class ParamInfoTypes {
         List<ParamInfo> paramInfos = new ArrayList<>();
 
         // Register enum types
-        paramInfos.add(new ParamInfoEnum(Art.class, "Art", "View all the paintings you can use for a painting disguise"));
+        paramInfos.add(new ParamInfoEnum(Art.class, "Art", "View all the paintings you can use for a painting disguise").setNullable(
+            NmsVersion.v1_19_R1.isSupported()));
         paramInfos.add(new ParamInfoEnum(Horse.Color.class, "Horse Color", "View all the colors you can use for a horses color"));
 
         paramInfos.add(new ParamInfoEnum(Villager.Profession.class, "Villager Profession",
@@ -130,7 +131,7 @@ public class ParamInfoTypes {
         paramInfos.add(new ParamInfoEnum(Parrot.Variant.class, "Parrot Variant", "View the different colors a parrot can be"));
         paramInfos.add(new ParamInfoComponent(Component.class, "Component", "A kyori adventure text component"));
         paramInfos.add(new ParamInfoEnum(DisguiseAnimation.class, "Disguise Animation",
-            "Every animation that Mojang has added to entities, not all of them will work"));
+            "Every animation that Mojang has added to entities, not all of them will work").setNotNull());
         paramInfos.add(new ParamInfoEnum(DisguiseSoundCategory.class, "Sound Category",
             "The sound category the sounds from this disguise will play under, not set when global default",
             Arrays.stream(DisguiseSoundCategory.values()).filter(DisguiseSoundCategory::isAvailable)

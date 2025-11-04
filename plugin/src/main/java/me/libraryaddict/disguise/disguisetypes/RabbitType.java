@@ -15,6 +15,9 @@ public enum RabbitType {
     PEPPER(5, Rabbit.Type.SALT_AND_PEPPER),
     WHITE(1, Rabbit.Type.WHITE);
 
+    private final int typeId;
+    private final Rabbit.Type type;
+
     public static Rabbit.Type getType(int id) {
         for (RabbitType type : values()) {
             if (type.getTypeId() != id) {
@@ -26,6 +29,7 @@ public enum RabbitType {
 
         return null;
     }
+
     public static int getTypeId(Rabbit.Type rabbitType) {
         for (RabbitType type : values()) {
             if (type.getType() != rabbitType) {
@@ -37,7 +41,4 @@ public enum RabbitType {
 
         throw new IllegalStateException("Unknown rabbit type " + rabbitType);
     }
-
-    private final int typeId;
-    private final Rabbit.Type type;
 }

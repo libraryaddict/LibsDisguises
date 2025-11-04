@@ -23,7 +23,8 @@ public class ShulkerWatcher extends InsentientWatcher {
     }
 
     public void setFacingDirection(BlockFace face) {
-        sendData(MetaIndex.SHULKER_FACING, com.github.retrooper.packetevents.protocol.world.BlockFace.valueOf(face.name()));
+        sendData(MetaIndex.SHULKER_FACING,
+            face != null ? com.github.retrooper.packetevents.protocol.world.BlockFace.valueOf(face.name()) : null);
     }
 
     public Vector3i getAttachmentPosition() {

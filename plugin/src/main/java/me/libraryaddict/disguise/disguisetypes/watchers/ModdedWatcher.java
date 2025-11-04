@@ -13,10 +13,14 @@ public class ModdedWatcher extends FlagWatcher {
      * @param object
      */
     public void setMetadata(int index, Object object) {
-        getEntityValues().put(index, object);
+        if (object == null) {
+            getUserDefinedValues().remove(index);
+        } else {
+            getUserDefinedValues().put(index, object);
+        }
     }
 
     public Object getMetadata(int index) {
-        return getEntityValues().get(index);
+        return getUserDefinedValues().get(index);
     }
 }

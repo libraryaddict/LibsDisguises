@@ -47,27 +47,33 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FlagWatcher {
     @Setter
     private boolean addEntityAnimations = DisguiseConfig.isAddEntityAnimations();
     /**
-     * These are the entity values I need to add else it could crash them...
+     * If this object is used, it represents that this entity should not have any metadata sent for the retrospective id
+     */
+    protected static final Object DONT_SEND = new Object();
+    /**
+     * If set in here, then it represents metadata to replace any metadata from the real entity. If the disguise does not have enough
+     * metadata to cover all the ids, then the remaining metadata is set to 'NO_METADATA'
      */
     @Getter(value = AccessLevel.PROTECTED)
-    private final HashMap<Integer, Object> backupEntityValues = new HashMap<>();
+    private final Map<Integer, Object> backupEntityValues = new ConcurrentHashMap<>();
     @Getter
     private transient TargetedDisguise disguise;
     /**
      * Disguise set data
      */
     @Getter(value = AccessLevel.PROTECTED)
-    private HashMap<Integer, Object> entityValues = new HashMap<>();
+    private Map<Integer, Object> userDefinedValues = new ConcurrentHashMap<>();
     private LibsEquipment equipment;
     private transient boolean hasDied;
     @Getter
@@ -232,7 +238,7 @@ public class FlagWatcher {
             cloned = new FlagWatcher(owningDisguise);
         }
 
-        cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
+        cloned.userDefinedValues = new ConcurrentHashMap<>(userDefinedValues);
         cloned.equipment = equipment.clone(cloned);
         cloned.modifiedEntityAnimations = Arrays.copyOf(modifiedEntityAnimations, modifiedEntityAnimations.length);
         cloned.addEntityAnimations = addEntityAnimations;
@@ -327,22 +333,23 @@ public class FlagWatcher {
             Object value = null;
             boolean usingBackup = false;
 
-            if (entityValues.containsKey(id)) {
-                if (entityValues.get(id) == null) {
+            if (userDefinedValues.containsKey(id)) {
+                value = userDefinedValues.get(id);
+
+                if (value == DONT_SEND) {
                     continue;
                 }
-
-                value = entityValues.get(id);
 
                 if (index == MetaIndex.LIVING_HEALTH && (float) watch.getValue() <= 0) {
                     value = watch.getValue();
                 }
             } else if (backupEntityValues.containsKey(id)) {
-                if (backupEntityValues.get(id) == null) {
+                value = backupEntityValues.get(id);
+
+                if (value == DONT_SEND) {
                     continue;
                 }
 
-                value = backupEntityValues.get(id);
                 usingBackup = true;
             }
 
@@ -379,24 +386,12 @@ public class FlagWatcher {
 
         if (sendAllCustom) {
             // It's sending the entire metadata. Better add the custom meta
-            for (Integer id : entityValues.keySet()) {
-                if (sentValues.contains(id)) {
+            for (Map.Entry<Integer, Object> entry : userDefinedValues.entrySet()) {
+                if (entry.getValue() == DONT_SEND || sentValues.contains(entry.getKey())) {
                     continue;
                 }
 
-                Object value = entityValues.get(id);
-
-                if (value == null) {
-                    continue;
-                }
-
-                WatcherValue watch = new WatcherValue(MetaIndex.getMetaIndex(this, id), value, true);
-
-                if (watch == null) {
-                    continue;
-                }
-
-                newList.add(watch);
+                newList.add(new WatcherValue(MetaIndex.getMetaIndex(this, entry.getKey()), entry.getValue(), true));
             }
 
             if (getDisguise().isPlayerDisguise() && DisguiseConfig.isScoreboardUpdateHealth()) {
@@ -671,14 +666,20 @@ public class FlagWatcher {
             return null;
         }
 
-        if (entityValues.containsKey(flagType.getIndex())) {
-            return (Y) entityValues.get(flagType.getIndex());
+        if (userDefinedValues.containsKey(flagType.getIndex())) {
+            Object value = userDefinedValues.get(flagType.getIndex());
+
+            if (value == DONT_SEND) {
+                return null;
+            }
+
+            return (Y) value;
         }
 
         return flagType.getDefault();
     }
 
-    public List<WatcherValue> getWatchableObjects() {
+    public synchronized List<WatcherValue> getWatchableObjects() {
         if (watchableObjects == null) {
             rebuildWatchableObjects();
         }
@@ -695,7 +696,7 @@ public class FlagWatcher {
             return false;
         }
 
-        return entityValues.containsKey(metaIndex.getIndex());
+        return userDefinedValues.containsKey(metaIndex.getIndex());
     }
 
     public boolean isBurning() {
@@ -836,53 +837,84 @@ public class FlagWatcher {
         sendEntityFlag(3, setSprinting);
     }
 
-    public void rebuildWatchableObjects() {
-        watchableObjects = new ArrayList<>();
+    public synchronized void rebuildWatchableObjects() {
+        List<WatcherValue> list = new ArrayList<>();
 
-        for (int i = 0; i <= 31; i++) {
-            WatcherValue watchable;
+        for (int i = 0; i <= MetaIndex.getHighestMetaIndex(); i++) {
+            // Get the value
+            Object value = userDefinedValues.getOrDefault(i, backupEntityValues.get(i));
 
-            if (entityValues.containsKey(i) && entityValues.get(i) != null) {
-                watchable = new WatcherValue(MetaIndex.getMetaIndex(this, i), entityValues.get(i), true);
-            } else if (backupEntityValues.containsKey(i) && backupEntityValues.get(i) != null) {
-                watchable = new WatcherValue(MetaIndex.getMetaIndex(this, i), backupEntityValues.get(i), true);
-            } else {
+            // If value is not set, or is not a value we provide
+            if (value == null || value == DONT_SEND) {
                 continue;
             }
 
-            if (watchable == null) {
-                continue;
-            }
-
-            watchableObjects.add(watchable);
+            list.add(new WatcherValue(MetaIndex.getMetaIndex(this, i), value, true));
         }
+
+        watchableObjects = Collections.unmodifiableList(list);
     }
 
     protected void sendData(MetaIndex... dataValues) {
-        if (getDisguise() == null || !DisguiseAPI.isDisguiseInUse(getDisguise()) || getDisguise().getWatcher() != this) {
+        if (getDisguise() == null || getDisguise().getEntity() == null || !DisguiseAPI.isDisguiseInUse(getDisguise()) ||
+            getDisguise().getWatcher() != this) {
             return;
         }
 
         List<WatcherValue> list = new ArrayList<>();
+        List<EntityData<?>> realEntityData = null;
 
-        for (MetaIndex data : dataValues) {
-            if (data == null) {
+        for (MetaIndex index : dataValues) {
+            if (index == null) {
                 continue;
             }
 
-            Object value = entityValues.get(data.getIndex());
+            boolean bukkitReadable = true;
+            Object value = userDefinedValues.get(index.getIndex());
 
+            // If we tried to send the metadata and we do not have that defined
             if (value == null) {
+                // Revert to backup values
+                value = backupEntityValues.get(index.getIndex());
+
+                // If backup was not defined, then we did not need to ensure there was backup metadata
+                // In which case, we need to send the actual meta we expect
+                if (value == null) {
+                    // Ensure the list exists
+                    if (realEntityData == null) {
+                        realEntityData = ReflectionManager.getEntityWatcher(getDisguise().getEntity());
+                    }
+
+                    // Find the metadata from the entity itself for that index
+                    EntityData<?> data = realEntityData.stream().filter(d -> d.getIndex() == index.getIndex()).findAny().orElse(null);
+
+                    // If it does not exist, then it's either not valid, or it's not modified from vanilla
+                    if (data == null) {
+                        // Use the vanilla default
+                        value = index.getDefault();
+                    } else {
+                        value = data.getValue();
+                        bukkitReadable = false;
+                    }
+                }
+            }
+
+            // If the value is null, or not to be sent
+            if (value == null || value == DONT_SEND) {
                 continue;
             }
 
             if (isEntityAnimationsAdded() && DisguiseConfig.isMetaPacketsEnabled() &&
-                (data == MetaIndex.ENTITY_META || data == MetaIndex.LIVING_META)) {
+                (index == MetaIndex.ENTITY_META || index == MetaIndex.LIVING_META)) {
 
-                byte b = (byte) data.getDefault();
+                byte b = (byte) index.getDefault();
 
-                for (EntityData d : ReflectionManager.getEntityWatcher(disguise.getEntity())) {
-                    if (d.getIndex() != data.getIndex()) {
+                if (realEntityData == null) {
+                    realEntityData = ReflectionManager.getEntityWatcher(getDisguise().getEntity());
+                }
+
+                for (EntityData d : realEntityData) {
+                    if (d.getIndex() != index.getIndex()) {
                         continue;
                     }
 
@@ -890,16 +922,10 @@ public class FlagWatcher {
                     break;
                 }
 
-                value = addEntityAnimations(data, (byte) value, b);
+                value = addEntityAnimations(index, (byte) value, b);
             }
 
-            WatcherValue watch = new WatcherValue(data, value, true);
-
-            if (watch == null) {
-                continue;
-            }
-
-            list.add(watch);
+            list.add(new WatcherValue(index, value, bukkitReadable));
         }
 
         if (list.isEmpty()) {
@@ -926,6 +952,10 @@ public class FlagWatcher {
     protected void setBackupValue(MetaIndex no, Object value) {
         if (no == null) {
             return;
+        }
+
+        if (value == null) {
+            value = DONT_SEND;
         }
 
         backupEntityValues.put(no.getIndex(), value);
@@ -1063,11 +1093,11 @@ public class FlagWatcher {
                 " a bug.");
         }
 
-        if (value == null && id.getDefault() instanceof ItemStack) {
-            throw new IllegalArgumentException("Cannot use null ItemStacks");
+        if (value == null) {
+            userDefinedValues.remove(id.getIndex());
+        } else {
+            userDefinedValues.put(id.getIndex(), value);
         }
-
-        entityValues.put(id.getIndex(), value);
 
         if (!DisguiseConfig.isMetaPacketsEnabled()) {
             rebuildWatchableObjects();

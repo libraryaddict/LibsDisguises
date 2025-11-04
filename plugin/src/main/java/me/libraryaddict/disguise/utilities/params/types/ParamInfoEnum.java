@@ -9,6 +9,9 @@ import java.lang.reflect.Array;
 import java.util.Map;
 
 public class ParamInfoEnum<T> extends ParamInfo<T> {
+    private boolean nullable = false;
+//true; Not setting this to true for now, too much needs to be done to ensure the values are all nullable
+
     public ParamInfoEnum(Class<T> paramClass, String name, String description) {
         super(paramClass, name, name, description, paramClass.isEnum() ? paramClass.getEnumConstants() :
             (T[]) (Bukkit.getServer() == null ? Array.newInstance(paramClass, 0) :
@@ -66,5 +69,20 @@ public class ParamInfoEnum<T> extends ParamInfo<T> {
     @Override
     public boolean isCustomValues() {
         return false;
+    }
+
+    @Override
+    public boolean canReturnNull() {
+        return nullable;
+    }
+
+    public ParamInfoEnum setNullable(boolean notNull) {
+        nullable = notNull;
+
+        return this;
+    }
+
+    public ParamInfoEnum setNotNull() {
+        return setNullable(false);
     }
 }

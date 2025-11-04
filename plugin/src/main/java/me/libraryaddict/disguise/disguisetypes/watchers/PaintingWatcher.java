@@ -12,6 +12,10 @@ public class PaintingWatcher extends HangingWatcher {
 
     public PaintingWatcher(Disguise disguise) {
         super(disguise);
+
+        if (!NmsVersion.v1_19_R1.isSupported()) {
+            painting = MetaIndex.PAINTING.getDefault();
+        }
     }
 
     @Override
@@ -34,6 +38,10 @@ public class PaintingWatcher extends HangingWatcher {
         if (NmsVersion.v1_19_R1.isSupported()) {
             sendData(MetaIndex.PAINTING, newPainting);
         } else {
+            if (newPainting == null) {
+                newPainting = MetaIndex.PAINTING.getDefault();
+            }
+
             this.painting = newPainting;
 
             if (getDisguise().getEntity() != null && getDisguise().getWatcher() == this) {

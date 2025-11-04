@@ -172,6 +172,8 @@ import java.util.UUID;
 
 public class MetaIndex<Y> {
     private static MetaIndex[] _values = new MetaIndex[0];
+    @Getter
+    private static int highestMetaIndex;
 
     @NmsAddedIn(NmsVersion.v1_19_R1)
     public static MetaIndex<Boolean> ALLAY_DANCING = new MetaIndex<>(AllayWatcher.class, 0, false);
@@ -788,7 +790,8 @@ public class MetaIndex<Y> {
         new MetaIndex<>(OminousItemSpawnerWatcher.class, 0, new ItemStack(Material.AIR));
 
     @NmsAddedIn(NmsVersion.v1_19_R1)
-    public static MetaIndex<Art> PAINTING = new MetaIndex<>(PaintingWatcher.class, 0, NmsVersion.v1_19_R1.isSupported() ? Art.KEBAB : null);
+    public static MetaIndex<Art> PAINTING = new MetaIndex<>(PaintingWatcher.class, 0,
+        NmsVersion.v1_19_R1.isSupported() ? Art.KEBAB : ReflectionManager.fromEnum(Art.class, "KEBAB"));
 
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<Integer> PANDA_HEAD_SHAKING = new MetaIndex<>(PandaWatcher.class, 0, 0);
@@ -1070,6 +1073,7 @@ public class MetaIndex<Y> {
             }
 
             flagType._index += getNoIndexes(ReflectionManager.getSuperClass(flagType.getFlagWatcher()));
+            highestMetaIndex = Math.max(highestMetaIndex, flagType._index);
         }
     }
 

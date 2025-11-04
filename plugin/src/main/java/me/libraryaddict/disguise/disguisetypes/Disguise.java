@@ -1145,6 +1145,10 @@ public abstract class Disguise {
     }
 
     public void setTallSelfDisguise(DisguiseConfig.TallSelfDisguise tallSelfDisguise) {
+        if (tallSelfDisguise == null) {
+            tallSelfDisguise = DisguiseConfig.getTallSelfDisguisesVisibility();
+        }
+
         if (getTallSelfDisguise() == tallSelfDisguise) {
             return;
         }

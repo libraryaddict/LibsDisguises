@@ -28,7 +28,8 @@ public class HorseWatcher extends AbstractHorseWatcher {
 
     @RandomDefaultValue
     public void setColor(Color color) {
-        sendData(MetaIndex.HORSE_COLOR_STYLE, color.ordinal() & 0xFF | getStyle().ordinal() << 8);
+        Integer toSend = color == null ? null : color.ordinal() & 0xFF | getStyle().ordinal() << 8;
+        sendData(MetaIndex.HORSE_COLOR_STYLE, toSend);
     }
 
     public Style getStyle() {
@@ -37,7 +38,9 @@ public class HorseWatcher extends AbstractHorseWatcher {
 
     @RandomDefaultValue
     public void setStyle(Style style) {
-        sendData(MetaIndex.HORSE_COLOR_STYLE, getColor().ordinal() & 0xFF | style.ordinal() << 8);
+        Integer toSend = style == null ? null : getColor().ordinal() & 0xFF | style.ordinal() << 8;
+
+        sendData(MetaIndex.HORSE_COLOR_STYLE, toSend);
     }
 
     public ItemStack getHorseArmor() {

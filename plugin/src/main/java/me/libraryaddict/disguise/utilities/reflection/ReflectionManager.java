@@ -1268,6 +1268,10 @@ public class ReflectionManager {
     }
 
     public static int getCombinedIdByWrappedBlockState(WrappedBlockState state) {
+        if (state == null) {
+            state = WrappedBlockState.getDefaultState(StateTypes.AIR);
+        }
+
         if (NmsVersion.v1_13.isSupported()) {
             return state.getGlobalId();
         }

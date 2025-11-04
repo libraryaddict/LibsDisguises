@@ -105,6 +105,6 @@ public class MannequinWatcher extends AvatarWatcher {
     }
 
     public void setDescription(@Nullable Component description) {
-        setData(MetaIndex.MANNEQUIN_DESCRIPTION, Optional.of(description));
+        setData(MetaIndex.MANNEQUIN_DESCRIPTION, Optional.ofNullable(description));
     }
 }
