@@ -139,6 +139,11 @@ public class LibsEquipment implements EntityEquipment {
 
     @Override
     public void setArmorContents(ItemStack[] items) {
+        if (items == null) {
+            clear();
+            return;
+        }
+
         setBoots(items[0]);
         setLeggings(items[1]);
         setChestplate(items[2]);
