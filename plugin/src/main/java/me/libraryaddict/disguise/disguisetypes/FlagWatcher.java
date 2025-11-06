@@ -642,25 +642,25 @@ public class FlagWatcher {
     }
 
     public ItemStack getItemInMainHand() {
-        return equipment.getItemInMainHand();
+        return getEquipment().getItemInMainHand();
     }
 
     @MethodOnlyUsedBy(value = {}, group = MethodGroupType.HOLDABLE)
     public void setItemInMainHand(ItemStack itemstack) {
-        setItemStack(EquipmentSlot.HAND, itemstack);
+        getEquipment().setItemInMainHand(itemstack);
     }
 
     public ItemStack getItemInOffHand() {
-        return equipment.getItemInOffHand();
+        return getEquipment().getItemInOffHand();
     }
 
     @MethodOnlyUsedBy(value = {}, group = MethodGroupType.HOLDABLE)
     public void setItemInOffHand(ItemStack itemstack) {
-        setItemStack(EquipmentSlot.OFF_HAND, itemstack);
+        getEquipment().setItemInOffHand(itemstack);
     }
 
     public ItemStack getItemStack(EquipmentSlot slot) {
-        return equipment.getItem(slot);
+        return getEquipment().getItem(slot);
     }
 
     protected <Y> Y getData(MetaIndex<Y> flagType) {
@@ -1000,7 +1000,7 @@ public class FlagWatcher {
     }
 
     public void setItemStack(EquipmentSlot slot, ItemStack itemStack) {
-        equipment.setItem(slot, itemStack);
+        getEquipment().setItem(slot, itemStack);
     }
 
     protected void sendItemStack(EquipmentSlot slot, ItemStack itemStack) {

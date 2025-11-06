@@ -26,7 +26,7 @@ public class LlamaWatcher extends ChestedHorseWatcher {
 
     public DyeColor getCarpet() {
         if (NmsVersion.v1_20_R4.isSupported()) {
-            ItemStack item = getEquipment().getItem(EquipmentSlot.BODY);
+            ItemStack item = getItemStack(EquipmentSlot.BODY);
 
             if (item == null) {
                 return null;

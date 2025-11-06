@@ -151,13 +151,13 @@ public class WolfWatcher extends TameableWatcher {
 
     @NmsAddedIn(NmsVersion.v1_20_R4)
     public ItemStack getWolfArmor() {
-        return getEquipment().getItem(EquipmentSlot.BODY);
+        return getItemStack(EquipmentSlot.BODY);
     }
 
     @NmsAddedIn(NmsVersion.v1_20_R4)
     @MethodDescription("The item that renders as the wolf's armor, only a certain subset of items will display")
     public void setWolfArmor(ItemStack item) {
-        getEquipment().setItem(EquipmentSlot.BODY, item);
+        setItemStack(EquipmentSlot.BODY, item);
     }
 
     @NmsAddedIn(NmsVersion.v1_20_R4)

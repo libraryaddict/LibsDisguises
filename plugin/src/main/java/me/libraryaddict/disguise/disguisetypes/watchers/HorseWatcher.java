@@ -45,17 +45,17 @@ public class HorseWatcher extends AbstractHorseWatcher {
 
     public ItemStack getHorseArmor() {
         if (NmsVersion.v1_20_R4.isSupported()) {
-            return getEquipment().getItem(EquipmentSlot.BODY);
+            return getItemStack(EquipmentSlot.BODY);
         }
 
-        return getEquipment().getChestplate();
+        return getChestplate();
     }
 
     public void setHorseArmor(ItemStack item) {
         if (NmsVersion.v1_20_R4.isSupported()) {
-            getEquipment().setItem(EquipmentSlot.BODY, item);
+            setItemStack(EquipmentSlot.BODY, item);
         } else {
-            getEquipment().setChestplate(item);
+            setChestplate(item);
         }
 
         if (NmsVersion.v1_14.isSupported()) {
