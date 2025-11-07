@@ -186,7 +186,7 @@ public class LibsDisguises extends JavaPlugin {
         }
 
         String mcVersion = matcher.group(1);
-        NmsVersion version = NmsVersion.valueOf(mcVersion);
+        NmsVersion version = NmsVersion.getByVersion(mcVersion);
 
         if (version == null || !version.isVersionLoadable()) {
             getLogger().severe(
