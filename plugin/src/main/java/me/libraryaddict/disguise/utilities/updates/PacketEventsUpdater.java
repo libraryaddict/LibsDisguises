@@ -86,7 +86,7 @@ public class PacketEventsUpdater {
     }
 
     private boolean isNotBukkitPlugin(String name) {
-        return !name.toLowerCase(Locale.ENGLISH).matches(".*(bukkit|spigot|paper).*");
+        return !name.toLowerCase(Locale.ENGLISH).matches(".*(bukkit|spigot|paper).*") || name.matches(".*(javadoc|sources).jar");
     }
 
     /**
