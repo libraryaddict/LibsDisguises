@@ -660,7 +660,8 @@ public class FlagWatcher {
     }
 
     public ItemStack getItemStack(EquipmentSlot slot) {
-        return getEquipment().getItem(slot);
+        // We specifically do not use `getEquipment()` here to avoid it throwing a 'method missing in 1.12' error.
+        return this.equipment.getItem(slot);
     }
 
     protected <Y> Y getData(MetaIndex<Y> flagType) {
