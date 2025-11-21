@@ -549,4 +549,13 @@ public enum DisguiseType {
 
         return TranslateType.DISGUISES.get(StringUtils.join(split, " "));
     }
+
+    /**
+     * If this type represents a usable disguise type
+     *
+     * @return if this disguise type can be used
+     */
+    public boolean isValid() {
+        return getEntityClass() != null && !isCustom();
+    }
 }
