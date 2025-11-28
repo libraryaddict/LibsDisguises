@@ -2,7 +2,7 @@ package me.libraryaddict.disguise.utilities.reflection;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 
 import java.util.Arrays;
 
@@ -13,17 +13,17 @@ public enum NmsVersion {
     v1_15("1.15", "1.15.1", "1.15.2"),
     v1_16("1.16", "1.16.1", "1.16.2", "1.16.3", "1.16.4", "1.16.5"),
     v1_17("1.17", "1.17.1"),
-    @ApiStatus.ScheduledForRemoval @Deprecated v1_18_R1("1.18", "1.18.1"),
+    @ScheduledForRemoval @Deprecated v1_18_R1("1.18", "1.18.1"),
     v1_18_R2("1.18.2"),
-    @ApiStatus.ScheduledForRemoval @Deprecated v1_19_R1("1.19", "1.19.1", "1.19.2"),
-    @ApiStatus.ScheduledForRemoval @Deprecated v1_19_R2("1.19.3"),
+    @ScheduledForRemoval @Deprecated v1_19_R1("1.19", "1.19.1", "1.19.2"),
+    @ScheduledForRemoval @Deprecated v1_19_R2("1.19.3"),
     v1_19_R3("1.19.4"),
-    @ApiStatus.ScheduledForRemoval @Deprecated v1_20_R1("1.20", "1.20.1"),
-    @ApiStatus.ScheduledForRemoval @Deprecated v1_20_R2("1.20.2"),
+    @ScheduledForRemoval @Deprecated v1_20_R1("1.20", "1.20.1"),
+    @ScheduledForRemoval @Deprecated v1_20_R2("1.20.2"),
     v1_20_R3("1.20.3", "1.20.4"),
     v1_20_R4("1.20.5", "1.20.6"),
-    @ApiStatus.ScheduledForRemoval @Deprecated v1_21_R1("1.21", "1.21.1"),
-    @ApiStatus.ScheduledForRemoval @Deprecated v1_21_R2("1.21.3"), // 1.21.2 was hotfixed by 1.21.3
+    @ScheduledForRemoval @Deprecated v1_21_R1("1.21", "1.21.1"),
+    @ScheduledForRemoval @Deprecated v1_21_R2("1.21.3"), // 1.21.2 was hotfixed by 1.21.3
     v1_21_R3("1.21.4"),
     v1_21_R4("1.21.5"),
     v1_21_R5("1.21.6", "1.21.7", "1.21.8"),
