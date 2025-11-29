@@ -556,6 +556,6 @@ public enum DisguiseType {
      * @return if this disguise type can be used
      */
     public boolean isValid() {
-        return getEntityClass() != null && !isCustom();
+        return getWatcherClass() != null && getEntityClass() != null && !isCustom();
     }
 }
