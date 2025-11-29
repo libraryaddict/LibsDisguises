@@ -94,6 +94,7 @@ import me.libraryaddict.disguise.utilities.gson.SerializerUserProfile;
 import me.libraryaddict.disguise.utilities.gson.SerializerUserProfileFactory;
 import me.libraryaddict.disguise.utilities.gson.SerializerWrappedBlockData;
 import me.libraryaddict.disguise.utilities.mineskin.MineSkinAPI;
+import me.libraryaddict.disguise.utilities.movements.MovementTracker;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
@@ -281,6 +282,8 @@ public class DisguiseUtilities {
      */
     @Getter
     private static final Map<Integer, Set<TargetedDisguise>> futureDisguises = new ConcurrentHashMap<>();
+    @Getter
+    private static final Map<Integer, Integer> remappedEntityIds = new ConcurrentHashMap<>();
     private static final Set<UUID> savedDisguiseList = new HashSet<>();
     private static final Set<String> cachedNames = new HashSet<>();
     private static final Map<String, String> sanitySkinCacheMap = new LinkedHashMap<>();
@@ -351,7 +354,7 @@ public class DisguiseUtilities {
     @Setter
     private static boolean debuggingMode;
     @Getter
-    private static boolean placeholderApi, runningPaper;
+    private static boolean placeholderApi, runningPaper, voiceChatPlugin;
     @Getter
     // Uses ticks in 1.19+, real time in older versions
     private static long lastFutureDisguiseApplied;
@@ -1576,6 +1579,9 @@ public class DisguiseUtilities {
                     continue;
                 }
 
+                List<MovementTracker> trackers = disguise.getInternals().getTrackers();
+                trackers.forEach(t -> t.onDespawn(player, false));
+
                 PacketEvents.getAPI().getPlayerManager().sendPacket(player, getDestroyPacket(disguise.getEntity().getEntityId()));
             }
         } catch (Exception ex) {
@@ -2012,6 +2018,8 @@ public class DisguiseUtilities {
         selfDisguiseScaleNamespace = new NamespacedKey(LibsDisguises.getInstance(), "Self_Disguise_Scaling");
         debuggingMode = LibsDisguises.getInstance().isDebuggingBuild();
         placeholderApi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
+        // We don't care about voicechat api, so we only check if it exists
+        voiceChatPlugin = Bukkit.getPluginManager().getPlugin("voicechat") != null;
 
         DisguiseFiles.init();
         recreateGsonSerializer();
@@ -2397,6 +2405,9 @@ public class DisguiseUtilities {
                     if (disguise.getEntity() == player || !disguise.canSee(player)) {
                         continue;
                     }
+
+                    List<MovementTracker> trackers = disguise.getInternals().getTrackers();
+                    trackers.forEach(t -> t.onDespawn(player, false));
 
                     ReflectionManager.clearEntityTracker(entityTracker, entityTrackerEntry, p);
 
@@ -3275,10 +3286,10 @@ public class DisguiseUtilities {
     }
 
     @SneakyThrows
-    public static PacketWrapper unsafeClone(PacketPlaySendEvent eventForConstructor, PacketWrapper wrapper) {
+    public static <T extends PacketWrapper> T unsafeClone(PacketPlaySendEvent eventForConstructor, T wrapper) {
         // I'm not sure why PacketEvents makes it hard to clone another packet without manually handling every wrapper
         PacketWrapper lastEvent = eventForConstructor.getLastUsedWrapper();
-        PacketWrapper clone = wrapper.getClass().getConstructor(PacketSendEvent.class).newInstance(eventForConstructor);
+        T clone = (T) wrapper.getClass().getConstructor(PacketSendEvent.class).newInstance(eventForConstructor);
         clone.copy(wrapper);
         clone.buffer = null;
 

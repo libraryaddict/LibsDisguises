@@ -7,6 +7,7 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.utilities.movements.InteractiveBoundingBox;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
@@ -66,7 +67,7 @@ public class DisguiseMethods {
                 // We want to only validate remapped methods
                 // TODO Validate this, it's been broken for a while and no issues has seemingly arisen...
                 if (method.getMappedName().equals(method.getMappedName())) {
-                //if (method.getName().equals(method.getMappedName())) {
+                    //if (method.getName().equals(method.getMappedName())) {
                     continue;
                 }
 
@@ -202,7 +203,8 @@ public class DisguiseMethods {
         List<String> extraMethods = new ArrayList<>(
             Arrays.asList("setSelfDisguiseVisible", "setHideHeldItemFromSelf", "setHideArmorFromSelf", "setHearSelfDisguise",
                 "setReplaceSounds", "setHidePlayer", "setExpires", "setNotifyBar", "setBossBarColor", "setBossBarStyle", "setDynamicName",
-                "setSoundGroup", "setDisguiseName", "setDeadmau5Ears", "setTallSelfDisguise", "setPlayIdleSounds", "setSoundCategory"));
+                "setSoundGroup", "setDisguiseName", "setDeadmau5Ears", "setTallSelfDisguise", "setPlayIdleSounds", "setSoundCategory",
+                "setBoundingBox"));
 
         // Methods hidden by default, mainly so it doesn't throw an exception if used
         // This means that any options in this will be set in a disguise, but it won't be copied when a disguise is parsed to string
@@ -250,6 +252,9 @@ public class DisguiseMethods {
                         break;
                     case "setSoundCategory":
                         cl = DisguiseSoundCategory.class;
+                        break;
+                    case "setBoundingBox":
+                        cl = InteractiveBoundingBox.class;
                         break;
                     default:
                         break;

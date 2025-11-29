@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityHeadLook;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityPositionSync;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMove;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMoveAndRotation;
@@ -19,6 +20,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.GridLockedWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.movements.MovementTracker;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -29,8 +31,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -57,6 +59,32 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
         if (invalid && RandomUtils.nextDouble() < 0.1) {
             packets.clear();
             return;
+        }
+
+        List<MovementTracker> trackers = disguise.getInternals().getTrackers();
+
+        if (!trackers.isEmpty()) {
+            PacketWrapper wrapper = packets.getOriginalPacket();
+
+            if (wrapper instanceof WrapperPlayServerEntityRotation) {
+               trackers
+                    .forEach(t -> t.onRotation(observer, (WrapperPlayServerEntityRotation) packets.getOriginalPacket()));
+            } else if (wrapper instanceof WrapperPlayServerEntityHeadLook) {
+               trackers
+                    .forEach(t -> t.onLook(observer, (WrapperPlayServerEntityHeadLook) packets.getOriginalPacket()));
+            } else if (wrapper instanceof WrapperPlayServerEntityRelativeMove) {
+               trackers
+                    .forEach(t -> t.onRelativeMove(observer, (WrapperPlayServerEntityRelativeMove) packets.getOriginalPacket()));
+            } else if (wrapper instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
+               trackers.forEach(
+                    t -> t.onRelativeMoveLook(observer, (WrapperPlayServerEntityRelativeMoveAndRotation) packets.getOriginalPacket()));
+            } else if (wrapper instanceof WrapperPlayServerEntityPositionSync) {
+               trackers
+                    .forEach(t -> t.onSync(observer, (WrapperPlayServerEntityPositionSync) packets.getOriginalPacket()));
+            } else if (wrapper instanceof WrapperPlayServerEntityTeleport) {
+               trackers
+                    .forEach(t -> t.onTeleport(observer, (WrapperPlayServerEntityTeleport) packets.getOriginalPacket()));
+            }
         }
 
         PacketWrapper sentPacket = packets.getOriginalPacket();
@@ -235,7 +263,8 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
                     iterator.remove();
                 }
             } else {
-                entity.setMetadata("LibsRabbitHop", new FixedMetadataValue(LibsDisguises.getInstance(), rabbitHops = new ConcurrentHashMap<>()));
+                entity.setMetadata("LibsRabbitHop",
+                    new FixedMetadataValue(LibsDisguises.getInstance(), rabbitHops = new ConcurrentHashMap<>()));
             }
 
             long lastHop =

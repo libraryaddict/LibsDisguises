@@ -10,6 +10,8 @@ import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.movements.InteractiveBoundingBox;
+import me.libraryaddict.disguise.utilities.movements.MovementTracker;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.scaling.DisguiseScaling;
 import org.bukkit.NamespacedKey;
@@ -23,6 +25,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -60,10 +63,39 @@ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.Di
     @Getter
     private transient DisguiseRunnable runnable;
     private final Set<UUID> seesDisguise = new HashSet<>();
+    @Getter
+    private final List<MovementTracker> trackers = new ArrayList<>();
+    @Getter
+    private InteractiveBoundingBox interactiveBoundingBox;
 
     public DisguiseInternals(D disguise) {
         this.disguise = disguise;
         scaling = new DisguiseScaling(this);
+    }
+
+    public void setInteractiveBoundingBox(InteractiveBoundingBox boundingBox) {
+        if (getInteractiveBoundingBox() != null) {
+            trackers.remove(getInteractiveBoundingBox());
+
+            if (getDisguise().isDisguiseInUse()) {
+                getInteractiveBoundingBox().onDespawn();
+            }
+        }
+
+        interactiveBoundingBox = boundingBox;
+
+        if (boundingBox == null) {
+            return;
+        }
+
+        boundingBox.setDisguise(getDisguise());
+        trackers.add(boundingBox);
+
+        if (!getDisguise().isDisguiseInUse()) {
+            return;
+        }
+
+        boundingBox.onSpawn();
     }
 
     /**
@@ -96,11 +128,26 @@ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.Di
         runnable = new DisguiseRunnable(getDisguise());
 
         runnable.runTaskTimer(LibsDisguises.getInstance(), 1, 1);
+
+        for (MovementTracker tracker : trackers) {
+            for (int entityId : tracker.getOwnedEntityIds()) {
+                DisguiseUtilities.getRemappedEntityIds().put(entityId, getDisguise().getEntity().getEntityId());
+            }
+        }
     }
 
-    protected void cancelRunnable() {
+    protected void onDisguiseStop() {
+        for (MovementTracker tracker : trackers) {
+            tracker.onDespawn();
+
+            for (int entityId : tracker.getOwnedEntityIds()) {
+                DisguiseUtilities.getRemappedEntityIds().remove(entityId);
+            }
+        }
+
         // Clear the seen
         seesDisguise.clear();
+
         if (runnable == null) {
             return;
         }

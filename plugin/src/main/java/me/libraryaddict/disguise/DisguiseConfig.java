@@ -338,6 +338,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static boolean tickProjectilesFaster;
+    @Getter
+    @Setter
+    private static boolean voiceChatCompatibility;
 
     public static boolean isDisplayTextName() {
         return getPlayerNameType() == PlayerNameType.TEXT_DISPLAY;
@@ -647,6 +650,7 @@ public class DisguiseConfig {
         setDynamicExpiry(config.getBoolean("DynamicExpiry"));
         setHideDisguisedPlayers(config.getBoolean("HideDisguisedPlayersFromTab"));
         setPlayerHideArmor(config.getBoolean("PlayerHideArmor"));
+        setVoiceChatCompatibility(config.getBoolean("Compatibility.VoiceChat"));
 
         try {
             tallSelfDisguisesVisibility = TallSelfDisguise.valueOf(config.getString("TallSelfDisguises").toUpperCase(Locale.ENGLISH));

@@ -51,28 +51,42 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
             event.setCancelled(true);
         }
 
-        WrapperPlayClientInteractEntity packet = new WrapperPlayClientInteractEntity(event.clone());
+        WrapperPlayClientInteractEntity packet = new WrapperPlayClientInteractEntity(event);
 
-        if (packet.getEntityId() == DisguiseAPI.getSelfDisguiseId()) {
+        Integer remapped = DisguiseUtilities.getRemappedEntityIds().get(packet.getEntityId());
+
+        if (remapped != null) {
+            packet.setEntityId(remapped);
+            event.markForReEncode(true);
+        }
+
+        int entityId = packet.getEntityId();
+
+        final Disguise disguise = DisguiseUtilities.getDisguise(observer, entityId);
+
+        if (entityId == DisguiseAPI.getSelfDisguiseId()) {
             // Self disguise
             event.setCancelled(true);
-        } else if (DisguiseUtilities.isNotInteractable(packet.getEntityId())) {
+        } else if (DisguiseUtilities.isNotInteractable(entityId)) {
             event.setCancelled(true);
-        } else if (DisguiseUtilities.isSpecialInteract(packet.getEntityId()) && getHand(packet) == InteractionHand.OFF_HAND) {
+        } else if (DisguiseUtilities.isSpecialInteract(entityId) && getHand(packet) == InteractionHand.OFF_HAND) {
             // If its an interaction that we should cancel, such as right clicking a wolf..
             // Honestly I forgot the reason.
             event.setCancelled(true);
         }
 
+        WrapperPlayClientInteractEntity interactEntity =
+            new WrapperPlayClientInteractEntity(entityId, packet.getAction(), packet.getHand(), packet.getTarget(), packet.isSneaking());
+
         if (!Bukkit.isPrimaryThread()) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    handleSync(observer, packet);
+                    handleSync(observer, interactEntity);
                 }
             }.runTask(LibsDisguises.getInstance());
         } else {
-            handleSync(observer, packet);
+            handleSync(observer, interactEntity);
         }
     }
 

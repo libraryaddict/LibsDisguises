@@ -73,3 +73,10 @@ DynamicExpiry: false
 
 # If the plugin should have some verbose logging, mostly only affects startup.
 VerboseLogging: false
+
+# The compatibility related settings
+Compatibility:
+  # To fix VoiceChat not working properly, LibsDisguises sends an invisible 'Marker' or 'Area Effect Cloud' when a player is disguised.
+  # This means clients with VoiceChat will properly recognize the location of players when they're disguised.
+  # In 1.17+, a 'Marker' is used, in older versions, an area effect cloud with a radius of 0 is used.
+  VoiceChat: true

@@ -44,6 +44,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.listeners.PlayerSkinHandler;
+import me.libraryaddict.disguise.utilities.movements.MovementTracker;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -125,6 +126,9 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
         com.github.retrooper.packetevents.protocol.world.Location pLoc =
             new com.github.retrooper.packetevents.protocol.world.Location(loc.getX(), loc.getY(), loc.getZ(), yaw, pitch);
+
+        List<MovementTracker> trackers = disguise.getInternals().getTrackers();
+        trackers.forEach(t -> t.onSpawn(observer, pLoc));
 
         boolean inLineOfSight = true;
 

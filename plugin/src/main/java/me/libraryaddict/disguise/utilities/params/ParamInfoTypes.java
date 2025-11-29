@@ -24,6 +24,7 @@ import me.libraryaddict.disguise.utilities.params.types.base.ParamInfoInteger;
 import me.libraryaddict.disguise.utilities.params.types.base.ParamInfoString;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoBlockPosition;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoBoatType;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoBoundingBox;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoChatColor;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoColor;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoComponent;
@@ -284,6 +285,7 @@ public class ParamInfoTypes {
         paramInfos.add(new ParamInfoDouble("Number.0", "A number which can have decimal places"));
         paramInfos.add(new ParamInfoByte("Number", "A whole number from -127 to 128"));
         paramInfos.add(new ParamInfoSoundGroup());
+        paramInfos.add(new ParamInfoBoundingBox());
 
         return paramInfos;
     }

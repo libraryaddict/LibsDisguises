@@ -9,8 +9,11 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.movements.MovementTracker;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
@@ -39,20 +42,34 @@ public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
             return null;
         }
 
+        List<MovementTracker> trackers = disguise.getInternals().getTrackers();
+        trackers.forEach(t -> t.onDespawn(player, true));
+        int[] toRemove;
+
+        if (entityId != DisguiseAPI.getSelfDisguiseId() && disguise.getMultiNameLength() > 0) {
+            toRemove = disguise.getArmorstandIds();
+        } else {
+            toRemove = new int[0];
+        }
+
         // Remove from 'is seeing currently'
         disguise.getInternals().addSeen(player, false);
 
-        if (entityId == DisguiseAPI.getSelfDisguiseId()) {
-            return null;
+        for (MovementTracker tracker : trackers) {
+            int[] remove = tracker.getOwnedEntityIds();
+
+            if (remove.length == 0) {
+                continue;
+            }
+
+            toRemove = Arrays.copyOf(toRemove, toRemove.length + remove.length);
+
+            for (int i = 0; i < remove.length; i++) {
+                toRemove[toRemove.length - (i + 1)] = remove[i];
+            }
         }
 
-        int len = disguise.getMultiNameLength();
-
-        if (len == 0) {
-            return null;
-        }
-
-        return disguise.getArmorstandIds();
+        return toRemove;
     }
 
     private void handleEntityId(Player player, int entityId) {
