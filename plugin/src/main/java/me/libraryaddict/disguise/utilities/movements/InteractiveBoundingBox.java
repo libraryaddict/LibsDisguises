@@ -25,6 +25,7 @@ import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,6 +65,7 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
         this.entityId = ReflectionManager.getNewEntityId();
     }
 
+    @ApiStatus.Internal
     public void setDisguise(Disguise disguise) {
         if (this.disguise != null) {
             throw new IllegalStateException("The disguise has already been set");
@@ -111,7 +113,7 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
         return DisguiseUtilities.getTrackingPlayers(disguise);
     }
 
-    public void setSize(int size) {
+    public InteractiveBoundingBox setSize(int size) {
         if (SlimeWatcher.class.isAssignableFrom(disguiseType.getWatcherClass())) {
             set(MetaIndex.SLIME_SIZE, size);
         } else if (disguiseType == DisguiseType.PHANTOM) {
@@ -119,28 +121,32 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
         } else {
             throw new IllegalArgumentException("Cannot call setSize on a non-slime & non-phantom type");
         }
+
+        return this;
     }
 
-    public void setSize(float width, float height) {
+    public InteractiveBoundingBox setSize(float width, float height) {
         if (disguiseType != DisguiseType.INTERACTION) {
             throw new IllegalArgumentException("This is only usable on Interaction");
         }
 
         set(MetaIndex.INTERACTION_WIDTH, width);
         set(MetaIndex.INTERACTION_HEIGHT, height);
+
+        return this;
     }
 
-    public void setScale(double scale) {
+    public InteractiveBoundingBox setScale(double scale) {
         if (disguiseType == DisguiseType.INTERACTION) {
             setSize((float) scale, (float) scale);
 
-            return;
+            return this;
         }
 
         this.scale = scale;
 
         if (!isValid() || !NmsVersion.v1_20_R4.isSupported()) {
-            return;
+            return this;
         }
 
         for (Player player : getEffectedPlayers()) {
@@ -150,8 +156,11 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
 
             PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, createAttributes());
         }
+
+        return this;
     }
 
+    @ApiStatus.Internal
     public void onSpawn() {
         if (!isValid()) {
             return;
@@ -167,6 +176,7 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
         }
     }
 
+    @ApiStatus.Internal
     public void onDespawn() {
         if (!isValid()) {
             return;
