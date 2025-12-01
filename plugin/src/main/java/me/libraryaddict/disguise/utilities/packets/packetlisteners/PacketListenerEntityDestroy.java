@@ -27,8 +27,13 @@ public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
             return;
         }
 
-        WrapperPlayServerDestroyEntities packet = new WrapperPlayServerDestroyEntities(event);
         Player player = event.getPlayer();
+
+        if (player == null) {
+            return;
+        }
+
+        WrapperPlayServerDestroyEntities packet = new WrapperPlayServerDestroyEntities(event);
 
         for (int entityId : packet.getEntityIds()) {
             handleEntityId(player, entityId);

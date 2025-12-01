@@ -41,6 +41,10 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
                 return;
             }
 
+            if (event.getPlayer() == null) {
+                return;
+            }
+
             if (!Bukkit.isPrimaryThread()) {
                 PacketPlayReceiveEvent cloned = event.clone();
                 new BukkitRunnable() {
@@ -54,7 +58,7 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
 
             final Player player = event.getPlayer();
 
-            if (player == null || player.getVehicle() != null) {
+            if (player.getVehicle() != null) {
                 return;
             }
 

@@ -26,6 +26,10 @@ public class PacketListenerTabList extends SimplePacketListenerAbstract {
 
         Player observer = event.getPlayer();
 
+        if (observer == null) {
+            return;
+        }
+
         Function<UUID, Boolean> shouldRemove = uuid -> {
             Player player = Bukkit.getPlayer(uuid);
 
