@@ -1258,6 +1258,30 @@ public class DisguiseConfig {
         public boolean isScoreboardPacketListenerNeeded() {
             return this == EXTENDED || this == TEAMS;
         }
+
+        public boolean isFakeEntity() {
+            return isArmorstandsType() || isTextDisplayType();
+        }
+
+        public boolean isArmorstandsType() {
+            return this == ARMORSTANDS;
+        }
+
+        public boolean isTextDisplayType() {
+            return this == TEXT_DISPLAY;
+        }
+
+        public boolean isVanillaType() {
+            return this == VANILLA;
+        }
+
+        public boolean isTeamsType() {
+            return this == TEAMS;
+        }
+
+        public boolean isExtendedType() {
+            return this == EXTENDED;
+        }
     }
 
     public enum UpdatesBranch {

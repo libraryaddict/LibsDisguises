@@ -149,7 +149,7 @@ public class PlayerDisguise extends TargetedDisguise {
     public boolean hasScoreboardName() {
         // I confuse myself with this
         // If armorstands name and display text names are NOT enabled, and it is a static name, then always return false
-        if (!DisguiseConfig.isArmorstandsName() && !DisguiseConfig.isDisplayTextName() && isStaticName(getName())) {
+        if (!getInternals().getNameDisplayType().isFakeEntity() && isStaticName(getName())) {
             return false;
         }
 
@@ -189,7 +189,7 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         if (isDisguiseInUse()) {
-            if (DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) {
+            if (getInternals().getNameDisplayType().isFakeEntity()) {
                 this.nameVisible = nameVisible;
                 sendArmorStands(isNameVisible() ? getMultiName() : new String[0]);
             } else if (!DisguiseConfig.isScoreboardNames()) {
@@ -233,7 +233,7 @@ public class PlayerDisguise extends TargetedDisguise {
         getWatcher().setInternalUpsideDown(upsideDown);
 
         if (isDisguiseInUse()) {
-            resendDisguise(DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName() ? getName() : "Dinnerbone", true);
+            resendDisguise(getInternals().getNameDisplayType().isFakeEntity() ? getName() : "Dinnerbone", true);
         } else {
             scoreboardName = null;
         }
@@ -249,7 +249,7 @@ public class PlayerDisguise extends TargetedDisguise {
         this.deadmau5Ears = deadmau5Ears;
 
         if (isDisguiseInUse()) {
-            resendDisguise(DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName() ? getName() : "deadmau5", true);
+            resendDisguise(getInternals().getNameDisplayType().isFakeEntity() ? getName() : "deadmau5", true);
         } else {
             scoreboardName = null;
         }
@@ -315,7 +315,7 @@ public class PlayerDisguise extends TargetedDisguise {
             }
         }
 
-        if (DisguiseConfig.isCopyPlayerTeamInfo() && DisguiseConfig.getPlayerNameType().isDisplayNameCopy()) {
+        if (DisguiseConfig.isCopyPlayerTeamInfo() && getInternals().getNameDisplayType().isDisplayNameCopy()) {
             name = DisguiseUtilities.getDisplayName(name);
         }
 
@@ -336,7 +336,7 @@ public class PlayerDisguise extends TargetedDisguise {
 
         int cLimit;
 
-        switch (DisguiseConfig.getPlayerNameType()) {
+        switch (getInternals().getNameDisplayType()) {
             case TEAMS:
                 cLimit = (NmsVersion.v1_13.isSupported() ? 64 : 16) * 2;
                 break;
@@ -363,7 +363,7 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         if (isDisguiseInUse()) {
-            if (DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) {
+            if (getInternals().getNameDisplayType().isFakeEntity()) {
                 playerName = name;
 
                 setNameVisible(!name.isEmpty(), true);
@@ -416,7 +416,7 @@ public class PlayerDisguise extends TargetedDisguise {
                 setScoreboardName(split);
             }
 
-            if (DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) {
+            if (getInternals().getNameDisplayType().isFakeEntity()) {
                 setMultiName(DisguiseUtilities.splitNewLine(name));
             }
 

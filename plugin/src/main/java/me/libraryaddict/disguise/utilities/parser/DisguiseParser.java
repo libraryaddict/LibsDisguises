@@ -1385,7 +1385,7 @@ public class DisguiseParser {
                 }
             }
 
-            if ((DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) &&
+            if (disguise.getInternals().getNameDisplayType().isFakeEntity() &&
                 ((methodToUse.getMappedName().equals("setName") && disguise.isPlayerDisguise()) ||
                     (DisguiseConfig.isOverrideCustomNames() && methodToUse.getMappedName().equals("setCustomName"))) &&
                 !sender.hasPermission("libsdisguises.multiname")) {

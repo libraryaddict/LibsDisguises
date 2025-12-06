@@ -140,7 +140,7 @@ public class PacketsManager {
         }
 
         // If armorstand packet listener was registered, but isn't wanted anymore
-        if (vehicleMovement != null && !DisguiseConfig.isArmorstandsName()) {
+        if (vehicleMovement != null && !DisguiseConfig.getPlayerNameType().isFakeEntity()) {
             PacketEvents.getAPI().getEventManager().unregisterListener(vehicleMovement);
             HandlerList.unregisterAll(vehicleMovement);
 
@@ -195,7 +195,7 @@ public class PacketsManager {
             PacketEvents.getAPI().getEventManager().registerListener(new PacketListenerScoreboardTeam());
         }
 
-        if (vehicleMovement == null && DisguiseConfig.isArmorstandsName()) {
+        if (vehicleMovement == null && DisguiseConfig.getPlayerNameType().isFakeEntity()) {
             vehicleMovement = new PacketListenerVehicleMovement();
 
             Bukkit.getPluginManager().registerEvents(vehicleMovement, LibsDisguises.getInstance());

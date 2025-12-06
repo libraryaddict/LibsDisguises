@@ -225,7 +225,7 @@ public class DisguiseUtilities {
         }
 
         public void handleTeam(Scoreboard board, boolean nameVisible) {
-            nameVisible = !(DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) && nameVisible;
+            nameVisible = !disguise.getInternals().getNameDisplayType().isFakeEntity() && nameVisible;
             Team team = board.getTeam(getTeamName());
 
             if (team == null) {
@@ -3828,7 +3828,7 @@ public class DisguiseUtilities {
         double startingY = loc.getY() + (height * heightScale);
         startingY += (getNameSpacing() * (heightScale - 1)) * 0.35;
 
-        if (DisguiseConfig.isDisplayTextName()) {
+        if (disguise.getInternals().getNameDisplayType().isTextDisplayType()) {
             String origLine = StringUtils.join(internalOldNames, "\n");
             String newLine = StringUtils.join(newNames, "\n");
 
@@ -3842,7 +3842,7 @@ public class DisguiseUtilities {
                 destroyIds = standIds;
             } else if (origLine.replace("\n", "").isEmpty()) {
                 // Spawn packet
-                addSpawn(disguise.getEntity(), loc, startingY, standIds, 0, packets, newLine);
+                addSpawn(disguise, disguise.getEntity(), loc, startingY, standIds, 0, packets, newLine);
             } else {
                 // Metadata packet, 0 is the slime, 1 is the text
                 packets.add(constructMetadata(standIds[1], newLine));
@@ -3870,7 +3870,7 @@ public class DisguiseUtilities {
                     destroyIds = Arrays.copyOf(destroyIds, destroyIds.length + 1);
                     destroyIds[destroyIds.length - 1] = standIds[loop];
                 } else {
-                    addSpawn(disguise.getEntity(), loc, startingY, standIds, loop, packets, name);
+                    addSpawn(disguise, disguise.getEntity(), loc, startingY, standIds, loop, packets, name);
                 }
             }
 
@@ -3887,48 +3887,21 @@ public class DisguiseUtilities {
         return packets;
     }
 
-    private static void addSpawn(Entity entity, Location loc, double startingY, int[] standIds, int index, List<PacketWrapper<?>> packets,
-                                 String line) {
-        List<EntityData<?>> watcherValues =
-            constructNameEntity(DisguiseConfig.isDisplayTextName() ? TextDisplayWatcher.class : ArmorStandWatcher.class, line);
+    private static void addSpawn(Disguise disguise, Entity entity, Location loc, double startingY, int[] standIds, int index,
+                                 List<PacketWrapper<?>> packets, String line) {
+        List<EntityData<?>> watcherValues = constructNameEntity(disguise,
+            disguise.getInternals().getNameDisplayType().isTextDisplayType() ? TextDisplayWatcher.class : ArmorStandWatcher.class, line);
         double y = startingY + (getNameSpacing() * index);
 
         int textEntityId = standIds[index];
 
-        if (DisguiseConfig.isDisplayTextName()) {
-            // With display text, the first ID is the middleman entity
-            int pufferfishId = textEntityId;
-            // The second ID is the text display
-            textEntityId = standIds[1];
-
+        if (disguise.getInternals().getNameDisplayType().isTextDisplayType()) {
             // The hardcoded offset picked specifically for the pufferfish
             WrapperPlayServerSpawnEntity spawnEntity =
                 new WrapperPlayServerSpawnEntity(textEntityId, Optional.of(UUID.randomUUID()), EntityTypes.TEXT_DISPLAY,
-                    new Vector3d(loc.getX(), y + 0.29, loc.getZ()), 0f, 0f, 0f, 0, Optional.of(Vector3d.zero()));
+                    new Vector3d(loc.getX(), y + 0.27, loc.getZ()), 0f, 0f, 0f, 0, Optional.of(Vector3d.zero()));
 
             packets.add(spawnEntity);
-
-            List<Entity> riding = entity.getPassengers();
-            int[] passengers = new int[]{riding.size() + 1};
-
-            for (int i = 0; i < riding.size(); i++) {
-                passengers[i] = riding.get(i).getEntityId();
-            }
-
-            passengers[passengers.length - 1] = pufferfishId;
-
-            WrapperPlayServerSetPassengers setPassengers = new WrapperPlayServerSetPassengers(entity.getEntityId(), passengers);
-
-            WrapperPlayServerSpawnEntity spawnPufferfish =
-                new WrapperPlayServerSpawnEntity(pufferfishId, Optional.of(UUID.randomUUID()), EntityTypes.PUFFERFISH,
-                    new Vector3d(loc.getX(), y, loc.getZ()), 0f, 0f, 0f, 0, Optional.of(Vector3d.zero()));
-            WrapperPlayServerSetPassengers pufferfishPassengers = new WrapperPlayServerSetPassengers(pufferfishId, new int[]{textEntityId});
-
-            packets.add(spawnPufferfish);
-            packets.add(setPassengers);
-            packets.add(pufferfishPassengers);
-
-            packets.add(new WrapperPlayServerEntityMetadata(pufferfishId, constructNameEntity(LivingWatcher.class, null)));
         } else if (NmsVersion.v1_19_R1.isSupported()) {
             WrapperPlayServerSpawnEntity spawnEntity =
                 new WrapperPlayServerSpawnEntity(textEntityId, Optional.of(UUID.randomUUID()), EntityTypes.ARMOR_STAND,
@@ -3962,7 +3935,7 @@ public class DisguiseUtilities {
         return new WrapperPlayServerEntityMetadata(entityId, Collections.singletonList(data));
     }
 
-    private static List<EntityData<?>> constructNameEntity(Class<? extends FlagWatcher> clss, String line) {
+    private static List<EntityData<?>> constructNameEntity(Disguise disguise, Class<? extends FlagWatcher> clss, String line) {
         List<EntityData<?>> watcherValues = new ArrayList<>();
 
         for (MetaIndex index : MetaIndex.getMetaIndexes(clss)) {
@@ -3978,7 +3951,7 @@ public class DisguiseUtilities {
             } else if (index == MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE && line != null) {
                 // Unfortunately text display custom name visible won't work as expected either
                 // It's either always hidden, or always showing if true
-                val = DisguiseConfig.isArmorstandsName();
+                val = disguise.getInternals().getNameDisplayType().isArmorstandsType();
             }
             // Armorstand specific
             else if (index == MetaIndex.ENTITY_CUSTOM_NAME && line != null) {

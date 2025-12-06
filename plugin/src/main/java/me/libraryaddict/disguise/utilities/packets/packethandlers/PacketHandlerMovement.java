@@ -13,7 +13,6 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityStatus;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
 import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -50,7 +49,7 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
     public void handle(Disguise disguise, LibsPackets<T> packets, Player observer, Entity entity) {
         handleMovement(disguise, packets, observer, entity);
 
-        if (DisguiseConfig.isArmorstandsName()) {
+        if (disguise.getInternals().getNameDisplayType().isArmorstandsType()) {
             DisguiseUtilities.adjustNamePositions(disguise, packets);
         }
     }

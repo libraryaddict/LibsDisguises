@@ -322,9 +322,9 @@ public abstract class Disguise {
         int desiredlength = getMultiNameLength();
 
         // If text display and there is a display
-        if (DisguiseConfig.isDisplayTextName() && desiredlength > 0) {
-            // We only have the slime & text display IDs
-            desiredlength = 2;
+        if (getInternals().getNameDisplayType().isTextDisplayType() && desiredlength > 0) {
+            // We only have the text display IDs
+            desiredlength = 1;
         }
 
         if (desiredlength > getInternalArmorstandIds().length) {

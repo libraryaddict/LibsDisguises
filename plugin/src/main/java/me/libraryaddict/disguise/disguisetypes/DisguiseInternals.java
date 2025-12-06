@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.movements.InteractiveBoundingBox;
@@ -67,6 +68,8 @@ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.Di
     private final List<MovementTracker> trackers = new ArrayList<>();
     @Getter
     private InteractiveBoundingBox interactiveBoundingBox;
+    @Getter
+    private final DisguiseConfig.PlayerNameType nameDisplayType = DisguiseConfig.getPlayerNameType();
 
     public DisguiseInternals(D disguise) {
         this.disguise = disguise;

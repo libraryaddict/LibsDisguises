@@ -35,8 +35,7 @@ public class PlayerDisguiseParam extends ExtraDisguiseParam<String> {
     public String createParametervalue(CommandSender sender, String arg) {
         arg = arg.replace("\\_", " ");
 
-        if ((DisguiseConfig.isArmorstandsName() || DisguiseConfig.isDisplayTextName()) && sender != null &&
-            !sender.hasPermission("libsdisguises.multiname")) {
+        if (DisguiseConfig.getPlayerNameType().isFakeEntity() && sender != null && !sender.hasPermission("libsdisguises.multiname")) {
             arg = DisguiseUtilities.quoteNewLine(arg);
         }
 
