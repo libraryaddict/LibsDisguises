@@ -144,7 +144,7 @@ public enum TranslateType {
                 .info("Loaded " + translated.size() + " translations for " + name() + " with " + diff + " changed");
         } else if (diff > 0 && !DisguiseConfig.isUseTranslations()) {
             LibsDisguises.getInstance().getLogger().info(
-                "Translations are disabled in libsdisguises.yml, but you modified " + diff + " messages in the translations for " + name() +
+                "Translations are disabled in premium.yml, but you modified " + diff + " messages in the translations for " + name() +
                     ". Is this intended?");
         }
     }

@@ -33,9 +33,9 @@ OverrideCustomNames: true
 #     Names will always show (ignores setCustomNameVisible), even if entity is invisible using potion effects - TEXT_DISPLAY too!
 #     Will act weirdly on Bedrock Minecraft, TEXT_DISPLAY is recommended instead
 #     Scoreboard displays won't appear (eg, health), use one of the above options instead
-# TEXT_DISPLAY - Names are limited to 1000+ chars, uses a Text Display -> riding invisible pufferfish (for position) -> riding disguised entity, via packets
+# TEXT_DISPLAY - Names are limited to 1000+ chars, uses a Text Display via packets
 #     If server is older than 1.19.4+, this will revert to ARMORSTANDS behavior
-#     Names remain perfectly in sync with the disguised entity, but multi-line names are rendered as a giant text block
+#     Names remain in sync with the disguised entity, but multi-line names are rendered as a giant text block
 # With ARMORSTANDS/TEXT_DISPLAY and Premium, you can also use multiple lines in the name, use \n as a seperator.
 # It's recommended that you restart the server after changing this setting, or at minimum, re-apply disguises to see the changes.
 # Default is ARMORSTANDS, recommended if you have no issues.
