@@ -49,7 +49,7 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
     public void handle(Disguise disguise, LibsPackets<T> packets, Player observer, Entity entity) {
         handleMovement(disguise, packets, observer, entity);
 
-        if (disguise.getInternals().getNameDisplayType().isArmorstandsType()) {
+        if (disguise.getInternals().getNameDisplayType().isFakeEntity()) {
             DisguiseUtilities.adjustNamePositions(disguise, packets);
         }
     }

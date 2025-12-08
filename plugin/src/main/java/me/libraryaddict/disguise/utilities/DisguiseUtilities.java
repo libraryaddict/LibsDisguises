@@ -265,6 +265,9 @@ public class DisguiseUtilities {
         long fetched;
     }
 
+    private static final double TEXT_DISPLAY_OFFSET = 0.27;
+    @Getter
+    private static final double nameSpacing = 0.28;
     @Getter
     public static final Random random = new Random();
     private static final LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<>();
@@ -525,10 +528,6 @@ public class DisguiseUtilities {
         attribute.getModifiers().stream().filter(DisguiseUtilities::isDisguisesSelfScalingAttribute).forEach(attribute::removeModifier);
     }
 
-    public static double getNameSpacing() {
-        return 0.28;
-    }
-
     public static String serialize(Component component) {
         return AdventureSerializer.serializer().gson().serialize(component);
     }
@@ -642,11 +641,15 @@ public class DisguiseUtilities {
             return null;
         }
 
-        ArrayList<PacketWrapper> toAdd = new ArrayList<>();
+        List<PacketWrapper> toAdd = new ArrayList<>();
         double height = (disguise.getHeight() + disguise.getWatcher().getNameYModifier());
         double heightScale = disguise.getDisguiseScale();
         height *= heightScale;
         height += (getNameSpacing() * (heightScale - 1)) * 0.35;
+
+        if (disguise.getInternals().getNameDisplayType().isTextDisplayType()) {
+            height += TEXT_DISPLAY_OFFSET;
+        }
 
         for (PacketWrapper packet : packets) {
             if (packet instanceof WrapperPlayServerEntityRotation) {
@@ -3899,7 +3902,7 @@ public class DisguiseUtilities {
             // The hardcoded offset picked specifically for the pufferfish
             WrapperPlayServerSpawnEntity spawnEntity =
                 new WrapperPlayServerSpawnEntity(textEntityId, Optional.of(UUID.randomUUID()), EntityTypes.TEXT_DISPLAY,
-                    new Vector3d(loc.getX(), y + 0.27, loc.getZ()), 0f, 0f, 0f, 0, Optional.of(Vector3d.zero()));
+                    new Vector3d(loc.getX(), y + TEXT_DISPLAY_OFFSET, loc.getZ()), 0f, 0f, 0f, 0, Optional.of(Vector3d.zero()));
 
             packets.add(spawnEntity);
         } else if (NmsVersion.v1_19_R1.isSupported()) {
