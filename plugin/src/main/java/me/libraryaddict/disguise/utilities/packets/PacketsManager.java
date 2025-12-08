@@ -230,7 +230,8 @@ public class PacketsManager {
 
         // Add the packet that makes sure that entities with armor do not send unpickupable armor on death
         if (isntHighPerformance || DisguiseConfig.isEntityStatusPacketsEnabled()) {
-            conflictingPackets[Server.ENTITY_STATUS.ordinal()] = true;
+            // TODO Handle this better
+            //conflictingPackets[Server.ENTITY_STATUS.ordinal()] = true;
         }
 
         return conflictingPackets;
