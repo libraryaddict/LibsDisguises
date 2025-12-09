@@ -21,12 +21,12 @@ For `build.gradle` you can use
 ```groovy
 repositories {
     maven {
-        url "https://repo.md-5.net/content/groups/public/"
+        url "https://mvn.lib.co.nz/public"
     }
 }
 
 dependencies {
-    implementation group: 'me.libraryaddict.disguises', name: 'libsdisguises', version: '11.0.0'
+    implementation group: 'me.libraryaddict.disguises', name: 'libsdisguises', version: '11.0.13'
 }
 ```
 
@@ -36,14 +36,14 @@ For maven's `pom.xml`, you can use
 
 ```xml
 <repository>
-    <id>md_5-public</id>
-    <url>https://repo.md-5.net/content/groups/public/</url>
+    <id>libsdisguises-public</id>
+    <url>https://mvn.lib.co.nz/public/</url>
 </repository>
 
 <dependency>
     <groupId>me.libraryaddict.disguises</groupId>
     <artifactId>libsdisguises</artifactId>
-    <version>11.0.0</version>
+    <version>11.0.13</version>
     <scope>provided</scope>
 </dependency>
 ```
