@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.packets;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Server;
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -149,6 +150,8 @@ public class PacketsManager {
 
         getPacketsHandler().registerPacketHandlers();
 
+        // TODO Populate the packets using the packethandlers, not hardcoded.
+
         boolean[] listenedPackets = new boolean[Server.values().length];
         boolean[] spawnPackets = new boolean[Server.values().length];
         boolean[] conflictingPackets = createConflicting(false);
@@ -175,6 +178,7 @@ public class PacketsManager {
             listenedPackets[Server.ENTITY_VELOCITY.ordinal()] = true;
             listenedPackets[Server.SET_PASSENGERS.ordinal()] = true;
             listenedPackets[Server.ENTITY_POSITION_SYNC.ordinal()] = true;
+            listenedPackets[Server.ENTITY_ROTATION.ordinal()] = true;
         }
 
         // Add equipment packet
@@ -182,8 +186,27 @@ public class PacketsManager {
             listenedPackets[Server.ENTITY_EQUIPMENT.ordinal()] = true;
         }
 
+        // Add status packet
+        if (DisguiseConfig.isEntityStatusPacketsEnabled()) {
+            listenedPackets[Server.ENTITY_STATUS.ordinal()] = true;
+        }
+
         for (int i = 0; i < listenedPackets.length; i++) {
             listenedPackets[i] |= conflictingPackets[i] || spawnPackets[i];
+        }
+
+        if (LibsDisguises.getInstance().isDebuggingBuild()) {
+            IPacketHandler[] handledPackets = packetsHandler.getPacketHandlers();
+
+            for (int i = 0; i < handledPackets.length; i++) {
+                if (handledPackets[i] == null || listenedPackets[i]) {
+                    continue;
+                }
+
+                LibsDisguises.getInstance().getLogger().severe(
+                    String.format("The packet handler %s has registered %s but it is not in the main listener",
+                        handledPackets[i].getClass(), PacketType.Play.Server.values()[i]));
+            }
         }
 
         mainListener = new PacketListenerMain(listenedPackets, spawnPackets, createConflicting(true));

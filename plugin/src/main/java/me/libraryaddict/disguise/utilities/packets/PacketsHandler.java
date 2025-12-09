@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -29,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PacketsHandler {
+    @Getter
     private final IPacketHandler[] packetHandlers = new IPacketHandler[PacketType.Play.Server.values().length];
 
     public PacketsHandler() {
