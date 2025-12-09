@@ -12,10 +12,6 @@ subprojects {
         }
 
         maven {
-            url = uri("https://repo.md-5.net/content/groups/public/")
-        }
-
-        maven {
             url = uri("https://repo.papermc.io/repository/maven-public/")
         }
 
