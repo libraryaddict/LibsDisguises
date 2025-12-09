@@ -65,7 +65,15 @@ public class PacketsHandler {
 
         for (IPacketHandler handler : packetHandlers) {
             for (PacketTypeCommon packetType : handler.getHandledPackets()) {
-                this.packetHandlers[((Enum) packetType).ordinal()] = handler;
+                int index = ((Enum) packetType).ordinal();
+
+                if (this.packetHandlers[index] != null) {
+                    LibsDisguises.getInstance().getLogger().severe(
+                        String.format("The packet %s has a handler for %s, but %s is overriding it", ((Enum<?>) packetType).name(),
+                            this.packetHandlers[index].getClass(), handler.getClass()));
+                }
+
+                this.packetHandlers[index] = handler;
             }
         }
     }
