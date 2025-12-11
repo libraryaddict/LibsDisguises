@@ -5,6 +5,8 @@ import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloStat
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataType;
 import com.github.retrooper.packetevents.protocol.entity.data.struct.CopperGolemState;
 import com.github.retrooper.packetevents.protocol.entity.data.struct.WeatheringCopperState;
+import com.github.retrooper.packetevents.protocol.entity.nautilus.ZombieNautilusVariant;
+import com.github.retrooper.packetevents.protocol.entity.nautilus.ZombieNautilusVariants;
 import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.protocol.entity.sniffer.SnifferState;
 import com.github.retrooper.packetevents.protocol.entity.villager.VillagerData;
@@ -16,6 +18,7 @@ import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.particle.Particle;
 import com.github.retrooper.packetevents.protocol.particle.data.ParticleColorData;
 import com.github.retrooper.packetevents.protocol.particle.type.ParticleTypes;
+import com.github.retrooper.packetevents.protocol.player.HumanoidArm;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
@@ -86,6 +89,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.MinecartCommandWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartFurnaceWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MushroomCowWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.NautilusWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.OcelotWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.OminousItemSpawnerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
@@ -127,6 +131,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.WitherSkullWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WitherWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZoglinWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ZombieNautilusWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieVillagerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -277,7 +282,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<Byte> AVATAR_SKIN = new MetaIndex<>(AvatarWatcher.class, 1, (byte) 127);
 
     @NmsAddedIn(NmsVersion.v1_21_R6)
-    public static MetaIndex<Byte> AVATAR_HAND = new MetaIndex<>(AvatarWatcher.class, 0, (byte) 1);
+    public static MetaIndex<HumanoidArm> AVATAR_HAND = new MetaIndex<>(AvatarWatcher.class, 0, HumanoidArm.RIGHT);
 
     @NmsAddedIn(NmsVersion.v1_17)
     public static MetaIndex<Axolotl.Variant> AXOLOTL_VARIANT =
@@ -298,7 +303,12 @@ public class MetaIndex<Y> {
     public static MetaIndex<Byte> BEE_META = new MetaIndex<>(BeeWatcher.class, 0, (byte) 0);
 
     @NmsAddedIn(NmsVersion.v1_15)
-    public static MetaIndex<Integer> BEE_ANGER = new MetaIndex<>(BeeWatcher.class, 1, 0);
+
+    @NmsRemovedIn(NmsVersion.v1_21_R7)
+    public static MetaIndex<Integer> BEE_ANGER_OLD = new MetaIndex<>(BeeWatcher.class, 1, 0);
+
+    @NmsAddedIn(NmsVersion.v1_21_R7)
+    public static MetaIndex<Long> BEE_ANGER = new MetaIndex<>(BeeWatcher.class, 1, -1L);
 
     /**
      * If the blaze is ignited, false/true state
@@ -778,6 +788,9 @@ public class MetaIndex<Y> {
     public static MetaIndex<MushroomCow.Variant> MUSHROOM_COW_TYPE =
         new MetaIndex<>(MushroomCowWatcher.class, 0, NmsVersion.v1_14.isSupported() ? MushroomCow.Variant.RED : null);
 
+    @NmsAddedIn(NmsVersion.v1_21_R7)
+    public static MetaIndex<Boolean> NAUTILUS_DASHING = new MetaIndex<>(NautilusWatcher.class, 0, false);
+
     @NmsRemovedIn(NmsVersion.v1_14)
     public static MetaIndex<Ocelot.Type> OCELOT_TYPE =
         new MetaIndex<>(OcelotWatcher.class, 0, !NmsVersion.v1_14.isSupported() ? Ocelot.Type.WILD_OCELOT : null);
@@ -1005,7 +1018,11 @@ public class MetaIndex<Y> {
     public static MetaIndex<AnimalColor> WOLF_COLLAR = new MetaIndex<>(WolfWatcher.class, 2, AnimalColor.RED);
 
     @NmsAddedIn(NmsVersion.v1_16)
-    public static MetaIndex<Integer> WOLF_ANGER = new MetaIndex<>(WolfWatcher.class, 3, 0);
+    @NmsRemovedIn(NmsVersion.v1_21_R7)
+    public static MetaIndex<Integer> WOLF_ANGER_OLD = new MetaIndex<>(WolfWatcher.class, 3, 0);
+
+    @NmsAddedIn(NmsVersion.v1_21_R7)
+    public static MetaIndex<Long> WOLF_ANGER = new MetaIndex<>(WolfWatcher.class, 3, -1L);
 
     @NmsAddedIn(NmsVersion.v1_20_R4)
     public static MetaIndex<Wolf.Variant> WOLF_VARIANT =
@@ -1029,6 +1046,9 @@ public class MetaIndex<Y> {
 
     @NmsAddedIn(NmsVersion.v1_13)
     public static MetaIndex<Boolean> ZOMBIE_CONVERTING_DROWNED = new MetaIndex<>(ZombieWatcher.class, 3, false);
+
+    public static MetaIndex<ZombieNautilusVariant> ZOMBIE_NAUTILUS_VARIANT =
+        new MetaIndex<>(ZombieNautilusWatcher.class, 0, ZombieNautilusVariants.TEMPERATE);
 
     /**
      * Shown for villager conversion

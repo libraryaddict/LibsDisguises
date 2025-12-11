@@ -4,7 +4,6 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
 import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
-import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloState;
 import com.github.retrooper.packetevents.protocol.entity.cat.CatVariant;
 import com.github.retrooper.packetevents.protocol.entity.cat.CatVariants;
 import com.github.retrooper.packetevents.protocol.entity.chicken.ChickenVariant;
@@ -20,8 +19,6 @@ import com.github.retrooper.packetevents.protocol.entity.frog.FrogVariant;
 import com.github.retrooper.packetevents.protocol.entity.frog.FrogVariants;
 import com.github.retrooper.packetevents.protocol.entity.pig.PigVariant;
 import com.github.retrooper.packetevents.protocol.entity.pig.PigVariants;
-import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
-import com.github.retrooper.packetevents.protocol.entity.sniffer.SnifferState;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfVariant;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfVariants;
 import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
@@ -66,6 +63,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.AgeableAquaWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BoatWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.CamelWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ChestBoatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FishWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
@@ -1164,8 +1162,7 @@ public class ReflectionManager {
             return RabbitType.getTypeId((Rabbit.Type) value);
         } else if (index == MetaIndex.CAT_COLLAR || index == MetaIndex.WOLF_COLLAR) {
             return (int) ((AnimalColor) value).getDyeColor().getWoolData();
-        } else if (value instanceof Enum && !(value instanceof SnifferState || value instanceof EntityPose || value instanceof BlockFace ||
-            value instanceof ArmadilloState || value instanceof CopperGolemState || value instanceof WeatheringCopperState)) {
+        } else if (value instanceof Enum && !value.getClass().getName().startsWith("com.github.retrooper.packetevents")) {
             int v = enumOrdinal(value);
 
             if (index.isByteValues()) {
@@ -1385,6 +1382,9 @@ public class ReflectionManager {
                     break;
                 case LINGERING_POTION:
                     watcherClass = SplashPotionWatcher.class;
+                    break;
+                case CAMEL_HUSK:
+                    watcherClass = CamelWatcher.class;
                     break;
                 default:
                     watcherClass = (Class<? extends FlagWatcher>) Class.forName(
@@ -1867,6 +1867,8 @@ public class ReflectionManager {
                 } else {
                     return EntityDataTypes.STRING;
                 }
+            } else if (index == MetaIndex.AVATAR_HAND) {
+                return EntityDataTypes.HUMANOID_ARM;
             }
 
             Type type1 = ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];

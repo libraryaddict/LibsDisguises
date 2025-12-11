@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import com.github.retrooper.packetevents.protocol.player.HumanoidArm;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -13,22 +14,30 @@ public abstract class AvatarWatcher extends LivingWatcher {
 
         // We set these values so that it doesn't obey the actual player's settings
         setData(getSkinMeta(), getSkinMeta().getDefault());
-        setData(getHandMeta(), (byte) 1); // I may be left handed, but the others are not
+        setMainHand(MainHand.RIGHT); // I may be left handed, but the others are not
     }
 
     public MainHand getMainHand() {
-        return MainHand.values()[getData(getHandMeta())];
+        if (getHandMeta().getDefault() instanceof HumanoidArm) {
+            return MainHand.valueOf(((HumanoidArm) getData(getHandMeta())).name());
+        }
+
+        return MainHand.values()[(byte) getData(getHandMeta())];
     }
 
     public void setMainHand(MainHand mainHand) {
-        sendData(getHandMeta(), mainHand != null ? (byte) mainHand.ordinal() : null);
+        if (getHandMeta().getDefault() instanceof HumanoidArm) {
+            sendData((MetaIndex<HumanoidArm>) getHandMeta(), mainHand != null ? HumanoidArm.valueOf(mainHand.name()) : null);
+        } else {
+            sendData((MetaIndex<Byte>) getHandMeta(), mainHand != null ? (byte) mainHand.ordinal() : null);
+        }
     }
 
     protected MetaIndex<Byte> getSkinMeta() {
         return MetaIndex.AVATAR_SKIN;
     }
 
-    protected MetaIndex<Byte> getHandMeta() {
+    protected MetaIndex<?> getHandMeta() {
         return MetaIndex.AVATAR_HAND;
     }
 

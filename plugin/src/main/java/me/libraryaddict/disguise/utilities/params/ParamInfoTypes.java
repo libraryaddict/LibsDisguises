@@ -83,6 +83,7 @@ import org.bukkit.entity.TextDisplay;
 import org.bukkit.entity.TropicalFish;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Wolf;
+import org.bukkit.entity.ZombieNautilus;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MainHand;
 import org.bukkit.potion.PotionEffectType;
@@ -241,6 +242,10 @@ public class ParamInfoTypes {
         if (NmsVersion.v1_21_R6.isSupported()) {
             paramInfos.add(new ParamInfoEnum(CopperGolemState.class, "Copper Golem State", "The state of a Copper Golem"));
             paramInfos.add(new ParamInfoEnum(WeatheringCopperState.class, "Weathering Copper State", "The state of oxidizing copper"));
+        }
+
+        if (NmsVersion.v1_21_R7.isSupported()) {
+            paramInfos.add(new ParamInfoEnum(ZombieNautilus.Variant.class, "Zombie Nautilus Variant", "The variant of a zombie nautilus"));
         }
 
         paramInfos.add(new ParamInfoEnum(DisguiseConfig.NotifyBar.class, "NotifyBar", "Where the disguised indicator should appear"));

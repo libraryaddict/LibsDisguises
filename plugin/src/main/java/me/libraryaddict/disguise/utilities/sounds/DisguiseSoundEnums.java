@@ -110,7 +110,12 @@ public class DisguiseSoundEnums {
         register("CAMEL").setHurt("entity.camel.hurt").setDeath("entity.camel.death").setStep("entity.camel.step", "entity.camel.step_sand")
             .setIdle("entity.camel.ambient")
             .setIgnored("entity.camel.dash", "entity.camel.dash_ready", "entity.camel.eat", "entity.camel.saddle", "entity.camel.sit",
-                "entity.camel.stand");
+                "entity.camel.stand", "entity.horse.land", "item.saddle.unequip");
+
+        register("CAMEL_HUSK").setHurt("entity.camel_husk.hurt").setDeath("entity.camel_husk.death")
+            .setStep("entity.camel_husk.step", "entity.camel_husk.step_sand").setIdle("entity.camel_husk.ambient")
+            .setIgnored("entity.camel_husk.dash", "entity.camel_husk.dash_ready", "entity.camel_husk.eat", "entity.camel_husk.saddle",
+                "entity.camel_husk.sit", "entity.camel_husk.stand", "entity.horse.land", "item.saddle.unequip");
 
         register("CAT").setHurt("entity.cat.hurt").setDeath("entity.cat.death").setIdle("entity.cat.ambient")
             .setIgnored("entity.cat.purr", "entity.cat.purreow", "entity.cat.hiss");
@@ -270,6 +275,13 @@ public class DisguiseSoundEnums {
         register("MUSHROOM_COW").setHurt("entity.cow.hurt").setDeath("entity.cow.death").setStep("entity.cow.step")
             .setIdle("entity.cow.ambient");
 
+        register("NAUTILUS").setHurt("entity.nautilus.hurt", "entity.nautilus.hurt_land")
+            .setDeath("entity.nautilus.death", "entity.nautilus.death_land")
+            .setIdle("entity.nautilus.ambient", "entity.nautilus.ambient_land").setStep("entity.nautilus.swim")
+            .setIgnored("entity.nautilus.riding", "entity.nautilus.eat", "entity.nautilus.dash", "entity.nautilus.dash",
+                "entity.nautilus.dash_land", "entity.nautilus.dash_ready", "entity.nautilus.dash_ready_land", "item.nautilus_saddle_equip",
+                "item.nautilus_saddle_underwater_equip", "item.saddle.unequip", "item.armor.equip_nautilus", "item.armor.unequip_nautilus");
+
         register("OCELOT").setHurt("entity.cat.hurt").setDeath("entity.cat.death").setStep("block.grass.step")
             .setIdle("entity.cat.ambient", "entity.cat.purr", "entity.cat.purreow").setIgnored("entity.cat.hiss");
 
@@ -277,6 +289,9 @@ public class DisguiseSoundEnums {
             .setIdle("entity.panda.ambient", "entity.panda.aggressive_ambient", "entity.panda.worried_ambient")
             .setIgnored("entity.panda.bite", "entity.panda.cant_breed", "entity.panda.eat", "entity.panda.pre_sneeze",
                 "entity.panda.sneeze");
+
+        register("PARCHED").setHurt("entity.parched.hurt").setDeath("entity.parched.death").setStep("entity.parched.step")
+            .setIdle("entity.parched.ambient");
 
         register("PARROT").setHurt("entity.parrot.hurt").setStep("entity.parrot.step").setDeath("entity.parrot.death")
             .setIdle("entity.parrot.ambient").setIgnored("entity.parrot.eat", "entity.parrot.fly", "^entity\\.parrot\\.imitate\\..+");
@@ -428,6 +443,14 @@ public class DisguiseSoundEnums {
             .setStep("block.grass.step", "entity.horse.step_wood").setIdle("entity.zombie_horse.ambient")
             .setIgnored("entity.horse.gallop", "entity.horse.saddle", "entity.horse.armor", "entity.horse.land", "entity.horse.jump",
                 "entity.horse.angry");
+
+        register("ZOMBIE_NAUTILUS").setHurt("entity.zombie_nautilus.hurt", "entity.zombie_nautilus.hurt_land")
+            .setDeath("entity.zombie_nautilus.death", "entity.zombie_nautilus.death_land")
+            .setIdle("entity.zombie_nautilus.ambient", "entity.zombie_nautilus.ambient_land").setStep("entity.zombie_nautilus.swim")
+            .setIgnored("entity.nautilus.riding", "entity.zombie_nautilus.eat", "entity.zombie_nautilus.dash",
+                "entity.zombie_nautilus.dash", "entity.zombie_nautilus.dash_land", "entity.zombie_nautilus.dash_ready",
+                "entity.zombie_nautilus.dash_ready_land", "item.nautilus_saddle_equip", "item.nautilus_saddle_underwater_equip",
+                "item.saddle.unequip", "item.armor.equip_nautilus", "item.armor.unequip_nautilus");
 
         register("ZOMBIE_VILLAGER").setHurt("entity.zombie_villager.hurt").setDeath("entity.zombie_villager.death")
             .setStep("entity.zombie_villager.step").setIdle("entity.zombie_villager.ambient")

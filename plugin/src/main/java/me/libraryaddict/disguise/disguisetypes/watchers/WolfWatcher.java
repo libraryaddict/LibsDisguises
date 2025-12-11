@@ -104,14 +104,26 @@ public class WolfWatcher extends TameableWatcher {
     }
 
     @NmsAddedIn(NmsVersion.v1_16)
+    @NmsRemovedIn(NmsVersion.v1_21_R7)
     public int getAnger() {
-        return getData(MetaIndex.WOLF_ANGER);
+        return getData(MetaIndex.WOLF_ANGER_OLD);
     }
 
     @NmsAddedIn(NmsVersion.v1_16)
+    @NmsRemovedIn(NmsVersion.v1_21_R7)
     public void setAnger(int anger) {
         // TODO Does this have a visible effect?
-        sendData(MetaIndex.WOLF_ANGER, anger);
+        sendData(MetaIndex.WOLF_ANGER_OLD, anger);
+    }
+
+    @NmsAddedIn(NmsVersion.v1_21_R7)
+    public long getAngryUntil() {
+        return getData(MetaIndex.WOLF_ANGER);
+    }
+
+    @NmsAddedIn(NmsVersion.v1_21_R7)
+    public void setAngryUntil(long wolfAngryUntilTime) {
+        sendData(MetaIndex.WOLF_ANGER, wolfAngryUntilTime);
     }
 
     /**

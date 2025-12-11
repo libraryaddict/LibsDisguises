@@ -17,11 +17,11 @@ proguard-version = "7.8.0"
 
 net-kyori-adventure-api = "4.25.0"
 net-kyori-adventure-platform = "4.4.1"
-com-retro-packetevents = "2.10.0"
+com-retro-packetevents = "2.11.0"
 placeholder-api = "2.11.6"
 
-org-spigotmc-spigot = "1.21.10-R0.1-SNAPSHOT"
-io-papermc-paper-api = "1.21.10-R0.1-SNAPSHOT"
+org-spigotmc-spigot = "1.21.11-R0.1-SNAPSHOT"
+io-papermc-paper-api = "1.21.11-R0.1-SNAPSHOT"
 
 
 [libraries]

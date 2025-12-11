@@ -34,7 +34,7 @@ public class PlayerWatcher extends AvatarWatcher {
     }
 
     @Override
-    protected MetaIndex<Byte> getHandMeta() {
+    protected MetaIndex<?> getHandMeta() {
         if (!NmsVersion.v1_21_R6.isSupported()) {
             return MetaIndex.PLAYER_HAND;
         }

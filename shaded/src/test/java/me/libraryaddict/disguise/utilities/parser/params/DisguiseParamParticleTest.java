@@ -342,8 +342,8 @@ public class DisguiseParamParticleTest {
         runTest("entity_effect:0.5,RED", "entity_effect:127:RED", new Particle<>(ParticleTypes.ENTITY_EFFECT,
             new ParticleColorData(new AlphaColor(127, bRed.getRed(), bRed.getGreen(), bRed.getBlue()))));
         // Test with a color that's not known by name
-        runTest("entity_effect:127:239,251,196",
-            new Particle<>(ParticleTypes.ENTITY_EFFECT, new ParticleColorData(new AlphaColor(0.5f, 20, 40, 60))));
+        runTest("entity_effect:127:20,40,60",
+            new Particle<>(ParticleTypes.ENTITY_EFFECT, new ParticleColorData(new AlphaColor(127, 20, 40, 60))));
         runTest("entity_effect:PURPLE", "entity_effect:255:PURPLE", new Particle<>(ParticleTypes.ENTITY_EFFECT,
             new ParticleColorData(new AlphaColor(255, bPurple.getRed(), bPurple.getGreen(), bPurple.getBlue()))));
         runTest("entity_effect:16711620", "entity_effect:0:254,255,196",

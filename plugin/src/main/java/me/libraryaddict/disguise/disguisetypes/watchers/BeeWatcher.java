@@ -4,6 +4,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 
 @NmsAddedIn(NmsVersion.v1_15)
 public class BeeWatcher extends AgeableWatcher {
@@ -11,12 +12,24 @@ public class BeeWatcher extends AgeableWatcher {
         super(disguise);
     }
 
+    @NmsRemovedIn(NmsVersion.v1_21_R7)
     public int getBeeAnger() {
+        return getData(MetaIndex.BEE_ANGER_OLD);
+    }
+
+    @NmsRemovedIn(NmsVersion.v1_21_R7)
+    public void setBeeAnger(int beeAnger) {
+        sendData(MetaIndex.BEE_ANGER_OLD, beeAnger);
+    }
+
+    @NmsAddedIn(NmsVersion.v1_21_R7)
+    public long getAngryUntil() {
         return getData(MetaIndex.BEE_ANGER);
     }
 
-    public void setBeeAnger(int beeAnger) {
-        sendData(MetaIndex.BEE_ANGER, beeAnger);
+    @NmsAddedIn(NmsVersion.v1_21_R7)
+    public void setAngryUntil(long beeAngryUntilTime) {
+        sendData(MetaIndex.BEE_ANGER, beeAngryUntilTime);
     }
 
     public void setHasNectar(boolean hasNectar) {

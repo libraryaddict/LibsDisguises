@@ -61,6 +61,8 @@ public enum DisguiseType {
 
     @NmsAddedIn(NmsVersion.v1_20_R1) CAMEL,
 
+    @NmsAddedIn(NmsVersion.v1_21_R7) CAMEL_HUSK,
+
     @NmsAddedIn(NmsVersion.v1_14) CAT,
 
     CAVE_SPIDER,
@@ -208,6 +210,8 @@ public enum DisguiseType {
 
     @NmsEntityName("mooshroom") MUSHROOM_COW,
 
+    @NmsAddedIn(NmsVersion.v1_21_R7) NAUTILUS,
+
     @NmsAddedIn(NmsVersion.v1_21_R2) OAK_BOAT,
 
     @NmsAddedIn(NmsVersion.v1_21_R2) OAK_CHEST_BOAT,
@@ -223,6 +227,8 @@ public enum DisguiseType {
     @NmsAddedIn(NmsVersion.v1_21_R3) PALE_OAK_CHEST_BOAT,
 
     @NmsAddedIn(NmsVersion.v1_14) PANDA,
+
+    @NmsAddedIn(NmsVersion.v1_21_R7) PARCHED,
 
     PARROT,
 
@@ -335,6 +341,8 @@ public enum DisguiseType {
     ZOMBIE,
 
     ZOMBIE_HORSE,
+
+    @NmsAddedIn(NmsVersion.v1_21_R7) ZOMBIE_NAUTILUS,
 
     ZOMBIE_VILLAGER,
 
