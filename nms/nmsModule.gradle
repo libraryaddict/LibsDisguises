@@ -4,6 +4,7 @@ apply plugin: 'java-library'
 apply plugin: 'idea'
 apply plugin: 'org.jetbrains.gradle.plugin.idea-ext'
 
+apply from: rootProject.file('nms/generator.gradle')
 apply from: rootProject.file('nms/specialSource.gradle')
 
 ext {
@@ -11,6 +12,12 @@ ext {
     craftbukkitVersion = 'UNSPECIFIED'
     // This can be overridden by projects that apply this script.
     remapServerCode = true
+}
+
+generationConfig {
+    templateDir = rootProject.project(':nms').layout.projectDirectory.dir('src/main/java-templates')
+    defaultProperties = rootProject.project(':nms').layout.projectDirectory.file('src/main/resources/default.properties')
+    overrideProperties = layout.projectDirectory.file('src/main/resources/override.properties')
 }
 
 dependencies {
@@ -28,50 +35,6 @@ dependencies {
             implementation "org.spigotmc:minecraft-server:${craftbukkitVersion}:maps-spigot@csrg"
         } else {
             implementation "org.spigotmc:spigot:${craftbukkitVersion}"
-        }
-    }
-}
-
-// Define the directory for the generated sources.
-def generatedSourcesDir = file("$buildDir/generated/java/main")
-
-task generateSharedNmsSources(type: Sync) {
-    // The task considered outdated if files change.
-    inputs.files(project(':nms').sourceSets.main.java)
-    outputs.dir(generatedSourcesDir)
-
-    from project(':nms').sourceSets.main.java
-    into generatedSourcesDir
-
-    eachFile { FileCopyDetails details ->
-        String newPath = details.relativePath.pathString.replace("version", project.description)
-        details.setRelativePath(RelativePath.parse(true, newPath))
-    }
-
-    filter { String line ->
-        line.replace("v1_17_R1", project.description)
-            .replace("package me.libraryaddict.disguise.utilities.reflection.version;",
-            "package me.libraryaddict.disguise.utilities.reflection.${project.description};")
-    }
-}
-
-// Add the generated sources to the main source set.
-sourceSets.main.java.srcDir generatedSourcesDir
-
-// Make the compileJava task depend on the source generation task.
-compileJava.dependsOn generateSharedNmsSources
-
-// Configure the 'idea' plugin to recognize the generated source directory.
-rootProject.idea {
-    module {
-        generatedSourceDirs += generatedSourcesDir
-    }
-
-    project {
-        settings {
-            taskTriggers {
-                beforeSync generateSharedNmsSources
-            }
         }
     }
 }

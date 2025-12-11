@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.utilities.reflection.version;
+package me.libraryaddict.disguise.utilities.reflection.@NMS_VERSION@;
 
 import com.mojang.authlib.GameProfile;
 import lombok.SneakyThrows;
@@ -18,12 +18,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_17_R1.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_17_R1.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.@NMS_VERSION@.CraftServer;
+import org.bukkit.craftbukkit.@NMS_VERSION@.CraftWorld;
+import org.bukkit.craftbukkit.@NMS_VERSION@.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.@NMS_VERSION@.entity.CraftEntity;
+import org.bukkit.craftbukkit.@NMS_VERSION@.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.@NMS_VERSION@.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -59,7 +59,7 @@ abstract class ReflectionReusedNms extends ReflectionManagerAbstract {
      */
     @Override
     public final void setImpulse(Entity entity) {
-        ((CraftEntity) entity).getHandle().hasImpulse = true;
+        ((CraftEntity) entity).getHandle().@needs_sync@ = true;
     }
 
     @Override
