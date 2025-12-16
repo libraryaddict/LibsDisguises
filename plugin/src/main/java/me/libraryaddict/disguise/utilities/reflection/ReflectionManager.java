@@ -26,6 +26,7 @@ import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.nbt.NBTList;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import com.github.retrooper.packetevents.protocol.player.HumanoidArm;
 import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
@@ -1049,6 +1050,8 @@ public class ReflectionManager {
             return (T) fromEnum(ItemDisplay.ItemDisplayTransform.class, (byte) value);
         } else if (index == MetaIndex.BOAT_TYPE_NEW) {
             return (T) fromEnum(Boat.Type.class, (int) value);
+        } else if (index == MetaIndex.AVATAR_HAND && !NmsVersion.v1_21_R7.isSupported()) {
+            return (T) fromEnum(HumanoidArm.class, (byte) value);
         }
 
         return (T) value;
@@ -1162,6 +1165,8 @@ public class ReflectionManager {
             return RabbitType.getTypeId((Rabbit.Type) value);
         } else if (index == MetaIndex.CAT_COLLAR || index == MetaIndex.WOLF_COLLAR) {
             return (int) ((AnimalColor) value).getDyeColor().getWoolData();
+        } else if (index == MetaIndex.AVATAR_HAND && !NmsVersion.v1_21_R7.isSupported()) {
+            return (byte) ((HumanoidArm) value).getId();
         } else if (value instanceof Enum && !value.getClass().getName().startsWith("com.github.retrooper.packetevents")) {
             int v = enumOrdinal(value);
 
@@ -1868,6 +1873,10 @@ public class ReflectionManager {
                     return EntityDataTypes.STRING;
                 }
             } else if (index == MetaIndex.AVATAR_HAND) {
+                if (!NmsVersion.v1_21_R7.isSupported()) {
+                    return EntityDataTypes.BYTE;
+                }
+
                 return EntityDataTypes.HUMANOID_ARM;
             }
 
