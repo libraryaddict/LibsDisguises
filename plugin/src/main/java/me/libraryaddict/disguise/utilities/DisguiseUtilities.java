@@ -434,18 +434,6 @@ public class DisguiseUtilities {
                 throw new IllegalArgumentException("Unable to load water breathing enchantment");
             }
 
-            whitelistedEnchantments.put(Enchantment.DEPTH_STRIDER, EnchantmentTypes.DEPTH_STRIDER);
-            whitelistedEnchantments.put(getWaterbreathingEnchantment(), EnchantmentTypes.RESPIRATION);
-
-            if (Bukkit.getServer() != null && NmsVersion.v1_13.isSupported()) {
-                whitelistedEnchantments.put(Enchantment.RIPTIDE, EnchantmentTypes.RIPTIDE);
-
-                if (NmsVersion.v1_19_R1.isSupported()) {
-                    whitelistedEnchantments.put(Enchantment.SOUL_SPEED, EnchantmentTypes.SOUL_SPEED);
-                    whitelistedEnchantments.put(Enchantment.SWIFT_SNEAK, EnchantmentTypes.SWIFT_SNEAK);
-                }
-            }
-
             try {
                 Class c = Class.forName(
                     new String(Base64.getDecoder().decode("bWUubGlicmFyeWFkZGljdC5kaXNndWlzZS51dGlsaXRpZXMuTGlic1ByZW1pdW0="),
@@ -2164,6 +2152,20 @@ public class DisguiseUtilities {
                         }
                     }
                 }.runTaskAsynchronously(LibsDisguises.getInstance());
+            }
+        }
+
+        if (whitelistedEnchantments.isEmpty()) {
+            whitelistedEnchantments.put(Enchantment.DEPTH_STRIDER, EnchantmentTypes.DEPTH_STRIDER);
+            whitelistedEnchantments.put(getWaterbreathingEnchantment(), EnchantmentTypes.RESPIRATION);
+
+            if (Bukkit.getServer() != null && NmsVersion.v1_13.isSupported()) {
+                whitelistedEnchantments.put(Enchantment.RIPTIDE, EnchantmentTypes.RIPTIDE);
+
+                if (NmsVersion.v1_19_R1.isSupported()) {
+                    whitelistedEnchantments.put(Enchantment.SOUL_SPEED, EnchantmentTypes.SOUL_SPEED);
+                    whitelistedEnchantments.put(Enchantment.SWIFT_SNEAK, EnchantmentTypes.SWIFT_SNEAK);
+                }
             }
         }
     }
