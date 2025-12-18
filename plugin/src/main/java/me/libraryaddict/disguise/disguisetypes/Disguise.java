@@ -551,15 +551,20 @@ public abstract class Disguise {
      */
     public Disguise setEntity(Entity entity) {
         if (getEntity() != null) {
+            if (LibsDisguises.getInstance() == null) {
+                throw new IllegalArgumentException(
+                    "Lib's Disguises did not start up properly, was the plugin shaded into a third party plugin? It shouldn't be!");
+            }
+
             if (getEntity() == entity) {
                 return this;
             }
 
-            throw new RuntimeException("This disguise is already in use! Try .clone()");
+            throw new IllegalArgumentException("This disguise is already in use! Try .clone()");
         }
 
         if (isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
-            throw new RuntimeException(
+            throw new IllegalArgumentException(
                 "Cannot disguise a living entity with a misc disguise. Reenable MiscDisguisesForLiving in the " + "config to do this");
         }
 
