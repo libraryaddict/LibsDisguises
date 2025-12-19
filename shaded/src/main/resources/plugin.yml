@@ -7,7 +7,10 @@ build-number: ${buildNumber}
 build-hash: ${buildHash}
 author: libraryaddict
 authors: [ Byteflux, Navid K. ]
-softdepend: [ packetevents, PlaceholderAPI ]
+softdepend:
+  - packetevents
+  - PlaceholderAPI
+  - Vulcan
 api-version: '1.13'
 file-count: 0
 commands:

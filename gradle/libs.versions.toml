@@ -14,6 +14,7 @@ mockito-version = "5.12.0"
 json-version = "20250517"
 asm-version = "9.8"
 proguard-version = "7.8.0"
+vulcan-version = "1.0.0"
 
 net-kyori-adventure-api = "4.25.0"
 net-kyori-adventure-platform = "4.4.1"
@@ -47,6 +48,7 @@ placeholder-api = { module = "me.clip:placeholderapi", version.ref = "placeholde
 org-json = { module = "org.json:json", version.ref = "json-version" }
 org-ow2-asm = { module = "org.ow2.asm:asm", version.ref = "asm-version" }
 com-guardsquare-proguard = { module = "com.guardsquare:proguard-gradle", version.ref = "proguard-version" }
+me-frep-vulcan = { module = "me.frep.vulcan:vulcan-api", version.ref = "vulcan-version" }
 
 [plugins]
 shadowjar = { id = "com.gradleup.shadow", version.ref = "shadowjar-version" }

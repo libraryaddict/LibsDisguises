@@ -12,6 +12,10 @@ subprojects {
         }
 
         maven {
+            url = uri("https://mvn.lib.co.nz/third-party/")
+        }
+
+        maven {
             url = uri("https://repo.papermc.io/repository/maven-public/")
         }
 

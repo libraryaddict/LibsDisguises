@@ -37,6 +37,7 @@ import me.libraryaddict.disguise.utilities.listeners.DisguiseListener;
 import me.libraryaddict.disguise.utilities.listeners.DisguiseListener1_18;
 import me.libraryaddict.disguise.utilities.listeners.PaperDisguiseListener;
 import me.libraryaddict.disguise.utilities.listeners.PlayerSkinHandler;
+import me.libraryaddict.disguise.utilities.listeners.VulcanCompatibilityListener;
 import me.libraryaddict.disguise.utilities.metrics.MetricsInitalizer;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
@@ -190,7 +191,8 @@ public class LibsDisguises extends JavaPlugin {
 
         if (version == null || !version.isVersionLoadable()) {
             getLogger().severe(
-                String.format("Skipping PacketEvents validation, this version of Minecraft (%s) does not appear to be supported.", mcVersion));
+                String.format("Skipping PacketEvents validation, this version of Minecraft (%s) does not appear to be supported.",
+                    mcVersion));
             return;
         }
 
@@ -360,6 +362,14 @@ public class LibsDisguises extends JavaPlugin {
 
         if (DisguiseUtilities.isRunningPaper()) {
             Bukkit.getPluginManager().registerEvents(new PaperDisguiseListener(), this);
+        }
+
+        try {
+            if (Bukkit.getPluginManager().isPluginEnabled("Vulcan")) {
+                Bukkit.getPluginManager().registerEvents(new VulcanCompatibilityListener(), this);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
