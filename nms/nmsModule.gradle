@@ -14,6 +14,10 @@ ext {
     remapServerCode = true
 }
 
+tasks.jar {
+    exclude("*.properties")
+}
+
 generationConfig {
     templateDir = rootProject.project(':nms').layout.projectDirectory.dir('src/main/java-templates')
     defaultProperties = rootProject.project(':nms').layout.projectDirectory.file('src/main/resources/default.properties')
