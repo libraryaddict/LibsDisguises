@@ -402,6 +402,10 @@ public class LibsDisguises extends JavaPlugin {
                 "Please update from MC 1.19.0! You should be using at least 1.19.3! 1.19.1 is the lowest supported 1.19 version!");
         }
 
+        if (NmsVersion.v1_21_R7.isVersion() ) {
+            getLogger().info("If you are using 1.21.11, please be aware that Paper may not have support yet. This does work on Spigot!");
+        }
+
         try {
             Class cl = Class.forName("org.bukkit.Server$Spigot");
         } catch (ClassNotFoundException e) {
