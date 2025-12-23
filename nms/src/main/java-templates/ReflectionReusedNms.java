@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.utilities.reflection.@NMS_VERSION@;
+package me.libraryaddict.disguise.utilities.reflection.@PACKAGE@;
 
 import com.mojang.authlib.GameProfile;
 import lombok.SneakyThrows;
@@ -18,12 +18,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.@NMS_VERSION@.CraftServer;
-import org.bukkit.craftbukkit.@NMS_VERSION@.CraftWorld;
-import org.bukkit.craftbukkit.@NMS_VERSION@.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.@NMS_VERSION@.entity.CraftEntity;
-import org.bukkit.craftbukkit.@NMS_VERSION@.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.@NMS_VERSION@.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.@NMS_VERSION@CraftServer;
+import org.bukkit.craftbukkit.@NMS_VERSION@CraftWorld;
+import org.bukkit.craftbukkit.@NMS_VERSION@block.data.CraftBlockData;
+import org.bukkit.craftbukkit.@NMS_VERSION@entity.CraftEntity;
+import org.bukkit.craftbukkit.@NMS_VERSION@inventory.CraftItemStack;
+import org.bukkit.craftbukkit.@NMS_VERSION@util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;

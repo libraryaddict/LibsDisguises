@@ -5,9 +5,12 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 abstract class GenerationConfig implements ExtensionAware {
     abstract DirectoryProperty getTemplateDir()
+
     abstract RegularFileProperty getDefaultProperties()
+
     abstract RegularFileProperty getOverrideProperties()
 }
+
 project.extensions.create('generationConfig', GenerationConfig)
 
 project.afterEvaluate { p ->
@@ -41,7 +44,11 @@ project.afterEvaluate { p ->
 
             mergedProps.each { key, value -> replacements[key.toString()] = value }
 
-            replacements['NMS_VERSION'] = p.description
+            replacements['PACKAGE'] = p.description
+            if (p.description.contains("_Paper"))
+                replacements['NMS_VERSION'] = ""
+            else
+                replacements['NMS_VERSION'] = p.description.replace("_Paper", "") + "."
         }
 
         from(config.templateDir)
@@ -69,6 +76,6 @@ project.afterEvaluate { p ->
     }
 
     if (p.rootProject.hasProperty('idea')) {
-         p.rootProject.idea.project.settings.taskTriggers.beforeSync(p.tasks.named('generateSharedNmsSources'))
+        p.rootProject.idea.project.settings.taskTriggers.beforeSync(p.tasks.named('generateSharedNmsSources'))
     }
 }

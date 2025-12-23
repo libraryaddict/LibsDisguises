@@ -11,7 +11,7 @@ ext {
     // This needs to be defined by projects that apply this script.
     craftbukkitVersion = 'UNSPECIFIED'
     // This can be overridden by projects that apply this script.
-    remapServerCode = true
+    spigotServerCode = true
 }
 
 tasks.jar {
@@ -26,32 +26,36 @@ generationConfig {
 
 dependencies {
     implementation project(':shared')
-    implementation(libs.org.spigotmc.spigot.api)
     compileOnly libs.io.netty.netty.buffer
     compileOnly libs.it.unimi.dsi.fastutil
     compileOnly libs.com.mojang.datafixerupper
     compileOnly libs.com.retro.packetevents
     afterEvaluate {
-        if (remapServerCode) {
+        if (spigotServerCode) {
+            implementation(libs.org.spigotmc.spigot.api)
             implementation "org.spigotmc:spigot:${craftbukkitVersion}:remapped-mojang"
             implementation "org.spigotmc:spigot:${craftbukkitVersion}:remapped-obf"
             implementation "org.spigotmc:minecraft-server:${craftbukkitVersion}:maps-mojang@txt"
             implementation "org.spigotmc:minecraft-server:${craftbukkitVersion}:maps-spigot@csrg"
-        } else {
+        } /*else {
             implementation "org.spigotmc:spigot:${craftbukkitVersion}"
-        }
+        }*/
     }
 }
 
 afterEvaluate {
-    if (remapServerCode) {
+    if (spigotServerCode) {
         jar {
             doLast {
+                // Get the ExecOperations service from the project
+                def execOps = project.services.get(ExecOperations)
+
                 def outputFiles = outputs.files.files
                 for (inputFile in outputFiles) {
                     File intermediateFile = new File(temporaryDir, inputFile.name.replace('.jar', '-obf.jar'))
                     File outputFile = inputFile
-                    remapMojangToSpigot(inputFile, intermediateFile, outputFile, craftbukkitVersion)
+                    // Call the function with the service as the first argument
+                    project.ext.remapMojangToSpigot(execOps, inputFile, intermediateFile, outputFile, craftbukkitVersion)
                 }
             }
         }

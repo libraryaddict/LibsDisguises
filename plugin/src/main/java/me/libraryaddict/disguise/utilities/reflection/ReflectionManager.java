@@ -512,6 +512,11 @@ public class ReflectionManager {
                 packageName += "_R1";
             }
 
+            if (nmsVersion == NmsVersion.v1_21_R7 && isRunningPaper()) {
+                LibsDisguises.getInstance().getLogger().info("Running Paper remapper workaround...");
+                packageName += "_Paper";
+            }
+
             Class<?> aClass = Class.forName("me.libraryaddict.disguise.utilities.reflection." + packageName + ".ReflectionManager");
             Object o = aClass.getConstructor().newInstance();
 

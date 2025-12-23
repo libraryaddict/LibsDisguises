@@ -6,72 +6,67 @@ configurations {
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
     specialSource 'net.md-5:SpecialSource:1.11.4:shaded'
 }
 
-// Spigot server code remapping: https://www.spigotmc.org/threads/spigot-bungeecord-1-17-1-17-1.510208/
-// These dependencies and mappings are installed into the local Maven repository when BuildTools builds the Spigot dependencies.
-def gradleCache = new File(System.getProperty("user.home"), '.gradle/caches/modules-2/files-2.1')
-def findInGradleCache = { group, module, version, fileName ->
-    def baseDir = new File(gradleCache, "${group}/${module}/${version}")
-
-    if (!baseDir.exists()) {
-        throw new Exception("Failed to resolve ${baseDir} when trying to load ${fileName}. Cache missing. If resolved using local maven repo, be advised that this script expects a cache from remote, which is stored via gradle.");
+ext.findArtifact = { group, module, version, classifier = '', ext = 'jar' ->
+    def notation = "${group}:${module}:${version}"
+    if (classifier) {
+        notation += ":${classifier}"
     }
+    notation += "@${ext}"
 
-    def result = baseDir.listFiles()?.findAll { it.isDirectory() }?.collectMany({ it.listFiles().flatten() })?.find { it.name == fileName }?.path
-
-    if (result == null) {
-        throw new Exception("Failed to resolve ${baseDir}/<cache key>/${fileName}");
-    }
-
-    return result;
+    def dependency = project.dependencies.create(notation)
+    // Create a temporary configuration to resolve this single dependency
+    def config = project.configurations.detachedConfiguration(dependency)
+    config.setTransitive(false) // We only want this specific file, not its dependencies
+    return config.singleFile
 }
 
-// Converts from Mojang's mappings to Minecraft's obfuscated mappings.
-ext.remapMojangToObfuscated = { inputFile, outputFile, craftbukkitVersion ->
-    def remappedMojang = findInGradleCache("org.spigotmc", "spigot", craftbukkitVersion, "spigot-${craftbukkitVersion}-remapped-mojang.jar")
-    def mojangMappings = findInGradleCache("org.spigotmc", "minecraft-server", craftbukkitVersion, "minecraft-server-${craftbukkitVersion}-maps-mojang.txt")
+ext.remapMojangToObfuscated = { execOps, inputFile, outputFile, craftbukkitVersion ->
+    def remappedMojang = findArtifact("org.spigotmc", "spigot", craftbukkitVersion, "remapped-mojang")
+    def mojangMappings = findArtifact("org.spigotmc", "minecraft-server", craftbukkitVersion, "maps-mojang", "txt")
 
     println '> remapMojangToObfuscated'
     println '  Input: ' + inputFile.path
     println '  Output: ' + outputFile.path
-    println '  CraftBukkit version: ' + craftbukkitVersion
 
-    project.javaexec {
+    // Use the passed-in service, not project.javaexec
+    execOps.javaexec {
         classpath = configurations.specialSource + files(remappedMojang)
         mainClass = 'net.md_5.specialsource.SpecialSource'
-        args '--live', '-i', inputFile.path, '-o', outputFile.path, '-m', mojangMappings, '--reverse'
+        args '--live', '-i', inputFile.path, '-o', outputFile.path, '-m', mojangMappings.path, '--reverse'
     }
 }
 
 // Converts from Minecraft's obfuscated mappings to Spigot's mappings.
-ext.remapObfuscatedToSpigot = { inputFile, outputFile, craftbukkitVersion ->
-    def spigotMappings = findInGradleCache("org.spigotmc", "minecraft-server", craftbukkitVersion, "minecraft-server-${craftbukkitVersion}-maps-spigot.csrg")
-    def remappedObf = findInGradleCache("org.spigotmc", "spigot", craftbukkitVersion, "spigot-${craftbukkitVersion}-remapped-obf.jar")
+ext.remapObfuscatedToSpigot = { execOps, inputFile, outputFile, craftbukkitVersion ->
+    def spigotMappings = findArtifact("org.spigotmc", "minecraft-server", craftbukkitVersion, "maps-spigot", "csrg")
+    def remappedObf = findArtifact("org.spigotmc", "spigot", craftbukkitVersion, "remapped-obf")
 
     println '> remapObfuscatedToSpigot'
     println '  Input: ' + inputFile.path
     println '  Output: ' + outputFile.path
-    println '  CraftBukkit version: ' + craftbukkitVersion
 
-    project.javaexec {
+    // Use the passed-in service, not project.javaexec
+    execOps.javaexec {
         classpath = configurations.specialSource + files(remappedObf)
         mainClass = 'net.md_5.specialsource.SpecialSource'
-        args '--live', '-i', inputFile.path, '-o', outputFile.path, '-m', spigotMappings
+        args '--live', '-i', inputFile.path, '-o', outputFile.path, '-m', spigotMappings.path
     }
 }
 
 // Converts from Mojang's mappings to Spigot's mappings.
-ext.remapMojangToSpigot = { inputFile, intermediateFile, outputFile, craftbukkitVersion ->
+ext.remapMojangToSpigot = { execOps, inputFile, intermediateFile, outputFile, craftbukkitVersion ->
     println '> remapMojangToSpigot'
     println '  Input: ' + inputFile.path
     println '  Intermediate: ' + intermediateFile.path
     println '  Output: ' + outputFile.path
-    println '  CraftBukkit version: ' + craftbukkitVersion
-    remapMojangToObfuscated(inputFile, intermediateFile, craftbukkitVersion)
-    remapObfuscatedToSpigot(intermediateFile, outputFile, craftbukkitVersion)
+    // Pass the execOps service down to the other functions
+    remapMojangToObfuscated(execOps, inputFile, intermediateFile, craftbukkitVersion)
+    remapObfuscatedToSpigot(execOps, intermediateFile, outputFile, craftbukkitVersion)
 }
