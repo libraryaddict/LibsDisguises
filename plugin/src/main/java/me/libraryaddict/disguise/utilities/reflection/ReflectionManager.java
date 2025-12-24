@@ -156,6 +156,7 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -512,15 +513,18 @@ public class ReflectionManager {
                 packageName += "_R1";
             }
 
-            if (nmsVersion == NmsVersion.v1_21_R7 && isRunningPaper()) {
-                LibsDisguises.getInstance().getLogger().info("Running Paper remapper workaround...");
-                packageName += "_Paper";
+            if (nmsVersion.hasPaperWorkaround() && isRunningPaper()) {
+                try {
+                    LibsDisguises.getInstance().getLogger().info("Attempting Paper remapper workaround...");
+
+                    // Attempts to create the reflection manager, if it errors we fall back to usual
+                    return createReflectionManager(packageName + "_Paper");
+                } catch (Throwable ignored) {
+                    LibsDisguises.getInstance().getLogger().info("Paper remapper workaround failed, trying spigot mappings.");
+                }
             }
 
-            Class<?> aClass = Class.forName("me.libraryaddict.disguise.utilities.reflection." + packageName + ".ReflectionManager");
-            Object o = aClass.getConstructor().newInstance();
-
-            return (ReflectionManagerAbstract) o;
+            return createReflectionManager(packageName);
         } catch (ClassNotFoundException ex) {
             try {
                 return new LegacyReflectionManager();
@@ -532,6 +536,14 @@ public class ReflectionManager {
         }
 
         return null;
+    }
+
+    private static ReflectionManagerAbstract createReflectionManager(String packageName)
+        throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Class<?> aClass = Class.forName("me.libraryaddict.disguise.utilities.reflection." + packageName + ".ReflectionManager");
+        Object o = aClass.getConstructor().newInstance();
+
+        return (ReflectionManagerAbstract) o;
     }
 
     public static Constructor getCraftConstructor(Class clazz, Class<?>... parameters) {
