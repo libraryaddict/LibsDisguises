@@ -35,8 +35,13 @@ abstract class NmsModulePlugin : Plugin<Project> {
         var overrideProperties = layout.projectDirectory.file("src/main/resources/override.properties")
         val libs = project.extensions.getByType<org.gradle.api.artifacts.VersionCatalogsExtension>().named("libs")
         plugins.apply("java-library")
-
         val nmsModule = extensions.create<NmsModuleExtension>("nmsModule")
+
+        val javaPluginExtension = extensions.getByType<JavaPluginExtension>()
+        javaPluginExtension.toolchain.languageVersion.set(nmsModule.javaVersion.map {
+            JavaLanguageVersion.of(it.majorVersion)
+        })
+
 
         repositories {
             mavenCentral()
