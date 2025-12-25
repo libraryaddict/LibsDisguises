@@ -14,4 +14,7 @@ dependencies {
     paperweight.paperDevBundle(nmsModule.craftbukkitVersion.get())
 }
 
-paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.REOBF_PRODUCTION
+java {
+    sourceCompatibility = nmsModule.javaVersion.get()
+    targetCompatibility = nmsModule.javaVersion.get()
+}

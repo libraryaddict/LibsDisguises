@@ -12,12 +12,6 @@ dependencies {
     implementation("io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin:2.0.0-beta.19")
 }
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-   }
-}
-
 gradlePlugin {
     plugins {
         create("nms-module-plugin") {
