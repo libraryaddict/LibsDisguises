@@ -7,12 +7,14 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.RelativePath
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.*
 import java.util.*
 
@@ -106,6 +108,10 @@ abstract class NmsModulePlugin : Plugin<Project> {
 
 
         afterEvaluate {
+            val javaExtension = project.extensions.getByType(JavaPluginExtension::class.java)
+            javaExtension.toolchain.languageVersion.set(
+                JavaLanguageVersion.of(nmsModule.javaVersion.get().majorVersion)
+            )
             apply {
                 overrideProperties = (layout.projectDirectory.file("src/main/resources/override.properties"))
             }
