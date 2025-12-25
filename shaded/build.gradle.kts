@@ -138,7 +138,7 @@ dependencies {
     runtimeOnly(project(":plugin"))
     runtimeOnly(libs.com.retro.packetevents)
 
-    (gradle.extra["nmsModules"] as List<*>).map { s -> project(s as String) }.forEach {
+    (gradle.extra["nmsModules"] as List<*>).map { s -> project(s as String, configuration = "reobf") }.forEach {
         shadow(it) {
             exclude("*")
         }

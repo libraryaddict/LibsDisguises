@@ -513,17 +513,6 @@ public class ReflectionManager {
                 packageName += "_R1";
             }
 
-            if (nmsVersion.hasPaperWorkaround() && isRunningPaper()) {
-                try {
-                    LibsDisguises.getInstance().getLogger().info("Attempting Paper remapper workaround...");
-
-                    // Attempts to create the reflection manager, if it errors we fall back to usual
-                    return createReflectionManager(packageName + "_Paper");
-                } catch (Throwable ignored) {
-                    LibsDisguises.getInstance().getLogger().info("Paper remapper workaround failed, trying spigot mappings.");
-                }
-            }
-
             return createReflectionManager(packageName);
         } catch (ClassNotFoundException ex) {
             try {

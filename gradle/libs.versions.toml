@@ -23,6 +23,7 @@ placeholder-api = "2.11.6"
 
 org-spigotmc-spigot = "1.21.11-R0.1-SNAPSHOT"
 io-papermc-paper-api = "1.21.11-R0.1-SNAPSHOT"
+paperweight-version = "2.0.0-beta.19"
 
 
 [libraries]
@@ -52,4 +53,4 @@ me-frep-vulcan = { module = "me.frep.vulcan:vulcan-api", version.ref = "vulcan-v
 
 [plugins]
 shadowjar = { id = "com.gradleup.shadow", version.ref = "shadowjar-version" }
-
+paperweight = { id = "io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin", version.ref = "paperweight-version" }

@@ -28,12 +28,7 @@ public enum NmsVersion {
     v1_21_R4("1.21.5"),
     v1_21_R5("1.21.6", "1.21.7", "1.21.8"),
     v1_21_R6("1.21.9", "1.21.10"),
-    v1_21_R7("1.21.11") {
-        @Override
-        public boolean hasPaperWorkaround() {
-            return true;
-        }
-    },
+    v1_21_R7("1.21.11"),
     UNSUPPORTED(false, "N/A");
 
     private final int deprecationStatus;
@@ -59,10 +54,6 @@ public enum NmsVersion {
         if (!name().equals("UNSUPPORTED") && !name().matches("^v\\d+_\\d+(_R\\d+)?$")) {
             throw new IllegalArgumentException("Enum " + name() + " does not validate");
         }
-    }
-
-    public boolean hasPaperWorkaround() {
-        return false;
     }
 
     @SneakyThrows
