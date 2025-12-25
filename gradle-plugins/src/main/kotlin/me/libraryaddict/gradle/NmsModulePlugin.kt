@@ -115,6 +115,7 @@ abstract class NmsModulePlugin : Plugin<Project> {
         afterEvaluate {
             javaPluginExtension.sourceCompatibility = nmsModule.javaVersion.get()
             javaPluginExtension.targetCompatibility = nmsModule.javaVersion.get()
+
             apply {
                 overrideProperties = (layout.projectDirectory.file("src/main/resources/override.properties"))
             }
