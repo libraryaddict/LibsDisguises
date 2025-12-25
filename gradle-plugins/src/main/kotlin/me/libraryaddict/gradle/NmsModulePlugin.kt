@@ -108,10 +108,6 @@ abstract class NmsModulePlugin : Plugin<Project> {
 
 
         afterEvaluate {
-            val javaExtension = project.extensions.getByType(JavaPluginExtension::class.java)
-            javaExtension.toolchain.languageVersion.set(
-                JavaLanguageVersion.of(nmsModule.javaVersion.get().majorVersion)
-            )
             apply {
                 overrideProperties = (layout.projectDirectory.file("src/main/resources/override.properties"))
             }
