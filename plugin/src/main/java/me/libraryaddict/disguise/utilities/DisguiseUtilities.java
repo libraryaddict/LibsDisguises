@@ -2010,7 +2010,7 @@ public class DisguiseUtilities {
         debuggingMode = LibsDisguises.getInstance().isDebuggingBuild();
         placeholderApi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
         // We don't care about voicechat api, so we only check if it exists
-        voiceChatPlugin = Bukkit.getPluginManager().getPlugin("voicechat") != null;
+        voiceChatPlugin = Bukkit.getPluginManager().getPlugin("voicechat") != null || Bukkit.getPluginManager().getPlugin("PlasmoVoice") != null;
 
         DisguiseFiles.init();
         recreateGsonSerializer();
