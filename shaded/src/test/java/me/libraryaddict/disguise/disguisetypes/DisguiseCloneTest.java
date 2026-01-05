@@ -14,7 +14,7 @@ public class DisguiseCloneTest {
     //  @Test
     public void testCloneDisguise() {
         try {
-            ReflectionManager.registerValues();
+            ReflectionManager.registerFlagWatchers();
             DisguiseParser.createDefaultMethods();
             DisguiseUtilities.init();
 

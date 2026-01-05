@@ -1,5 +1,11 @@
 # This config is for options that should only be touched if you're having compatibility issues with other plugins
 
+# If Lib's Disguises should try to load into registries or not
+# Set this to true if you're using resource packs, but basically there's no good solution that comes to mind at this time
+# that enables resource pack disguises, without conflicting
+# I have no idea why it's possible to register registry stuff while plugins are enabling.
+LoadIntoRegistries: false
+
 # Some players have issues with conflicting plugins where disguised entities will show the wrong armor
 # This should be left alone unless you're trying to solve this issue. Such as MM and stone blocks.
 # When true, the plugin will hide player disguises armor to prevent a minor visual bug for half a second

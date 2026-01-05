@@ -325,9 +325,6 @@ public class LibsDisguises extends JavaPlugin {
         verboseLog("Starting up our own reflection classes...");
         ReflectionManager.init();
 
-        verboseLog("Giving packetevents awareness of server registry");
-        ReflectionManager.tryLoadRegistriesIntoPE();
-
         verboseLog("Creating but not registering the packet listeners...");
         PacketsManager.getPacketsManager().init();
         verboseLog("Setting up some internal utilities for disguises...");
@@ -336,9 +333,15 @@ public class LibsDisguises extends JavaPlugin {
         verboseLog("Loading the sound files...");
         new SoundManager().load();
 
-        verboseLog("Integrating information about entities...");
-        ReflectionManager.registerValues();
+        verboseLog("Registering flag watchers...");
+        ReflectionManager.registerFlagWatchers();
+
+        verboseLog("Validating entity metadata...");
+        ReflectionManager.validateEntityMetadata();
+
+        verboseLog("Loading disguise animations...");
         DisguiseAnimation.load();
+
         verboseLog("Loading disguise parsing information...");
         DisguiseParser.createDefaultMethods();
 

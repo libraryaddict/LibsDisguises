@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.utilities.params;
 
 import javax.annotation.Nullable;
-import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
@@ -17,14 +16,26 @@ import java.util.List;
 import java.util.Locale;
 
 public class ParamInfoManager {
-    private static final List<ParamInfo> paramList;
-    @Getter
-    private static final DisguiseMethods disguiseMethods;
-    @Getter
-    private static final ParamInfoSoundGroup paramInfoSoundGroup;
+    private static List<ParamInfo> paramList;
+    private static DisguiseMethods disguiseMethods;
+    private static ParamInfoSoundGroup paramInfoSoundGroup;
 
     public static List<ParamInfo> getParamInfos() {
+        ensureLoaded();
+
         return paramList;
+    }
+
+    public static DisguiseMethods getDisguiseMethods() {
+        ensureLoaded();
+
+        return disguiseMethods;
+    }
+
+    public static ParamInfoSoundGroup getParamInfoSoundGroup() {
+        ensureLoaded();
+
+        return paramInfoSoundGroup;
     }
 
     public static String toString(Object object) {
@@ -81,9 +92,17 @@ public class ParamInfoManager {
         return null;
     }
 
-    static {
+    private static void ensureLoaded() {
+        if (paramList != null) {
+            return;
+        }
+
+        if (!ReflectionManager.isLoadedRegistries()) {
+            ReflectionManager.tryLoadRegistriesIntoPE();
+        }
+
         ParamInfoTypes infoTypes = new ParamInfoTypes();
-        paramList = infoTypes.getParamInfos();
+        paramList = infoTypes.createParamInfos();
         paramInfoSoundGroup = (ParamInfoSoundGroup) paramList.stream().filter(p -> p instanceof ParamInfoSoundGroup).findAny().orElse(null);
         disguiseMethods = LibsDisguises.getInstance() == null ? null : new DisguiseMethods();
 

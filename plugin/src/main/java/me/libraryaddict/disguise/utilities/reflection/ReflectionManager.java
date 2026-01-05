@@ -230,6 +230,10 @@ public class ReflectionManager {
      * Not really the optimal solution, but the alternative is that we cannot resolve any of this until a player joins
      */
     public static void tryLoadRegistriesIntoPE() {
+        if (!DisguiseConfig.isLoadIntoRegistries()) {
+            return;
+        }
+
         loadedRegistries = true;
 
         ServerVersion serverVersion = PacketEvents.getAPI().getServerManager().getVersion();
@@ -1438,7 +1442,7 @@ public class ReflectionManager {
      * for mob noises. As well as setting their watcher class and entity size.
      */
     @SneakyThrows
-    public static void registerValues() {
+    public static void registerFlagWatchers() {
         int maxErrorsThrown = 5;
 
         for (DisguiseType disguiseType : DisguiseType.values()) {
@@ -1465,8 +1469,23 @@ public class ReflectionManager {
                 }
 
                 disguiseType.setWatcherClass(watcherClass);
+            } catch (Throwable throwable) {
+                if (maxErrorsThrown-- <= 0) {
+                    throw throwable;
+                }
 
-                if (LibsDisguises.getInstance() == null || DisguiseValues.getDisguiseValues(disguiseType) != null) {
+                throwable.printStackTrace();
+            }
+        }
+    }
+
+    public static void validateEntityMetadata() {
+        int maxErrorsThrown = 5;
+
+        for (DisguiseType disguiseType : DisguiseType.values()) {
+            try {
+                if (LibsDisguises.getInstance() == null || !disguiseType.isValid() ||
+                    DisguiseValues.getDisguiseValues(disguiseType) != null) {
                     continue;
                 }
 

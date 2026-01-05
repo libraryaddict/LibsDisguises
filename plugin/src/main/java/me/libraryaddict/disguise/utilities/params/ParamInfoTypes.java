@@ -105,7 +105,7 @@ public class ParamInfoTypes {
     /**
      * Constructor values are listed here for continuity
      */
-    public List<ParamInfo> getParamInfos() {
+    public List<ParamInfo> createParamInfos() {
         // If I remember correctly, some of the things in here may matter in the order they're constructed. Annoying.
         List<ParamInfo> paramInfos = new ArrayList<>();
 
