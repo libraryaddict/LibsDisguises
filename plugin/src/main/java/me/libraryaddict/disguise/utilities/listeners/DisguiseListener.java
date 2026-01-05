@@ -39,6 +39,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -156,6 +157,15 @@ public class DisguiseListener implements Listener {
         } else if (isDodgyUser()) {
             event.setVelocity(event.getVelocity().multiply(0.75 + (event.getPlayer().getExp() * 1.5)));
         }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPortalEnter(EntityPortalEnterEvent event) {
+        if (DisguiseConfig.isUndisguiseOnWorldChange() || !DisguiseConfig.isSaveEntityDisguises()) {
+            return;
+        }
+
+        DisguiseUtilities.saveDisguises(event.getEntity());
     }
 
     @EventHandler(priority = EventPriority.HIGH)
