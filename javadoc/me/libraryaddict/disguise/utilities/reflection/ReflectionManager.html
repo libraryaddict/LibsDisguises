@@ -493,7 +493,7 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#registerEntityType(org.bukkit.NamespacedKey)" class="member-name-link">registerEntityType</a><wbr>(org.bukkit.NamespacedKey&nbsp;key)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#registerValues()" class="member-name-link">registerValues</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#registerFlagWatchers()" class="member-name-link">registerFlagWatchers</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Here we create a nms entity for each disguise.</div>
 </div>
@@ -524,6 +524,9 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Not really the optimal solution, but the alternative is that we cannot resolve any of this until a player joins</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#validateEntityMetadata()" class="member-name-link">validateEntityMetadata</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -1205,12 +1208,18 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="registerValues()">
-<h3>registerValues</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">registerValues</span>()</div>
+<section class="detail" id="registerFlagWatchers()">
+<h3>registerFlagWatchers</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">registerFlagWatchers</span>()</div>
 <div class="block">Here we create a nms entity for each disguise. Then grab their default values in their datawatcher. Then their
  sound volume
  for mob noises. As well as setting their watcher class and entity size.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="validateEntityMetadata()">
+<h3>validateEntityMetadata</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">validateEntityMetadata</span>()</div>
 </section>
 </li>
 <li>
