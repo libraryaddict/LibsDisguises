@@ -169,13 +169,13 @@ public class LibsDisguises extends JavaPlugin {
 
         if (DisguiseConfig.isNeverUpdatePacketEvents()) {
             getLogger().warning(
-                "Defined in plugins/LibsDisguises/configs/sanity.yml, you have requested that Lib's Disguises never updates or " +
-                    "installs PacketEvents. Please do not report any issues with this plugin.");
+                "Defined in plugins/LibsDisguises/configs/sanity.yml, you have requested that Lib's Disguises never updates or installs " +
+                    "PacketEvents. Please do not report any issues with this plugin.");
             return;
         } else if (!DisguiseConfig.isAutoUpdate()) {
             getLogger().warning(
-                "Defined in plugins/LibsDisguises/configs/libsdisguises.yml, you have requested that Lib's Disguises never auto " +
-                    "updates, which includes PacketEvents. Please do not report any issues with this plugin.");
+                "Defined in plugins/LibsDisguises/configs/libsdisguises.yml, you have requested that Lib's Disguises never auto updates, " +
+                    "which includes PacketEvents. Please do not report any issues with this plugin.");
             return;
         }
 
@@ -206,8 +206,9 @@ public class LibsDisguises extends JavaPlugin {
             boolean attempt = updater.doUpdate();
 
             if (!attempt) {
-                getLogger().severe("PacketEvents download has failed, please install PacketEvents manually from https://www.spigotmc" +
-                    ".org/resources/packetevents-api.80279/ or https://modrinth.com/plugin/packetevents");
+                getLogger().severe(
+                    "PacketEvents download has failed, please install PacketEvents manually from https://www.spigotmc" +
+                        ".org/resources/packetevents-api.80279/ or https://modrinth.com/plugin/packetevents");
                 return;
             } else if (plugin != null) {
                 getLogger().severe("Please restart the server to complete the PacketEvents update!");
@@ -220,8 +221,9 @@ public class LibsDisguises extends JavaPlugin {
 
             Bukkit.getPluginManager().enablePlugin(plugin);
         } catch (Exception e) {
-            getLogger().severe("Looks like PacketEvents's site may be down! Try download it manually from https://www.spigotmc" +
-                ".org/resources/packetevents-api.80279/ or https://modrinth.com/plugin/packetevents");
+            getLogger().severe(
+                "Looks like PacketEvents's site may be down! Try download it manually from https://www.spigotmc" +
+                    ".org/resources/packetevents-api.80279/ or https://modrinth.com/plugin/packetevents");
             e.printStackTrace();
         }
     }
@@ -425,20 +427,18 @@ public class LibsDisguises extends JavaPlugin {
 
         if (fileCount != expected) {
             getLogger().severe(
-                "Hi, this is libraryaddict from Lib's Disguises informing you that I have detected that my plugin Lib's Disguises looks " +
-                    "like another plugin (don't know which) has injected malware into it as soon as Lib's Disguises started running on " +
-                    "your server, there were " + (fileCount - expected) +
-                    " unknown files injected into the jar. Please redownload from a trusted source such as SpigotMC. If this warning " +
-                    "shows even after updating, try https://www.spigotmc.org/resources/spigot-anti-malware.64982/ but you will likely " +
-                    "need to reinstall all your plugins, jars, etc as just one infected plugin will infect everything else when it loads.");
+                "Hi, this is libraryaddict from Lib's Disguises. It appears that another plugin has injected malware into Lib's Disguises" +
+                    ". As soon as it started on your server, it detected " +
+                    (fileCount - expected) +
+                    " unknown files were added to the jar. Please redownload Lib's Disguises from a trusted source such as SpigotMC. If " +
+                    "this warning persists after updating, you can try https://www.spigotmc.org/resources/spigot-anti-malware.64982/, but" +
+                    " you will most likely need to reinstall all your plugins, jars, and related files, as a single infected plugin can " +
+                    "compromise everything.");
             getLogger().severe(
-                "Unfortunately I have seen this happen from time to time, this normally happens when a server owner is tricked into " +
-                    "adding third party plugins. Please note that Lib's Disguises is only detecting itself and doesn't know what other " +
-                    "plugins " +
-                    "have malware, only that Lib's Disguises itself was infected immediately after you installed it in your server. The " +
-                    "jar in your plugins folder will be bigger than what you downloaded from SpigotMC, you can easily check that for " +
-                    "yourself. I can't help you deal with the malware, there's no shortcuts but to re-download everything and remember " +
-                    "not" + " to download from shady sources.");
+                "This usually happens when a server owner installs third-party plugins from untrusted sources. Lib's Disguises only " +
+                    "detects its own infection and cannot tell which other plugins are infected. You can confirm the infection by " +
+                    "checking that the jar in your plugins folder is larger than the version downloaded from SpigotMC. There is no " +
+                    "shortcut, redownload all plugins from trusted sources and avoid shady downloads.");
         }
     }
 
