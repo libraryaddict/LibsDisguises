@@ -191,6 +191,8 @@ public class ReflectionManager {
     private static boolean mojangMapped;
     // Defaults to empty string, resolves to an url when a working backend is found, null if no working backend
     private static String workingBackend = "";
+    @Getter
+    private static boolean loadedRegistries = false;
 
     static {
         // An alternative implemention of https://github.com/PaperMC/Paper/blob/main/paper-server/src/main/java/io/papermc/paper/util/MappingEnvironment.java#L58
@@ -228,6 +230,8 @@ public class ReflectionManager {
      * Not really the optimal solution, but the alternative is that we cannot resolve any of this until a player joins
      */
     public static void tryLoadRegistriesIntoPE() {
+        loadedRegistries = true;
+
         ServerVersion serverVersion = PacketEvents.getAPI().getServerManager().getVersion();
         ClientVersion cacheKey = serverVersion.toClientVersion();
 
