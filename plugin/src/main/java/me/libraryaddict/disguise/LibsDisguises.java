@@ -113,6 +113,7 @@ public class LibsDisguises extends JavaPlugin {
 
             instance = this;
 
+            printPaperWarning();
             DisguiseConfig.loadInternalConfig();
             DisguiseConfig.loadPreConfig();
 
@@ -156,6 +157,29 @@ public class LibsDisguises extends JavaPlugin {
             }
 
             throw throwable;
+        }
+    }
+
+    private void printPaperWarning() {
+        if (!NmsVersion.v1_21_R7.isVersion() || !"Paper".equalsIgnoreCase(Bukkit.getName())) {
+            return;
+        }
+
+        Matcher match = Pattern.compile(".*1\\.21\\.11-(\\d+)-.*").matcher(Bukkit.getVersion());
+
+        if (!match.find()) {
+            return;
+        }
+
+        int version = Integer.parseInt(match.group(1));
+
+        if (version >= 54) {
+            return;
+        }
+
+        for (int i = 0; i < 5; i++) {
+            getLogger().severe("Your server is running an outdated build of paper, please download a more recent version of paper. " +
+                "Lib's Disguises will not work until you use a more recent build.");
         }
     }
 
@@ -245,6 +269,9 @@ public class LibsDisguises extends JavaPlugin {
             if (isReloaded()) {
                 getLogger().severe("Server was reloaded! Please do not report any bugs! This plugin can't handle reloads gracefully!");
             }
+
+            verboseLog("Checking for outdated paper...");
+            printPaperWarning();
 
             verboseLog("Checking for terrible Minecraft versions (Shouldn't be used)...");
             runWarnings();
