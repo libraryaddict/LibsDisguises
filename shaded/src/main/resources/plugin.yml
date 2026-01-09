@@ -59,12 +59,12 @@ commands:
     description: Copy a disguise (or entity) and use it later.
   disguiseviewself:
     aliases: [ dviewself, dvs, disguisevs, disvs, vsd, viewselfdisguise, viewselfd, selfdisguise, selfdisg, selfd, toggleselfdisguise, seeselfdisguise ]
-    permission: libsdisguises.seecmd.viewself
+    permission: libsdisguises.seecmd.disguiseviewself
     description: Toggle seeing your own disguise on or off.
   disguiseviewbar:
     aliases: [ dviewbar, dvb, disguisevb, disvb, viewdisguisebar, viewbardisguise, bardisguise, bardisg, bard,
                notifybar, viewnotifybar, disguisenotifybar, disgnotifybar, dnotifybar ]
-    permission: libsdisguises.seecmd.viewself
+    permission: libsdisguises.seecmd.disguiseviewbar
     description: Toggle seeing your own disguise on or off.
   disguisemodify:
     aliases: [ dmodify, dmod, disgmodify, modifydisguise, moddisguise, mdisguise ]
@@ -197,6 +197,10 @@ permissions:
       libsdisguises.seecmd.grabskin: true
       libsdisguises.seecmd.savedisguise: true
       libsdisguises.seecmd.grabhead: true
+      libsdisguises.seecmd.disguiseanimation: true
+      libsdisguises.seecmd.disguiseplayeranimation: true
+      libsdisguises.seecmd.disguiseradiusanimation: true
+      libsdisguises.seecmd.disguiseentityanimation: true
   libsdisguises.seecmd.disguiseviewself:
     description: See the /disguiseviewself command in tab-completion
   libsdisguises.seecmd.disguiseviewbar:
@@ -237,3 +241,11 @@ permissions:
     description: See the /savedisguise command in tab-completion
   libsdisguises.seecmd.grabhead:
     description: See the /grabhead command in tab-completion
+  libsdisguises.seecmd.disguiseanimation:
+    description: See the /disguiseanimation command in tab-completion
+  libsdisguises.seecmd.disguiseplayeranimation:
+    description: See the /disguiseplayeranimation command in tab-completion
+  libsdisguises.seecmd.disguiseradiusanimation:
+    description: See the /disguiseradiusanimation command in tab-completion
+  libsdisguises.seecmd.disguiseentityanimation:
+    description: See the /disguiseentityanimation command in tab-completion
