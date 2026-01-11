@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -30,6 +31,19 @@ public class LDMetaInfo implements LDCommand {
             MetaIndex index = MetaIndex.getMetaIndexByName(args[1]);
 
             if (index == null) {
+                try {
+
+                    DisguiseType type = DisguiseType.valueOf(args[1].toUpperCase());
+
+                    ArrayList<MetaIndex> metas = MetaIndex.getMetaIndexes(type.getWatcherClass());
+
+                    for (MetaIndex i : metas) {
+                        sender.sendMessage(i.toString());
+                    }
+
+                    return;
+                } catch (Throwable ignored) {
+                }
                 LibsMsg.META_NOT_FOUND.send(sender);
                 return;
             }
