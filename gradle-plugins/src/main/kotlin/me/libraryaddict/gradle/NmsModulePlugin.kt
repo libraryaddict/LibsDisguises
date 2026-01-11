@@ -48,12 +48,6 @@ abstract class NmsModulePlugin : Plugin<Project> {
             "compileOnly"(libs.findLibrary("com-retro-packetevents").get())
         }
 
-        configurations.all {
-            resolutionStrategy {
-                cacheChangingModulesFor(180, "days")
-            }
-        }
-
         val generatedSourcesDir = layout.buildDirectory.dir("generated/java/main")
         val generateSharedNmsSources = tasks.register<Sync>("generateSharedNmsSources") {
             group = "build"
