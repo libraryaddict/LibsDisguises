@@ -144,7 +144,8 @@ public abstract class Disguise {
      * For when plugins may want to assign custom data to a disguise, such as who owns it
      */
     private final LinkedHashMap<String, Object> customData = new LinkedHashMap<>();
-    private UUID uuid = ReflectionManager.getRandomUUID();
+    @Getter
+    private final UUID disguiseUUID = ReflectionManager.getRandomUUID();
     /*
       If the player should see their own height grow/shrink to match the disguise
      */
@@ -204,12 +205,7 @@ public abstract class Disguise {
             }
         }
 
-        // Partial fix for disguises serialized in older versions
-        if (this.uuid == null) {
-            this.uuid = ReflectionManager.getRandomUUID();
-        }
-
-        return uuid;
+        return getDisguiseUUID();
     }
 
     public int getMultiNameLength() {
