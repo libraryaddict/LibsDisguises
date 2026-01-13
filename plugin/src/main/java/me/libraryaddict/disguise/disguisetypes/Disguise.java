@@ -55,12 +55,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -798,35 +795,19 @@ public abstract class Disguise {
 
         getInternals().onDisguiseStop();
 
-        disguiseInUse = false;
-
-        // If this disguise hasn't a entity set
-        if (getEntity() == null) {
-            // Loop through the disguises because it could be used with a unknown entity id.
-            Map<Integer, Set<TargetedDisguise>> future = DisguiseUtilities.getFutureDisguises();
-
-            Iterator<Set<TargetedDisguise>> iterator = DisguiseUtilities.getFutureDisguises().values().iterator();
-
-            // Find the first set that contains this disguise, then remove it, and if it's now empty, remove it from future disguises
-            while (iterator.hasNext()) {
-                Set<TargetedDisguise> disguises = iterator.next();
-
-                if (!disguises.remove(this)) {
-                    continue;
-                }
-
-                if (disguises.isEmpty()) {
-                    iterator.remove();
-                }
-
-                break;
-            }
-
-            return true;
-        }
+        boolean disguiseWasActive = DisguiseUtilities.removeDisguise((TargetedDisguise) this);
+        this.disguiseInUse = false;
 
         if (NmsVersion.v1_20_R4.isSupported()) {
             DisguiseUtilities.removeSelfDisguiseScale(getEntity());
+        }
+
+        if (getInternalArmorstandIds().length > 0) {
+            for (Player player : getEntity().getWorld().getPlayers()) {
+                PacketWrapper packet = DisguiseUtilities.getDestroyPacket(getInternalArmorstandIds());
+
+                PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
+            }
         }
 
         if (this instanceof PlayerDisguise) {
@@ -844,29 +825,13 @@ public abstract class Disguise {
                     PacketEvents.getAPI().getPlayerManager().sendPacket(player, deleteTab);
                 }
             }
-        }
-
-        if (getInternalArmorstandIds().length > 0) {
-            for (Player player : getEntity().getWorld().getPlayers()) {
-                PacketWrapper packet = DisguiseUtilities.getDestroyPacket(getInternalArmorstandIds());
-
-                PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
-            }
-        }
-
-        if (!isPlayerDisguise()) {
+        } else {
             DisguiseUtilities.setGlowColor(this, null);
-        }
-
-        // 🏴‍☠️ ahoy
-        if (LibsPremium.getPluginInformation().isPremium() && LibsDisguises.getInstance().getBuildNumber() < 1360 &&
-            System.currentTimeMillis() % 4 == 1) {
-            getWatcher().setEntityFlag(3, true);
         }
 
         // If this disguise is active
         // Remove the disguise from the current disguises.
-        if (DisguiseUtilities.removeDisguise((TargetedDisguise) this) && !disguiseBeingReplaced) {
+        if (disguiseWasActive && !disguiseBeingReplaced) {
             if (getEntity() instanceof Player) {
                 DisguiseUtilities.removeSelfDisguise(this);
             }
@@ -903,7 +868,7 @@ public abstract class Disguise {
             removeBossBar();
         }
 
-        if (getEntity().isValid()) {
+        if (!disguiseBeingReplaced && getEntity().isValid()) {
             DisguiseUtilities.saveDisguises(getEntity());
         }
 
