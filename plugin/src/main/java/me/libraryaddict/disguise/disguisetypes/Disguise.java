@@ -559,16 +559,17 @@ public abstract class Disguise {
             throw new IllegalArgumentException("This disguise is already in use! Try .clone()");
         }
 
+        if (entity == null) {
+            throw new IllegalArgumentException("Cannot provide a null entity when calling disguise.setEntity()!");
+        }
+
         if (isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
             throw new IllegalArgumentException(
                 "Cannot disguise a living entity with a misc disguise. Reenable MiscDisguisesForLiving in the " + "config to do this");
         }
 
         this.entity = entity;
-
-        if (entity != null) {
-            setupWatcher();
-        }
+        setupWatcher();
 
         if (getEntity() instanceof Player && isSelfDisguiseVisible() && !isTallDisguisesVisible() && isTallDisguise()) {
             if (isTallSelfDisguisesScaling() && NmsVersion.v1_20_R4.isSupported() && canScaleDisguise()) {
