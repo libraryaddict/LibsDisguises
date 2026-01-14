@@ -51,7 +51,6 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
 
         // If not disguised
         if (disguise == null) {
-
             // If this is a spawn packet
             if (spawnPackets[event.getPacketType().ordinal()]) {
                 // Mark them as not in limbo
