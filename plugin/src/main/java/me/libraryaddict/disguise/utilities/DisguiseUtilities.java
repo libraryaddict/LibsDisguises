@@ -2435,6 +2435,12 @@ public class DisguiseUtilities {
         return impactedPlayers;
     }
 
+    /**
+     * Removes the disguise from the actively tracked disguises
+     *
+     * @param disguise to remove
+     * @return true if the disguise was active
+     */
     public static boolean removeDisguise(TargetedDisguise disguise) {
         int entityId = disguise.getEntity().getEntityId();
         AtomicBoolean wasDisguiseRemoved = new AtomicBoolean(false);
