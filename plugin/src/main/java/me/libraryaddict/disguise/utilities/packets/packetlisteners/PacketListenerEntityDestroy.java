@@ -36,17 +36,11 @@ public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
         WrapperPlayServerDestroyEntities packet = new WrapperPlayServerDestroyEntities(event);
 
         for (int entityId : packet.getEntityIds()) {
-            handleEntityId(player, entityId);
+            handleEntityId(event, player, entityId);
         }
     }
 
-    private int[] getToRemove(Player player, int entityId) {
-        Disguise disguise = DisguiseUtilities.getDisguise(player, entityId);
-
-        if (disguise == null) {
-            return null;
-        }
-
+    private int[] getToRemove(Disguise disguise, Player player, int entityId) {
         List<MovementTracker> trackers = disguise.getInternals().getTrackers();
         trackers.forEach(t -> t.onDespawn(player, true));
         int[] toRemove;
@@ -77,8 +71,15 @@ public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
         return toRemove;
     }
 
-    private void handleEntityId(Player player, int entityId) {
-        int[] toRemove = getToRemove(player, entityId);
+    private void handleEntityId(PacketPlaySendEvent event, Player player, int entityId) {
+        Disguise disguise = DisguiseUtilities.getDisguise(player, entityId);
+
+        if (disguise == null) {
+            DisguiseUtilities.getSeenTracker().setDisguiseBeingChangedOver(player.getUniqueId(), entityId);
+            return;
+        }
+
+        int[] toRemove = getToRemove(disguise, player, entityId);
 
         if (toRemove == null || toRemove.length == 0 || (odd == null ? !(odd =
             !LibsPremium.getPluginInformation().isPremium() || LibsPremium.getPluginInformation().getBuildNumber().matches("#\\d{4,}")) :

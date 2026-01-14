@@ -18,6 +18,7 @@ import me.libraryaddict.disguise.utilities.scaling.DisguiseScaling;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlotGroup;
@@ -112,11 +113,16 @@ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.Di
     }
 
     public synchronized void addSeen(Player player, boolean isSpawnElseRemove) {
+        // We track it here because the "seen state" is per disguise and we sometimes want to track it on an object level.
         if (isSpawnElseRemove) {
             seesDisguise.add(player.getUniqueId());
         } else {
             seesDisguise.remove(player.getUniqueId());
         }
+
+        // We always track it as transitionary because if it's being removed, then we definitely are not sending metadata
+        // If it's being added, then we're also not sending metadata that's untransformed
+        DisguiseUtilities.getSeenTracker().setDisguiseBeingChangedOver(player.getUniqueId(), getDisguise().getEntity().getEntityId());
     }
 
     protected void onDisguiseStart() {
@@ -145,6 +151,15 @@ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.Di
 
             for (int entityId : tracker.getOwnedEntityIds()) {
                 DisguiseUtilities.getRemappedEntityIds().remove(entityId);
+            }
+        }
+
+        Entity disguised = getDisguise().getEntity();
+
+        // Mark this as in limbo for all the "currently seeing" entities
+        if (disguised != null) {
+            for (UUID sees : seesDisguise) {
+                DisguiseUtilities.getSeenTracker().setDisguiseBeingChangedOver(sees, disguised.getEntityId());
             }
         }
 

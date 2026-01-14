@@ -49,10 +49,31 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
 
         final Disguise disguise = DisguiseUtilities.getDisguise(observer, entityId);
 
-        // If the entity is the same as the sender. Don't disguise!
-        // Prevents problems and there is no advantage to be gained.
-        // Or if they are null and there's no disguise
-        if (disguise == null || disguise.getEntity() == observer) {
+        // If not disguised
+        if (disguise == null) {
+            // If the entity is the same as the sender. Don't do anything here!
+            // Prevents problems and there is no advantage to be gained.
+            if (disguise.getEntity() == observer) {
+                return;
+            }
+
+            // If this is a spawn packet
+            if (spawnPackets[event.getPacketType().ordinal()]) {
+                // Mark them as not in limbo
+                DisguiseUtilities.getSeenTracker().setDisguiseTransitionFinished(observer.getUniqueId(), entityId);
+            } else if (conflictingTypes[event.getPacketType().ordinal()]) {
+                // If this is a conflicting packet, and a new spawn/destroy has not yet been sent
+                if (DisguiseUtilities.getSeenTracker().isDisguiseChangingOver(observer.getUniqueId(), entityId)) {
+                    event.setCancelled(true);
+                }
+            }
+
+            return;
+        }
+
+        if (conflictingTypes[event.getPacketType().ordinal()] && disguise.getInternals().shouldAvoidSendingPackets(observer)) {
+            // This array is always an entity rewrite packet type
+            event.setCancelled(true);
             return;
         }
 
@@ -79,16 +100,6 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
             event.setCancelled(true);
         }
 
-        // If packet is spawn
-        if (spawnPackets[event.getPacketType().ordinal()]) {
-            // Add to 'is currently seeing'
-            disguise.getInternals().addSeen(observer, true);
-        } else if (conflictingTypes[event.getPacketType().ordinal()] && disguise.getInternals().shouldAvoidSendingPackets(observer)) {
-            // This array is always an entity rewrite packet type
-            event.setCancelled(true);
-            return;
-        }
-
         for (PacketWrapper packet : packets.getPackets()) {
             if (packet == wrapper) {
                 event.markForReEncode(true);
@@ -99,5 +110,11 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
         }
 
         packets.sendDelayed(observer);
+
+        // If packet is spawn
+        if (spawnPackets[event.getPacketType().ordinal()]) {
+            // Add to 'is currently seeing'
+            disguise.getInternals().addSeen(observer, true);
+        }
     }
 }

@@ -361,9 +361,9 @@ public class DisguiseUtilities {
     @Getter
     // Uses ticks in 1.19+, real time in older versions
     private static long lastFutureDisguiseApplied;
-    // Approx Thu Nov 27 2025 05:37:10.292
-    // The time check is a temp thing meant to give time for MM update to roll out
-    private static boolean warnedFutureDisguises = System.currentTimeMillis() < 1764221830292L;
+    private static boolean warnedFutureDisguises = false;
+    @Getter
+    private static final DisguisesSeenTracker seenTracker = new DisguisesSeenTracker();
 
     static {
         // Paper check here so we do not need to load any reflection stuff

@@ -376,6 +376,9 @@ public class LibsDisguises extends JavaPlugin {
 
         verboseLog("Recalculating some sounds...");
         ParamInfoManager.getParamInfoSoundGroup().recalculate();
+
+        verboseLog("Setting up seen tracker");
+        DisguiseUtilities.getSeenTracker().startTimer();
     }
 
     private void registerListeners() {
