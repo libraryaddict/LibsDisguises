@@ -344,14 +344,11 @@ public class PlayerDisguise extends TargetedDisguise {
                 cLimit = ((NmsVersion.v1_13.isSupported() ? 64 : 16) * 2) + 16;
                 break;
             case ARMORSTANDS:
+            case TEXT_DISPLAY:
+                // TODO Multilines handling for multiple entities (armorstand)?
                 // This limit seems weird, we can do multilines can't we?
                 // Plus newer versions may extend limit
-                cLimit = 256;
-                break;
-            case TEXT_DISPLAY:
-                // Arbitary limit, users can do what they like!
-                // This is too long for normal command usage, should be safer to unrestrict
-                cLimit = 10000;
+                cLimit = DisguiseUtilities.getCustomNameLength();
                 break;
             default:
                 cLimit = 16;

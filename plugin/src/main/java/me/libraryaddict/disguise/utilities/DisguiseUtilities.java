@@ -3996,6 +3996,22 @@ public class DisguiseUtilities {
     }
 
     /**
+     * The maximum name that a entity custom name can be. This is not a hard rule, and this was not thoroughly tested and verified.
+     *
+     * @return max name for a custom name
+     */
+    public static int getCustomNameLength() {
+        // TODO Revisit this, verify the constraints.
+        // I think it's largely just a limit of the protocol
+        if (NmsVersion.v1_16.isSupported()) {
+            // Pretty sure the limit is unsigned short which is approx 65k, then as its a utf 8 string, it's divided by 8, so about 8192?
+            return 8192;
+        } else {
+            return 256;
+        }
+    }
+
+    /**
      * Grabs the scale of the entity as if the LibsDisguises: attributes did not exist, is clamped to 0.06 to 16
      */
     public static double getEntityScaleWithoutLibsDisguises(Entity entity) {

@@ -523,6 +523,20 @@ public class FlagWatcher {
         }
     }
 
+    private String getRealCustomName() {
+        if (!NmsVersion.v1_13.isSupported()) {
+            if (!hasValue(MetaIndex.ENTITY_CUSTOM_NAME_OLD)) {
+                return null;
+            }
+
+            return getData(MetaIndex.ENTITY_CUSTOM_NAME_OLD);
+        }
+
+        Optional<Component> optional = getData(MetaIndex.ENTITY_CUSTOM_NAME);
+
+        return optional.map(DisguiseUtilities::getSimpleString).orElse(null);
+    }
+
     public String getCustomName() {
         if (getDisguise().isPlayerDisguise()) {
             return ((PlayerDisguise) getDisguise()).getName();
@@ -536,17 +550,7 @@ public class FlagWatcher {
             return StringUtils.join(getDisguise().getMultiName(), "\n");
         }
 
-        if (!NmsVersion.v1_13.isSupported()) {
-            if (!hasValue(MetaIndex.ENTITY_CUSTOM_NAME_OLD)) {
-                return null;
-            }
-
-            return getData(MetaIndex.ENTITY_CUSTOM_NAME_OLD);
-        }
-
-        Optional<Component> optional = getData(MetaIndex.ENTITY_CUSTOM_NAME);
-
-        return optional.map(DisguiseUtilities::getSimpleString).orElse(null);
+        return getRealCustomName();
     }
 
     @MethodHiddenFor(DisguiseType.PLAYER)
@@ -597,16 +601,18 @@ public class FlagWatcher {
     protected void setInteralCustomName(String name) {
         if (Strings.isNullOrEmpty(name)) {
             if (NmsVersion.v1_13.isSupported()) {
-                sendData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.empty());
+                sendData(MetaIndex.ENTITY_CUSTOM_NAME, name != null ? Optional.empty() : null);
             } else {
-                sendData(MetaIndex.ENTITY_CUSTOM_NAME_OLD, "");
+                sendData(MetaIndex.ENTITY_CUSTOM_NAME_OLD, name);
             }
 
             return;
         }
 
-        if (name.length() > 256) {
-            name = name.substring(0, 256);
+        int len = DisguiseUtilities.getCustomNameLength();
+
+        if (name.length() > len) {
+            name = name.substring(0, len);
         }
 
         if (NmsVersion.v1_13.isSupported()) {
