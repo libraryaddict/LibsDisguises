@@ -159,9 +159,9 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPortalEnter(EntityPortalEnterEvent event) {
-        if (DisguiseConfig.isUndisguiseOnWorldChange() || !DisguiseConfig.isSaveEntityDisguises()) {
+        if (event.getEntity() instanceof Player || DisguiseConfig.isUndisguiseOnWorldChange() || !DisguiseConfig.isSaveEntityDisguises()) {
             return;
         }
 
