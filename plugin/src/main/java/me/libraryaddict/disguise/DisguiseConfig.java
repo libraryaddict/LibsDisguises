@@ -788,7 +788,7 @@ public class DisguiseConfig {
         setUniquePlayerDisguiseUUIDs(config.getBoolean("UniquePlayerUUID"));
         setHideDeathMessages(config.getBoolean("HideDeathMessages"));
 
-        if (apiKey != null && apiKey.matches("[a-zA-Z\\d]{8,}")) {
+        if (apiKey != null && apiKey.matches("[a-zA-Z\\d_]{8,}")) {
             DisguiseUtilities.getMineSkinAPI().setApiKey(apiKey);
         } else if (apiKey != null && apiKey.length() > 8) {
             LibsDisguises.getInstance().getLogger().warning("API Key provided for MineSkin does not appear to be in a valid format!");
