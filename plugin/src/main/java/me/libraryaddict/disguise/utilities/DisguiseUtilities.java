@@ -329,7 +329,6 @@ public class DisguiseUtilities {
     private final static ConcurrentHashMap<String, DScoreTeam> teams = new ConcurrentHashMap<>();
     private static boolean criedOverJava16;
     private static final Set<UUID> warnedSkin = new HashSet<>();
-    @Getter
     private static boolean fancyHiddenTabs;
     @Getter
     private static NamespacedKey oldSavedDisguisesKey;
@@ -449,6 +448,10 @@ public class DisguiseUtilities {
                 ex.printStackTrace();
             }
         }
+    }
+
+    public static boolean isFancyHiddenTabs() {
+        return fancyHiddenTabs && DisguiseConfig.isFancyHiddenTabs();
     }
 
     public static boolean shouldBeHiddenSelfDisguise(com.github.retrooper.packetevents.protocol.item.ItemStack itemStack) {
@@ -2010,7 +2013,8 @@ public class DisguiseUtilities {
         debuggingMode = LibsDisguises.getInstance().isDebuggingBuild();
         placeholderApi = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
         // We don't care about voicechat api, so we only check if it exists
-        voiceChatPlugin = Bukkit.getPluginManager().getPlugin("voicechat") != null || Bukkit.getPluginManager().getPlugin("PlasmoVoice") != null;
+        voiceChatPlugin =
+            Bukkit.getPluginManager().getPlugin("voicechat") != null || Bukkit.getPluginManager().getPlugin("PlasmoVoice") != null;
 
         DisguiseFiles.init();
         recreateGsonSerializer();

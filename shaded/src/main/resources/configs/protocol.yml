@@ -40,6 +40,12 @@ MiscDisguisesForLiving: true
 # This is the only thing allowing the mobs to fly without glitching out.
 SendVelocity: true
 
+# From 1.19.2 onwards, when ViaBackwards is not installed, Lib's Disguises uses hidden tablist packets instead of a hackier workaround.
+# This is for player disguises, as tablist packets are needed to show the skin. Unfortunately, this means that the hidden tablist
+# players will show in the player tab-complete. You can disable the hidden tablist players and go back to the older tablist behavior.
+# But this may not result in a better user experience. Default is true
+FancyHiddenTabs: true
+
 # This will help performance, especially with CPU
 # Due to safety reasons, self disguises can never have their packets disabled.
 PacketsEnabled:
