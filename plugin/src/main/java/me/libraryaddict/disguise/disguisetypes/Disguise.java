@@ -804,6 +804,11 @@ public abstract class Disguise {
 
         if (getInternalArmorstandIds().length > 0) {
             for (Player player : getEntity().getWorld().getPlayers()) {
+                // Quick probably ineffective solution for #824
+                if (!player.isOnline()) {
+                    continue;
+                }
+
                 PacketWrapper packet = DisguiseUtilities.getDestroyPacket(getInternalArmorstandIds());
 
                 PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
