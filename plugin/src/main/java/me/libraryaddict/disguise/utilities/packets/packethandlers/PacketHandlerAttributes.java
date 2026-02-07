@@ -84,6 +84,8 @@ public class PacketHandlerAttributes implements IPacketHandler<WrapperPlayServer
                 }
             } else if (property.getAttribute() == Attributes.GENERIC_GRAVITY) {
                 attributes.add(property);
+            } else if (property.getAttribute() == Attributes.ARMOR && disguise.getWatcher() instanceof LivingWatcher) {
+                attributes.add(property);
             }
         }
 
