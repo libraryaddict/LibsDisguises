@@ -96,3 +96,6 @@ CarpetableLlama: false
 # Can a player interact with a non-saddled horse of any type, to give it a saddle?
 # This does not change what you can ride or control!
 SaddleableHorse: false
+
+# This prevents allay disguises from 'holding' items that are not actually being held.
+AllayItemSwitchable: false

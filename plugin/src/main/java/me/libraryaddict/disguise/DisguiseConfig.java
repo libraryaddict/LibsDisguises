@@ -113,6 +113,9 @@ public class DisguiseConfig {
     private static boolean llamaCarpetable;
     @Getter
     @Setter
+    private static boolean allayItemSwitchable;
+    @Getter
+    @Setter
     private static boolean maxHealthDeterminedByDisguisedEntity;
     @Getter
     @Setter
@@ -747,6 +750,7 @@ public class DisguiseConfig {
         setHorseSaddleable(config.getBoolean("SaddleableHorse"));
         setKeepDisguiseOnPlayerDeath(config.getBoolean("KeepDisguises.PlayerDeath"));
         setLlamaCarpetable(config.getBoolean("CarpetableLlama"));
+        setAllayItemSwitchable(config.getBoolean("AllayItemSwitchable"));
         setMaxClonedDisguises(config.getInt("DisguiseCloneSize"));
         setMaxHealthDeterminedByDisguisedEntity(config.getBoolean("MaxHealthDeterminedByEntity"));
         setMetaPacketsEnabled(config.getBoolean("PacketsEnabled.Metadata"));

@@ -14,6 +14,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.AllayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LlamaWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SheepWatcher;
@@ -25,6 +26,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Axolotl;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -170,9 +172,54 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
                 }
 
                 break;
+            case ALLAY:
+                doAllay(observer, disguise, packet);
+
+                break;
             default:
                 break;
         }
+    }
+
+    private boolean isEmpty(ItemStack item) {
+        return item == null || item.getType() == Material.AIR;
+    }
+
+    private void doAllay(Player observer, Disguise disguise, WrapperPlayClientInteractEntity packet) {
+        InteractionHand hand = getHand(packet);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                AllayWatcher watcher = (AllayWatcher) disguise.getWatcher();
+                ItemStack playerHand = hand == InteractionHand.MAIN_HAND ? observer.getInventory().getItemInMainHand() :
+                    observer.getInventory().getItemInOffHand();
+                ItemStack watcherItem = watcher.getItemInMainHand();
+                ItemStack playerSeesItem = watcherItem == null && disguise.getEntity() instanceof LivingEntity ?
+                    ((LivingEntity) disguise.getEntity()).getEquipment().getItemInMainHand() : watcherItem;
+                boolean allayHoldingNothing = isEmpty(playerSeesItem);
+
+                // Nothing visual changed, do nothing.
+                if (isEmpty(playerHand) == allayHoldingNothing) {
+                    return;
+                }
+
+                // Ensure player knows they still have an item
+                observer.updateInventory();
+
+                // Set/update the item on the watcher
+                if (DisguiseConfig.isAllayItemSwitchable()) {
+                    // Update the held item!
+                    watcher.setItemInMainHand(playerHand);
+                } else {
+                    if (watcherItem == null || watcherItem.getType() == Material.AIR) {
+                        watcher.setItemInMainHand(new ItemStack(Material.STICK));
+                    }
+
+                    watcher.setItemInMainHand(watcherItem);
+                }
+            }
+        }.runTask(LibsDisguises.getInstance());
     }
 
     private void doSaddleable(Player observer, Disguise disguise) {
