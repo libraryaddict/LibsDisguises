@@ -36,11 +36,12 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
             }
 
             ParamInfo help = null;
+            String asArg = String.join(" ", args);
 
             for (ParamInfo s : ParamInfoManager.getParamInfos()) {
                 String name = s.getName().replaceAll(" ", "");
 
-                if (args[0].equalsIgnoreCase(name) || args[0].equalsIgnoreCase(name + "s")) {
+                if (asArg.equalsIgnoreCase(name) || asArg.equalsIgnoreCase(name + "s")) {
                     help = s;
                     break;
                 }
