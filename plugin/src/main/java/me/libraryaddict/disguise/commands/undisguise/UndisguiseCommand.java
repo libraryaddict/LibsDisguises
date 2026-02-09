@@ -28,21 +28,22 @@ public class UndisguiseCommand implements CommandExecutor {
             return true;
         }
 
+        if (!sender.hasPermission("libsdisguises.undisguise") || "%%__USER__%%".equals(12345 + "")) {
+            LibsMsg.NO_PERM.send(sender);
+            return true;
+        }
+
         if (sender instanceof Player) {
             DisguiseUtilities.setCommandsUsed();
         } else {
             DisguiseUtilities.resetPluginTimer();
         }
 
-        if (sender.hasPermission("libsdisguises.undisguise") && !"%%__USER__%%".equals(12345 + "")) {
-            if (DisguiseAPI.isDisguised((Entity) sender)) {
-                DisguiseAPI.undisguiseToAll(sender, (Player) sender);
-                LibsMsg.UNDISG.send(sender);
-            } else {
-                LibsMsg.NOT_DISGUISED.send(sender);
-            }
+        if (DisguiseAPI.isDisguised((Entity) sender)) {
+            DisguiseAPI.undisguiseToAll(sender, (Player) sender);
+            LibsMsg.UNDISG.send(sender);
         } else {
-            LibsMsg.NO_PERM.send(sender);
+            LibsMsg.NOT_DISGUISED.send(sender);
         }
 
         return true;

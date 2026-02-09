@@ -68,12 +68,6 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (sender instanceof Player) {
-            DisguiseUtilities.setCommandsUsed();
-        } else {
-            DisguiseUtilities.resetPluginTimer();
-        }
-
         if (!sender.hasPermission("libsdisguises.undisguiseplayer")) {
             LibsMsg.NO_PERM.send(sender);
             return true;
@@ -82,6 +76,12 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
         if (args.length == 0) {
             LibsMsg.UNDISG_PLAYER_HELP.send(sender);
             return true;
+        }
+
+        if (sender instanceof Player) {
+            DisguiseUtilities.setCommandsUsed();
+        } else {
+            DisguiseUtilities.resetPluginTimer();
         }
 
         Entity entityTarget = Bukkit.getPlayer(args[0]);

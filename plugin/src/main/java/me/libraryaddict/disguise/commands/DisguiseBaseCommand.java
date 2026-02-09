@@ -11,10 +11,12 @@ import me.libraryaddict.disguise.commands.disguise.DisguiseCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguiseEntityCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguisePlayerCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguiseRadiusCommand;
+import me.libraryaddict.disguise.commands.disguise.DisguiseSelectorCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyEntityCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyPlayerCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyRadiusCommand;
+import me.libraryaddict.disguise.commands.modify.DisguiseModifySelectorCommand;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
@@ -63,9 +65,11 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         disguiseCommandMap.put(DisguisePlayerCommand.class, "DisguisePlayer");
         disguiseCommandMap.put(DisguiseRadiusCommand.class, "DisguiseRadius");
         disguiseCommandMap.put(DisguiseModifyCommand.class, "DisguiseModify");
+        disguiseCommandMap.put(DisguiseSelectorCommand.class, "DisguiseSelector");
         disguiseCommandMap.put(DisguiseModifyEntityCommand.class, "DisguiseModifyEntity");
         disguiseCommandMap.put(DisguiseModifyPlayerCommand.class, "DisguiseModifyPlayer");
         disguiseCommandMap.put(DisguiseModifyRadiusCommand.class, "DisguiseModifyRadius");
+        disguiseCommandMap.put(DisguiseModifySelectorCommand.class, "DisguiseModifySelector");
 
         disguiseCommands = disguiseCommandMap;
     }

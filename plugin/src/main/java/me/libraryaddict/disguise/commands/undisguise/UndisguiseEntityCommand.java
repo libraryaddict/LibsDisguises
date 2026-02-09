@@ -28,15 +28,15 @@ public class UndisguiseEntityCommand implements CommandExecutor {
             return true;
         }
 
+        if (!sender.hasPermission("libsdisguises.undisguiseentity")) {
+            LibsMsg.NO_PERM.send(sender);
+            return true;
+        }
+
         if (sender instanceof Player) {
             DisguiseUtilities.setCommandsUsed();
         } else {
             DisguiseUtilities.resetPluginTimer();
-        }
-
-        if (!sender.hasPermission("libsdisguises.undisguiseentity")) {
-            LibsMsg.NO_PERM.send(sender);
-            return true;
         }
 
         LibsDisguises.getInstance().getListener()

@@ -37,6 +37,10 @@ commands:
     aliases: [ disradius, dradius, disgradius ]
     permission: libsdisguises.seecmd.disguiseradius
     description: Disguise all entities within a radius as an entity.
+  disguiseselector:
+    aliases: [ dselector, disselector, disgselector ]
+    permission: libsdisguises.seecmd.disguiseselector
+    description: Disguise entities via entity selector.
   undisguise:
     aliases: [ und, undis, undisg ]
     permission: libsdisguises.seecmd.undisguise
@@ -53,6 +57,10 @@ commands:
     aliases: [ undisradius, undradius, undisgradius ]
     permission: libsdisguises.seecmd.undisguiseradius
     description: Undisguise all entities within a radius.
+  undisguiseselector:
+    aliases: [ undisselector, undselector, undisgselector ]
+    permission: libsdisguises.seecmd.undisguiseselector
+    description: Undisguise all entities in an entity selector.
   disguiseclone:
     aliases: [ disguisec, disc, disclone, dclone, clonedisguise, clonedis, cdisguise, cdis, clonedisg, disgclone ]
     permission: libsdisguises.seecmd.disguiseclone
@@ -81,6 +89,11 @@ commands:
                moddisguiseradius, mdisguiseradius, moddisgradius ]
     permission: libsdisguises.seecmd.disguisemodifyradius
     description: Modify disguises in a radius
+  disguisemodifyselector:
+    aliases: [ dmodifyselector, dmodselector, disgmodselector, dismodselector, modifydisguiseselector, modifydisgselector,
+               moddisguiseselector, mdisguiseselector, moddisgselector ]
+    permission: libsdisguises.seecmd.disguisemodifyselector
+    description: Modify entity disguises via entity selector
   disguisemodifyentity:
     aliases: [ dmodifyentity, dmodentity, disgmodentity, dismodentity, modifydisguiseentity, modifydisgentity,
                modifydentity, moddisguiseentity, moddisgentity, mdisguiseentity, mdisgentity ]
@@ -96,6 +109,9 @@ commands:
   disguiseradiusanimation:
     permission: libsdisguises.disguiseradiusanimation
     description: Play a supported animation on all supported disguises in a radius
+  disguiseselectoranimation:
+    permission: libsdisguises.disguiseselectoranimation
+    description: Play a supported animation on all supported disguises via entity selector.
   disguiseentityanimation:
     permission: libsdisguises.disguiseentityanimation
     description: Play a supported animation on a right clicked entity's disguise
@@ -170,6 +186,9 @@ permissions:
   libsdisguises.disguiseradiusanimation:
     description: Play a supported animation on all supported disguises in a radius
     default: op
+  libsdisguises.disguiseselectoranimation:
+    description: Play a supported animation on all supported disguises via entity selector
+    default: op
   libsdisguises.disguiseentityanimation:
     description: Play a supported animation on a right clicked entity's disguise
     default: op
@@ -182,16 +201,19 @@ permissions:
       libsdisguises.seecmd.disguisehelp: true
       libsdisguises.seecmd.disguiseplayer: true
       libsdisguises.seecmd.disguiseradius: true
+      libsdisguises.seecmd.disguiseselector: true
       libsdisguises.seecmd.undisguise: true
       libsdisguises.seecmd.undisguiseentity: true
       libsdisguises.seecmd.undisguiseplayer: true
       libsdisguises.seecmd.undisguiseradius: true
+      libsdisguises.seecmd.undisguiseselector: true
       libsdisguises.seecmd.disguiseclone: true
       libsdisguises.seecmd.disguiseviewself: true
       libsdisguises.seecmd.disguiseviewbar: true
       libsdisguises.seecmd.disguisemodify: true
       libsdisguises.seecmd.disguisemodifyplayer: true
       libsdisguises.seecmd.disguisemodifyradius: true
+      libsdisguises.seecmd.disguisemodifyselector: true
       libsdisguises.seecmd.disguisemodifyentity: true
       libsdisguises.seecmd.copydisguise: true
       libsdisguises.seecmd.grabskin: true
@@ -200,6 +222,7 @@ permissions:
       libsdisguises.seecmd.disguiseanimation: true
       libsdisguises.seecmd.disguiseplayeranimation: true
       libsdisguises.seecmd.disguiseradiusanimation: true
+      libsdisguises.seecmd.disguiseselectoranimation: true
       libsdisguises.seecmd.disguiseentityanimation: true
   libsdisguises.seecmd.disguiseviewself:
     description: See the /disguiseviewself command in tab-completion
@@ -215,6 +238,8 @@ permissions:
     description: See the /disguiseplayer command in tab-completion
   libsdisguises.seecmd.disguiseradius:
     description: See the /disguiseradius command in tab-completion
+  libsdisguises.seecmd.disguiseselector:
+    description: See the /disguiseselector command in tab-completion
   libsdisguises.seecmd.undisguise:
     description: See the /undisguise command in tab-completion
   libsdisguises.seecmd.undisguiseentity:
@@ -223,6 +248,8 @@ permissions:
     description: See the /undisguiseplayer command in tab-completion
   libsdisguises.seecmd.undisguiseradius:
     description: See the /undisguiseradius command in tab-completion
+  libsdisguises.seecmd.undisguiseselector:
+    description: See the /undisguiseselector command in tab-completion
   libsdisguises.seecmd.disguiseclone:
     description: See the /disguiseclone command in tab-completion
   libsdisguises.seecmd.disguisemodify:
@@ -231,6 +258,8 @@ permissions:
     description: See the /disguisemodifyplayer command in tab-completion
   libsdisguises.seecmd.disguisemodifyradius:
     description: See the /disguisemodifyradius command in tab-completion
+  libsdisguises.seecmd.disguisemodifyselector:
+    description: See the /disguisemodifyselector command in tab-completion
   libsdisguises.seecmd.disguisemodifyentity:
     description: See the /disguisemodifyentity command in tab-completion
   libsdisguises.seecmd.copydisguise:
@@ -247,5 +276,7 @@ permissions:
     description: See the /disguiseplayeranimation command in tab-completion
   libsdisguises.seecmd.disguiseradiusanimation:
     description: See the /disguiseradiusanimation command in tab-completion
+  libsdisguises.seecmd.disguiseselectoranimation:
+    description: See the /disguiseselectoranimation command in tab-completion
   libsdisguises.seecmd.disguiseentityanimation:
     description: See the /disguiseentityanimation command in tab-completion

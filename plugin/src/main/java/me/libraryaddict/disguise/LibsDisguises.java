@@ -9,18 +9,22 @@ import me.libraryaddict.disguise.commands.animate.DisguiseAnimationCommand;
 import me.libraryaddict.disguise.commands.animate.DisguiseEntityAnimationCommand;
 import me.libraryaddict.disguise.commands.animate.DisguisePlayerAnimationCommand;
 import me.libraryaddict.disguise.commands.animate.DisguiseRadiusAnimationCommand;
+import me.libraryaddict.disguise.commands.animate.DisguiseSelectorAnimationCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguiseCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguiseEntityCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguisePlayerCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguiseRadiusCommand;
+import me.libraryaddict.disguise.commands.disguise.DisguiseSelectorCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyEntityCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyPlayerCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyRadiusCommand;
+import me.libraryaddict.disguise.commands.modify.DisguiseModifySelectorCommand;
 import me.libraryaddict.disguise.commands.undisguise.UndisguiseCommand;
 import me.libraryaddict.disguise.commands.undisguise.UndisguiseEntityCommand;
 import me.libraryaddict.disguise.commands.undisguise.UndisguisePlayerCommand;
 import me.libraryaddict.disguise.commands.undisguise.UndisguiseRadiusCommand;
+import me.libraryaddict.disguise.commands.undisguise.UndisguiseSelectorCommand;
 import me.libraryaddict.disguise.commands.utils.CopyDisguiseCommand;
 import me.libraryaddict.disguise.commands.utils.DisguiseCloneCommand;
 import me.libraryaddict.disguise.commands.utils.DisguiseHelpCommand;
@@ -531,26 +535,35 @@ public class LibsDisguises extends JavaPlugin {
 
     private void registerCommands() {
         registerCommand("libsdisguises", new LibsDisguisesCommand());
+
         registerCommand("disguise", new DisguiseCommand());
-        registerCommand("undisguise", new UndisguiseCommand());
         registerCommand("disguiseplayer", new DisguisePlayerCommand());
-        registerCommand("undisguiseplayer", new UndisguisePlayerCommand());
-        registerCommand("undisguiseentity", new UndisguiseEntityCommand());
         registerCommand("disguiseentity", new DisguiseEntityCommand());
         registerCommand("disguiseradius", new DisguiseRadiusCommand());
+        registerCommand("disguiseselector", new DisguiseSelectorCommand());
+
+        registerCommand("undisguise", new UndisguiseCommand());
+        registerCommand("undisguiseplayer", new UndisguisePlayerCommand());
+        registerCommand("undisguiseentity", new UndisguiseEntityCommand());
         registerCommand("undisguiseradius", new UndisguiseRadiusCommand());
-        registerCommand("disguisehelp", new DisguiseHelpCommand());
-        registerCommand("disguiseclone", new DisguiseCloneCommand());
-        registerCommand("disguiseviewself", new DisguiseViewSelfCommand());
-        registerCommand("disguiseviewbar", new DisguiseViewBarCommand());
+        registerCommand("undisguiseselector", new UndisguiseSelectorCommand());
+
         registerCommand("disguisemodify", new DisguiseModifyCommand());
-        registerCommand("disguisemodifyentity", new DisguiseModifyEntityCommand());
         registerCommand("disguisemodifyplayer", new DisguiseModifyPlayerCommand());
+        registerCommand("disguisemodifyentity", new DisguiseModifyEntityCommand());
         registerCommand("disguisemodifyradius", new DisguiseModifyRadiusCommand());
+        registerCommand("disguisemodifyselector", new DisguiseModifySelectorCommand());
+
         registerCommand("disguiseanimation", new DisguiseAnimationCommand());
         registerCommand("disguiseplayeranimation", new DisguisePlayerAnimationCommand());
         registerCommand("disguiseentityanimation", new DisguiseEntityAnimationCommand());
         registerCommand("disguiseradiusanimation", new DisguiseRadiusAnimationCommand());
+        registerCommand("disguiseselectoranimation", new DisguiseSelectorAnimationCommand());
+
+        registerCommand("disguisehelp", new DisguiseHelpCommand());
+        registerCommand("disguiseclone", new DisguiseCloneCommand());
+        registerCommand("disguiseviewself", new DisguiseViewSelfCommand());
+        registerCommand("disguiseviewbar", new DisguiseViewBarCommand());
         registerCommand("copydisguise", new CopyDisguiseCommand());
         registerCommand("grabskin", new GrabSkinCommand());
         registerCommand("savedisguise", new SaveDisguiseCommand());

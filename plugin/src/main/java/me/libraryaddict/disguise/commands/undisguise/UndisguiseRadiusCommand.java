@@ -39,54 +39,55 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
             return true;
         }
 
+        if (!sender.hasPermission("libsdisguises.undisguiseradius")) {
+            LibsMsg.NO_PERM.send(sender);
+            return true;
+        }
+
         if (sender instanceof Player) {
             DisguiseUtilities.setCommandsUsed();
         } else {
             DisguiseUtilities.resetPluginTimer();
         }
 
-        if (sender.hasPermission("libsdisguises.undisguiseradius")) {
-            int radius = DisguiseConfig.getDisguiseRadiusMax();
+        int radius = DisguiseConfig.getDisguiseRadiusMax();
 
-            if (args.length > 0) {
-                if (!isNumeric(args[0])) {
-                    LibsMsg.NOT_NUMBER.send(sender, args[0]);
-                    return true;
-                }
-
-                radius = Integer.parseInt(args[0]);
-
-                if (radius > DisguiseConfig.getDisguiseRadiusMax()) {
-                    LibsMsg.LIMITED_RADIUS.send(sender, DisguiseConfig.getDisguiseRadiusMax());
-                    radius = DisguiseConfig.getDisguiseRadiusMax();
-                }
+        if (args.length > 0) {
+            if (!isNumeric(args[0])) {
+                LibsMsg.NOT_NUMBER.send(sender, args[0]);
+                return true;
             }
 
-            Location center;
+            radius = Integer.parseInt(args[0]);
 
-            if (sender instanceof Player) {
-                center = ((Player) sender).getLocation();
-            } else {
-                center = ((BlockCommandSender) sender).getBlock().getLocation().add(0.5, 0, 0.5);
+            if (radius > DisguiseConfig.getDisguiseRadiusMax()) {
+                LibsMsg.LIMITED_RADIUS.send(sender, DisguiseConfig.getDisguiseRadiusMax());
+                radius = DisguiseConfig.getDisguiseRadiusMax();
             }
-
-            int disguisedEntitys = 0;
-
-            for (Entity entity : center.getWorld().getNearbyEntities(center, radius, radius, radius)) {
-                if (entity == sender) {
-                    continue;
-                }
-
-                if (DisguiseAPI.isDisguised(entity)) {
-                    DisguiseAPI.undisguiseToAll(sender, entity);
-                    disguisedEntitys++;
-                }
-            }
-
-            LibsMsg.UNDISRADIUS.send(sender, disguisedEntitys);
-        } else {
-            LibsMsg.NO_PERM.send(sender);
         }
+
+        Location center;
+
+        if (sender instanceof Player) {
+            center = ((Player) sender).getLocation();
+        } else {
+            center = ((BlockCommandSender) sender).getBlock().getLocation().add(0.5, 0, 0.5);
+        }
+
+        int disguisedEntitys = 0;
+
+        for (Entity entity : center.getWorld().getNearbyEntities(center, radius, radius, radius)) {
+            if (entity == sender) {
+                continue;
+            }
+
+            if (DisguiseAPI.isDisguised(entity)) {
+                DisguiseAPI.undisguiseToAll(sender, entity);
+                disguisedEntitys++;
+            }
+        }
+
+        LibsMsg.UNDISRADIUS.send(sender, disguisedEntitys);
         return true;
     }
 }
