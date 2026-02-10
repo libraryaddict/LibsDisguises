@@ -82,7 +82,11 @@ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.Di
             trackers.remove(getInteractiveBoundingBox());
 
             if (getDisguise().isDisguiseInUse()) {
-                getInteractiveBoundingBox().onDespawn();
+                getInteractiveBoundingBox().onStop(false);
+
+                for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
+                    getInteractiveBoundingBox().onDespawn(player, false);
+                }
             }
         }
 
@@ -99,7 +103,7 @@ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.Di
             return;
         }
 
-        boundingBox.onSpawn();
+        boundingBox.onStart(false);
     }
 
     /**
@@ -139,6 +143,8 @@ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.Di
         runnable.runTaskTimer(LibsDisguises.getInstance(), 1, 1);
 
         for (MovementTracker tracker : trackers) {
+            tracker.onStart(true);
+
             for (int entityId : tracker.getOwnedEntityIds()) {
                 DisguiseUtilities.getRemappedEntityIds().put(entityId, getDisguise().getEntity().getEntityId());
             }
@@ -147,7 +153,11 @@ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.Di
 
     protected void onDisguiseStop() {
         for (MovementTracker tracker : trackers) {
-            tracker.onDespawn();
+            tracker.onStop(true);
+
+            for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
+                tracker.onDespawn(player, false);
+            }
 
             for (int entityId : tracker.getOwnedEntityIds()) {
                 DisguiseUtilities.getRemappedEntityIds().remove(entityId);

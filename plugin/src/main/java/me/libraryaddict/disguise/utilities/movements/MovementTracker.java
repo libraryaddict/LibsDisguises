@@ -36,9 +36,19 @@ public interface MovementTracker {
     void onDespawn(Player receiver, boolean fromDestroyPacket);
 
     /**
-     * Called when the tracker is being cancelled
+     * Called when the tracker is being started
+     *
+     * @param disguiseStarting If the disguise is starting and the tracker is being called into action as a result
      */
-    default void onDespawn() {
+    default void onStart(boolean disguiseStarting) {
+    }
+
+    /**
+     * Called when the tracker is being cancelled
+     *
+     * @param disguiseStopping If the disguise itself, not the tracker is being canceled
+     */
+    default void onStop(boolean disguiseStopping) {
     }
 
     /**

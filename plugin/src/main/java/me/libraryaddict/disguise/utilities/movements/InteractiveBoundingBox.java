@@ -161,8 +161,8 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
     }
 
     @ApiStatus.Internal
-    public void onSpawn() {
-        if (!isValid()) {
+    public void onStart(boolean disguiseStarting) {
+        if (disguiseStarting || !isValid()) {
             return;
         }
 
@@ -177,8 +177,8 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
     }
 
     @ApiStatus.Internal
-    public void onDespawn() {
-        if (!isValid()) {
+    public void onStop(boolean disguiseStopping) {
+        if (disguiseStopping || !isValid()) {
             return;
         }
 
