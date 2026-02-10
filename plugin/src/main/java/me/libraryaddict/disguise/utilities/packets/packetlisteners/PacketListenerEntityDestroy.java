@@ -75,7 +75,9 @@ public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
         Disguise disguise = DisguiseUtilities.getDisguise(player, entityId);
 
         if (disguise == null) {
-            DisguiseUtilities.getSeenTracker().setDisguiseBeingChangedOver(player.getUniqueId(), entityId);
+            // Logic could possibly be wrong, but I think I made a typo where I set it to being "changed over" and not "no need to pause"
+            DisguiseUtilities.getSeenTracker().setDisguiseTransitionFinished(player.getUniqueId(), entityId);
+
             return;
         }
 
