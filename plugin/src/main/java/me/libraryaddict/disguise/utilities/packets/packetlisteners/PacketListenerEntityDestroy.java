@@ -78,6 +78,12 @@ public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
             // Logic could possibly be wrong, but I think I made a typo where I set it to being "changed over" and not "no need to pause"
             DisguiseUtilities.getSeenTracker().setDisguiseTransitionFinished(player.getUniqueId(), entityId);
 
+            // If the entity being removed was a self disguise, the actual player id will not be getting a 'destroy entity'
+            // So we need to remove their id manually
+            if (entityId == DisguiseAPI.getSelfDisguiseId()) {
+                DisguiseUtilities.getSeenTracker().setDisguiseTransitionFinished(player.getUniqueId(), player.getEntityId());
+            }
+
             return;
         }
 
