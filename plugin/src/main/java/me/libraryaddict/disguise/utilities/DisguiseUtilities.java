@@ -2385,6 +2385,8 @@ public class DisguiseUtilities {
 
         try {
             if (selfDisguised.contains(disguise.getEntity().getUniqueId()) && disguise.isDisguiseInUse()) {
+                impactedPlayers++;
+
                 WrapperPlayServerDestroyEntities destroyPacket = getDestroyPacket(DisguiseAPI.getSelfDisguiseId());
                 PacketEvents.getAPI().getPlayerManager().sendPacket(disguise.getEntity(), destroyPacket);
 
@@ -2407,13 +2409,14 @@ public class DisguiseUtilities {
                 Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTracker, entityTrackerEntry);
 
                 for (final Object o : trackedPlayers) {
-                    impactedPlayers++;
                     Object p = ReflectionManager.getPlayerFromPlayerConnection(o);
                     Player player = (Player) ReflectionManager.getBukkitEntity(p);
 
                     if (disguise.getEntity() == player || !disguise.canSee(player)) {
                         continue;
                     }
+
+                    impactedPlayers++;
 
                     List<MovementTracker> trackers = disguise.getInternals().getTrackers();
                     trackers.forEach(t -> t.onDespawn(player, false));
