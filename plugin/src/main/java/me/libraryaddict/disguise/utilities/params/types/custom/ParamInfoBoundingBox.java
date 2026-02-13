@@ -102,8 +102,9 @@ public class ParamInfoBoundingBox extends ParamInfo<InteractiveBoundingBox> {
 
     public ParamInfoBoundingBox() {
         super(InteractiveBoundingBox.class, "Interactive Box",
-            "Creates a fake entity to simulate a hitbox that would otherwise not be there, Interaction is default using '<width.0>:<height.0>'. " +
-                "'Slime:<size>', <Living>:<scale.0>. Add an extra ':<y-offset.0>' for offsetting Y location");
+            "Creates a fake entity to simulate a hitbox that would otherwise not be there, Interaction is default using '<width" +
+                ".0>:<height.0>'. 'Slime:<size>', <Living>:<scale.0>. Add an extra ':<y-offset.0>' for offsetting Y location. Read more " +
+                "at https://www.spigotmc.org/wiki/lib-s-disguises-using-the-commands/#interactive-bounding-boxes");
     }
 
     @Override
