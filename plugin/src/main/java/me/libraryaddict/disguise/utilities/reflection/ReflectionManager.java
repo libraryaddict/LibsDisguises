@@ -465,7 +465,7 @@ public class ReflectionManager {
 
     public static String getMinecraftVersion() {
         if (minecraftVersion == null) {
-            Matcher matcher = Pattern.compile(" \\(MC: ([\\d.]+?)[^)]+\\)").matcher(Bukkit.getVersion());
+            Matcher matcher = Pattern.compile(" \\(MC: ([\\d.]+)[^)]+\\)").matcher(Bukkit.getVersion());
 
             if (!matcher.find()) {
                 throw new IllegalStateException(

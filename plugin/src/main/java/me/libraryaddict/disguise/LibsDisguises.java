@@ -207,7 +207,7 @@ public class LibsDisguises extends JavaPlugin {
             return;
         }
 
-        Matcher matcher = Pattern.compile(" \\(MC: ([\\d.]+?)[^)]+\\)").matcher(Bukkit.getVersion());
+        Matcher matcher = Pattern.compile(" \\(MC: ([\\d.]+)[^)]+\\)").matcher(Bukkit.getVersion());
 
         if (!matcher.find()) {
             getLogger().severe("Skipping PacketEvents check, unable to determine Minecraft version.");
