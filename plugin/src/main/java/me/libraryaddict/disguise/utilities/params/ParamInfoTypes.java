@@ -146,7 +146,7 @@ public class ParamInfoTypes {
 
         if (NmsVersion.v1_13.isSupported()) {
             paramInfos.add(new ParamInfoParticle("Particle", "The different particles of Minecraft", materials));
-            paramInfos.add(new ParamInfoEnum(Particle.class, "ParticleType", "The different particles of Minecraft"));
+            paramInfos.add(new ParamInfoEnum(Particle.class, "ParticleType", "The different particles of Minecraft: https://www.spigotmc.org/wiki/lib-s-disguises-faq/#particles"));
             paramInfos.add(new ParamInfoEnum(TropicalFish.Pattern.class, "Pattern", "Patterns of a tropical fish"));
             //   paramInfos.add(
             //      new ParamInfoBlockData(BlockData.class, "BlockData", "The block data states, barrel[facing=north,open=false] as
