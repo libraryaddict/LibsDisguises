@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -158,7 +159,12 @@ public class Metrics {
                 // scheduler
                 // Don't be afraid! The connection to the bStats server is still async, only the stats collection is
                 // sync ;)
-                Bukkit.getScheduler().runTask(plugin, Metrics.this::submitData);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        submitData();
+                    }
+                }.runTask(LibsDisguises.getInstance());
             }
         }, 1000 * 60 * 5, 1000 * 60 * 30);
         // Submit the data every 30 minutes, first time after 5 minutes to give other plugins enough time to start

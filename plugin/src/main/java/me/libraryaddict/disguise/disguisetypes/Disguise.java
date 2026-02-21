@@ -48,6 +48,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1112,8 +1113,12 @@ public abstract class Disguise {
         }
 
         // Setup a scheduler for a self disguise
-        Bukkit.getScheduler()
-            .scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> DisguiseUtilities.setupFakeDisguise(Disguise.this), 2);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                DisguiseUtilities.setupFakeDisguise(Disguise.this);
+            }
+        }.runTaskLater(LibsDisguises.getInstance(), 2);
 
         if (isHidePlayer() && getEntity() instanceof Player) {
             for (Player player : Bukkit.getOnlinePlayers()) {

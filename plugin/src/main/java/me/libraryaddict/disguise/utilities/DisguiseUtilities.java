@@ -1886,27 +1886,33 @@ public class DisguiseUtilities {
                 list.add(runnable);
             }
 
-            Bukkit.getScheduler().runTaskAsynchronously(LibsDisguises.getInstance(), () -> {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+
                 try {
                     final UserProfile gameProfile = lookupUserProfile(origName);
 
-                    Bukkit.getScheduler().runTask(LibsDisguises.getInstance(), () -> {
-                        if (DisguiseConfig.isSaveGameProfiles()) {
-                            addUserProfile(playerName, gameProfile);
-                        }
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if (DisguiseConfig.isSaveGameProfiles()) {
+                                addUserProfile(playerName, gameProfile);
+                            }
 
-                        synchronized (runnables) {
-                            if (runnables.containsKey(playerName)) {
-                                for (Object obj : runnables.remove(playerName)) {
-                                    if (obj instanceof Runnable) {
-                                        ((Runnable) obj).run();
-                                    } else if (obj instanceof LibsProfileLookup) {
-                                        ((LibsProfileLookup) obj).onLookup(gameProfile);
+                            synchronized (runnables) {
+                                if (runnables.containsKey(playerName)) {
+                                    for (Object obj : runnables.remove(playerName)) {
+                                        if (obj instanceof Runnable) {
+                                            ((Runnable) obj).run();
+                                        } else if (obj instanceof LibsProfileLookup) {
+                                            ((LibsProfileLookup) obj).onLookup(gameProfile);
+                                        }
                                     }
                                 }
                             }
                         }
-                    });
+                    }.runTask(LibsDisguises.getInstance());
                 } catch (Exception e) {
                     synchronized (runnables) {
                         runnables.remove(playerName);
@@ -1915,7 +1921,8 @@ public class DisguiseUtilities {
                     LibsDisguises.getInstance().getLogger()
                         .severe("Error when fetching " + playerName + "'s uuid from mojang: " + e.getMessage());
                 }
-            });
+                }
+            }.runTaskAsynchronously(LibsDisguises.getInstance());
         }
 
         return null;
@@ -2271,13 +2278,12 @@ public class DisguiseUtilities {
                 WrapperPlayServerDestroyEntities destroyPacket = getDestroyPacket(DisguiseAPI.getSelfDisguiseId());
                 PacketEvents.getAPI().getPlayerManager().sendPacket(disguise.getEntity(), destroyPacket);
 
-                Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
-                    try {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
                         sendSelfDisguise((Player) disguise.getEntity(), disguise);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
                     }
-                }, 2);
+                }.runTaskLater(LibsDisguises.getInstance(), 2);
             } else {
                 final Object entityTracker = ReflectionManager.getEntityTracker(disguise.getEntity());
                 final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity(), entityTracker);
@@ -2302,13 +2308,12 @@ public class DisguiseUtilities {
 
                     PacketEvents.getAPI().getPlayerManager().sendPacket(pl, destroyPacket);
 
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
-                        try {
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
                             ReflectionManager.addEntityTracker(entityTracker, entityTrackerEntry, p);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
                         }
-                    }, 2);
+                    }.runTaskLater(LibsDisguises.getInstance(), 2);
                     break;
                 }
             }
@@ -2348,13 +2353,12 @@ public class DisguiseUtilities {
                         WrapperPlayServerDestroyEntities destroyPacket = getDestroyPacket(entity.getEntityId());
                         PacketEvents.getAPI().getPlayerManager().sendPacket(player, destroyPacket);
 
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
-                            try {
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
                                 ReflectionManager.addEntityTracker(entityTracker, entityTrackerEntry, p);
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
                             }
-                        }, 2);
+                        }.runTaskLater(LibsDisguises.getInstance(), 2);
                     }
                 }
             } catch (Exception ex) {
@@ -2392,13 +2396,12 @@ public class DisguiseUtilities {
 
                 removeSelfTracker((Player) disguise.getEntity());
 
-                Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
-                    try {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
                         sendSelfDisguise((Player) disguise.getEntity(), disguise);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
                     }
-                }, 2);
+                }.runTaskLater(LibsDisguises.getInstance(), 2);
             }
 
             final Object entityTracker = ReflectionManager.getEntityTracker(disguise.getEntity());
@@ -2426,13 +2429,12 @@ public class DisguiseUtilities {
                     WrapperPlayServerDestroyEntities destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
                     PacketEvents.getAPI().getPlayerManager().sendPacket(player, destroyPacket);
 
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
-                        try {
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
                             ReflectionManager.addEntityTracker(entityTracker, entityTrackerEntry, p);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
                         }
-                    }, 2);
+                    }.runTaskLater(LibsDisguises.getInstance(), 2);
                 }
             }
         } catch (Exception ex) {
@@ -3040,11 +3042,16 @@ public class DisguiseUtilities {
                 // If it is, then this method will be run again in one tick. Which is when it should be constructed.
                 // Else its going to run in a infinite loop hue hue hue..
                 // At least until this disguise is discarded
-                Bukkit.getScheduler().runTask(LibsDisguises.getInstance(), () -> {
-                    if (DisguiseAPI.getDisguise(player, player) == disguise) {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (DisguiseAPI.getDisguise(player, player) != disguise) {
+                            return;
+                        }
+
                         sendSelfDisguise(player, disguise);
                     }
-                });
+                }.runTaskLater(LibsDisguises.getInstance(), 1);
 
                 return;
             }

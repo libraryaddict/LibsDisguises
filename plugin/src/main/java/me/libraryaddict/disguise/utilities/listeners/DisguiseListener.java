@@ -764,7 +764,12 @@ public class DisguiseListener implements Listener {
                 if (disguise != null && disguise.isSelfDisguiseVisible()) {
                     disguise.setViewSelfDisguise(false);
 
-                    Bukkit.getScheduler().runTaskLater(plugin, () -> disguise.setViewSelfDisguise(true), 20L);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            disguise.setViewSelfDisguise(true);
+                        }
+                    }.runTaskLater(LibsDisguises.getInstance(), 20);
                 }
             }
         }
@@ -793,11 +798,14 @@ public class DisguiseListener implements Listener {
             final Disguise disguise = DisguiseAPI.getDisguise((Player) event.getExited(), event.getExited());
 
             if (disguise != null) {
-                Bukkit.getScheduler().runTask(plugin, () -> {
-                    DisguiseUtilities.setupFakeDisguise(disguise);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        DisguiseUtilities.setupFakeDisguise(disguise);
 
-                    ((Player) disguise.getEntity()).updateInventory();
-                });
+                        ((Player) disguise.getEntity()).updateInventory();
+                    }
+                }.runTaskLater(LibsDisguises.getInstance(), 1);
             }
         }
     }
@@ -828,7 +836,12 @@ public class DisguiseListener implements Listener {
                 if (disguise != null && disguise.isSelfDisguiseVisible()) {
                     disguise.setViewSelfDisguise(false);
 
-                    Bukkit.getScheduler().runTaskLater(plugin, () -> disguise.setViewSelfDisguise(true), 20L);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            disguise.setViewSelfDisguise(true);
+                        }
+                    }.runTaskLater(LibsDisguises.getInstance(), 20);
                 }
             }
         }
