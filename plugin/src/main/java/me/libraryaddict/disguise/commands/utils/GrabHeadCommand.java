@@ -23,6 +23,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 public class GrabHeadCommand implements CommandExecutor {
@@ -87,9 +88,17 @@ public class GrabHeadCommand implements CommandExecutor {
         }
 
         SkinUtils.SkinCallback callback = new SkinUtils.SkinCallback() {
+            private final long cancelAt = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(3);
+
             private final BukkitTask runnable = new BukkitRunnable() {
                 @Override
                 public void run() {
+                    if (System.currentTimeMillis() > cancelAt) {
+                        cancel();
+                        LibsMsg.SKIN_API_TIMEOUT.send(sender);
+                        return;
+                    }
+
                     LibsMsg.PLEASE_WAIT.send(sender);
                 }
             }.runTaskTimer(LibsDisguises.getInstance(), 100, 100);

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class GrabSkinCommand implements CommandExecutor {
 
@@ -92,9 +93,16 @@ public class GrabSkinCommand implements CommandExecutor {
         }
 
         SkinUtils.SkinCallback callback = new SkinUtils.SkinCallback() {
+            private final long cancelAt = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(3);
             private final BukkitTask runnable = new BukkitRunnable() {
                 @Override
                 public void run() {
+                    if (System.currentTimeMillis() > cancelAt) {
+                        cancel();
+                        LibsMsg.SKIN_API_TIMEOUT.send(sender);
+                        return;
+                    }
+
                     LibsMsg.PLEASE_WAIT.send(sender);
                 }
             }.runTaskTimer(LibsDisguises.getInstance(), 100, 100);
