@@ -33,6 +33,7 @@ import me.libraryaddict.disguise.commands.utils.DisguiseViewSelfCommand;
 import me.libraryaddict.disguise.commands.utils.GrabHeadCommand;
 import me.libraryaddict.disguise.commands.utils.GrabSkinCommand;
 import me.libraryaddict.disguise.commands.utils.SaveDisguiseCommand;
+import me.libraryaddict.disguise.disguisetypes.DisguiseRunnable;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.animations.DisguiseAnimation;
@@ -360,8 +361,10 @@ public class LibsDisguises extends JavaPlugin {
 
         verboseLog("Creating but not registering the packet listeners...");
         PacketsManager.getPacketsManager().init();
+
         verboseLog("Setting up some internal utilities for disguises...");
         DisguiseUtilities.init();
+        DisguiseRunnable.startRunnable();
 
         verboseLog("Loading the sound files...");
         new SoundManager().load();

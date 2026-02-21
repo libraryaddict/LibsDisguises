@@ -130,8 +130,8 @@ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.Di
     }
 
     protected void onDisguiseStart() {
-        if (runnable != null && !runnable.isCancelled()) {
-            runnable.cancel();
+        if (runnable != null && runnable.isInUse()) {
+            runnable.stop();
         }
 
         // Clear the seen
@@ -139,8 +139,7 @@ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.Di
 
         // A scheduler to clean up any unused disguises.
         runnable = new DisguiseRunnable(getDisguise());
-
-        runnable.runTaskTimer(LibsDisguises.getInstance(), 1, 1);
+        runnable.start();
 
         for (MovementTracker tracker : trackers) {
             tracker.onStart(true);
@@ -180,7 +179,7 @@ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.Di
             return;
         }
 
-        runnable.cancel();
+        runnable.stop();
         runnable = null;
     }
 

@@ -6,8 +6,10 @@ import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMove;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityVelocity;
+import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HangingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -18,6 +20,7 @@ import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -25,9 +28,14 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class DisguiseRunnable extends BukkitRunnable {
+public class DisguiseRunnable {
+    private static final List<DisguiseRunnable> runnables = new ArrayList<>();
+    @Getter
+    private boolean inUse;
     private int blockX, blockY, blockZ, facing;
     private int deadTicks = 0;
     private int actionBarTicks = -1;
@@ -218,14 +226,13 @@ public class DisguiseRunnable extends BukkitRunnable {
         return false;
     }
 
-    @Override
-    public void run() {
-        if (!disguise.isDisguiseInUse() || disguise.getEntity() == null || !Bukkit.getWorlds().contains(disguise.getEntity().getWorld())) {
+    public void run(List<World> validWorlds) {
+        if (!disguise.isDisguiseInUse() || disguise.getEntity() == null || !validWorlds.contains(disguise.getEntity().getWorld())) {
             disguise.stopDisguise();
 
             // If still somehow not cancelled
-            if (!isCancelled()) {
-                cancel();
+            if (isInUse()) {
+                stop();
             }
             return;
         }
@@ -366,9 +373,56 @@ public class DisguiseRunnable extends BukkitRunnable {
             e.printStackTrace();
         }
     }
-    // If we need to send a packet to update the exp position as it likes to gravitate client
-    // sided to
-    // players.
+
+    public void start() {
+        if (isInUse()) {
+            throw new IllegalStateException("Runnable already in use");
+        }
+
+        inUse = true;
+
+        synchronized (runnables) {
+            runnables.add(this);
+        }
+    }
+
+    public void stop() {
+        synchronized (runnables) {
+            if (!isInUse()) {
+                throw new IllegalStateException("Runnable not in use");
+            }
+
+            inUse = false;
+        }
+    }
+
+    public static void startRunnable() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                synchronized (runnables) {
+                    Iterator<DisguiseRunnable> iterator = runnables.iterator();
+
+                    if (!iterator.hasNext()) {
+                        return;
+                    }
+
+                    List<World> worlds = Bukkit.getWorlds();
+
+                    while (iterator.hasNext()) {
+                        DisguiseRunnable runnable = iterator.next();
+
+                        if (!runnable.inUse) {
+                            iterator.remove();
+                            continue;
+                        }
+
+                        runnable.run(worlds);
+                    }
+                }
+            }
+        }.runTaskTimer(LibsDisguises.getInstance(), 1, 1);
+    }
 }
 
 

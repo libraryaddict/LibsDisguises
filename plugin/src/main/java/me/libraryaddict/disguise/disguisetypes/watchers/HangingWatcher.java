@@ -8,6 +8,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.ApiStatus;
 
 public class HangingWatcher extends FlagWatcher implements GridLockedWatcher{
     private volatile int lastRotation = -1;
@@ -16,6 +17,7 @@ public class HangingWatcher extends FlagWatcher implements GridLockedWatcher{
         super(disguise);
     }
 
+    @ApiStatus.Internal
     public void updateHangingRotation() {
         if (!NmsVersion.v1_21_R5.isSupported()) {
             return;
