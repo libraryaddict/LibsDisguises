@@ -66,7 +66,7 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
 
         final Disguise disguise = DisguiseUtilities.getDisguise(observer, entityId);
 
-        if (entityId == DisguiseAPI.getSelfDisguiseId()) {
+        if (entityId == DisguiseAPI.getSelfDisguiseId() || entityId == observer.getEntityId()) {
             // Self disguise
             event.setCancelled(true);
         } else if (DisguiseUtilities.isNotInteractable(entityId)) {
