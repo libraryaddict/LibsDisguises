@@ -62,6 +62,12 @@ Scoreboard:
   # For multiple lines, refer to 'PlayerNames' and 'ARMORSTANDS', it does require Lib's Disguises premium.
   # You are not forced to use multiple lines, you can enable this. But most servers will not need or want this.
   UpdateHealth: false
+  # If you want to disable all handling of scoreboard, and you're fully aware that you will need to handle
+  # * Disguises pushing around
+  # * Player disguises showing a name
+  # * Changing glow color
+  # and potentially more, then you may want the plugin to ignore scoreboards, yet otherwise operate as normal.
+  ModifyScoreboards: true
 
 # Hide players in tab when disguised? This means a disguised player cannot be seen when you press tab! This can be toggled on/off per disguise
 HideDisguisedPlayersFromTab: false

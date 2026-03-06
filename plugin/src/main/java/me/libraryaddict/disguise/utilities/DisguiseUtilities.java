@@ -1890,37 +1890,37 @@ public class DisguiseUtilities {
                 @Override
                 public void run() {
 
-                try {
-                    final UserProfile gameProfile = lookupUserProfile(origName);
+                    try {
+                        final UserProfile gameProfile = lookupUserProfile(origName);
 
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            if (DisguiseConfig.isSaveGameProfiles()) {
-                                addUserProfile(playerName, gameProfile);
-                            }
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                if (DisguiseConfig.isSaveGameProfiles()) {
+                                    addUserProfile(playerName, gameProfile);
+                                }
 
-                            synchronized (runnables) {
-                                if (runnables.containsKey(playerName)) {
-                                    for (Object obj : runnables.remove(playerName)) {
-                                        if (obj instanceof Runnable) {
-                                            ((Runnable) obj).run();
-                                        } else if (obj instanceof LibsProfileLookup) {
-                                            ((LibsProfileLookup) obj).onLookup(gameProfile);
+                                synchronized (runnables) {
+                                    if (runnables.containsKey(playerName)) {
+                                        for (Object obj : runnables.remove(playerName)) {
+                                            if (obj instanceof Runnable) {
+                                                ((Runnable) obj).run();
+                                            } else if (obj instanceof LibsProfileLookup) {
+                                                ((LibsProfileLookup) obj).onLookup(gameProfile);
+                                            }
                                         }
                                     }
                                 }
                             }
+                        }.runTask(LibsDisguises.getInstance());
+                    } catch (Exception e) {
+                        synchronized (runnables) {
+                            runnables.remove(playerName);
                         }
-                    }.runTask(LibsDisguises.getInstance());
-                } catch (Exception e) {
-                    synchronized (runnables) {
-                        runnables.remove(playerName);
-                    }
 
-                    LibsDisguises.getInstance().getLogger()
-                        .severe("Error when fetching " + playerName + "'s uuid from mojang: " + e.getMessage());
-                }
+                        LibsDisguises.getInstance().getLogger()
+                            .severe("Error when fetching " + playerName + "'s uuid from mojang: " + e.getMessage());
+                    }
                 }
             }.runTaskAsynchronously(LibsDisguises.getInstance());
         }
@@ -2004,10 +2004,12 @@ public class DisguiseUtilities {
             DisguiseFiles.getSavedDisguisesFolder().mkdirs();
         }
 
-        for (Scoreboard board : getAllScoreboards()) {
-            registerAllExtendedNames(board);
-            registerNoName(board);
-            registerColors(board);
+        if (DisguiseConfig.isModifyScoreboards()) {
+            for (Scoreboard board : getAllScoreboards()) {
+                registerAllExtendedNames(board);
+                registerNoName(board);
+                registerColors(board);
+            }
         }
 
         loadViewPreferences();
@@ -2068,17 +2070,20 @@ public class DisguiseUtilities {
         }
 
         // Clear the old scoreboard teams for extended names!
-        for (Scoreboard board : getAllScoreboards()) {
-            for (Team team : board.getTeams()) {
-                if (!team.getName().startsWith("LD_")) {
-                    continue;
-                }
 
-                for (String name : team.getEntries()) {
-                    board.resetScores(name);
-                }
+        if (DisguiseConfig.isModifyScoreboards()) {
+            for (Scoreboard board : getAllScoreboards()) {
+                for (Team team : board.getTeams()) {
+                    if (!team.getName().startsWith("LD_")) {
+                        continue;
+                    }
 
-                team.unregister();
+                    for (String name : team.getEntries()) {
+                        board.resetScores(name);
+                    }
+
+                    team.unregister();
+                }
             }
         }
 
@@ -2608,6 +2613,10 @@ public class DisguiseUtilities {
     }
 
     public static void updateExtendedName(PlayerDisguise disguise) {
+        if (!DisguiseConfig.isModifyScoreboards()) {
+            return;
+        }
+
         DScoreTeam exName = disguise.getScoreboardName();
 
         if (exName.getTeamName() == null) {
@@ -2620,6 +2629,10 @@ public class DisguiseUtilities {
     }
 
     public static void registerExtendedName(PlayerDisguise disguise) {
+        if (!DisguiseConfig.isModifyScoreboards()) {
+            return;
+        }
+
         DScoreTeam exName = disguise.getScoreboardName();
 
         if (exName.getTeamName() == null) {
@@ -2634,6 +2647,10 @@ public class DisguiseUtilities {
     }
 
     public static void registerAllExtendedNames(Scoreboard scoreboard) {
+        if (!DisguiseConfig.isModifyScoreboards()) {
+            return;
+        }
+
         for (Set<TargetedDisguise> disguises : getDisguises().values()) {
             for (Disguise disguise : disguises) {
                 if (!disguise.isPlayerDisguise() || !disguise.isDisguiseInUse()) {
@@ -2652,6 +2669,10 @@ public class DisguiseUtilities {
     }
 
     public static void unregisterExtendedName(PlayerDisguise removed) {
+        if (!DisguiseConfig.isModifyScoreboards()) {
+            return;
+        }
+
         if (removed.getScoreboardName().getTeamName() == null) {
             return;
         }
@@ -2675,6 +2696,10 @@ public class DisguiseUtilities {
     }
 
     public static void registerNoName(Scoreboard scoreboard) {
+        if (!DisguiseConfig.isModifyScoreboards()) {
+            return;
+        }
+
         Team mainTeam = scoreboard.getTeam("LD_NoName");
 
         if (mainTeam == null) {
@@ -2687,6 +2712,10 @@ public class DisguiseUtilities {
     }
 
     public static void setGlowColor(UUID uuid, ChatColor color) {
+        if (!DisguiseConfig.isModifyScoreboards()) {
+            return;
+        }
+
         String name = color == null ? "" : getTeamName(color);
 
         for (Scoreboard scoreboard : getAllScoreboards()) {
@@ -2723,6 +2752,10 @@ public class DisguiseUtilities {
     }
 
     public static void registerColors(Scoreboard scoreboard) {
+        if (!DisguiseConfig.isModifyScoreboards()) {
+            return;
+        }
+
         for (ChatColor color : ChatColor.values()) {
             if (!color.isColor()) {
                 continue;
@@ -2752,7 +2785,7 @@ public class DisguiseUtilities {
             name = name.substring(0, (16 + (limit * 2)));
         }
 
-        Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
+        Scoreboard board = DisguiseConfig.isModifyScoreboards() ? Bukkit.getScoreboardManager().getMainScoreboard() : null;
 
         // If name is short enough to be used outside of player name
         if (DisguiseConfig.isScoreboardNames() && name.length() <= limit * 2) {
@@ -2881,7 +2914,7 @@ public class DisguiseUtilities {
     }
 
     private static boolean isInvalidPlayerName(Scoreboard board, String name) {
-        return board.getEntryTeam(name) != null || Bukkit.getPlayerExact(name) != null;
+        return board != null && (board.getEntryTeam(name) != null || Bukkit.getPlayerExact(name) != null);
     }
 
     public static String quote(String string) {
@@ -3129,7 +3162,7 @@ public class DisguiseUtilities {
                     potionEffect.getAmplifier(), array.length > 0 ? array[0] : 0));
             }
 
-            if (DisguiseConfig.isDisableFriendlyInvisibles()) {
+            if (DisguiseConfig.isDisableFriendlyInvisibles() && DisguiseConfig.isModifyScoreboards()) {
                 Team team = player.getScoreboard().getEntryTeam(player.getName());
 
                 if (team != null && team.canSeeFriendlyInvisibles()) {

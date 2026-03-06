@@ -351,6 +351,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static boolean fancyHiddenTabs = true;
+    @Getter
+    @Setter
+    private static boolean modifyScoreboards = true;
 
     public static boolean isDisplayTextName() {
         return getPlayerNameType() == PlayerNameType.TEXT_DISPLAY;
@@ -667,6 +670,7 @@ public class DisguiseConfig {
         setVoiceChatCompatibility(config.getBoolean("Compatibility.VoiceChat"));
         setLoadIntoRegistries(config.getBoolean("LoadIntoRegistries"));
         setFancyHiddenTabs(config.getBoolean("FancyHiddenTabs"));
+        setModifyScoreboards(config.getBoolean("Scoreboard.ModifyScoreboards", true));
 
         try {
             tallSelfDisguisesVisibility = TallSelfDisguise.valueOf(config.getString("TallSelfDisguises").toUpperCase(Locale.ENGLISH));
