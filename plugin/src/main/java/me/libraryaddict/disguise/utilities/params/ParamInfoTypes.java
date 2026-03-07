@@ -79,6 +79,7 @@ import org.bukkit.entity.Pose;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Salmon;
 import org.bukkit.entity.Sniffer;
+import org.bukkit.entity.Spellcaster;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.entity.TropicalFish;
 import org.bukkit.entity.Villager;
@@ -173,6 +174,7 @@ public class ParamInfoTypes {
             paramInfos.add(new ParamInfoEnum(Panda.Gene.class, "Panda Gene", "The panda gene type"));
             paramInfos.add(
                 new ParamInfoEnum(MushroomCow.Variant.class, "Mushroom Cow Variant", "The different variants for mushroom cows"));
+            paramInfos.add(new ParamInfoEnum(Spellcaster.Spell.class, "Illager Spell", "The spells that an Illusioner can cast"));
         } else {
             paramInfos.add(new ParamInfoEnum(Ocelot.Type.class, "Ocelot Type", "The type of ocelot"));
         }
