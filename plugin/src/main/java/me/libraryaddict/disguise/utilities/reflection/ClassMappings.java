@@ -80,7 +80,7 @@ public class ClassMappings {
             "org.bukkit.craftbukkit.$version$.block.data", "org.bukkit.craftbukkit.$version$.entity",
             "org.bukkit.craftbukkit.$version$.inventory", "org.bukkit.craftbukkit.$version$.util"};
         String replaceStr = "$version$";
-        String version = ReflectionManager.getNmsPackage();
+        String version = NmsVersion.getCraftbukkitPackage();
 
         // If there is no nms package, then replace the . as well so we don't have a "org.bukkit..server" package name situation
         if (version.isEmpty()) {

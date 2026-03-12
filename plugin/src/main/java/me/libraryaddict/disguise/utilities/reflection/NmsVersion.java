@@ -2,9 +2,12 @@ package me.libraryaddict.disguise.utilities.reflection;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public enum NmsVersion {
     v1_12("1.12", "1.12.1", "1.12.2"),
@@ -85,7 +88,7 @@ public enum NmsVersion {
         int index = ordinal();
 
         // We don't ever expect to hit end of loop
-        while (values[index].isDeprecated()) {
+        while (index + 1 < values.length && values[index].isDeprecated()) {
             index++;
         }
 
@@ -112,11 +115,11 @@ public enum NmsVersion {
      * If this enum version is older, or the same version as the current running server
      */
     public boolean isSupported() {
-        return ReflectionManager.getVersion() != null && ReflectionManager.getVersion().ordinal() >= ordinal();
+        return getVersion() != null && getVersion().ordinal() >= ordinal();
     }
 
     public boolean isVersion() {
-        return ReflectionManager.getVersion() == this;
+        return getVersion() == this;
     }
 
     /**
@@ -160,5 +163,29 @@ public enum NmsVersion {
         }
 
         return null;
+    }
+
+    @Getter
+    private static final NmsVersion version;
+    @Getter
+    private static final String minecraftVersion, craftbukkitPackage;
+
+    static {
+        if (Bukkit.getServer() == null) {
+            version = values()[values().length - 1];
+            minecraftVersion = version.getRecommendedMinorVersion();
+            craftbukkitPackage = version.name();
+        } else {
+            Matcher matcher = Pattern.compile(" \\(MC: ([\\d.]+)[^)]*\\)").matcher(Bukkit.getVersion());
+
+            if (!matcher.find()) {
+                throw new IllegalStateException(
+                    "Lib's Disguises is unable to find and parse a ` (MC: 1.10.1)` version in Bukkit.getVersion()");
+            }
+
+            minecraftVersion = matcher.group(1);
+            version = getByVersion(minecraftVersion);
+            craftbukkitPackage = Bukkit.getServer().getClass().getPackage().getName();
+        }
     }
 }

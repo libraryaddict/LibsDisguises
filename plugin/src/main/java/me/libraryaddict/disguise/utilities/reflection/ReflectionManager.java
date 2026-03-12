@@ -172,19 +172,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ReflectionManager {
-    private static String craftbukkitVersion;
-    private static NmsVersion version;
     @Getter
     private static ReflectionManagerAbstract nmsReflection;
     private static Field trackedPlayersMap;
     private static Method fillProfileProperties;
     private static MinecraftSessionService sessionService;
-    private static String minecraftVersion;
     private static Method propertyName, propertyValue, propertySignature;
     private static Method gameProfileGetId, gameProfileGetName, gameProfileGetProperties;
     @Getter
@@ -212,7 +207,7 @@ public class ReflectionManager {
 
     public static void init() {
         try {
-            nmsReflection = getReflectionManager(getVersion());
+            nmsReflection = getReflectionManager(NmsVersion.getVersion());
 
             loadAuthlibStuff();
 
@@ -451,56 +446,24 @@ public class ReflectionManager {
         return getNmsReflection().getCraftItem(bukkitItem);
     }
 
+    @Deprecated
     public static NmsVersion getVersion() {
-        if (craftbukkitVersion == null) {
-            if (Bukkit.getServer() == null) {
-                version = NmsVersion.values()[NmsVersion.values().length - 1];
-            } else {
-                getCraftBukkitPackage();
-            }
-        }
-
-        return version;
+        return NmsVersion.getVersion();
     }
 
+    @Deprecated
     public static String getMinecraftVersion() {
-        if (minecraftVersion == null) {
-            Matcher matcher = Pattern.compile(" \\(MC: ([\\d.]+)[^)]*\\)").matcher(Bukkit.getVersion());
-
-            if (!matcher.find()) {
-                throw new IllegalStateException(
-                    "Lib's Disguises is unable to find and parse a ` (MC: 1.10.1)` version in Bukkit.getVersion()");
-            }
-
-            minecraftVersion = matcher.group(1);
-        }
-
-        return minecraftVersion;
+        return NmsVersion.getMinecraftVersion();
     }
 
     @Deprecated
     public static String getNmsPackage() {
-        if (craftbukkitVersion == null) {
-            getCraftBukkitPackage();
-        }
-
-        String[] spl = craftbukkitVersion.split("\\.");
-
-        if (spl.length != 4) {
-            return "";
-        }
-
-        return spl[3];
+        return getCraftBukkitPackage();
     }
 
+    @Deprecated
     public static String getCraftBukkitPackage() {
-        if (craftbukkitVersion == null) {
-            craftbukkitVersion = Bukkit.getServer().getClass().getPackage().getName();
-
-            version = NmsVersion.getByVersion(getMinecraftVersion());
-        }
-
-        return craftbukkitVersion;
+        return NmsVersion.getCraftbukkitPackage();
     }
 
     public static Class<?> getCraftClass(String className) {

@@ -55,11 +55,11 @@ public class WatcherInfo {
     }
 
     public boolean isSupported() {
-        if (getAdded() >= 0 && added > ReflectionManager.getVersion().ordinal()) {
+        if (getAdded() >= 0 && added > NmsVersion.getVersion().ordinal()) {
             return false;
         }
 
-        return getRemoved() < 0 || removed > ReflectionManager.getVersion().ordinal();
+        return getRemoved() < 0 || removed > NmsVersion.getVersion().ordinal();
     }
 
     @Override

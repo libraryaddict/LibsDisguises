@@ -263,7 +263,7 @@ public class LibsDisguises extends JavaPlugin {
 
             // No point logging this one
             someMoreLogging();
-            NmsVersion nmsVersion = ReflectionManager.getVersion();
+            NmsVersion nmsVersion = NmsVersion.getVersion();
 
             if (nmsVersion == null || nmsVersion == NmsVersion.UNSUPPORTED) {
                 getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is intended for " +
@@ -455,8 +455,8 @@ public class LibsDisguises extends JavaPlugin {
     private void logInfo() {
         getLogger().info("File Name: " + getFile().getName());
 
-        String minecraft = ReflectionManager.getMinecraftVersion();
-        NmsVersion version = ReflectionManager.getVersion();
+        String minecraft = NmsVersion.getMinecraftVersion();
+        NmsVersion version = NmsVersion.getVersion();
 
         getLogger().info("Discovered nms version (LD: " + version + ") (MC: " + minecraft + ")");
 
