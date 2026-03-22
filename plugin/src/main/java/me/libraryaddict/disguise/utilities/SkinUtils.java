@@ -268,6 +268,7 @@ public class SkinUtils {
                 continue;
             }
 
+            modelType = variant;
             param = param.substring(0, param.length() - (variant.name().length() + 1));
             break;
         }
