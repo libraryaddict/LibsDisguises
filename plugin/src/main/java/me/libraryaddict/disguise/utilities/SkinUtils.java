@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.google.gson.Gson;
 import com.mojang.authlib.GameProfile;
+import javax.imageio.ImageIO;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.mineskin.models.responses.MineSkinQueueResponse;
 import me.libraryaddict.disguise.utilities.mineskin.models.structures.SkinVariant;
@@ -12,8 +13,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -261,6 +264,8 @@ public class SkinUtils {
 
     public static void grabSkin(CommandSender sender, String param, SkinCallback callback) {
         SkinVariant modelType = SkinVariant.UNKNOWN;
+        // If we shouldn't try to resolve this ourselves
+        boolean specificModel = false;
 
         // Try to find ':slim', ':classic' and ':unknown'
         for (SkinVariant variant : SkinVariant.values()) {
@@ -270,6 +275,7 @@ public class SkinUtils {
 
             modelType = variant;
             param = param.substring(0, param.length() - (variant.name().length() + 1));
+            specificModel = true;
             break;
         }
 
@@ -304,6 +310,10 @@ public class SkinUtils {
 
             if (file != null) {
                 // We're using a file!
+                if (!specificModel && modelType == SkinVariant.UNKNOWN) {
+                    modelType = detectSkinVariant(file);
+                }
+
                 callback.onInfo(LibsMsg.SKIN_API_USING_FILE);
                 handleFile(file, modelType, callback);
                 attemptPromoteMineskin(sender);
@@ -335,5 +345,154 @@ public class SkinUtils {
                 attemptPromoteMineskin(sender);
             }
         }
+    }
+
+    /**
+     * Detects if a Minecraft skin is Steve (Classic) or Alex (Slim).
+     */
+    public static SkinVariant detectSkinVariant(File skinFile) {
+        BufferedImage image;
+
+        try {
+            image = ImageIO.read(skinFile);
+        } catch (IOException e) {
+            return SkinVariant.UNKNOWN;
+        }
+
+        // If image failed to load
+        if (image == null) {
+            return SkinVariant.UNKNOWN;
+        }
+
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        // Minecraft skins must be 64 wide, 32 or 64 high
+        if (width != 64 || (height != 32 && height != 64)) {
+            return SkinVariant.UNKNOWN;
+        }
+
+        if (height == 32) {
+            return SkinVariant.CLASSIC;
+        }
+
+        // The pixel to check for "solid color"
+        Integer pixelToCheck = image.getRGB(0, 0);
+        // If the unused 8x8 is alpha, then we're checking alpha
+        int firstBlockAlpha = 0;
+        int firstBlockNonAlpha = 0;
+
+        // We're checking the unused 8x8 block at the start of the image
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                int pixel = image.getRGB(x, y);
+
+                if ((((pixel) >> 24) & 0xFF) == 0) {
+                    firstBlockAlpha++;
+                } else {
+                    firstBlockNonAlpha++;
+                }
+
+                // Check if it's all a solid color
+                if (pixelToCheck != null && pixelToCheck != pixel) {
+                    pixelToCheck = null;
+                }
+            }
+        }
+
+        if (firstBlockAlpha > 0 && firstBlockNonAlpha > 0) {
+            String message = String.format(
+                "The skin '%s' has a mixture of transparent and solid colors in the first 8x8 block of pixels, unknown if this is a " +
+                    "classic or slim skin.", skinFile.getName());
+
+            if (LibsDisguises.getInstance() != null) {
+                LibsDisguises.getInstance().getLogger().warning(message);
+            } else {
+                System.out.println("[LibsDisguises] " + message);
+            }
+
+            return SkinVariant.UNKNOWN;
+        }
+
+        boolean checkingForAlpha = firstBlockNonAlpha == 0;
+
+        // If the 8x8 has non-transparent, and is not consistent colors
+        if (!checkingForAlpha && pixelToCheck == null) {
+            return SkinVariant.UNKNOWN;
+        }
+
+        boolean colorReused = false;
+        int rightArmAlpha = 0;
+        int rightArmNonAlpha = 0;
+
+        // We're checking the right arm
+        for (int x = checkingForAlpha ? 54 : 40; x < 56 && !colorReused; x++) {
+            for (int y = 20; y < 32 && !colorReused; y++) {
+                int pixel = image.getRGB(x, y);
+
+                // We're checking solid colors, we're validating to ensure a solid color isn't used in the right arm.
+                if (x < 54) {
+                    if (pixel == pixelToCheck) {
+                        colorReused = true;
+                    }
+
+                    continue;
+                }
+                // If we're checking alpha
+                if (firstBlockNonAlpha == 0) {
+                    // If the pixel is transparent
+                    if (((pixel >> 24) & 0xFF) == 0) {
+                        rightArmAlpha++;
+                    } else {
+                        rightArmNonAlpha++;
+                    }
+
+                    continue;
+                }
+
+                // If we're not checking alpha, then any color disparity is not slim
+                if (pixel != pixelToCheck) {
+                    return SkinVariant.CLASSIC;
+                }
+
+                rightArmAlpha++;
+            }
+        }
+
+        if (colorReused) {
+            String message = String.format(
+                "The skin '%s' has no transparency in the first 8x8 block, and that color is used in the skin, unknown if this is a " +
+                    "classic or slim skin.", skinFile.getName());
+
+            if (LibsDisguises.getInstance() != null) {
+                LibsDisguises.getInstance().getLogger().warning(message);
+            } else {
+                System.out.println("[LibsDisguises] " + message);
+            }
+
+            return SkinVariant.UNKNOWN;
+        }
+
+        // If there are no transparent pixels, it's a steve skin
+        if (rightArmAlpha == 0) {
+            return SkinVariant.CLASSIC;
+        }
+
+        // If there are solid colors among the transparent pixels
+        if (rightArmNonAlpha > 0) {
+            String message = String.format(
+                "The skin '%s' has a mixture of transparent and solid colors in the right arm, unknown if this is a classic or slim skin.",
+                skinFile.getName());
+
+            if (LibsDisguises.getInstance() != null) {
+                LibsDisguises.getInstance().getLogger().warning(message);
+            } else {
+                System.out.println("[LibsDisguises] " + message);
+            }
+
+            return SkinVariant.UNKNOWN;
+        }
+
+        return SkinVariant.SLIM;
     }
 }
