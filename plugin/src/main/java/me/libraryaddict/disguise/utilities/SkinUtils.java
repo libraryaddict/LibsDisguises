@@ -347,8 +347,22 @@ public class SkinUtils {
         }
     }
 
+    private static void warn(String message) {
+        if (LibsDisguises.getInstance() != null) {
+            LibsDisguises.getInstance().getLogger().warning(message);
+        } else {
+            System.out.println("[LibsDisguises] " + message);
+        }
+    }
+
     /**
      * Detects if a Minecraft skin is Steve (Classic) or Alex (Slim).
+     * <p>
+     * This does so by checking the first 8x8 block of pixels which are unused, to determine if a solid color is used, or if transparency
+     * is used. Transparency is correct, but sometimes missing.
+     * <p>
+     * Then we compare the skin for the "right arm", if the skin is slimmer, compared using the background color, then it must be a slim
+     * skin
      */
     public static SkinVariant detectSkinVariant(File skinFile) {
         BufferedImage image;
@@ -372,127 +386,105 @@ public class SkinUtils {
             return SkinVariant.UNKNOWN;
         }
 
-        if (height == 32) {
-            return SkinVariant.CLASSIC;
-        }
-
         // The pixel to check for "solid color"
-        Integer pixelToCheck = image.getRGB(0, 0);
-        // If the unused 8x8 is alpha, then we're checking alpha
-        int firstBlockAlpha = 0;
-        int firstBlockNonAlpha = 0;
+        Integer backgroundColor = image.getRGB(0, 0);
+        boolean backgroundIsAlpha = false;
+        boolean backgroundIsColor = false;
 
         // We're checking the unused 8x8 block at the start of the image
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
                 int pixel = image.getRGB(x, y);
 
-                if ((((pixel) >> 24) & 0xFF) == 0) {
-                    firstBlockAlpha++;
+                if (((pixel >> 24) & 0xFF) == 0) {
+                    backgroundIsAlpha = true;
                 } else {
-                    firstBlockNonAlpha++;
+                    backgroundIsColor = true;
                 }
 
-                // Check if it's all a solid color
-                if (pixelToCheck != null && pixelToCheck != pixel) {
-                    pixelToCheck = null;
+                // Check if the background is a consistent solid color
+                if (backgroundColor != null && backgroundColor != pixel) {
+                    // If not, set to null
+                    backgroundColor = null;
                 }
             }
         }
 
-        if (firstBlockAlpha > 0 && firstBlockNonAlpha > 0) {
-            String message = String.format(
-                "The skin '%s' has a mixture of transparent and solid colors in the first 8x8 block of pixels, unknown if this is a " +
-                    "classic or slim skin.", skinFile.getName());
-
-            if (LibsDisguises.getInstance() != null) {
-                LibsDisguises.getInstance().getLogger().warning(message);
-            } else {
-                System.out.println("[LibsDisguises] " + message);
-            }
-
+        // It cannot have both alpha and color
+        if (backgroundIsAlpha == backgroundIsColor) {
+            warn(String.format("The skin '%s' has a mixture of transparent and solid colors in the first 8x8 block of pixels, " +
+                "unknown if this is a classic or slim skin.", skinFile.getName()));
             return SkinVariant.UNKNOWN;
         }
 
-        boolean checkingForAlpha = firstBlockNonAlpha == 0;
-
-        // If the 8x8 has non-transparent, and is not consistent colors
-        if (!checkingForAlpha && pixelToCheck == null) {
+        // If the 8x8 block is color, but is not consistent
+        if (backgroundIsColor && backgroundColor == null) {
+            warn(String.format("The skin '%s' appears to be corrupt, random colors are used in the first 8x8 block of pixels, " +
+                "unknown if this is a classic or slim skin.", skinFile.getName()));
             return SkinVariant.UNKNOWN;
         }
 
-        boolean colorReused = false;
-        int rightArmAlpha = 0;
-        int rightArmNonAlpha = 0;
+        boolean transparentStrip = false;
+        boolean coloredStrip = false;
+        boolean consistentStripColor = backgroundIsColor && backgroundColor != null;
 
-        // We're checking the right arm
-        for (int x = checkingForAlpha ? 54 : 40; x < 56 && !colorReused; x++) {
-            for (int y = 20; y < 32 && !colorReused; y++) {
-                int pixel = image.getRGB(x, y);
+        // If checking a solid color, we need to scan from 40 to validate it's not reused in the arm, some skins are solid colors.
+        // If checking alpha, we only need to scan the 2 pixel wide strip, alpha should never be used in a normal skin.
+        for (int x = backgroundIsColor ? 40 : 54; x < 56; x++) {
+            for (int y = 20; y < 32; y++) {
+                int rgb = image.getRGB(x, y);
 
-                // We're checking solid colors, we're validating to ensure a solid color isn't used in the right arm.
                 if (x < 54) {
-                    if (pixel == pixelToCheck) {
-                        colorReused = true;
-                    }
-
-                    continue;
-                }
-                // If we're checking alpha
-                if (firstBlockNonAlpha == 0) {
-                    // If the pixel is transparent
-                    if (((pixel >> 24) & 0xFF) == 0) {
-                        rightArmAlpha++;
-                    } else {
-                        rightArmNonAlpha++;
+                    // We're checking solid colors to validate that the background color isn't used in the right arm texture.
+                    if (rgb == backgroundColor) {
+                        warn(String.format(
+                            "The skin '%s' has no transparency in the first 8x8 block, and yet the background color is used in the skin " +
+                                "itself, unknown if this is a classic or slim skin.", skinFile.getName()));
+                        return SkinVariant.UNKNOWN;
                     }
 
                     continue;
                 }
 
-                // If we're not checking alpha, then any color disparity is not slim
-                if (pixel != pixelToCheck) {
-                    return SkinVariant.CLASSIC;
+                // If the pixel is transparent
+                if (((rgb >> 24) & 0xFF) == 0) {
+                    transparentStrip = true;
+                } else {
+                    coloredStrip = true;
                 }
 
-                rightArmAlpha++;
+                // If check already failed, or check passed, continue
+                if (!consistentStripColor || rgb == backgroundColor) {
+                    continue;
+                }
+
+                // Fail check
+                consistentStripColor = false;
             }
         }
 
-        if (colorReused) {
-            String message = String.format(
-                "The skin '%s' has no transparency in the first 8x8 block, and that color is used in the skin, unknown if this is a " +
-                    "classic or slim skin.", skinFile.getName());
-
-            if (LibsDisguises.getInstance() != null) {
-                LibsDisguises.getInstance().getLogger().warning(message);
-            } else {
-                System.out.println("[LibsDisguises] " + message);
-            }
-
+        // If transparent AND non-transparent colors are encountered, then it's an issue
+        if (transparentStrip && coloredStrip) {
+            warn(String.format("The skin '%s' has a mixture of transparent and solid colors in the right arm, " +
+                "unknown if this is a classic or slim skin.", skinFile.getName()));
             return SkinVariant.UNKNOWN;
         }
 
-        // If there are no transparent pixels, it's a steve skin
-        if (rightArmAlpha == 0) {
+        // If we were checking via alpha
+        if (backgroundIsAlpha) {
+            // If the strip is transparent, then it must be slim
+            if (transparentStrip) {
+                return SkinVariant.SLIM;
+            }
+
             return SkinVariant.CLASSIC;
         }
 
-        // If there are solid colors among the transparent pixels
-        if (rightArmNonAlpha > 0) {
-            String message = String.format(
-                "The skin '%s' has a mixture of transparent and solid colors in the right arm, unknown if this is a classic or slim skin.",
-                skinFile.getName());
-
-            if (LibsDisguises.getInstance() != null) {
-                LibsDisguises.getInstance().getLogger().warning(message);
-            } else {
-                System.out.println("[LibsDisguises] " + message);
-            }
-
-            return SkinVariant.UNKNOWN;
+        // Otherwise we were checking for a consistent color, and it does match
+        if (consistentStripColor) {
+            return SkinVariant.SLIM;
         }
 
-        return SkinVariant.SLIM;
+        return SkinVariant.CLASSIC;
     }
 }
