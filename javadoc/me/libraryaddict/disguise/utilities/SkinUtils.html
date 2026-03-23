@@ -331,7 +331,13 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="detectSkinVariant(java.io.File)">
 <h3>detectSkinVariant</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="mineskin/models/structures/SkinVariant.html" title="enum class in me.libraryaddict.disguise.utilities.mineskin.models.structures">SkinVariant</a></span>&nbsp;<span class="element-name">detectSkinVariant</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;skinFile)</span></div>
-<div class="block">Detects if a Minecraft skin is Steve (Classic) or Alex (Slim).</div>
+<div class="block">Detects if a Minecraft skin is Steve (Classic) or Alex (Slim).
+ <p>
+ This does so by checking the first 8x8 block of pixels which are unused, to determine if a solid color is used, or if transparency
+ is used. Transparency is correct, but sometimes missing.
+ <p>
+ Then we compare the skin for the "right arm", if the skin is slimmer, compared using the background color, then it must be a slim
+ skin</div>
 </section>
 </li>
 </ul>
