@@ -396,7 +396,8 @@ public class SkinUtils {
             for (int x = 0; x < 8; x++) {
                 int pixel = image.getRGB(x, y);
 
-                if (((pixel >> 24) & 0xFF) == 0) {
+                // If the pixel is between 0 to ~39% transparency
+                if (((pixel >> 24) & 0xFF) < 100) {
                     backgroundIsAlpha = true;
                 } else {
                     backgroundIsColor = true;
@@ -446,8 +447,8 @@ public class SkinUtils {
                     continue;
                 }
 
-                // If the pixel is transparent
-                if (((rgb >> 24) & 0xFF) == 0) {
+                // If the pixel is between 0 to ~39% transparency
+                if (((rgb >> 24) & 0xFF) < 100) {
                     transparentStrip = true;
                 } else {
                     coloredStrip = true;
