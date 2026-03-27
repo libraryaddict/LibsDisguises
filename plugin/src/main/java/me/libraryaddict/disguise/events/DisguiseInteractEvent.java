@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.events;
 
 import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
@@ -38,7 +39,7 @@ public class DisguiseInteractEvent extends PlayerEvent {
     private final boolean leftClick;
 
     public DisguiseInteractEvent(TargetedDisguise disguise, EquipmentSlot hand, boolean leftClick) {
-        super((Player) disguise.getEntity());
+        super((Player) disguise.getEntity(), !Bukkit.isPrimaryThread());
 
         this.disguise = disguise;
         this.hand = hand;

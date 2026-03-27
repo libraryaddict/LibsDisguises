@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
@@ -41,6 +42,8 @@ public class UndisguiseEvent extends Event implements Cancellable {
     }
 
     public UndisguiseEvent(CommandSender sender, Entity entity, Disguise disguise, boolean beingReplaced, Supplier<Boolean> isCancellable) {
+        super(!Bukkit.isPrimaryThread());
+
         this.commandSender = sender;
         this.disguised = entity;
         this.disguise = disguise;

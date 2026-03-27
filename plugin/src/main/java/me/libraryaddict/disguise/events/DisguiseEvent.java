@@ -3,6 +3,9 @@ package me.libraryaddict.disguise.events;
 import lombok.Getter;
 import lombok.Setter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
@@ -21,6 +24,8 @@ public class DisguiseEvent extends Event implements Cancellable {
     private boolean cancelled;
 
     public DisguiseEvent(CommandSender sender, Entity entity, Disguise disguise) {
+        super(!Bukkit.isPrimaryThread());
+
         commandSender = sender;
         this.entity = entity;
         this.disguise = disguise;
