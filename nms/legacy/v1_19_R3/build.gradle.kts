@@ -11,9 +11,7 @@ nmsModule {
 
 dependencies {
     compileOnly(libs.com.mojang.authlib.old)
-    paperweight.paperDevBundle(nmsModule.craftbukkitVersion.get()) {
-        isChanging = false
-    }
+    paperweight.paperDevBundle(nmsModule.craftbukkitVersion.get())
 }
 
 java {
