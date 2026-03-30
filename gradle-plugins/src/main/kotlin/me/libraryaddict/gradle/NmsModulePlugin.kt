@@ -7,6 +7,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.RelativePath
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SourceSetContainer
@@ -46,6 +47,7 @@ abstract class NmsModulePlugin : Plugin<Project> {
             "compileOnly"(libs.findLibrary("it-unimi-dsi-fastutil").get())
             "compileOnly"(libs.findLibrary("com-mojang-datafixerupper").get())
             "compileOnly"(libs.findLibrary("com-retro-packetevents").get())
+            "compileOnly"(libs.findLibrary("com-mojang-authlib-old").get())
         }
 
         val generatedSourcesDir = layout.buildDirectory.dir("generated/java/main")
@@ -105,9 +107,11 @@ abstract class NmsModulePlugin : Plugin<Project> {
 
 
         afterEvaluate {
-            apply {
-                overrideProperties = (layout.projectDirectory.file("src/main/resources/override.properties"))
-            }
+            val javaExt = extensions.getByType<JavaPluginExtension>()
+            javaExt.sourceCompatibility = nmsModule.javaVersion.get()
+            javaExt.targetCompatibility = nmsModule.javaVersion.get()
+
+            overrideProperties = (layout.projectDirectory.file("src/main/resources/override.properties"))
         }
     }
 }
