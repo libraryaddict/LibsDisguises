@@ -88,10 +88,18 @@ abstract class NmsModulePlugin : Plugin<Project> {
             filter(mapOf("tokens" to replacements), ReplaceTokens::class.java)
         }
 
-        apply(plugin = "io.papermc.paperweight.userdev")
+        val usingPaperweight =
+            providers.gradleProperty("${project.name}.usePaperweight").map(String::toBoolean).getOrElse(true)
+        if (usingPaperweight) {
+            apply(plugin = "io.papermc.paperweight.userdev")
 
-        (project.extensions.getByName("paperweight") as PaperweightUserExtension).reobfArtifactConfiguration =
-            io.papermc.paperweight.userdev.ReobfArtifactConfiguration.REOBF_PRODUCTION
+            (project.extensions.getByName("paperweight") as PaperweightUserExtension).reobfArtifactConfiguration =
+                io.papermc.paperweight.userdev.ReobfArtifactConfiguration.REOBF_PRODUCTION
+
+            tasks.named("assemble") {
+                dependsOn(tasks.named("reobfJar"))
+            }
+        }
 
         project.extensions.getByType<SourceSetContainer>().getByName("main").java.srcDir(generatedSourcesDir)
 
@@ -99,9 +107,7 @@ abstract class NmsModulePlugin : Plugin<Project> {
             dependsOn(generateSharedNmsSources)
         }
 
-        tasks.named("assemble") {
-            dependsOn(tasks.named("reobfJar"))
-        }
+
 
         tasks.withType<Jar> { exclude("*.properties") }
 
