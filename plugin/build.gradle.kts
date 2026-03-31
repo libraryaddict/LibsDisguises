@@ -120,7 +120,7 @@ tasks.register("updatePacketEventsRelease") {
                 it.getString("status") == "listed" &&
                         it.getString("version_type") == "release" && it.has("files") &&
                         it.getJSONArray("files").getJSONObject(0).getString("filename").lowercase()
-                            .matches(".*(bukkit|spigot|paper).*\\.jar$".toRegex())
+                            .matches("^(?!.*(javadoc|sources).*).*(bukkit|spigot|paper).*\\.jar$".toRegex())
             } ?: throw GradleException("Could not find a suitable release version on Modrinth.")
 
         val fileInfo = latestRelease.getJSONArray("files").getJSONObject(0)
@@ -143,7 +143,7 @@ tasks.register("updatePacketEventsSnapshot") {
         val artifact = build.getJSONArray("artifacts").asSequence()
             .map { it as JSONObject }
             .firstOrNull {
-                it.getString("fileName").lowercase().matches(".*(bukkit|spigot|paper).*\\.jar$".toRegex())
+                it.getString("fileName").lowercase().matches("^(?!.*(javadoc|sources).*).*(bukkit|spigot|paper).*\\.jar$".toRegex())
             }
             ?: throw GradleException("Could not find JAR in Jenkins.")
 
