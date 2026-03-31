@@ -25,7 +25,7 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           javadoc-branch: javadoc
-          java-version: 21
+          java-version: 25
           target-folder: javadoc
           project: gradle
           custom-command: gradle plugin:javadoc

@@ -40,7 +40,7 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_1_8
 
         toolchain {
-            languageVersion = JavaLanguageVersion.of(21)
+            languageVersion = JavaLanguageVersion.of(25)
         }
         disableAutoTargetJvm()
     }
