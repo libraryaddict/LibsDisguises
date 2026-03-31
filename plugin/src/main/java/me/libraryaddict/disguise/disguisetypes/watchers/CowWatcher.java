@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import com.github.retrooper.packetevents.protocol.entity.cow.CowSoundVariant;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -19,5 +20,15 @@ public class CowWatcher extends AgeableWatcher {
     @NmsAddedIn(NmsVersion.v1_21_R4)
     public Cow.Variant getVariant() {
         return getData(MetaIndex.COW_VARIANT);
+    }
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public void setSoundVariant(CowSoundVariant variant) {
+        sendData(MetaIndex.COW_SOUND, variant);
+    }
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public CowSoundVariant getSoundVariant() {
+        return getData(MetaIndex.COW_SOUND);
     }
 }

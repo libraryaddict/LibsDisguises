@@ -2,11 +2,19 @@ package me.libraryaddict.disguise.disguisetypes;
 
 import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
 import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloState;
+import com.github.retrooper.packetevents.protocol.entity.cat.CatSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.cat.CatSoundVariants;
+import com.github.retrooper.packetevents.protocol.entity.chicken.ChickenSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.chicken.ChickenSoundVariants;
+import com.github.retrooper.packetevents.protocol.entity.cow.CowSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.cow.CowSoundVariants;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataType;
 import com.github.retrooper.packetevents.protocol.entity.data.struct.CopperGolemState;
 import com.github.retrooper.packetevents.protocol.entity.data.struct.WeatheringCopperState;
 import com.github.retrooper.packetevents.protocol.entity.nautilus.ZombieNautilusVariant;
 import com.github.retrooper.packetevents.protocol.entity.nautilus.ZombieNautilusVariants;
+import com.github.retrooper.packetevents.protocol.entity.pig.PigSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.pig.PigSoundVariants;
 import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.protocol.entity.sniffer.SnifferState;
 import com.github.retrooper.packetevents.protocol.entity.villager.VillagerData;
@@ -116,6 +124,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.SpiderWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.StriderWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TNTWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.TadpoleWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TameableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TextDisplayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ThrowableWatcher;
@@ -189,6 +198,9 @@ public class MetaIndex<Y> {
      * True if entity is a baby
      */
     public static MetaIndex<Boolean> AGEABLE_BABY = new MetaIndex<>(AgeableWatcher.class, 0, false);
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public static MetaIndex<Boolean> AGEABLE_AGE_LOCKED = new MetaIndex<>(AgeableWatcher.class, 1, false);
 
     /**
      * The size of the area
@@ -367,9 +379,15 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<AnimalColor> CAT_COLLAR = new MetaIndex<>(CatWatcher.class, 3, AnimalColor.RED);
 
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public static MetaIndex<CatSoundVariant> CAT_SOUND = new MetaIndex<>(CatWatcher.class, 4, CatSoundVariants.CLASSIC);
+
     @NmsAddedIn(NmsVersion.v1_21_R4)
     public static MetaIndex<Chicken.Variant> CHICKEN_VARIANT =
         new MetaIndex<>(ChickenWatcher.class, 0, NmsVersion.v1_21_R4.isSupported() ? Chicken.Variant.TEMPERATE : null);
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public static MetaIndex<ChickenSoundVariant> CHICKEN_SOUND = new MetaIndex<>(ChickenWatcher.class, 1, ChickenSoundVariants.CLASSIC);
 
     public static MetaIndex<WeatheringCopperState> COPPER_GOLEM_OXIDATION =
         new MetaIndex<>(CopperGolemWatcher.class, 0, WeatheringCopperState.UNAFFECTED);
@@ -379,6 +397,9 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_21_R4)
     public static MetaIndex<Cow.Variant> COW_VARIANT =
         new MetaIndex<>(CowWatcher.class, 0, NmsVersion.v1_21_R4.isSupported() ? Cow.Variant.TEMPERATE : null);
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public static MetaIndex<CowSoundVariant> COW_SOUND = new MetaIndex<>(CowWatcher.class, 1, CowSoundVariants.CLASSIC);
 
     @NmsAddedIn(NmsVersion.v1_21_R3)
     public static MetaIndex<Boolean> CREAKING_CAN_MOVE = new MetaIndex<>(CreakingWatcher.class, 0, true);
@@ -842,6 +863,9 @@ public class MetaIndex<Y> {
     public static MetaIndex<Pig.Variant> PIG_VARIANT =
         new MetaIndex<>(PigWatcher.class, 2, NmsVersion.v1_21_R4.isSupported() ? Pig.Variant.TEMPERATE : null);
 
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public static MetaIndex<PigSoundVariant> PIG_SOUND = new MetaIndex<>(PigWatcher.class, 3, PigSoundVariants.CLASSIC);
+
     @NmsAddedIn(NmsVersion.v1_16)
     public static MetaIndex<Boolean> PIGLIN_ABSTRACT_SHAKING = new MetaIndex<>(PiglinAbstractWatcher.class, 0, false);
 
@@ -935,6 +959,9 @@ public class MetaIndex<Y> {
     public static MetaIndex<ItemStack> SPLASH_POTION_ITEM =
         new MetaIndex<>(SplashPotionWatcher.class, 0, new ItemStack(Material.SPLASH_POTION));
 
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public static MetaIndex<Boolean> TADPOLE_IS_FROM_BUCKET = new MetaIndex<>(TadpoleWatcher.class, 0, false);
+
     public static MetaIndex<Byte> TAMEABLE_META = new MetaIndex<>(TameableWatcher.class, 0, (byte) 0);
 
     public static MetaIndex<Optional<UUID>> TAMEABLE_OWNER = new MetaIndex<>(TameableWatcher.class, 1, Optional.empty());
@@ -995,6 +1022,9 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<VillagerData> VILLAGER_DATA =
         new MetaIndex<>(VillagerWatcher.class, 0, new VillagerData(VillagerTypes.PLAINS, VillagerProfessions.NONE, 1));
+
+    @NmsAddedIn(NmsVersion.v1_14)
+    public static MetaIndex<Boolean> VILLAGER_DATA_LOCKED = new MetaIndex<>(VillagerWatcher.class, 1, false);
 
     public static MetaIndex<Integer> WARDEN_ANGER = new MetaIndex<>(WardenWatcher.class, 0, 0);
 
@@ -1061,6 +1091,9 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<VillagerData> ZOMBIE_VILLAGER_PROFESSION =
         new MetaIndex<>(ZombieVillagerWatcher.class, 1, new VillagerData(VillagerTypes.PLAINS, VillagerProfessions.NONE, 1));
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public static MetaIndex<Boolean> ZOMBIE_VILLAGER_PROFESSION_LOCKED = new MetaIndex<>(ZombieVillagerWatcher.class, 2, false);
 
     static {
         setValues();

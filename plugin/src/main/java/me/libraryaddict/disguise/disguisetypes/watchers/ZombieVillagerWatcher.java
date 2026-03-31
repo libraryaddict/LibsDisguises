@@ -111,4 +111,14 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
         setVillagerData(new VillagerData(VillagerTypes.getByName(ReflectionManager.keyedName(getType())),
             VillagerProfessions.getByName(ReflectionManager.keyedName(getProfession())), Math.max(1, Math.min(5, level))));
     }
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public void setProfessionLocked(boolean professionLocked) {
+        sendData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION_LOCKED, professionLocked);
+    }
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public boolean isProfessionLocked() {
+        return getData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION_LOCKED);
+    }
 }

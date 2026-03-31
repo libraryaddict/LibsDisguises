@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import com.github.retrooper.packetevents.protocol.entity.cat.CatSoundVariant;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -81,5 +82,15 @@ public class CatWatcher extends TameableWatcher {
     @MethodDescription("Is the Cat looking upwards?")
     public void setLookingUp(boolean value) {
         sendData(MetaIndex.CAT_LOOKING_UP, value);
+    }
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public void setSoundVariant(CatSoundVariant variant) {
+        sendData(MetaIndex.CAT_SOUND, variant);
+    }
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public CatSoundVariant getSoundVariant() {
+        return getData(MetaIndex.CAT_SOUND);
     }
 }

@@ -2,7 +2,9 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
+import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 
 public class AgeableWatcher extends InsentientWatcher {
     public AgeableWatcher(Disguise disguise) {
@@ -28,5 +30,15 @@ public class AgeableWatcher extends InsentientWatcher {
 
     public void setBaby() {
         setBaby(true);
+    }
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public void setAgeLocked(boolean ageLocked) {
+        sendData(MetaIndex.AGEABLE_AGE_LOCKED, ageLocked);
+    }
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public boolean isAgeLocked() {
+        return getData(MetaIndex.AGEABLE_AGE_LOCKED);
     }
 }

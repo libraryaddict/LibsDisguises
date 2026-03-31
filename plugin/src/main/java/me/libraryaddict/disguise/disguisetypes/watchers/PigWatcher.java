@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import com.github.retrooper.packetevents.protocol.entity.pig.PigSoundVariant;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -42,5 +43,15 @@ public class PigWatcher extends AgeableWatcher {
     @NmsAddedIn(NmsVersion.v1_21_R4)
     public Pig.Variant getVariant() {
         return getData(MetaIndex.PIG_VARIANT);
+    }
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public void setSoundVariant(PigSoundVariant variant) {
+        sendData(MetaIndex.PIG_SOUND, variant);
+    }
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public PigSoundVariant getSoundVariant() {
+        return getData(MetaIndex.PIG_SOUND);
     }
 }

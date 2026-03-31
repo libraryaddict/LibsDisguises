@@ -92,4 +92,14 @@ public class VillagerWatcher extends AbstractVillagerWatcher {
         setVillagerData(new VillagerData(VillagerTypes.getByName(ReflectionManager.keyedName(getType())),
             VillagerProfessions.getByName(ReflectionManager.keyedName(getProfession())), Math.max(1, Math.min(5, level))));
     }
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public void setProfessionLocked(boolean professionLocked) {
+        sendData(MetaIndex.VILLAGER_DATA_LOCKED, professionLocked);
+    }
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public boolean isProfessionLocked() {
+        return getData(MetaIndex.VILLAGER_DATA_LOCKED);
+    }
 }

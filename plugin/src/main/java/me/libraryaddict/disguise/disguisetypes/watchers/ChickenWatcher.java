@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import com.github.retrooper.packetevents.protocol.entity.chicken.ChickenSoundVariant;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -19,5 +20,15 @@ public class ChickenWatcher extends AgeableWatcher {
     @NmsAddedIn(NmsVersion.v1_21_R4)
     public Chicken.Variant getVariant() {
         return getData(MetaIndex.CHICKEN_VARIANT);
+    }
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public void setSoundVariant(ChickenSoundVariant variant) {
+        sendData(MetaIndex.CHICKEN_SOUND, variant);
+    }
+
+    @NmsAddedIn(NmsVersion.v26_R1)
+    public ChickenSoundVariant getSoundVariant() {
+        return getData(MetaIndex.CHICKEN_SOUND);
     }
 }

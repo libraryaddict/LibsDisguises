@@ -2,8 +2,16 @@ package me.libraryaddict.disguise.utilities.params;
 
 import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
 import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloState;
+import com.github.retrooper.packetevents.protocol.entity.cat.CatSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.cat.CatSoundVariants;
+import com.github.retrooper.packetevents.protocol.entity.chicken.ChickenSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.chicken.ChickenSoundVariants;
+import com.github.retrooper.packetevents.protocol.entity.cow.CowSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.cow.CowSoundVariants;
 import com.github.retrooper.packetevents.protocol.entity.data.struct.CopperGolemState;
 import com.github.retrooper.packetevents.protocol.entity.data.struct.WeatheringCopperState;
+import com.github.retrooper.packetevents.protocol.entity.pig.PigSoundVariant;
+import com.github.retrooper.packetevents.protocol.entity.pig.PigSoundVariants;
 import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariant;
 import com.github.retrooper.packetevents.protocol.entity.wolfvariant.WolfSoundVariants;
@@ -147,7 +155,8 @@ public class ParamInfoTypes {
 
         if (NmsVersion.v1_13.isSupported()) {
             paramInfos.add(new ParamInfoParticle("Particle", "The different particles of Minecraft", materials));
-            paramInfos.add(new ParamInfoEnum(Particle.class, "ParticleType", "The different particles of Minecraft: https://www.spigotmc.org/wiki/lib-s-disguises-faq/#particles"));
+            paramInfos.add(new ParamInfoEnum(Particle.class, "ParticleType",
+                "The different particles of Minecraft: https://www.spigotmc.org/wiki/lib-s-disguises-faq/#particles"));
             paramInfos.add(new ParamInfoEnum(TropicalFish.Pattern.class, "Pattern", "Patterns of a tropical fish"));
             //   paramInfos.add(
             //      new ParamInfoBlockData(BlockData.class, "BlockData", "The block data states, barrel[facing=north,open=false] as
@@ -248,6 +257,17 @@ public class ParamInfoTypes {
 
         if (NmsVersion.v1_21_R7.isSupported()) {
             paramInfos.add(new ParamInfoEnum(ZombieNautilus.Variant.class, "Zombie Nautilus Variant", "The variant of a zombie nautilus"));
+        }
+
+        if (NmsVersion.v26_R1.isSupported()) {
+            paramInfos.add(new ParamInfoPacketEvents(CatSoundVariant.class, CatSoundVariants.getRegistry(), "Cat Sound Variant",
+                "The variant of cat sounds"));
+            paramInfos.add(new ParamInfoPacketEvents(ChickenSoundVariant.class, ChickenSoundVariants.getRegistry(), "Chicken Sound Variant",
+                "The variant of chicken sounds"));
+            paramInfos.add(new ParamInfoPacketEvents(CowSoundVariant.class, CowSoundVariants.getRegistry(), "Cow Sound Variant",
+                "The variant of cow sounds"));
+            paramInfos.add(new ParamInfoPacketEvents(PigSoundVariant.class, PigSoundVariants.getRegistry(), "Pig Sound Variant",
+                "The variant of pig sounds"));
         }
 
         paramInfos.add(new ParamInfoEnum(DisguiseConfig.NotifyBar.class, "NotifyBar", "Where the disguised indicator should appear"));
