@@ -1454,6 +1454,13 @@ public class ReflectionManager {
 
                 createNMSValues(disguiseType);
             } catch (Throwable throwable) {
+                LibsDisguises.getInstance().getLogger()
+                    .severe("Uh oh! Trouble while making values for the disguise " + disguiseType.name() + "!");
+                LibsDisguises.getInstance().getLogger().severe("Before reporting this error, " +
+                    "please make sure you are using the latest version of LibsDisguises and PacketEvents.");
+                LibsDisguises.getInstance().getLogger().severe("Development builds are available at (PacketEvents) " +
+                    "https://ci.codemc.io/job/retrooper/job/packetevents/ and (LibsDisguises) https://ci.lib.co.nz/job/LibsDisguises/");
+
                 if (maxErrorsThrown-- <= 0) {
                     throw throwable;
                 }
@@ -1585,158 +1592,145 @@ public class ReflectionManager {
             }
         }
 
-        try {
-            Object nmsEntity = getNmsReflection().createEntityInstance(disguiseType.getEntityType(), nmsEntityName);
+        Object nmsEntity = getNmsReflection().createEntityInstance(disguiseType.getEntityType(), nmsEntityName);
 
-            if (nmsEntity == null) {
-                LibsDisguises.getInstance().getLogger().warning("Entity not found! (" + nmsEntityName + ")");
-                return;
-            }
+        if (nmsEntity == null) {
+            LibsDisguises.getInstance().getLogger().warning("Entity not found! (" + nmsEntityName + ")");
+            return;
+        }
 
-            disguiseType.setTypeId(NmsVersion.v1_13.isSupported() ? getEntityType(disguiseType.getEntityType()) : null,
-                getEntityTypeId(disguiseType.getEntityType()));
+        disguiseType.setTypeId(NmsVersion.v1_13.isSupported() ? getEntityType(disguiseType.getEntityType()) : null,
+            getEntityTypeId(disguiseType.getEntityType()));
 
-            Entity bukkitEntity = getBukkitEntity(nmsEntity);
+        Entity bukkitEntity = getBukkitEntity(nmsEntity);
 
-            DisguiseValues disguiseValues =
-                new DisguiseValues(disguiseType, bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0,
-                    getNmsReflection().getAmbientSoundInterval(bukkitEntity));
+        DisguiseValues disguiseValues =
+            new DisguiseValues(disguiseType, bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0,
+                getNmsReflection().getAmbientSoundInterval(bukkitEntity));
 
-            List<EntityData<?>> watcher = getEntityWatcher(bukkitEntity);
-            ArrayList<MetaIndex> indexes = MetaIndex.getMetaIndexes(disguiseType.getWatcherClass());
-            boolean loggedName = false;
+        List<EntityData<?>> watcher = getEntityWatcher(bukkitEntity);
+        ArrayList<MetaIndex> indexes = MetaIndex.getMetaIndexes(disguiseType.getWatcherClass());
+        boolean loggedName = false;
 
-            for (EntityData data : watcher) {
-                MetaIndex metaIndex = MetaIndex.getMetaIndex(disguiseType.getWatcherClass(), data.getIndex());
+        for (EntityData data : watcher) {
+            MetaIndex metaIndex = MetaIndex.getMetaIndex(disguiseType.getWatcherClass(), data.getIndex());
 
-                if (metaIndex == null) {
-                    // Hide purpur's decision to become a modded server
+            if (metaIndex == null) {
+                // Hide purpur's decision to become a modded server
                     /*if (disguiseType == DisguiseType.GLOW_SQUID && data.getValue().getClass() == String.class) {
                         continue;
                     }*/
 
-                    LibsDisguises.getInstance().getLogger().severe(StringUtils.repeat("-", 20));
-                    LibsDisguises.getInstance().getLogger()
-                        .severe("MetaIndex not found for " + disguiseType + "! Index: " + data.getIndex());
-                    LibsDisguises.getInstance().getLogger().severe(
-                        "Value: " + data.getValue() + " (" + data.getValue().getClass() + ") (" + nmsEntity.getClass() + ") & " +
-                            disguiseType.getWatcherClass().getSimpleName());
+                LibsDisguises.getInstance().getLogger().severe(StringUtils.repeat("-", 20));
+                LibsDisguises.getInstance().getLogger().severe("MetaIndex not found for " + disguiseType + "! Index: " + data.getIndex());
+                LibsDisguises.getInstance().getLogger().severe(
+                    "Value: " + data.getValue() + " (" + data.getValue().getClass() + ") (" + nmsEntity.getClass() + ") & " +
+                        disguiseType.getWatcherClass().getSimpleName());
 
-                    continue;
-                }
-
-                indexes.remove(metaIndex);
-
-                Object ourDefaultBukkit = metaIndex.getDefault();
-                Object ourDefaultSerialized = convertMetaToSerialized(metaIndex, ourDefaultBukkit);
-                Object minecraftDefaultBukkit = convertMetaFromSerialized(metaIndex, data.getValue());
-                Object minecraftDefaultSerialized = data.getValue();
-
-                if (ourDefaultBukkit == null) {
-                    ourDefaultBukkit = "ld-bukkit-null";
-                }
-
-                if (ourDefaultSerialized == null) {
-                    ourDefaultSerialized = "ld-minecraft-null";
-                }
-
-                if (minecraftDefaultBukkit == null) {
-                    minecraftDefaultBukkit = "mc-bukkit-null";
-                }
-
-                if (minecraftDefaultSerialized == null) {
-                    minecraftDefaultSerialized = "mc-minecraft-null";
-                }
-
-                if (minecraftDefaultBukkit.getClass().getSimpleName().equals("CraftItemStack") &&
-                    ourDefaultBukkit.getClass().getSimpleName().equals("ItemStack")) {
-                    ourDefaultBukkit = getCraftItem((ItemStack) ourDefaultBukkit);
-                }
-
-                if (ourDefaultBukkit.getClass() != minecraftDefaultBukkit.getClass() || metaIndex.getDataType() != data.getType() ||
-                    minecraftDefaultSerialized.getClass() != ourDefaultSerialized.getClass()) {
-                    if (!loggedName) {
-                        LibsDisguises.getInstance().getLogger().severe(StringUtils.repeat("=", 20));
-                        LibsDisguises.getInstance().getLogger()
-                            .severe("MetaIndex mismatch! Disguise " + disguiseType + ", Entity " + nmsEntityName);
-                        loggedName = true;
-                    }
-
-                    LibsDisguises.getInstance().getLogger().severe(StringUtils.repeat("-", 20));
-                    LibsDisguises.getInstance().getLogger().severe(
-                        "Index: " + data.getIndex() + " | " + metaIndex.getFlagWatcher().getSimpleName() + " | " +
-                            MetaIndex.getName(metaIndex));
-
-                    LibsDisguises.getInstance().getLogger()
-                        .severe("LibsDisguises Bukkit: " + ourDefaultBukkit + " (" + ourDefaultBukkit.getClass() + ")");
-                    LibsDisguises.getInstance().getLogger()
-                        .severe("LibsDisguises Serialized: " + ourDefaultSerialized + " (" + ourDefaultSerialized.getClass() + ")");
-                    LibsDisguises.getInstance().getLogger().severe("LibsDisguises Data Type: " + metaIndex.getDataType().getName());
-                    LibsDisguises.getInstance().getLogger()
-                        .severe("Minecraft Bukkit: " + minecraftDefaultBukkit + " (" + minecraftDefaultBukkit.getClass() + ")");
-                    LibsDisguises.getInstance().getLogger()
-                        .severe("Minecraft Serialized: " + minecraftDefaultSerialized + " (" + minecraftDefaultSerialized.getClass() + ")");
-                    LibsDisguises.getInstance().getLogger().severe("Minecraft Data Type: " + data.getType().getName());
-                    LibsDisguises.getInstance().getLogger()
-                        .severe("LibsDisguises Serializer Data Type: " + metaIndex.getDataType().getName());
-                    LibsDisguises.getInstance().getLogger().severe("Minecraft Serializer Data Type: " + data.getType().getName());
-                    LibsDisguises.getInstance().getLogger().severe(StringUtils.repeat("-", 20));
-                }
+                continue;
             }
 
-            for (MetaIndex index : indexes) {
+            indexes.remove(metaIndex);
+
+            Object ourDefaultBukkit = metaIndex.getDefault();
+            Object ourDefaultSerialized = convertMetaToSerialized(metaIndex, ourDefaultBukkit);
+            Object minecraftDefaultBukkit = convertMetaFromSerialized(metaIndex, data.getValue());
+            Object minecraftDefaultSerialized = data.getValue();
+
+            if (ourDefaultBukkit == null) {
+                ourDefaultBukkit = "ld-bukkit-null";
+            }
+
+            if (ourDefaultSerialized == null) {
+                ourDefaultSerialized = "ld-minecraft-null";
+            }
+
+            if (minecraftDefaultBukkit == null) {
+                minecraftDefaultBukkit = "mc-bukkit-null";
+            }
+
+            if (minecraftDefaultSerialized == null) {
+                minecraftDefaultSerialized = "mc-minecraft-null";
+            }
+
+            if (minecraftDefaultBukkit.getClass().getSimpleName().equals("CraftItemStack") &&
+                ourDefaultBukkit.getClass().getSimpleName().equals("ItemStack")) {
+                ourDefaultBukkit = getCraftItem((ItemStack) ourDefaultBukkit);
+            }
+
+            if (ourDefaultBukkit.getClass() != minecraftDefaultBukkit.getClass() || metaIndex.getDataType() != data.getType() ||
+                minecraftDefaultSerialized.getClass() != ourDefaultSerialized.getClass()) {
+                if (!loggedName) {
+                    LibsDisguises.getInstance().getLogger().severe(StringUtils.repeat("=", 20));
+                    LibsDisguises.getInstance().getLogger()
+                        .severe("MetaIndex mismatch! Disguise " + disguiseType + ", Entity " + nmsEntityName);
+                    loggedName = true;
+                }
+
                 LibsDisguises.getInstance().getLogger().severe(StringUtils.repeat("-", 20));
                 LibsDisguises.getInstance().getLogger().severe(
-                    disguiseType + " has MetaIndex remaining! " + index.getFlagWatcher().getSimpleName() + " at index " + index.getIndex());
+                    "Index: " + data.getIndex() + " | " + metaIndex.getFlagWatcher().getSimpleName() + " | " +
+                        MetaIndex.getName(metaIndex));
+
+                LibsDisguises.getInstance().getLogger()
+                    .severe("LibsDisguises Bukkit: " + ourDefaultBukkit + " (" + ourDefaultBukkit.getClass() + ")");
+                LibsDisguises.getInstance().getLogger()
+                    .severe("LibsDisguises Serialized: " + ourDefaultSerialized + " (" + ourDefaultSerialized.getClass() + ")");
+                LibsDisguises.getInstance().getLogger().severe("LibsDisguises Data Type: " + metaIndex.getDataType().getName());
+                LibsDisguises.getInstance().getLogger()
+                    .severe("Minecraft Bukkit: " + minecraftDefaultBukkit + " (" + minecraftDefaultBukkit.getClass() + ")");
+                LibsDisguises.getInstance().getLogger()
+                    .severe("Minecraft Serialized: " + minecraftDefaultSerialized + " (" + minecraftDefaultSerialized.getClass() + ")");
+                LibsDisguises.getInstance().getLogger().severe("Minecraft Data Type: " + data.getType().getName());
+                LibsDisguises.getInstance().getLogger().severe("LibsDisguises Serializer Data Type: " + metaIndex.getDataType().getName());
+                LibsDisguises.getInstance().getLogger().severe("Minecraft Serializer Data Type: " + data.getType().getName());
+                LibsDisguises.getInstance().getLogger().severe(StringUtils.repeat("-", 20));
+            }
+        }
+
+        for (MetaIndex index : indexes) {
+            LibsDisguises.getInstance().getLogger().severe(StringUtils.repeat("-", 20));
+            LibsDisguises.getInstance().getLogger().severe(
+                disguiseType + " has MetaIndex remaining! " + index.getFlagWatcher().getSimpleName() + " at index " + index.getIndex());
+        }
+
+        SoundGroup[] groups = SoundGroup.getGroups(disguiseType.name());
+        Float soundStrength;
+
+        if (groups.length > 0 && (soundStrength = getSoundModifier(nmsEntity)) != null) {
+            for (SoundGroup sound : groups) {
+                sound.setDamageAndIdleSoundVolume(soundStrength);
             }
 
-            SoundGroup[] groups = SoundGroup.getGroups(disguiseType.name());
-            Float soundStrength;
-
-            if (groups.length > 0 && (soundStrength = getSoundModifier(nmsEntity)) != null) {
-                for (SoundGroup sound : groups) {
-                    sound.setDamageAndIdleSoundVolume(soundStrength);
-                }
-
-                // This should only display on custom builds
-                if (!LibsDisguises.getInstance().isJenkins()) {
-                    if (disguiseType == DisguiseType.COW) {
-                        if (soundStrength != 0.4F) {
-                            LibsDisguises.getInstance().getLogger()
-                                .severe("The hurt sound volume may be wrong on the COW disguise! Bad nms update?");
-                        } else if (disguiseValues.getAmbientSoundInterval() != 120) {
-                            LibsDisguises.getInstance().getLogger()
-                                .severe("The ambient interval may be wrong on the COW disguise! Bad nms update?");
-                        }
+            // This should only display on custom builds
+            if (!LibsDisguises.getInstance().isJenkins()) {
+                if (disguiseType == DisguiseType.COW) {
+                    if (soundStrength != 0.4F) {
+                        LibsDisguises.getInstance().getLogger()
+                            .severe("The hurt sound volume may be wrong on the COW disguise! Bad nms update?");
+                    } else if (disguiseValues.getAmbientSoundInterval() != 120) {
+                        LibsDisguises.getInstance().getLogger()
+                            .severe("The ambient interval may be wrong on the COW disguise! Bad nms update?");
                     }
                 }
             }
+        }
 
-            // Get the bounding box
-            disguiseValues.setAdultBox(getBoundingBox(bukkitEntity));
+        // Get the bounding box
+        disguiseValues.setAdultBox(getBoundingBox(bukkitEntity));
 
-            if (bukkitEntity instanceof Ageable) {
-                ((Ageable) bukkitEntity).setBaby();
+        if (bukkitEntity instanceof Ageable) {
+            ((Ageable) bukkitEntity).setBaby();
 
-                disguiseValues.setBabyBox(getBoundingBox(bukkitEntity));
-            } else if (bukkitEntity instanceof Zombie) {
-                ((Zombie) bukkitEntity).setBaby(true);
+            disguiseValues.setBabyBox(getBoundingBox(bukkitEntity));
+        } else if (bukkitEntity instanceof Zombie) {
+            ((Zombie) bukkitEntity).setBaby(true);
 
-                disguiseValues.setBabyBox(getBoundingBox(bukkitEntity));
-            } else if (bukkitEntity instanceof ArmorStand) {
-                ((ArmorStand) bukkitEntity).setSmall(true);
+            disguiseValues.setBabyBox(getBoundingBox(bukkitEntity));
+        } else if (bukkitEntity instanceof ArmorStand) {
+            ((ArmorStand) bukkitEntity).setSmall(true);
 
-                disguiseValues.setBabyBox(getBoundingBox(bukkitEntity));
-            }
-        } catch (Exception ex) {
-            LibsDisguises.getInstance().getLogger()
-                .severe("Uh oh! Trouble while making values for the disguise " + disguiseType.name() + "!");
-            LibsDisguises.getInstance().getLogger().severe(
-                "Before reporting this error, " + "please make sure you are using the latest version of LibsDisguises and PacketEvents.");
-            LibsDisguises.getInstance().getLogger().severe("Development builds are available at (PacketEvents) " +
-                "https://ci.codemc.io/job/retrooper/job/packetevents/ and (LibsDisguises) https://ci.lib.co.nz/job/LibsDisguises/");
-
-            ex.printStackTrace();
+            disguiseValues.setBabyBox(getBoundingBox(bukkitEntity));
         }
     }
 
