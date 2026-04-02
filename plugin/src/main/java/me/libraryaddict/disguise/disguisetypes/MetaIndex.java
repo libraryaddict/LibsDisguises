@@ -1023,7 +1023,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<VillagerData> VILLAGER_DATA =
         new MetaIndex<>(VillagerWatcher.class, 0, new VillagerData(VillagerTypes.PLAINS, VillagerProfessions.NONE, 1));
 
-    @NmsAddedIn(NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v26_R1)
     public static MetaIndex<Boolean> VILLAGER_DATA_LOCKED = new MetaIndex<>(VillagerWatcher.class, 1, false);
 
     public static MetaIndex<Integer> WARDEN_ANGER = new MetaIndex<>(WardenWatcher.class, 0, 0);
