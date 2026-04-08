@@ -32,7 +32,7 @@ public enum NmsVersion {
     v1_21_R5("1.21.6", "1.21.7", "1.21.8"),
     v1_21_R6("1.21.9", "1.21.10"),
     v1_21_R7("1.21.11"),
-    v26_R1("26.1"),
+    v26_R1("26.1", "26.1.1"),
     UNSUPPORTED(false, "N/A");
 
     private final int deprecationStatus;
