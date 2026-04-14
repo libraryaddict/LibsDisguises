@@ -45,8 +45,8 @@ public class SoundGroup {
     @Getter
     private final LinkedHashMap<ResourceLocation, SoundType> disguiseSoundTypes = new LinkedHashMap<>();
     @Getter
-    private final LinkedHashMap<SoundType, ResourceLocation[]> disguiseSounds = new LinkedHashMap<>();
-    private boolean customSounds;
+    private final LinkedHashMap<SoundType, DisguiseSound[]> disguiseSounds = new LinkedHashMap<>();
+    private boolean customSounds, hasWeights;
     private final DisguiseSoundCategory soundCategory;
 
     public SoundGroup(String name) {
@@ -72,26 +72,32 @@ public class SoundGroup {
         return soundCategory;
     }
 
-    public void addSound(ResourceLocation soundString, SoundType type) {
-        if (soundString == null) {
+    public void addSound(ResourceLocation disguiseSound, SoundType type) {
+        addSound(new DisguiseSound(disguiseSound), type);
+    }
+
+    public void addSound(DisguiseSound disguiseSound, SoundType type) {
+        if (disguiseSound == null) {
             return;
         }
 
-        disguiseSoundTypes.putIfAbsent(soundString, type);
+        disguiseSoundTypes.putIfAbsent(disguiseSound.getSound(), type);
 
         if (disguiseSounds.containsKey(type)) {
-            ResourceLocation[] array = disguiseSounds.get(type);
+            DisguiseSound[] array = disguiseSounds.get(type);
 
             array = Arrays.copyOf(array, array.length + 1);
-            array[array.length - 1] = soundString;
+            array[array.length - 1] = disguiseSound;
 
             disguiseSounds.put(type, array);
+            // Weights only matter if there are at least 2
+            hasWeights = hasWeights || Math.abs(1 - disguiseSound.getWeight()) > 0.000001;
         } else {
-            disguiseSounds.put(type, new ResourceLocation[]{soundString});
+            disguiseSounds.put(type, new DisguiseSound[]{disguiseSound});
         }
     }
 
-    public ResourceLocation getSound(SoundType type) {
+    public DisguiseSound getSound(SoundType type) {
         if (type == null) {
             return null;
         }
@@ -100,7 +106,7 @@ public class SoundGroup {
             return getRandomSound(type);
         }
 
-        ResourceLocation[] sounds = disguiseSounds.get(type);
+        DisguiseSound[] sounds = disguiseSounds.get(type);
 
         if (sounds == null) {
             return null;
@@ -109,15 +115,35 @@ public class SoundGroup {
         return sounds[0];
     }
 
-    private ResourceLocation getRandomSound(SoundType type) {
+    private DisguiseSound getRandomSound(SoundType type) {
         if (type == null) {
             return null;
         }
 
-        ResourceLocation[] sounds = disguiseSounds.get(type);
+        DisguiseSound[] sounds = disguiseSounds.get(type);
 
-        if (sounds == null) {
+        if (sounds == null || sounds.length == 0) {
             return null;
+        }
+
+        if (hasWeights) {
+            float totalWeight = 0;
+
+            for (DisguiseSound sound : sounds) {
+                totalWeight += sound.getWeight();
+            }
+
+            float selected = RandomUtils.nextFloat() * totalWeight;
+
+            for (DisguiseSound sound : sounds) {
+                selected -= sound.getWeight();
+
+                if (selected > 0) {
+                    continue;
+                }
+
+                return sound;
+            }
         }
 
         return sounds[RandomUtils.nextInt(sounds.length)];

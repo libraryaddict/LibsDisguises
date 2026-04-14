@@ -8,7 +8,6 @@ import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Server;
 import com.github.retrooper.packetevents.protocol.world.damagetype.DamageTypes;
-import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityAnimation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
@@ -25,6 +24,7 @@ import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
+import me.libraryaddict.disguise.utilities.sounds.DisguiseSound;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import org.bukkit.entity.Player;
 
@@ -296,14 +296,15 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
         }
 
         SoundGroup group = SoundGroup.getGroup(disguise);
-        ResourceLocation sound = group.getSound(SoundGroup.SoundType.HURT);
+        DisguiseSound sound = group.getSound(SoundGroup.SoundType.HURT);
 
         if (sound == null) {
             return;
         }
 
+        // As we're on 1.19.3+, we always use sound.toString()
         observer.playSound(observer.getLocation(), sound.toString(), disguise.getEffectiveSoundCategory().getBukkitSoundCategory(disguise),
-            1f, 1f);
+            sound.hasVolume() ? sound.getVolume() : 1f, sound.hasPitch() ? sound.getPitch() : 1f);
     }
 
     private void handleDamage(Disguise disguise, PacketPlaySendEvent event, Player observer) {
@@ -319,14 +320,14 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
             return;
         }
 
-        ResourceLocation sound = group.getSound(SoundGroup.SoundType.HURT);
+        DisguiseSound sound = group.getSound(SoundGroup.SoundType.HURT);
 
         if (sound == null) {
             return;
         }
 
         observer.playSound(observer.getLocation(), sound.toString(), disguise.getEffectiveSoundCategory().getBukkitSoundCategory(disguise),
-            1f, 1f);
+            sound.hasVolume() ? sound.getVolume() : 1f, sound.hasPitch() ? sound.getPitch() : 1f);
     }
 
     private void handleVelocity(PacketPlaySendEvent event, Player observer) {

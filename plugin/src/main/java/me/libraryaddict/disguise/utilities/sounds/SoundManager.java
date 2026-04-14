@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class SoundManager {
@@ -70,34 +71,124 @@ public class SoundManager {
         DisguiseConfig.setPlayIdleSounds(config.getBoolean("PlayIdleSounds", false));
         DisguiseConfig.setSoundsEnabled(config.getBoolean("DisguiseSounds", true));
 
-        for (String key : config.getKeys(false)) {
-            if (!config.isConfigurationSection(key) || key.equals("GroupName")) {
+        for (String groupName : config.getKeys(false)) {
+            if (!config.isConfigurationSection(groupName) || groupName.equals("GroupName")) {
                 continue;
             }
 
-            if (SoundGroup.getGroups().keySet().stream().anyMatch(k -> k.equalsIgnoreCase(key))) {
-                LibsDisguises.getInstance().getLogger().warning("The SoundGroup " + key + " has already been registered!");
+            if (SoundGroup.getGroups().keySet().stream().anyMatch(k -> k.equalsIgnoreCase(groupName))) {
+                LibsDisguises.getInstance().getLogger().warning("The SoundGroup " + groupName + " has already been registered!");
                 continue;
             }
 
-            ConfigurationSection section = config.getConfigurationSection(key);
+            ConfigurationSection section = config.getConfigurationSection(groupName);
 
             DisguiseSoundCategory category = getCategory(section, "Category", null);
 
-            SoundGroup group = new SoundGroup(key, category);
+            SoundGroup group = new SoundGroup(groupName, category);
 
             for (SoundGroup.SoundType type : SoundGroup.SoundType.values()) {
                 if (type == SoundGroup.SoundType.CANCEL) {
                     continue;
                 }
 
-                List<String> list = section.getStringList(type.name().charAt(0) + type.name().substring(1).toLowerCase(Locale.ENGLISH));
+                List<?> list = section.getList(type.name().charAt(0) + type.name().substring(1).toLowerCase(Locale.ENGLISH));
 
                 if (list == null || list.isEmpty()) {
                     continue;
                 }
 
-                for (String sound : list) {
+                for (Object soundEntry : list) {
+                    String sound;
+                    Float volume = null;
+                    Float pitch = null;
+                    // pitchMin is used for both the range and for setting normal pitch
+                    Float pitchMin = null;
+                    Float pitchMax = null;
+                    float weight = 1f;
+
+                    if (soundEntry instanceof String) {
+                        sound = (String) soundEntry;
+                    } else if (soundEntry instanceof Map) {
+                        Map.Entry<?, ?> entryAsMap = ((Map<?, ?>) soundEntry).entrySet().iterator().next();
+                        sound = String.valueOf(entryAsMap.getKey());
+
+                        if (entryAsMap.getValue() instanceof Map) {
+                            Map<?, ?> map = (Map<?, ?>) entryAsMap.getValue();
+
+                            for (Map.Entry<?, ?> e : map.entrySet()) {
+                                float val;
+
+                                if (!(e.getKey() instanceof String)) {
+                                    continue;
+                                } else if (e.getValue() instanceof Float) {
+                                    val = (Float) e.getValue();
+                                } else if (e.getValue() instanceof Number) {
+                                    val = ((Number) e.getValue()).floatValue();
+                                } else if (e.getValue() instanceof String && ((String) e.getValue()).matches("\\s*\\d+(\\.\\d+)?\\s*")) {
+                                    val = Float.parseFloat(String.valueOf(e.getValue()).trim());
+                                } else if (e.getValue() instanceof Character) {
+                                    val = (Character) e.getValue();
+                                } else {
+                                    LibsDisguises.getInstance().getLogger().warning(
+                                        "Invalid number '" + e.getValue() + "' set on '" + e.getKey() + "' for sound '" + sound + "' on " +
+                                            groupName + "." + type + "!");
+                                    continue;
+                                }
+
+                                if (!Float.isFinite(val)) {
+                                    LibsDisguises.getInstance().getLogger().warning(
+                                        "Invalid number '" + e.getValue() + "' set on '" + e.getKey() + "' for sound '" + sound + "' on " +
+                                            groupName + "." + type + "!");
+                                    continue;
+                                }
+
+                                if (e.getKey().equals("Volume")) {
+                                    volume = val;
+                                } else if (e.getKey().equals("Pitch")) {
+                                    pitch = val;
+                                } else if (e.getKey().equals("PitchMin")) {
+                                    pitchMin = val;
+                                } else if (e.getKey().equals("PitchMax")) {
+                                    pitchMax = val;
+                                } else if (e.getKey().equals("Weight")) {
+                                    weight = val;
+                                }
+                            }
+
+                            if (pitch != null && (pitchMin != null || pitchMax != null)) {
+                                LibsDisguises.getInstance().getLogger().warning(
+                                    "Invalid sound '" + sound + "': cannot mix Pitch with PitchMin and PitchMax on " + groupName + "." +
+                                        type + "! Defaulting to Pitch.");
+                                pitchMin = null;
+                                pitchMax = null;
+                                continue;
+                            }
+
+                            if ((pitchMin == null) != (pitchMax == null)) {
+                                LibsDisguises.getInstance().getLogger().warning(
+                                    "Invalid sound '" + sound + "': PitchMin and PitchMax must both be defined on " + groupName + "." +
+                                        type + "!");
+                                pitchMin = null;
+                                pitchMax = null;
+                                continue;
+                            }
+
+                            if (pitchMin != null && pitchMax != null && pitchMin > pitchMax) {
+                                LibsDisguises.getInstance().getLogger().warning(
+                                    "Invalid sound '" + sound + "': PitchMin cannot be larger than PitchMax on " + groupName + "." + type +
+                                        "!");
+                                pitchMin = null;
+                                pitchMax = null;
+                                continue;
+                            }
+
+                            pitchMin = pitch;
+                        }
+                    } else {
+                        continue;
+                    }
+
                     if (!sound.matches(".+:.+")) {
                         SoundGroup subGroup = SoundGroup.getGroup(sound);
 
@@ -107,26 +198,27 @@ public class SoundManager {
                             continue;
                         }
 
-                        ResourceLocation[] sounds = subGroup.getDisguiseSounds().get(type);
+                        DisguiseSound[] sounds = subGroup.getDisguiseSounds().get(type);
 
                         if (sounds == null) {
                             LibsDisguises.getInstance().getLogger().warning(
-                                "Sound group '" + sound + "' does not contain a category for " + type + "! Can't use as default in " + key);
+                                "Sound group '" + sound + "' does not contain a category for " + type + "! Can't use as default in " +
+                                    groupName);
                             continue;
                         }
 
-                        for (ResourceLocation obj : sounds) {
+                        for (DisguiseSound obj : sounds) {
                             group.addSound(obj, type);
                         }
 
                         continue;
                     }
 
-                    group.addSound(new ResourceLocation(sound), type);
+                    group.addSound(new DisguiseSound(new ResourceLocation(sound), weight, volume, pitchMin, pitchMax), type);
                 }
             }
 
-            LibsDisguises.getInstance().getLogger().info("Loaded sound group '" + key + "'");
+            LibsDisguises.getInstance().getLogger().info("Loaded sound group '" + groupName + "'");
         }
     }
 

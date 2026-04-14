@@ -21,6 +21,7 @@ PlayIdleSounds: false
 # https://jd.papermc.io/paper/1.21.10/org/bukkit/SoundCategory.html as well
 SoundCategory: DISGUISE
 
+# You cannot override the default sound groups.
 # This is an example group, 'GroupName' will never be loaded.
 GroupName:
   # If you don't set one of these options, or it is empty. Then no sound will be played for that sound type
@@ -36,6 +37,20 @@ GroupName:
   Hurt:
     - minecraft:some.hurt.sound
   Death:
-    - minecraft:some.death.scream.sound
+    # Sounds support optional parameters such as volume, pitch, and weight
+    - minecraft:some.death.scream.sound:
+        Volume: 3.5
+        Pitch: 1.5
+        # - 'Pitch' sets a fixed pitch
+        # - 'PitchMin' and 'PitchMax' are used to randomize the pitch
+        # - You can't use both at the same time; this would show an error if it was loaded.
+        PitchMin: 1.5 # Randomized between 1.5
+        PitchMax: 2.5 # and 2.5
   Step:
-    - minecraft:some.step.sound
+    # Weights determine relative chance to be selected.
+    - minecraft:some.step.sound:
+      Weight: 20  # Higher weight, higher chance
+    - minecraft:some.super.scary.step.sound:
+      Weight: 1.5 # Lower chance
+    - minecraft:some.super.frightning.step.sound:
+      # Default weight of 1

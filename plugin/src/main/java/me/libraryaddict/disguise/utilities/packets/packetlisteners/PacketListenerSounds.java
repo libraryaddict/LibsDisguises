@@ -16,6 +16,7 @@ import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.sounds.DisguiseSound;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup.SoundType;
 import org.bukkit.Location;
@@ -173,19 +174,23 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             return;
         }
 
-        ResourceLocation newSound = disguiseSound.getSound(soundType);
+        DisguiseSound newSound = disguiseSound.getSound(soundType);
 
         if (newSound == null) {
             event.setCancelled(true);
             return;
         }
 
-        // If the volume is the default, set it to what the real disguise sound group expects
-        if (volume == group.getDamageAndIdleSoundVolume()) {
+        if (newSound.hasVolume()) {
+            volume = newSound.getVolume();
+        } else if (volume == group.getDamageAndIdleSoundVolume()) {
+            // If the volume is the default, set it to what the real disguise sound group expects
             volume = disguiseSound.getDamageAndIdleSoundVolume();
         }
 
-        if (disguise instanceof MobDisguise && entity instanceof LivingEntity && ((MobDisguise) disguise).doesDisguiseAge()) {
+        if (newSound.hasPitch()) {
+            pitch = newSound.getPitch();
+        } else if (disguise instanceof MobDisguise && entity instanceof LivingEntity && ((MobDisguise) disguise).doesDisguiseAge()) {
             if (((MobDisguise) disguise).isAdult()) {
                 pitch = ((DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F) + 1.0F;
             } else {

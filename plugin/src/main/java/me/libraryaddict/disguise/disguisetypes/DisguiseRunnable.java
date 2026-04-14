@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMove;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
@@ -16,6 +15,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.sounds.DisguiseSound;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
@@ -123,7 +123,7 @@ public class DisguiseRunnable {
             return;
         }
 
-        ResourceLocation idleSound;
+        DisguiseSound idleSound;
 
         // If no group, or the group has no sound
         if (group == null || (idleSound = group.getSound(SoundGroup.SoundType.IDLE)) == null) {
@@ -131,11 +131,13 @@ public class DisguiseRunnable {
             return;
         }
 
-        float volume = group.getDamageAndIdleSoundVolume();
+        float volume = idleSound.hasVolume() ? idleSound.getVolume() : group.getDamageAndIdleSoundVolume();
         float volumeSquared = volume * (16 * 16);
         float pitch = 1f;
 
-        if (disguise instanceof MobDisguise && ((MobDisguise) disguise).doesDisguiseAge()) {
+        if (idleSound.hasPitch()) {
+            pitch = idleSound.getPitch();
+        } else if (disguise instanceof MobDisguise && ((MobDisguise) disguise).doesDisguiseAge()) {
             if (((MobDisguise) disguise).isAdult()) {
                 pitch = ((DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F) + 1.0F;
             } else {
@@ -157,7 +159,8 @@ public class DisguiseRunnable {
                 continue;
             }
 
-            player.playSound(disguise.getEntity().getLocation(), NmsVersion.v1_16.isSupported() ? idleSound.toString() : idleSound.getKey(),
+            player.playSound(disguise.getEntity().getLocation(),
+                NmsVersion.v1_16.isSupported() ? idleSound.toString() : idleSound.getKey(),
                 disguise.getEffectiveSoundCategory().getBukkitSoundCategory(disguise), volume, pitch);
         }
     }
