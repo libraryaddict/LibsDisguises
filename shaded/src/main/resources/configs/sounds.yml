@@ -43,7 +43,7 @@ GroupName:
         Pitch: 1.5
         # - 'Pitch' sets a fixed pitch
         # - 'PitchMin' and 'PitchMax' are used to randomize the pitch
-        # - You can't use both at the same time; this would show an error if it was loaded.
+        # - You can't use both at the same time; this would show an error if 'GroupName' wasn't ignored.
         PitchMin: 1.5 # Randomized between 1.5
         PitchMax: 2.5 # and 2.5
   Step:
