@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -81,145 +80,180 @@ public class SoundManager {
                 continue;
             }
 
-            ConfigurationSection section = config.getConfigurationSection(groupName);
+            ConfigurationSection groupSection = config.getConfigurationSection(groupName);
 
-            DisguiseSoundCategory category = getCategory(section, "Category", null);
+            DisguiseSoundCategory category = getCategory(groupSection, "Category", null);
 
             SoundGroup group = new SoundGroup(groupName, category);
 
-            for (SoundGroup.SoundType type : SoundGroup.SoundType.values()) {
-                if (type == SoundGroup.SoundType.CANCEL) {
+            for (String soundToReplace : groupSection.getKeys(false)) {
+                if (soundToReplace.equals("Category")) {
                     continue;
                 }
 
-                List<?> list = section.getList(type.name().charAt(0) + type.name().substring(1).toLowerCase(Locale.ENGLISH));
+                List<?> list = groupSection.getList(soundToReplace);
 
+                SoundGroup.SoundType type = null;
+                ResourceLocation replacedSound = null;
+
+                if (soundToReplace.matches("^[A-Z][a-z]+$")) {
+                    try {
+                        type = SoundGroup.SoundType.valueOf(soundToReplace);
+                    } catch (Exception ignored) {
+                    }
+                }
+
+                if (type == null) {
+                    if (!soundToReplace.contains(":")) {
+                        LibsDisguises.getInstance().getLogger().warning("Invalid section key '" + soundToReplace + "' on " + groupName +
+                            "! Must be a minecraft:sound.name or sound type!");
+                        continue;
+                    }
+
+                    replacedSound = new ResourceLocation(soundToReplace);
+                }
+
+                // They asked to have no sounds for this
                 if (list == null || list.isEmpty()) {
+                    if (type != null) {
+                        group.addSound(type, (DisguiseSound) null);
+                    } else {
+                        group.addRemappedSound(replacedSound, null);
+                    }
+
                     continue;
                 }
 
                 for (Object soundEntry : list) {
-                    String sound;
-                    Float volume = null;
-                    Float pitch = null;
-                    // pitchMin is used for both the range and for setting normal pitch
-                    Float pitchMin = null;
-                    Float pitchMax = null;
-                    float weight = 1f;
+                    DisguiseSound[] sounds = parseSound(groupName, soundToReplace, soundEntry);
 
-                    if (soundEntry instanceof String) {
-                        sound = (String) soundEntry;
-                    } else if (soundEntry instanceof Map) {
-                        Map.Entry<?, ?> entryAsMap = ((Map<?, ?>) soundEntry).entrySet().iterator().next();
-                        sound = String.valueOf(entryAsMap.getKey());
-
-                        if (entryAsMap.getValue() instanceof Map) {
-                            Map<?, ?> map = (Map<?, ?>) entryAsMap.getValue();
-
-                            for (Map.Entry<?, ?> e : map.entrySet()) {
-                                float val;
-
-                                if (!(e.getKey() instanceof String)) {
-                                    continue;
-                                } else if (e.getValue() instanceof Float) {
-                                    val = (Float) e.getValue();
-                                } else if (e.getValue() instanceof Number) {
-                                    val = ((Number) e.getValue()).floatValue();
-                                } else if (e.getValue() instanceof String && ((String) e.getValue()).matches("\\s*\\d+(\\.\\d+)?\\s*")) {
-                                    val = Float.parseFloat(String.valueOf(e.getValue()).trim());
-                                } else if (e.getValue() instanceof Character) {
-                                    val = (Character) e.getValue();
-                                } else {
-                                    LibsDisguises.getInstance().getLogger().warning(
-                                        "Invalid number '" + e.getValue() + "' set on '" + e.getKey() + "' for sound '" + sound + "' on " +
-                                            groupName + "." + type + "!");
-                                    continue;
-                                }
-
-                                if (!Float.isFinite(val)) {
-                                    LibsDisguises.getInstance().getLogger().warning(
-                                        "Invalid number '" + e.getValue() + "' set on '" + e.getKey() + "' for sound '" + sound + "' on " +
-                                            groupName + "." + type + "!");
-                                    continue;
-                                }
-
-                                if (e.getKey().equals("Volume")) {
-                                    volume = val;
-                                } else if (e.getKey().equals("Pitch")) {
-                                    pitch = val;
-                                } else if (e.getKey().equals("PitchMin")) {
-                                    pitchMin = val;
-                                } else if (e.getKey().equals("PitchMax")) {
-                                    pitchMax = val;
-                                } else if (e.getKey().equals("Weight")) {
-                                    weight = val;
-                                }
-                            }
-
-                            if (pitch != null && (pitchMin != null || pitchMax != null)) {
-                                LibsDisguises.getInstance().getLogger().warning(
-                                    "Invalid sound '" + sound + "': cannot mix Pitch with PitchMin and PitchMax on " + groupName + "." +
-                                        type + "! Defaulting to Pitch.");
-                                pitchMin = null;
-                                pitchMax = null;
-                                continue;
-                            }
-
-                            if ((pitchMin == null) != (pitchMax == null)) {
-                                LibsDisguises.getInstance().getLogger().warning(
-                                    "Invalid sound '" + sound + "': PitchMin and PitchMax must both be defined on " + groupName + "." +
-                                        type + "!");
-                                pitchMin = null;
-                                pitchMax = null;
-                                continue;
-                            }
-
-                            if (pitchMin != null && pitchMax != null && pitchMin > pitchMax) {
-                                LibsDisguises.getInstance().getLogger().warning(
-                                    "Invalid sound '" + sound + "': PitchMin cannot be larger than PitchMax on " + groupName + "." + type +
-                                        "!");
-                                pitchMin = null;
-                                pitchMax = null;
-                                continue;
-                            }
-
-                            pitchMin = pitch;
-                        }
-                    } else {
+                    if (sounds == null) {
                         continue;
                     }
 
-                    if (!sound.matches(".+:.+")) {
-                        SoundGroup subGroup = SoundGroup.getGroup(sound);
-
-                        if (subGroup == null) {
-                            LibsDisguises.getInstance().getLogger()
-                                .warning("Invalid sound '" + sound + "'! Must be a minecraft:sound.name or SoundGroup name!");
-                            continue;
+                    for (DisguiseSound sound : sounds) {
+                        if (type != null) {
+                            group.addSound(type, sound);
+                        } else {
+                            group.addRemappedSound(replacedSound, sound);
                         }
-
-                        DisguiseSound[] sounds = subGroup.getDisguiseSounds().get(type);
-
-                        if (sounds == null) {
-                            LibsDisguises.getInstance().getLogger().warning(
-                                "Sound group '" + sound + "' does not contain a category for " + type + "! Can't use as default in " +
-                                    groupName);
-                            continue;
-                        }
-
-                        for (DisguiseSound obj : sounds) {
-                            group.addSound(obj, type);
-                        }
-
-                        continue;
                     }
-
-                    group.addSound(new DisguiseSound(new ResourceLocation(sound), weight, volume, pitchMin, pitchMax), type);
                 }
             }
 
             LibsDisguises.getInstance().getLogger().info("Loaded sound group '" + groupName + "'");
         }
+    }
+
+    public static DisguiseSound[] parseSound(String groupName, String replacementKey, Object soundEntry) {
+        String sound;
+        Float volume = null;
+        Float pitch = null;
+        // pitchMin is used for both the range and for setting normal pitch
+        Float pitchMin = null;
+        Float pitchMax = null;
+        float weight = 1f;
+
+        if (soundEntry instanceof String) {
+            sound = (String) soundEntry;
+        } else if (soundEntry instanceof Map) {
+            Map.Entry<?, ?> entryAsMap = ((Map<?, ?>) soundEntry).entrySet().iterator().next();
+            sound = String.valueOf(entryAsMap.getKey());
+
+            if (entryAsMap.getValue() instanceof Map) {
+                Map<?, ?> map = (Map<?, ?>) entryAsMap.getValue();
+
+                for (Map.Entry<?, ?> e : map.entrySet()) {
+                    float val;
+
+                    if (!(e.getKey() instanceof String)) {
+                        continue;
+                    } else if (e.getValue() instanceof Float) {
+                        val = (Float) e.getValue();
+                    } else if (e.getValue() instanceof Number) {
+                        val = ((Number) e.getValue()).floatValue();
+                    } else if (e.getValue() instanceof String && ((String) e.getValue()).matches("\\s*\\d+(\\.\\d+)?\\s*")) {
+                        val = Float.parseFloat(String.valueOf(e.getValue()).trim());
+                    } else if (e.getValue() instanceof Character) {
+                        val = (Character) e.getValue();
+                    } else {
+                        LibsDisguises.getInstance().getLogger().warning(
+                            "Invalid number '" + e.getValue() + "' set on '" + e.getKey() + "' for sound '" + sound + "' on " + groupName +
+                                "." + replacementKey + "!");
+                        continue;
+                    }
+
+                    if (!Float.isFinite(val)) {
+                        LibsDisguises.getInstance().getLogger().warning(
+                            "Invalid number '" + e.getValue() + "' set on '" + e.getKey() + "' for sound '" + sound + "' on " + groupName +
+                                "." + replacementKey + "!");
+                        continue;
+                    }
+
+                    if (e.getKey().equals("Volume")) {
+                        volume = val;
+                    } else if (e.getKey().equals("Pitch")) {
+                        pitch = val;
+                    } else if (e.getKey().equals("PitchMin")) {
+                        pitchMin = val;
+                    } else if (e.getKey().equals("PitchMax")) {
+                        pitchMax = val;
+                    } else if (e.getKey().equals("Weight")) {
+                        weight = val;
+                    }
+                }
+
+                if (pitch != null && (pitchMin != null || pitchMax != null)) {
+                    LibsDisguises.getInstance().getLogger().warning(
+                        "Invalid sound '" + sound + "': cannot mix Pitch with PitchMin and PitchMax on " + groupName + "." +
+                            replacementKey + "! Defaulting to Pitch.");
+                    return null;
+                }
+
+                if ((pitchMin == null) != (pitchMax == null)) {
+                    LibsDisguises.getInstance().getLogger().warning(
+                        "Invalid sound '" + sound + "': PitchMin and PitchMax must both be defined on " + groupName + "." + replacementKey +
+                            "!");
+                    return null;
+                }
+
+                if (pitchMin != null && pitchMax != null && pitchMin > pitchMax) {
+                    LibsDisguises.getInstance().getLogger().warning(
+                        "Invalid sound '" + sound + "': PitchMin cannot be larger than PitchMax on " + groupName + "." + replacementKey +
+                            "!");
+                    return null;
+                }
+
+                if (pitch != null) {
+                    pitchMin = pitch;
+                }
+            }
+        } else {
+            return null;
+        }
+
+        if (!sound.matches(".+:.+")) {
+            SoundGroup subGroup = SoundGroup.getGroup(sound);
+
+            if (subGroup == null) {
+                LibsDisguises.getInstance().getLogger()
+                    .warning("Invalid sound '" + sound + "'! Must be a minecraft:sound.name or SoundGroup name!");
+                return null;
+            }
+
+            DisguiseSound[] sounds = subGroup.getDisguiseSounds().get(replacementKey);
+
+            if (sounds == null) {
+                LibsDisguises.getInstance().getLogger().warning(
+                    "Sound group '" + sound + "' does not contain a category for " + replacementKey + "! Can't use as default in " +
+                        groupName);
+                return null;
+            }
+
+            return sounds;
+        }
+
+        return new DisguiseSound[]{new DisguiseSound(new ResourceLocation(sound), weight, volume, pitchMin, pitchMax)};
     }
 
     private void loadSounds() {
@@ -254,10 +288,10 @@ public class SoundManager {
                                     continue;
                                 }
 
-                                group.addSound(s1.getSoundId(), type);
+                                group.addSound(type, s1.getSoundId());
                             }
                         } else {
-                            group.addSound(new ResourceLocation(soundStr), type);
+                            group.addSound(type, new ResourceLocation(soundStr));
                         }
                     }
                 }

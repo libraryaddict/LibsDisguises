@@ -29,6 +29,8 @@ GroupName:
   # Alternatively, you could use "COW" which refers to the "COW" soundgroup, and loads the category from that!
   # Idle:
   #   - COW
+  # To cancel a sound entirely, define it as an empty list
+  # Hurt: []
 
   # The category here obeys the same rules as "SoundCategory"
   Category: HOSTILE
@@ -54,3 +56,12 @@ GroupName:
       Weight: 1.5 # Lower chance
     - minecraft:some.super.frightning.step.sound:
       # Default weight of 1
+
+  # You can also remap specific sounds!
+  # If the plugin detects a sound being played, it checks if it has a replacement for that specific sound.
+  # If it doesn't, it falls back to the group sounds (Idle, Hurt, Death, Step)
+  # This is useful for resource packs, or if you want to change a specific sound for a disguise.
+  # The sound name must be the full resource location (eg: minecraft:entity.cow.ambient)
+  minecraft:entity.cow.ambient:
+    - minecraft:entity.zombie.ambient:
+        Pitch: 0.5

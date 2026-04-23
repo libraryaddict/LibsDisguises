@@ -174,9 +174,9 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             return;
         }
 
-        DisguiseSound newSound = disguiseSound.getSound(soundType);
+        DisguiseSound newSound = disguiseSound.getSound(soundType, sound.getSoundId());
 
-        if (newSound == null) {
+        if (newSound == null || newSound.getSound() == null) {
             event.setCancelled(true);
             return;
         }

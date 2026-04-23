@@ -46,6 +46,7 @@ public class SoundGroup {
     private final LinkedHashMap<ResourceLocation, SoundType> disguiseSoundTypes = new LinkedHashMap<>();
     @Getter
     private final LinkedHashMap<SoundType, DisguiseSound[]> disguiseSounds = new LinkedHashMap<>();
+    private final LinkedHashMap<ResourceLocation, DisguiseSound[]> remappedSounds = new LinkedHashMap<>();
     private boolean customSounds, hasWeights;
     private final DisguiseSoundCategory soundCategory;
 
@@ -72,29 +73,59 @@ public class SoundGroup {
         return soundCategory;
     }
 
-    public void addSound(ResourceLocation disguiseSound, SoundType type) {
-        addSound(new DisguiseSound(disguiseSound), type);
+    public void addRemappedSound(ResourceLocation oldSound, DisguiseSound disguiseSound) {
+        remappedSounds.compute(oldSound, (key, value) -> {
+            if (disguiseSound == null) {
+                return new DisguiseSound[]{null};
+            }
+
+            if (value == null || (value.length == 1 && value[0] == null)) {
+                value = new DisguiseSound[]{disguiseSound};
+            } else {
+                value = Arrays.copyOf(value, value.length + 1);
+                value[value.length - 1] = disguiseSound;
+            }
+
+            return value;
+        });
     }
 
-    public void addSound(DisguiseSound disguiseSound, SoundType type) {
-        if (disguiseSound == null) {
-            return;
-        }
+    public void addSound(SoundType type, ResourceLocation disguiseSound) {
+        addSound(type, disguiseSound != null ? new DisguiseSound(disguiseSound) : null);
+    }
 
-        disguiseSoundTypes.putIfAbsent(disguiseSound.getSound(), type);
+    public void addSound(SoundType type, DisguiseSound disguiseSound) {
+        if (disguiseSound != null) {
+            disguiseSoundTypes.putIfAbsent(disguiseSound.getSound(), type);
+        }
 
         if (disguiseSounds.containsKey(type)) {
             DisguiseSound[] array = disguiseSounds.get(type);
 
-            array = Arrays.copyOf(array, array.length + 1);
-            array[array.length - 1] = disguiseSound;
+            if (disguiseSound == null) {
+                // No sound
+                array = new DisguiseSound[0];
+            } else {
+                array = Arrays.copyOf(array, array.length + 1);
+                array[array.length - 1] = disguiseSound;
+            }
 
             disguiseSounds.put(type, array);
             // Weights only matter if there are at least 2
-            hasWeights = hasWeights || Math.abs(1 - disguiseSound.getWeight()) > 0.000001;
+            if (disguiseSound != null) {
+                hasWeights = hasWeights || Math.abs(1 - disguiseSound.getWeight()) > 0.000001;
+            }
         } else {
             disguiseSounds.put(type, new DisguiseSound[]{disguiseSound});
         }
+    }
+
+    public DisguiseSound getSound(SoundType type, ResourceLocation actualSound) {
+        if (remappedSounds.containsKey(actualSound)) {
+            return getRandomSound(remappedSounds.get(actualSound));
+        }
+
+        return getSound(type);
     }
 
     public DisguiseSound getSound(SoundType type) {
@@ -120,8 +151,10 @@ public class SoundGroup {
             return null;
         }
 
-        DisguiseSound[] sounds = disguiseSounds.get(type);
+        return getRandomSound(disguiseSounds.get(type));
+    }
 
+    private DisguiseSound getRandomSound(DisguiseSound[] sounds) {
         if (sounds == null || sounds.length == 0) {
             return null;
         }
