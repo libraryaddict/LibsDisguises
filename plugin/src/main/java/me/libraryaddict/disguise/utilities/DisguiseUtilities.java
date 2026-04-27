@@ -251,11 +251,11 @@ public class DisguiseUtilities {
             String suffix = getSuffix();
 
             if (!prefix.equals(team.getPrefix())) {
-                team.setPrefix(NmsVersion.v1_13.isSupported() ? "Colorize" : prefix);
+                team.setPrefix(NmsVersion.v1_13.isSupported() ? "" : prefix);
             }
 
             if (!suffix.equals(team.getSuffix())) {
-                team.setSuffix(NmsVersion.v1_13.isSupported() ? "Colorize" : suffix);
+                team.setSuffix(NmsVersion.v1_13.isSupported() ? "" : suffix);
             }
         }
     }
