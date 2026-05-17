@@ -139,7 +139,7 @@ public class SoundGroup {
 
         DisguiseSound[] sounds = disguiseSounds.get(type);
 
-        if (sounds == null) {
+        if (sounds == null || sounds.length == 0) {
             return null;
         }
 

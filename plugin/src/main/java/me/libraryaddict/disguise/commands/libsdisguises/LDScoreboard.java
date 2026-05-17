@@ -81,7 +81,7 @@ public class LDScoreboard implements LDCommand {
                             continue;
                         }
 
-                        if (!team.getPrefix().equals("Colorize") && (!team.getPrefix().equals(scoreboardName.getPrefix()) ||
+                        if (!team.getPrefix().equals("") && (!team.getPrefix().equals(scoreboardName.getPrefix()) ||
                             !team.getSuffix().equals(scoreboardName.getSuffix()))) {
                             if (issuesFound++ < 5) {
                                 sender.sendMessage(

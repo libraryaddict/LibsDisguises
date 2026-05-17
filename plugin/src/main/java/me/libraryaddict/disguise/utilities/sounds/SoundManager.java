@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -98,7 +99,7 @@ public class SoundManager {
 
                 if (soundToReplace.matches("^[A-Z][a-z]+$")) {
                     try {
-                        type = SoundGroup.SoundType.valueOf(soundToReplace);
+                        type = SoundGroup.SoundType.valueOf(soundToReplace.toUpperCase(Locale.ENGLISH));
                     } catch (Exception ignored) {
                     }
                 }
