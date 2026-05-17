@@ -279,7 +279,16 @@ public class MineSkinAPI {
             return null;
         }
 
-        if (mineSkinResponse.getJob() == null || (!mineSkinResponse.getJob().isJobRunning() && mineSkinResponse.getSkin() == null)) {
+        // Fetch skin explictly if job finished but skin is null
+        // Technically, we should be checking response code 202, but this works!
+        if (mineSkinResponse != null && mineSkinResponse.getJob() != null && mineSkinResponse.isSuccess() &&
+            mineSkinResponse.getSkin() == null && mineSkinResponse.getJob().getResult() != null) {
+            sleepUntilReady();
+
+            mineSkinResponse = getSkinById(mineSkinResponse.getJob().getResult(), callback);
+        }
+
+        if (mineSkinResponse.getSkin() == null && (mineSkinResponse.getJob() == null || !mineSkinResponse.getJob().isJobRunning())) {
             // If we got an error that we don't know how to handle..
             if (LibsDisguises.getInstance() != null) {
                 LibsDisguises.getInstance().getLogger().warning("Received an unknown response from MineSkin: " + response);
@@ -351,6 +360,14 @@ public class MineSkinAPI {
             stream.write(bytes);
             stream.flush(); // Reportably not reliable for a stream to flush before closing
         }
+    }
+
+    private MineSkinQueueResponse getSkinById(String skinId, SkinUtils.SkinCallback callback) throws IOException {
+        URL url = new URL("https://api.mineskin.org/v2/skins/" + skinId);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        addConnectionHeaders(con);
+
+        return readResponse(con, callback);
     }
 
     private MineSkinQueueResponse doPost(SkinUtils.SkinCallback callback, MineSkinSubmitQueue mineskinRequest) {
