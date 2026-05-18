@@ -186,7 +186,8 @@ public enum NmsVersion {
 
             minecraftVersion = matcher.group(1);
             version = getByVersion(minecraftVersion);
-            craftbukkitPackage = Bukkit.getServer().getClass().getPackage().getName();
+            String[] packageName = Bukkit.getServer().getClass().getPackage().getName().split("\\.");
+            craftbukkitPackage = packageName.length > 3 ? packageName[3] : "";
         }
     }
 }
