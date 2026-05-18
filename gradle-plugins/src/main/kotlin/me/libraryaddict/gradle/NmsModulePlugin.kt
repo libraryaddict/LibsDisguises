@@ -14,6 +14,7 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.*
 import java.util.*
 
@@ -35,6 +36,10 @@ abstract class NmsModulePlugin : Plugin<Project> {
         val libs = project.extensions.getByType<org.gradle.api.artifacts.VersionCatalogsExtension>().named("libs")
         plugins.apply("java-library")
         val nmsModule = extensions.create<NmsModuleExtension>("nmsModule")
+        val javaExt = extensions.getByType<JavaPluginExtension>()
+        javaExt.toolchain {
+            languageVersion.set(nmsModule.javaVersion.map { JavaLanguageVersion.of(it.majorVersion) })
+        }
 
         repositories {
             mavenCentral()
@@ -107,16 +112,15 @@ abstract class NmsModulePlugin : Plugin<Project> {
             dependsOn(generateSharedNmsSources)
         }
 
-
+        tasks.withType<JavaCompile>().configureEach {
+            options.release.set(nmsModule.javaVersion.map {
+                it.majorVersion.toInt().coerceAtMost(JavaVersion.VERSION_21.majorVersion.toInt())
+            })
+        }
 
         tasks.withType<Jar> { exclude("*.properties") }
 
-
         afterEvaluate {
-            val javaExt = extensions.getByType<JavaPluginExtension>()
-            javaExt.sourceCompatibility = nmsModule.javaVersion.get()
-            javaExt.targetCompatibility = nmsModule.javaVersion.get()
-
             overrideProperties = (layout.projectDirectory.file("src/main/resources/override.properties"))
         }
     }
