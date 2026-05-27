@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Represents a bounding box that is used to provide a larger interaction hitbox
@@ -94,10 +95,6 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
         }
 
         for (Player player : getEffectedPlayers()) {
-            if (player == disguise.getEntity()) {
-                continue;
-            }
-
             WrapperPlayServerEntityMetadata packet =
                 ReflectionManager.getMetadataPacket(entityId, Collections.singletonList(new WatcherValue(index, getMetadata(index), true)));
 
@@ -110,7 +107,7 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
             return Collections.emptyList();
         }
 
-        return DisguiseUtilities.getTrackingPlayers(disguise);
+        return DisguiseUtilities.getTrackingPlayers(disguise).stream().filter(p -> p != disguise.getEntity()).collect(Collectors.toList());
     }
 
     public InteractiveBoundingBox setSize(int size) {
@@ -150,10 +147,6 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
         }
 
         for (Player player : getEffectedPlayers()) {
-            if (player == disguise.getEntity()) {
-                continue;
-            }
-
             PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, createAttributes());
         }
 
