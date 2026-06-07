@@ -4,6 +4,8 @@ import com.github.retrooper.packetevents.event.SimplePacketListenerAbstract;
 import com.github.retrooper.packetevents.event.simple.PacketPlayReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.player.InteractionHand;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientAttack;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
@@ -35,9 +37,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.Random;
 
 public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
+
     @Override
     public void onPacketPlayReceive(PacketPlayReceiveEvent event) {
-        if (event.isCancelled() || event.getPacketType() != PacketType.Play.Client.INTERACT_ENTITY) {
+        boolean isInteract = event.getPacketType() == PacketType.Play.Client.INTERACT_ENTITY;
+        boolean isAttackPacket = event.getPacketType() == PacketType.Play.Client.ATTACK;
+
+        if (event.isCancelled() || (!isInteract && !isAttackPacket)) {
             return;
         }
 
@@ -53,42 +59,60 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
             event.setCancelled(true);
         }
 
-        WrapperPlayClientInteractEntity packet = new WrapperPlayClientInteractEntity(event);
+        int entityId;
+        boolean isAttack = isAttackPacket;
+        InteractionHand hand = InteractionHand.MAIN_HAND;
+        PacketWrapper<?> wrapper;
 
-        Integer remapped = DisguiseUtilities.getRemappedEntityIds().get(packet.getEntityId());
-
-        if (remapped != null) {
-            packet.setEntityId(remapped);
-            event.markForReEncode(true);
+        if (isInteract) {
+            WrapperPlayClientInteractEntity packet = new WrapperPlayClientInteractEntity(event);
+            entityId = packet.getEntityId();
+            isAttack = packet.getAction() == WrapperPlayClientInteractEntity.InteractAction.ATTACK;
+            hand = getHand(packet);
+            wrapper = packet;
+        } else {
+            WrapperPlayClientAttack packet = new WrapperPlayClientAttack(event);
+            entityId = packet.getEntityId();
+            wrapper = packet;
         }
 
-        int entityId = packet.getEntityId();
+        Integer remapped = DisguiseUtilities.getRemappedEntityIds().get(entityId);
 
-        final Disguise disguise = DisguiseUtilities.getDisguise(observer, entityId);
+        if (remapped != null) {
+            if (isInteract) {
+                ((WrapperPlayClientInteractEntity) wrapper).setEntityId(remapped);
+            } else {
+                ((WrapperPlayClientAttack) wrapper).setEntityId(remapped);
+            }
+
+            event.markForReEncode(true);
+            entityId = remapped;
+        }
 
         if (entityId == DisguiseAPI.getSelfDisguiseId() || entityId == observer.getEntityId()) {
             // Self disguise
             event.setCancelled(true);
         } else if (DisguiseUtilities.isNotInteractable(entityId)) {
             event.setCancelled(true);
-        } else if (DisguiseUtilities.isSpecialInteract(entityId) && getHand(packet) == InteractionHand.OFF_HAND) {
+        } else if (hand == InteractionHand.OFF_HAND && DisguiseUtilities.isSpecialInteract(entityId)) {
             // If its an interaction that we should cancel, such as right clicking a wolf..
             // Honestly I forgot the reason.
             event.setCancelled(true);
         }
 
-        WrapperPlayClientInteractEntity interactEntity =
-            new WrapperPlayClientInteractEntity(entityId, packet.getAction(), packet.getHand(), packet.getTarget(), packet.isSneaking());
+        int finalEntityId = entityId;
+        boolean finalIsAttack = isAttack;
+        InteractionHand finalHand = hand;
 
         if (!Bukkit.isPrimaryThread()) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    handleSync(observer, interactEntity);
+                    handleSync(observer, finalEntityId, finalIsAttack, finalHand);
                 }
             }.runTask(LibsDisguises.getInstance());
         } else {
-            handleSync(observer, interactEntity);
+            handleSync(observer, finalEntityId, finalIsAttack, finalHand);
         }
     }
 
@@ -108,8 +132,8 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
         return packet.getHand();
     }
 
-    private void handleSync(Player observer, WrapperPlayClientInteractEntity packet) {
-        final Disguise disguise = DisguiseUtilities.getDisguise(observer, packet.getEntityId());
+    private void handleSync(Player observer, int entityId, boolean isAttack, InteractionHand hand) {
+        final Disguise disguise = DisguiseUtilities.getDisguise(observer, entityId);
 
         if (disguise == null) {
             return;
@@ -117,14 +141,12 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
 
         if (disguise.getEntity() == observer) {
             // The type of interact, we don't care the difference with "Interact_At" however as it's not
-            // useful
-            // for self disguises
+            // useful for self disguises
             final EquipmentSlot handUsed;
-            final WrapperPlayClientInteractEntity.InteractAction interactType = packet.getAction();
 
             // Attack has a null hand, which throws an error if you attempt to fetch
             // If the hand used wasn't their main hand
-            if (interactType != WrapperPlayClientInteractEntity.InteractAction.ATTACK && getHand(packet) == InteractionHand.OFF_HAND) {
+            if (!isAttack && hand == InteractionHand.OFF_HAND) {
                 handUsed = EquipmentSlot.OFF_HAND;
             } else {
                 handUsed = EquipmentSlot.HAND;
@@ -134,12 +156,14 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
                 @Override
                 public void run() {
                     // Fire self interact event
-                    DisguiseInteractEvent selfEvent = new DisguiseInteractEvent((TargetedDisguise) disguise, handUsed,
-                        interactType == WrapperPlayClientInteractEntity.InteractAction.ATTACK);
-
+                    DisguiseInteractEvent selfEvent = new DisguiseInteractEvent((TargetedDisguise) disguise, handUsed, isAttack);
                     Bukkit.getPluginManager().callEvent(selfEvent);
                 }
             }.runTask(LibsDisguises.getInstance());
+        }
+
+        if (isAttack) {
+            return;
         }
 
         switch (disguise.getType()) {
@@ -173,8 +197,7 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
 
                 break;
             case ALLAY:
-                doAllay(observer, disguise, packet);
-
+                doAllay(observer, disguise, hand);
                 break;
             default:
                 break;
@@ -185,9 +208,7 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
         return item == null || item.getType() == Material.AIR;
     }
 
-    private void doAllay(Player observer, Disguise disguise, WrapperPlayClientInteractEntity packet) {
-        InteractionHand hand = getHand(packet);
-
+    private void doAllay(Player observer, Disguise disguise, InteractionHand hand) {
         new BukkitRunnable() {
             @Override
             public void run() {
