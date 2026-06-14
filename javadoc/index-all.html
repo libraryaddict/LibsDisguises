@@ -141,13 +141,15 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Only allow saves every 2 minutes</div>
 </dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#addSeen(java.util.UUID,boolean)" class="member-name-link">addSeen(UUID, boolean)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#addSeen(org.bukkit.entity.Player,boolean)" class="member-name-link">addSeen(Player, boolean)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#addUserProfile(java.lang.String,com.github.retrooper.packetevents.protocol.player.UserProfile)" class="member-name-link">addUserProfile(String, UserProfile)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#adjustNamePositions(me.libraryaddict.disguise.disguisetypes.Disguise,java.util.List)" class="member-name-link">adjustNamePositions(Disguise, List&lt;PacketWrapper&gt;)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
+<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#adjustNamePositions(me.libraryaddict.disguise.disguisetypes.Disguise,java.util.List,java.util.UUID)" class="member-name-link">adjustNamePositions(Disguise, List&lt;PacketWrapper&gt;, UUID)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#adjustNamePositions(me.libraryaddict.disguise.disguisetypes.Disguise,me.libraryaddict.disguise.utilities.packets.LibsPackets)" class="member-name-link">adjustNamePositions(Disguise, LibsPackets&lt;? extends PacketWrapper&gt;)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
+<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#adjustNamePositions(me.libraryaddict.disguise.disguisetypes.Disguise,me.libraryaddict.disguise.utilities.packets.LibsPackets,me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer)" class="member-name-link">adjustNamePositions(Disguise, LibsPackets&lt;? extends PacketWrapper&gt;, IWrappedPlayer)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/Disguise.html#adjustTallSelfDisguiseScale()" class="member-name-link">adjustTallSelfDisguiseScale()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a></dt>
 <dd>&nbsp;</dd>
@@ -468,6 +470,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/TargetedDisguise.html#canSee(java.lang.String)" class="member-name-link">canSee(String)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/TargetedDisguise.html" title="class in me.libraryaddict.disguise.disguisetypes">TargetedDisguise</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/TargetedDisguise.html#canSee(me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer)" class="member-name-link">canSee(IWrappedPlayer)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/TargetedDisguise.html" title="class in me.libraryaddict.disguise.disguisetypes">TargetedDisguise</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/TargetedDisguise.html#canSee(org.bukkit.entity.Player)" class="member-name-link">canSee(Player)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/TargetedDisguise.html" title="class in me.libraryaddict.disguise.disguisetypes">TargetedDisguise</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/translations/LibsMsg.html#CANT_ATTACK_DISGUISED" class="member-name-link">CANT_ATTACK_DISGUISED</a> - Enum constant in enum class me.libraryaddict.disguise.utilities.translations.<a href="me/libraryaddict/disguise/utilities/translations/LibsMsg.html" title="enum class in me.libraryaddict.disguise.utilities.translations">LibsMsg</a></dt>
@@ -533,6 +537,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#clearEntityTracker(java.lang.Object,java.lang.Object,java.lang.Object)" class="member-name-link">clearEntityTracker(Object, Object, Object)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#clearPlayerVelocity(org.bukkit.entity.Player)" class="member-name-link">clearPlayerVelocity(Player)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#clearRememberedScaling()" class="member-name-link">clearRememberedScaling()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/translations/LibsMsg.html#CLICK_COPY" class="member-name-link">CLICK_COPY</a> - Enum constant in enum class me.libraryaddict.disguise.utilities.translations.<a href="me/libraryaddict/disguise/utilities/translations/LibsMsg.html" title="enum class in me.libraryaddict.disguise.utilities.translations">LibsMsg</a></dt>
 <dd>&nbsp;</dd>
@@ -606,6 +612,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/FlagWatcher.html#convert(org.bukkit.entity.Player,java.util.List)" class="member-name-link">convert(Player, List&lt;WatcherValue&gt;)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/FlagWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes">FlagWatcher</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/FlagWatcher.html#convert(org.bukkit.entity.Player,java.util.List,boolean,boolean)" class="member-name-link">convert(Player, List&lt;WatcherValue&gt;, boolean, boolean)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/FlagWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes">FlagWatcher</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#convertMetaFromSerialized(me.libraryaddict.disguise.disguisetypes.MetaIndex,java.lang.Object)" class="member-name-link">convertMetaFromSerialized(MetaIndex&lt;T&gt;, Object)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#convertMetaToSerialized(com.github.retrooper.packetevents.util.mappings.IRegistryHolder,me.libraryaddict.disguise.disguisetypes.MetaIndex,java.lang.Object)" class="member-name-link">convertMetaToSerialized(IRegistryHolder, MetaIndex, Object)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
@@ -674,8 +682,16 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#createProfile(com.github.retrooper.packetevents.protocol.player.UserProfile)" class="member-name-link">createProfile(UserProfile)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#createSanitizedWatcherValues(org.bukkit.entity.Player,org.bukkit.entity.Entity,me.libraryaddict.disguise.disguisetypes.FlagWatcher)" class="member-name-link">createSanitizedWatcherValues(Player, Entity, FlagWatcher)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
+<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#createSanitizedWatcherValues(me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer,me.libraryaddict.disguise.disguisetypes.FlagWatcher)" class="member-name-link">createSanitizedWatcherValues(IWrappedPlayer, FlagWatcher)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#createSanitizedWatcherValues(me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer,me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity,me.libraryaddict.disguise.disguisetypes.FlagWatcher)" class="member-name-link">createSanitizedWatcherValues(IWrappedPlayer, IWrappedEntity&lt;?&gt;, FlagWatcher)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+</dd>
+<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#createSanitizedWatcherValues(org.bukkit.entity.Player,org.bukkit.entity.Entity,me.libraryaddict.disguise.disguisetypes.FlagWatcher)" class="member-name-link">createSanitizedWatcherValues(Player, Entity, FlagWatcher)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#createTablistAddPackets(me.libraryaddict.disguise.disguisetypes.PlayerDisguise)" class="member-name-link">createTablistAddPackets(PlayerDisguise)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#createTablistPacket(me.libraryaddict.disguise.disguisetypes.PlayerDisguise,com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfo.Action)" class="member-name-link">createTablistPacket(PlayerDisguise, WrapperPlayServerPlayerInfo.Action)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
@@ -961,8 +977,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#%3Cinit%3E()" class="member-name-link">DisguiseUtilities()</a> - Constructor for class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.DScoreTeam.html" class="type-name-link" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities.DScoreTeam</a> - Class in <a href="me/libraryaddict/disguise/utilities/package-summary.html">me.libraryaddict.disguise.utilities</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/MetaIndex.html#DISPLAY_BILLBOARD_RENDER_CONSTRAINTS" class="member-name-link">DISPLAY_BILLBOARD_RENDER_CONSTRAINTS</a> - Static variable in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/MetaIndex.html" title="class in me.libraryaddict.disguise.disguisetypes">MetaIndex</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/MetaIndex.html#DISPLAY_BRIGHTNESS_OVERRIDE" class="member-name-link">DISPLAY_BRIGHTNESS_OVERRIDE</a> - Static variable in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/MetaIndex.html" title="class in me.libraryaddict.disguise.disguisetypes">MetaIndex</a></dt>
@@ -1124,8 +1138,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/DroppedItemWatcher.html#%3Cinit%3E(me.libraryaddict.disguise.disguisetypes.Disguise)" class="member-name-link">DroppedItemWatcher(Disguise)</a> - Constructor for class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/DroppedItemWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">DroppedItemWatcher</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseType.html#DROWNED" class="member-name-link">DROWNED</a> - Enum constant in enum class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseType.html" title="enum class in me.libraryaddict.disguise.disguisetypes">DisguiseType</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.DScoreTeam.html#%3Cinit%3E(me.libraryaddict.disguise.disguisetypes.PlayerDisguise,java.lang.String%5B%5D)" class="member-name-link">DScoreTeam(PlayerDisguise, String[])</a> - Constructor for class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.DScoreTeam.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities.DScoreTeam</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/translations/LibsMsg.html#DSELECTOR_HELP1" class="member-name-link">DSELECTOR_HELP1</a> - Enum constant in enum class me.libraryaddict.disguise.utilities.translations.<a href="me/libraryaddict/disguise/utilities/translations/LibsMsg.html" title="enum class in me.libraryaddict.disguise.utilities.translations">LibsMsg</a></dt>
 <dd>&nbsp;</dd>
@@ -1434,8 +1446,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/translations/TranslateType.html#get(me.libraryaddict.disguise.utilities.translations.LibsMsg)" class="member-name-link">get(LibsMsg)</a> - Method in enum class me.libraryaddict.disguise.utilities.translations.<a href="me/libraryaddict/disguise/utilities/translations/TranslateType.html" title="enum class in me.libraryaddict.disguise.utilities.translations">TranslateType</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#getActualEntityScale()" class="member-name-link">getActualEntityScale()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/translations/LibsMsg.html#getAdv(java.lang.Object...)" class="member-name-link">getAdv(Object...)</a> - Method in enum class me.libraryaddict.disguise.utilities.translations.<a href="me/libraryaddict/disguise/utilities/translations/LibsMsg.html" title="enum class in me.libraryaddict.disguise.utilities.translations">LibsMsg</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#getAdventureChat(java.lang.String)" class="member-name-link">getAdventureChat(String)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
@@ -1445,8 +1455,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/TextDisplayWatcher.html#getAlignment()" class="member-name-link">getAlignment()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/TextDisplayWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">TextDisplayWatcher</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/parser/DisguisePermissions.html#getAllowed()" class="member-name-link">getAllowed()</a> - Method in class me.libraryaddict.disguise.utilities.parser.<a href="me/libraryaddict/disguise/utilities/parser/DisguisePermissions.html" title="class in me.libraryaddict.disguise.utilities.parser">DisguisePermissions</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#getAllScoreboards()" class="member-name-link">getAllScoreboards()</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/WardenWatcher.html#getAnger()" class="member-name-link">getAnger()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/WardenWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">WardenWatcher</a></dt>
 <dd>&nbsp;</dd>
@@ -1547,8 +1555,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/LibsEquipment.html#getBootsDropChance()" class="member-name-link">getBootsDropChance()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/LibsEquipment.html" title="class in me.libraryaddict.disguise.disguisetypes">LibsEquipment</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/Disguise.html#getBoundingBox()" class="member-name-link">getBoundingBox()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#getBoundingBox(org.bukkit.entity.Entity)" class="member-name-link">getBoundingBox(Entity)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/DisplayWatcher.html#getBrightness()" class="member-name-link">getBrightness()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/DisplayWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">DisplayWatcher</a></dt>
 <dd>&nbsp;</dd>
@@ -1710,6 +1716,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#getDisguise(org.bukkit.entity.Player,int)" class="member-name-link">getDisguise(Player, int)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#getDisguise(org.bukkit.entity.Player,java.util.UUID,int)" class="member-name-link">getDisguise(Player, UUID, int)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/DisguiseAPI.html#getDisguise(org.bukkit.entity.Player,org.bukkit.entity.Entity)" class="member-name-link">getDisguise(Player, Entity)</a> - Static method in class me.libraryaddict.disguise.<a href="me/libraryaddict/disguise/DisguiseAPI.html" title="class in me.libraryaddict.disguise">DisguiseAPI</a></dt>
 <dd>
 <div class="block">Get the disguise of a entity</div>
@@ -1732,11 +1740,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get the disguises of a entity</div>
 </dd>
-<dt><a href="me/libraryaddict/disguise/disguisetypes/Disguise.html#getDisguiseScale()" class="member-name-link">getDisguiseScale()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#getDisguiseScale()" class="member-name-link">getDisguiseScale()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/disguisetypes/MiscDisguise.html#getDisguiseScale()" class="member-name-link">getDisguiseScale()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/MiscDisguise.html" title="class in me.libraryaddict.disguise.disguisetypes">MiscDisguise</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/TargetedDisguise.html#getDisguiseTarget()" class="member-name-link">getDisguiseTarget()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/TargetedDisguise.html" title="class in me.libraryaddict.disguise.disguisetypes">TargetedDisguise</a></dt>
 <dd>&nbsp;</dd>
@@ -1778,9 +1782,9 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/CamelWatcher.html#getEntityPose()" class="member-name-link">getEntityPose()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/CamelWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">CamelWatcher</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#getEntityScaleWithoutLibsDisguises(org.bukkit.entity.Entity)" class="member-name-link">getEntityScaleWithoutLibsDisguises(Entity)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
+<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#getEntityScales(org.bukkit.entity.Entity)" class="member-name-link">getEntityScales(Entity)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>
-<div class="block">Grabs the scale of the entity as if the LibsDisguises: attributes did not exist, is clamped to 0.06 to 16</div>
+<div class="block">Grabs the scale of the entity with LibsDisguises attribute, and without, is clamped to 0.06 to 16</div>
 </dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#getEntityTracker(org.bukkit.entity.Entity)" class="member-name-link">getEntityTracker(Entity)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
 <dd>&nbsp;</dd>
@@ -1799,6 +1803,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#getEntityTypeId(java.lang.Object)" class="member-name-link">getEntityTypeId(Object)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#getEntityTypeId(org.bukkit.entity.EntityType)" class="member-name-link">getEntityTypeId(EntityType)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#getEntityWatcher(java.lang.Object)" class="member-name-link">getEntityWatcher(Object)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#getEntityWatcher(org.bukkit.entity.Entity)" class="member-name-link">getEntityWatcher(Entity)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
 <dd>&nbsp;</dd>
@@ -1974,6 +1980,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/NmsVersion.html#getLastSupported()" class="member-name-link">getLastSupported()</a> - Method in enum class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/NmsVersion.html" title="enum class in me.libraryaddict.disguise.utilities.reflection">NmsVersion</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#getLastTransmittedScale(java.util.UUID)" class="member-name-link">getLastTransmittedScale(UUID)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/ArmorStandWatcher.html#getLeftArm()" class="member-name-link">getLeftArm()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/ArmorStandWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">ArmorStandWatcher</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/ArmorStandWatcher.html#getLeftLeg()" class="member-name-link">getLeftLeg()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/ArmorStandWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">ArmorStandWatcher</a></dt>
@@ -2050,6 +2058,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#getNamePackets(me.libraryaddict.disguise.disguisetypes.Disguise,org.bukkit.entity.Player,java.lang.String%5B%5D)" class="member-name-link">getNamePackets(Disguise, Player, String[])</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#getNamePackets(me.libraryaddict.disguise.disguisetypes.Disguise,org.bukkit.entity.Player,java.lang.String%5B%5D,double)" class="member-name-link">getNamePackets(Disguise, Player, String[], double)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#getNewEntityId()" class="member-name-link">getNewEntityId()</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#getNewEntityId(boolean)" class="member-name-link">getNewEntityId(boolean)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
@@ -2091,8 +2101,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/TameableWatcher.html#getOwner()" class="member-name-link">getOwner()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/TameableWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">TameableWatcher</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/CopperGolemWatcher.html#getOxidation()" class="member-name-link">getOxidation()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/CopperGolemWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">CopperGolemWatcher</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#getPacketEntityScale(double)" class="member-name-link">getPacketEntityScale(double)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/params/ParamInfo.html#getParamClass()" class="member-name-link">getParamClass()</a> - Method in class me.libraryaddict.disguise.utilities.params.<a href="me/libraryaddict/disguise/utilities/params/ParamInfo.html" title="class in me.libraryaddict.disguise.utilities.params">ParamInfo</a></dt>
 <dd>&nbsp;</dd>
@@ -2140,15 +2148,11 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#getPitch(me.libraryaddict.disguise.disguisetypes.DisguiseType,org.bukkit.entity.EntityType,float)" class="member-name-link">getPitch(DisguiseType, EntityType, float)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.DScoreTeam.html#getPlayer()" class="member-name-link">getPlayer()</a> - Method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.DScoreTeam.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities.DScoreTeam</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#getPlayerConnectionOrPlayer(org.bukkit.entity.Player)" class="member-name-link">getPlayerConnectionOrPlayer(Player)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#getPlayerFromPlayerConnection(java.lang.Object)" class="member-name-link">getPlayerFromPlayerConnection(Object)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#getPlayerListName(org.bukkit.entity.Player)" class="member-name-link">getPlayerListName(Player)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#getPlayerScaleWithoutLibsDisguises()" class="member-name-link">getPlayerScaleWithoutLibsDisguises()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#getPluginYAML(java.io.File)" class="member-name-link">getPluginYAML(File)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
 <dd>
@@ -2162,10 +2166,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 </dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.DScoreTeam.html#getPrefix()" class="member-name-link">getPrefix()</a> - Method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.DScoreTeam.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities.DScoreTeam</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#getPrevSelfDisguiseTallScaleMax()" class="member-name-link">getPrevSelfDisguiseTallScaleMax()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/VillagerWatcher.html#getProfession()" class="member-name-link">getProfession()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/VillagerWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">VillagerWatcher</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/ZombieVillagerWatcher.html#getProfession()" class="member-name-link">getProfession()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/ZombieVillagerWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">ZombieVillagerWatcher</a></dt>
@@ -2207,8 +2207,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/utilities/params/ParamInfo.html#getRawDescription()" class="member-name-link">getRawDescription()</a> - Method in class me.libraryaddict.disguise.utilities.params.<a href="me/libraryaddict/disguise/utilities/params/ParamInfo.html" title="class in me.libraryaddict.disguise.utilities.params">ParamInfo</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/params/ParamInfo.html#getRawDescriptiveName()" class="member-name-link">getRawDescriptiveName()</a> - Method in class me.libraryaddict.disguise.utilities.params.<a href="me/libraryaddict/disguise/utilities/params/ParamInfo.html" title="class in me.libraryaddict.disguise.utilities.params">ParamInfo</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#getRawEntityScaleWithoutLibsDisguises()" class="member-name-link">getRawEntityScaleWithoutLibsDisguises()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/params/ParamInfo.html#getRawName()" class="member-name-link">getRawName()</a> - Method in class me.libraryaddict.disguise.utilities.params.<a href="me/libraryaddict/disguise/utilities/params/ParamInfo.html" title="class in me.libraryaddict.disguise.utilities.params">ParamInfo</a></dt>
 <dd>&nbsp;</dd>
@@ -2272,8 +2270,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/SlimeWatcher.html#getSize()" class="member-name-link">getSize()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/SlimeWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">SlimeWatcher</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#getSize(org.bukkit.entity.Entity)" class="member-name-link">getSize(Entity)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/PlayerDisguise.html#getSkin()" class="member-name-link">getSkin()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/PlayerDisguise.html" title="class in me.libraryaddict.disguise.disguisetypes">PlayerDisguise</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/MannequinWatcher.html#getSkin()" class="member-name-link">getSkin()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/MannequinWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">MannequinWatcher</a></dt>
@@ -2334,8 +2330,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/HorseWatcher.html#getStyle()" class="member-name-link">getStyle()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/HorseWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">HorseWatcher</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.DScoreTeam.html#getSuffix()" class="member-name-link">getSuffix()</a> - Method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.DScoreTeam.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities.DScoreTeam</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#getSuperClass(java.lang.Class)" class="member-name-link">getSuperClass(Class)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/PlayerDisguise.html#getTablistName()" class="member-name-link">getTablistName()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/PlayerDisguise.html" title="class in me.libraryaddict.disguise.disguisetypes">PlayerDisguise</a></dt>
@@ -2345,8 +2339,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/GuardianWatcher.html#getTarget()" class="member-name-link">getTarget()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/GuardianWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">GuardianWatcher</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/WitherWatcher.html#getTargets()" class="member-name-link">getTargets()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/WitherWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">WitherWatcher</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#getTeamName(org.bukkit.ChatColor)" class="member-name-link">getTeamName(ChatColor)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/DisplayWatcher.html#getTeleportDuration()" class="member-name-link">getTeleportDuration()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/DisplayWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">DisplayWatcher</a></dt>
 <dd>&nbsp;</dd>
@@ -2634,8 +2626,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/utilities/SkinUtils.html#handleProfile(com.github.retrooper.packetevents.protocol.player.UserProfile,me.libraryaddict.disguise.utilities.mineskin.models.structures.SkinVariant,me.libraryaddict.disguise.utilities.SkinUtils.SkinCallback)" class="member-name-link">handleProfile(UserProfile, SkinVariant, SkinUtils.SkinCallback)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/SkinUtils.html" title="class in me.libraryaddict.disguise.utilities">SkinUtils</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/SkinUtils.html#handleProfile(com.mojang.authlib.GameProfile,me.libraryaddict.disguise.utilities.mineskin.models.structures.SkinVariant,me.libraryaddict.disguise.utilities.SkinUtils.SkinCallback)" class="member-name-link">handleProfile(GameProfile, SkinVariant, SkinUtils.SkinCallback)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/SkinUtils.html" title="class in me.libraryaddict.disguise.utilities">SkinUtils</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.DScoreTeam.html#handleTeam(org.bukkit.scoreboard.Scoreboard,boolean)" class="member-name-link">handleTeam(Scoreboard, boolean)</a> - Method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.DScoreTeam.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities.DScoreTeam</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/SkinUtils.html#handleUrl(java.lang.String,me.libraryaddict.disguise.utilities.mineskin.models.structures.SkinVariant,me.libraryaddict.disguise.utilities.SkinUtils.SkinCallback)" class="member-name-link">handleUrl(String, SkinVariant, SkinUtils.SkinCallback)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/SkinUtils.html" title="class in me.libraryaddict.disguise.utilities">SkinUtils</a></dt>
 <dd>&nbsp;</dd>
@@ -3128,6 +3118,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/AvatarWatcher.html#isLeftSleeveEnabled()" class="member-name-link">isLeftSleeveEnabled()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/AvatarWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AvatarWatcher</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/utilities/reflection/NmsVersion.html#isLegacy()" class="member-name-link">isLegacy()</a> - Method in enum class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/NmsVersion.html" title="enum class in me.libraryaddict.disguise.utilities.reflection">NmsVersion</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/CatWatcher.html#isLookingUp()" class="member-name-link">isLookingUp()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/CatWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">CatWatcher</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/CatWatcher.html#isLyingDown()" class="member-name-link">isLyingDown()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/CatWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">CatWatcher</a></dt>
@@ -3373,8 +3365,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
 </dd>
-<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#isTallDisguise()" class="member-name-link">isTallDisguise()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#isTallDisguise(me.libraryaddict.disguise.disguisetypes.Disguise)" class="member-name-link">isTallDisguise(Disguise)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/Disguise.html#isTallDisguisesVisible()" class="member-name-link">isTallDisguisesVisible()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a></dt>
@@ -4142,6 +4132,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/LibsDisguises.html#onDisable()" class="member-name-link">onDisable()</a> - Method in class me.libraryaddict.disguise.<a href="me/libraryaddict/disguise/LibsDisguises.html" title="class in me.libraryaddict.disguise">LibsDisguises</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#onDisable()" class="member-name-link">onDisable()</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#onDisguiseStart()" class="member-name-link">onDisguiseStart()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#onDisguiseStop()" class="member-name-link">onDisguiseStop()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
@@ -4150,9 +4142,9 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/SkinUtils.SkinCallback.html#onError(me.libraryaddict.disguise.utilities.translations.LibsMsg,java.lang.Object...)" class="member-name-link">onError(LibsMsg, Object...)</a> - Method in interface me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/SkinUtils.SkinCallback.html" title="interface in me.libraryaddict.disguise.utilities">SkinUtils.SkinCallback</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#onFutureDisguise(org.bukkit.entity.Entity)" class="member-name-link">onFutureDisguise(Entity)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
+<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#onFutureDisguise(org.bukkit.entity.Entity,int)" class="member-name-link">onFutureDisguise(Entity, int)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#onFutureDisguise(org.bukkit.entity.Entity,boolean)" class="member-name-link">onFutureDisguise(Entity, boolean)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
+<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#onFutureDisguise(org.bukkit.entity.Entity,int,boolean)" class="member-name-link">onFutureDisguise(Entity, int, boolean)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/SkinUtils.SkinCallback.html#onInfo(me.libraryaddict.disguise.utilities.translations.LibsMsg,java.lang.Object...)" class="member-name-link">onInfo(LibsMsg, Object...)</a> - Method in interface me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/SkinUtils.SkinCallback.html" title="interface in me.libraryaddict.disguise.utilities">SkinUtils.SkinCallback</a></dt>
 <dd>&nbsp;</dd>
@@ -4557,10 +4549,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Plays an animation to all players currently in range of this disguise, no validation is run.</div>
 </dd>
-<dt><a href="me/libraryaddict/disguise/disguisetypes/Disguise.html#playAnimation(org.bukkit.entity.Player,me.libraryaddict.disguise.utilities.animations.DisguiseAnimation)" class="member-name-link">playAnimation(Player, DisguiseAnimation)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a></dt>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/Disguise.html#playAnimation(me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer,me.libraryaddict.disguise.utilities.animations.DisguiseAnimation)" class="member-name-link">playAnimation(IWrappedPlayer, DisguiseAnimation)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a></dt>
 <dd>
 <div class="block">Plays an animation to the specific player, no validation is run.</div>
 </dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/Disguise.html#playAnimation(org.bukkit.entity.Player,me.libraryaddict.disguise.utilities.animations.DisguiseAnimation)" class="member-name-link">playAnimation(Player, DisguiseAnimation)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseType.html#PLAYER" class="member-name-link">PLAYER</a> - Enum constant in enum class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseType.html" title="enum class in me.libraryaddict.disguise.disguisetypes">DisguiseType</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/MetaIndex.html#PLAYER_ABSORPTION" class="member-name-link">PLAYER_ABSORPTION</a> - Static variable in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/MetaIndex.html" title="class in me.libraryaddict.disguise.disguisetypes">MetaIndex</a></dt>
@@ -4689,6 +4683,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#%3Cinit%3E()" class="member-name-link">ReflectionManager()</a> - Constructor for class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#refreshScale()" class="member-name-link">refreshScale()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#refreshTracker(me.libraryaddict.disguise.disguisetypes.TargetedDisguise,java.lang.String)" class="member-name-link">refreshTracker(TargetedDisguise, String)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>
 <div class="block">Resends the entity to this specific player</div>
@@ -4705,20 +4701,12 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="me/libraryaddict/disguise/utilities/translations/TranslateType.html#refreshTranslations()" class="member-name-link">refreshTranslations()</a> - Static method in enum class me.libraryaddict.disguise.utilities.translations.<a href="me/libraryaddict/disguise/utilities/translations/TranslateType.html" title="enum class in me.libraryaddict.disguise.utilities.translations">TranslateType</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#registerAllExtendedNames(org.bukkit.scoreboard.Scoreboard)" class="member-name-link">registerAllExtendedNames(Scoreboard)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#registerColors(org.bukkit.scoreboard.Scoreboard)" class="member-name-link">registerColors(Scoreboard)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#registerEntityType(org.bukkit.NamespacedKey)" class="member-name-link">registerEntityType(NamespacedKey)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#registerExtendedName(me.libraryaddict.disguise.disguisetypes.PlayerDisguise)" class="member-name-link">registerExtendedName(PlayerDisguise)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#registerFlagWatchers()" class="member-name-link">registerFlagWatchers()</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
 <dd>
 <div class="block">Here we create a nms entity for each disguise.</div>
 </dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#registerNoName(org.bukkit.scoreboard.Scoreboard)" class="member-name-link">registerNoName(Scoreboard)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/DisguiseConfig.UpdatesBranch.html#RELEASES" class="member-name-link">RELEASES</a> - Enum constant in enum class me.libraryaddict.disguise.<a href="me/libraryaddict/disguise/DisguiseConfig.UpdatesBranch.html" title="enum class in me.libraryaddict.disguise">DisguiseConfig.UpdatesBranch</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#reload()" class="member-name-link">reload()</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
@@ -4749,7 +4737,9 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html#removeEntityFromTracked(java.lang.Object,java.lang.Object,org.bukkit.entity.Player)" class="member-name-link">removeEntityFromTracked(Object, Object, Player)</a> - Static method in class me.libraryaddict.disguise.utilities.reflection.<a href="me/libraryaddict/disguise/utilities/reflection/ReflectionManager.html" title="class in me.libraryaddict.disguise.utilities.reflection">ReflectionManager</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#removeInvisibleSlime(org.bukkit.entity.Player)" class="member-name-link">removeInvisibleSlime(Player)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#removeEntityScale(java.util.UUID)" class="member-name-link">removeEntityScale(UUID)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#removeInvisibleSlime(me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer)" class="member-name-link">removeInvisibleSlime(IWrappedPlayer)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/LivingWatcher.html#removeParticles(com.github.retrooper.packetevents.protocol.particle.Particle...)" class="member-name-link">removeParticles(Particle&lt;? extends ParticleData&gt;...)</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/LivingWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">LivingWatcher</a></dt>
 <dd>&nbsp;</dd>
@@ -4793,7 +4783,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/translations/TranslateType.html#reverseGet(java.lang.String)" class="member-name-link">reverseGet(String)</a> - Method in enum class me.libraryaddict.disguise.utilities.translations.<a href="me/libraryaddict/disguise/utilities/translations/TranslateType.html" title="enum class in me.libraryaddict.disguise.utilities.translations">TranslateType</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseRunnable.html#run(java.util.List)" class="member-name-link">run(List&lt;World&gt;)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseRunnable.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseRunnable</a></dt>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseRunnable.html#run()" class="member-name-link">run()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseRunnable.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseRunnable</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:S">S</h2>
@@ -4858,7 +4848,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/FlagWatcher.html#sendEntityFlag(int,boolean)" class="member-name-link">sendEntityFlag(int, boolean)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/FlagWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes">FlagWatcher</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#sendInvisibleSlime(org.bukkit.entity.Player,int,int%5B%5D)" class="member-name-link">sendInvisibleSlime(Player, int, int[])</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
+<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#sendInvisibleSlime(me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer,int,int%5B%5D)" class="member-name-link">sendInvisibleSlime(IWrappedPlayer, int, int[])</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/FlagWatcher.html#sendItemStack(org.bukkit.inventory.EquipmentSlot,org.bukkit.inventory.ItemStack)" class="member-name-link">sendItemStack(EquipmentSlot, ItemStack)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/FlagWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes">FlagWatcher</a></dt>
 <dd>&nbsp;</dd>
@@ -5217,6 +5207,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/FlagWatcher.html#setEntityPose(com.github.retrooper.packetevents.protocol.entity.pose.EntityPose)" class="member-name-link">setEntityPose(EntityPose)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/FlagWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes">FlagWatcher</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/CamelWatcher.html#setEntityPose(com.github.retrooper.packetevents.protocol.entity.pose.EntityPose)" class="member-name-link">setEntityPose(EntityPose)</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/CamelWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">CamelWatcher</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#setEntityScale(java.util.UUID,double)" class="member-name-link">setEntityScale(UUID, double)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/DisguiseConfig.html#setEntityStatusPacketsEnabled(boolean)" class="member-name-link">setEntityStatusPacketsEnabled(boolean)</a> - Static method in class me.libraryaddict.disguise.<a href="me/libraryaddict/disguise/DisguiseConfig.html" title="class in me.libraryaddict.disguise">DisguiseConfig</a></dt>
 <dd>&nbsp;</dd>
@@ -5813,8 +5805,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/SplashPotionWatcher.html#setSplashPotion(org.bukkit.inventory.ItemStack)" class="member-name-link">setSplashPotion(ItemStack)</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/SplashPotionWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">SplashPotionWatcher</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.DScoreTeam.html#setSplit(java.lang.String%5B%5D)" class="member-name-link">setSplit(String[])</a> - Method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.DScoreTeam.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities.DScoreTeam</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/FoxWatcher.html#setSpringing(boolean)" class="member-name-link">setSpringing(boolean)</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/FoxWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">FoxWatcher</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/FlagWatcher.html#setSprinting(boolean)" class="member-name-link">setSprinting(boolean)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/FlagWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes">FlagWatcher</a></dt>
@@ -6040,6 +6030,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/SheepWatcher.html" class="type-name-link" title="class in me.libraryaddict.disguise.disguisetypes.watchers">SheepWatcher</a> - Class in <a href="me/libraryaddict/disguise/disguisetypes/watchers/package-summary.html">me.libraryaddict.disguise.disguisetypes.watchers</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/SheepWatcher.html#%3Cinit%3E(me.libraryaddict.disguise.disguisetypes.Disguise)" class="member-name-link">SheepWatcher(Disguise)</a> - Constructor for class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/SheepWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">SheepWatcher</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#shouldAvoidSendingPackets(java.util.UUID)" class="member-name-link">shouldAvoidSendingPackets(UUID)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#shouldAvoidSendingPackets(org.bukkit.entity.Player)" class="member-name-link">shouldAvoidSendingPackets(Player)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
 <dd>
@@ -6576,6 +6568,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/utilities/translations/LibsMsg.html#UPDATE_SUCCESS" class="member-name-link">UPDATE_SUCCESS</a> - Enum constant in enum class me.libraryaddict.disguise.utilities.translations.<a href="me/libraryaddict/disguise/utilities/translations/LibsMsg.html" title="enum class in me.libraryaddict.disguise.utilities.translations">LibsMsg</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/parser/DisguiseParser.html#updateDisguiseName(me.libraryaddict.disguise.disguisetypes.Disguise)" class="member-name-link">updateDisguiseName(Disguise)</a> - Static method in class me.libraryaddict.disguise.utilities.parser.<a href="me/libraryaddict/disguise/utilities/parser/DisguiseParser.html" title="class in me.libraryaddict.disguise.utilities.parser">DisguiseParser</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html#updateEntityScale(double)" class="member-name-link">updateEntityScale(double)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/DisguiseInternals.html" title="class in me.libraryaddict.disguise.disguisetypes">DisguiseInternals</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html#updateExtendedName(me.libraryaddict.disguise.disguisetypes.PlayerDisguise)" class="member-name-link">updateExtendedName(PlayerDisguise)</a> - Static method in class me.libraryaddict.disguise.utilities.<a href="me/libraryaddict/disguise/utilities/DisguiseUtilities.html" title="class in me.libraryaddict.disguise.utilities">DisguiseUtilities</a></dt>
 <dd>&nbsp;</dd>
