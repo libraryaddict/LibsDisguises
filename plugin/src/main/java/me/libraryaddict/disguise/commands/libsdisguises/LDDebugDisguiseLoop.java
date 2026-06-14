@@ -8,7 +8,6 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -53,37 +52,34 @@ public class LDDebugDisguiseLoop implements LDCommand {
 
         Iterator<String> iterator = getDisguisesToRun().iterator();
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!((Player) sender).isOnline()) {
-                    cancel();
-                    return;
+        LibsDisguises.getScheduler().entity((Player) sender).runAtFixedRate(task -> {
+            if (!((Player) sender).isOnline()) {
+                task.cancel();
+                return;
+            }
+
+            String command = iterator.next();
+            String message = ChatColor.AQUA + "Now disguising " + sender.getName() + " as " + command;
+            sender.sendMessage(message);
+            LibsDisguises.getInstance().getLogger().info(message);
+
+            Disguise disguise = DisguiseAPI.getDisguise((Player) sender);
+
+            try {
+                ((Player) sender).performCommand("disguise " + command);
+
+                if (disguise == DisguiseAPI.getDisguise((Player) sender)) {
+                    LibsDisguises.getInstance().getLogger().info("Looks like '" + command + "' failed.");
                 }
-
-                String command = iterator.next();
-                String message = ChatColor.AQUA + "Now disguising " + sender.getName() + " as " + command;
-                sender.sendMessage(message);
-                LibsDisguises.getInstance().getLogger().info(message);
-
-                Disguise disguise = DisguiseAPI.getDisguise((Player) sender);
-
-                try {
-                    ((Player) sender).performCommand("disguise " + command);
-
-                    if (disguise == DisguiseAPI.getDisguise((Player) sender)) {
-                        LibsDisguises.getInstance().getLogger().info("Looks like '" + command + "' failed.");
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                } finally {
-                    if (!iterator.hasNext()) {
-                        cancel();
-                        sender.sendMessage(ChatColor.AQUA + "Command Complete!");
-                    }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                if (!iterator.hasNext()) {
+                    task.cancel();
+                    sender.sendMessage(ChatColor.AQUA + "Command Complete!");
                 }
             }
-        }.runTaskTimer(LibsDisguises.getInstance(), 5, 5);
+        }, 5, 5);
     }
 
     @NotNull

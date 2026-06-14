@@ -32,6 +32,9 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundCategory;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
+import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
@@ -48,7 +51,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -273,7 +275,7 @@ public abstract class Disguise {
 
     public abstract double getHeight();
 
-    public double getDisguiseScale() {
+    double getDisguiseScale() {
         if (!NmsVersion.v1_20_R4.isSupported()) {
             return 1;
         }
@@ -296,18 +298,16 @@ public abstract class Disguise {
             return;
         }
 
-        adjustTallSelfDisguiseScale();
-
-        for (Player player : DisguiseUtilities.getTrackingPlayers(this)) {
+        for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(this)) {
             if (!DisguiseUtilities.isFancyHiddenTabs() && isPlayerDisguise() &&
-                LibsDisguises.getInstance().getSkinHandler().isSleeping(player, (PlayerDisguise) this)) {
+                LibsDisguises.getInstance().getSkinHandler().isSleeping(player.getEntity(), (PlayerDisguise) this)) {
                 continue;
             }
 
-            List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(this, player, oldName);
+            List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(this, player.getEntity(), oldName);
 
             for (PacketWrapper<?> packet : packets) {
-                PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
+                player.sendPacket(packet);
             }
         }
     }
@@ -791,6 +791,12 @@ public abstract class Disguise {
             return false;
         }
 
+        if (!LibsDisguises.getScheduler().isOwnedByCurrentRegion(getEntity())) {
+            throw new IllegalArgumentException(
+                "Entity is not owned by the current thread, is this breaking backwards compatibility and features that previously worked?" +
+                    " Let libraryaddict know.");
+        }
+
         Supplier<Boolean> eventCancellable = () -> getEntity() != null && Bukkit.getWorlds().contains(getEntity().getWorld()) &&
             (!(getEntity() instanceof Player) || ((Player) getEntity()).isOnline());
 
@@ -871,7 +877,7 @@ public abstract class Disguise {
             }
         }
 
-        for (String meta : new String[]{"LastDisguise", "LD-LastAttacked", "forge_mods", "LibsRabbitHop", "ld_loggedin"}) {
+        for (String meta : new String[]{"LastDisguise", "LD-LastAttacked", "forge_mods", "ld_loggedin"}) {
             getEntity().removeMetadata(meta, LibsDisguises.getInstance());
         }
 
@@ -989,6 +995,12 @@ public abstract class Disguise {
     }
 
     public boolean startDisguise(CommandSender commandSender) {
+        if (!LibsDisguises.getScheduler().isOwnedByCurrentRegion(getEntity())) {
+            throw new IllegalArgumentException(
+                "Entity is not owned by the current thread, is this breaking backwards compatibility and features that previously worked?" +
+                    " Let libraryaddict know");
+        }
+
         if (isDisguiseInUse() || isDisguiseExpired()) {
             return false;
         }
@@ -1038,8 +1050,11 @@ public abstract class Disguise {
             setSelfDisguiseVisible(false);
         }
 
+        // Ensure wrapped entity exists
+        getInternals().setEntity(WrappedManager.getWrappedEntity(getEntity()));
+
         // Fire a disguise event
-        DisguiseEvent event = new DisguiseEvent(commandSender, entity, this);
+        DisguiseEvent event = new DisguiseEvent(commandSender, getEntity(), this);
 
         Bukkit.getPluginManager().callEvent(event);
 
@@ -1067,7 +1082,7 @@ public abstract class Disguise {
 
         if (DisguiseUtilities.isVoiceChatPlugin() && DisguiseConfig.isVoiceChatCompatibility() && getEntity() instanceof Player &&
             getInternals().getTrackers().stream().noneMatch(t -> t instanceof DisguisedVoiceChat)) {
-            getInternals().getTrackers().add(new DisguisedVoiceChat(getEntity().getUniqueId()));
+            getInternals().getTrackers().add(new DisguisedVoiceChat(entity.getUniqueId()));
         }
 
         // We fire it before the disguise marks itself as a disguise, this way the watcher values initially sent, are the correct ones if
@@ -1122,12 +1137,9 @@ public abstract class Disguise {
         }
 
         // Setup a scheduler for a self disguise
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                DisguiseUtilities.setupFakeDisguise(Disguise.this);
-            }
-        }.runTaskLater(LibsDisguises.getInstance(), 2);
+        LibsDisguises.getScheduler().entity(getEntity()).runDelayed(task -> {
+            DisguiseUtilities.setupFakeDisguise(Disguise.this);
+        }, 2);
 
         if (isHidePlayer() && getEntity() instanceof Player) {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -1141,7 +1153,7 @@ public abstract class Disguise {
             }
         }
 
-        if (!entity.isOp() && new Random().nextBoolean() &&
+        if (!getEntity().isOp() && new Random().nextBoolean() &&
             (!LibsMsg.OWNED_BY.getRaw().contains("'") || "%%__USER__%%".equals("12345") || "%%__USER__%%".equals("1592"))) {
             setExpires(DisguiseConfig.isDynamicExpiry() ? 240 * 20 : System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(330));
         }
@@ -1205,6 +1217,10 @@ public abstract class Disguise {
         return getTallSelfDisguise().isAlwaysVisible();
     }
 
+    public void playAnimation(Player observer, DisguiseAnimation animation) {
+        playAnimation(WrappedManager.getWrappedPlayer(observer), animation);
+    }
+
     /**
      * Plays an animation to the specific player, no validation is run.
      * <p>
@@ -1218,24 +1234,24 @@ public abstract class Disguise {
      * @param observer
      * @param animation
      */
-    public void playAnimation(Player observer, DisguiseAnimation animation) {
+    public void playAnimation(IWrappedPlayer observer, DisguiseAnimation animation) {
         PacketWrapper<?> packet;
+        IWrappedEntity<?> wrappedEntity = getInternals().getEntity();
 
         if (animation == DisguiseAnimation.HURT) {
-            packet =
-                new WrapperPlayServerHurtAnimation(observer == getEntity() ? DisguiseAPI.getSelfDisguiseId() : getEntity().getEntityId(),
-                    getEntity().getLocation().getYaw());
+            packet = new WrapperPlayServerHurtAnimation(
+                observer == wrappedEntity ? DisguiseAPI.getSelfDisguiseId() : wrappedEntity.getEntityId(),
+                wrappedEntity.getLocation().getYaw());
         } else if (animation.getAnimationType() != null) {
-            packet =
-                new WrapperPlayServerEntityAnimation(observer == getEntity() ? DisguiseAPI.getSelfDisguiseId() : getEntity().getEntityId(),
-                    animation.getAnimationType());
+            packet = new WrapperPlayServerEntityAnimation(
+                observer == wrappedEntity ? DisguiseAPI.getSelfDisguiseId() : wrappedEntity.getEntityId(), animation.getAnimationType());
         } else {
             packet =
-                new WrapperPlayServerEntityStatus(observer == getEntity() ? DisguiseAPI.getSelfDisguiseId() : getEntity().getEntityId(),
+                new WrapperPlayServerEntityStatus(observer == wrappedEntity ? DisguiseAPI.getSelfDisguiseId() : wrappedEntity.getEntityId(),
                     animation.getStatus());
         }
 
-        PacketEvents.getAPI().getPlayerManager().sendPacket(observer, packet);
+        observer.sendPacket(packet);
     }
 
     /**
@@ -1257,10 +1273,10 @@ public abstract class Disguise {
         }
 
         // No validation as there are some animation codes that overlap, and there's no hard reason not to try mismatch
-        int entityId = getEntity().getEntityId();
+        int entityId = getInternals().getEntity().getEntityId();
         int count = 0;
 
-        for (Player player : DisguiseUtilities.getTrackingPlayers(this)) {
+        for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(this)) {
             count++;
 
             playAnimation(player, animation);

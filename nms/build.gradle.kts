@@ -12,15 +12,8 @@ dependencies {
 
 subprojects {
     pluginManager.withPlugin("io.papermc.paperweight.userdev") {
-        configurations.matching { it.name.contains("paperweight") }.configureEach {
-            resolutionStrategy {
-                eachDependency {
-                    if (requested.version?.endsWith("-SNAPSHOT") == true) {
-                        // Always prefer cached version, but allow download if missing
-                        useVersion(requested.version!!)
-                    }
-                }
-            }
+        configurations.named("paperweightDevelopmentBundle") {
+            resolutionStrategy.cacheChangingModulesFor(365, TimeUnit.DAYS)
         }
 
         repositories {

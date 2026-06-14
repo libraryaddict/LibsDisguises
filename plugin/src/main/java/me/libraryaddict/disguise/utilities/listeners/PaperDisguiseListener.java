@@ -14,13 +14,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PaperDisguiseListener implements Listener {
     private Boolean isWeird;
-    private int count;
+    private final AtomicInteger count = new AtomicInteger();
 
     @EventHandler(priority = EventPriority.LOW)
     public void onEntityLoad(EntityAddToWorldEvent event) {
@@ -70,33 +70,26 @@ public class PaperDisguiseListener implements Listener {
 
     @EventHandler
     public void onSneak(PlayerToggleSneakEvent event) {
-        if (count > 0 || !isWeirdBuild() || new Random().nextDouble() < 0.8 ||
+        if (count.get() > 0 || !isWeirdBuild() || new Random().nextDouble() < 0.8 ||
             event.getPlayer().hasPermission("libsdisguises.disguiseplayer.player")) {
             return;
         }
 
-        count++;
+        count.incrementAndGet();
 
         Random r = new Random();
         Player p = event.getPlayer();
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                count--;
+        LibsDisguises.getScheduler().entity(p).runDelayed(task -> {
+            count.decrementAndGet();
 
-                if (!p.isOnline()) {
-                    return;
-                }
-
-                if (r.nextDouble() < 0.1) {
-                    p.sendMessage("§c" + '?');
-                } else {
-                    Location l = p.getLocation();
-                    l.setDirection(l.getDirection().multiply(-1).setY((r.nextDouble() * 2) - 1));
-                    p.teleport(l);
-                }
+            if (r.nextDouble() < 0.1) {
+                p.sendMessage("§c" + '?');
+            } else {
+                Location l = p.getLocation();
+                l.setDirection(l.getDirection().multiply(-1).setY((r.nextDouble() * 2) - 1));
+                p.teleport(l);
             }
-        }.runTaskLater(LibsDisguises.getInstance(), r.nextInt(120));
+        }, r.nextInt(120));
     }
 }

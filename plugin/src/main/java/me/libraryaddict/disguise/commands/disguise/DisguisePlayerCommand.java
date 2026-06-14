@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.commands.disguise;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -115,17 +116,17 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
             }
         }
 
-        disguise.startDisguise(sender);
+        String entityName = entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable();
 
-        if (disguise.isDisguiseInUse()) {
-            LibsMsg.DISG_PLAYER_AS_DISG.send(sender,
-                entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable(),
-                disguise.getDisguiseName());
-        } else {
-            LibsMsg.DISG_PLAYER_AS_DISG_FAIL.send(sender,
-                entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable(),
-                disguise.getDisguiseName());
-        }
+        LibsDisguises.getScheduler().entity(entityTarget).execute(() -> {
+            disguise.startDisguise(sender);
+
+            if (disguise.isDisguiseInUse()) {
+                LibsMsg.DISG_PLAYER_AS_DISG.send(sender, entityName, disguise.getDisguiseName());
+            } else {
+                LibsMsg.DISG_PLAYER_AS_DISG_FAIL.send(sender, entityName, disguise.getDisguiseName());
+            }
+        });
 
         return true;
     }

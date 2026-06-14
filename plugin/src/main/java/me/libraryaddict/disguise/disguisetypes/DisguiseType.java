@@ -2,10 +2,12 @@ package me.libraryaddict.disguise.disguisetypes;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
@@ -18,6 +20,7 @@ import org.bukkit.entity.EntityType;
 
 import java.util.Locale;
 
+@Getter
 public enum DisguiseType {
     @NmsAddedIn(NmsVersion.v1_21_R2) ACACIA_BOAT,
 
@@ -364,22 +367,20 @@ public enum DisguiseType {
         return DisguiseType.UNKNOWN;
     }
 
-    @Getter
     private EntityType entityType;
 
+    @Getter(AccessLevel.NONE)
     private Object nmsType;
-    @Getter
     private int defaultData = 0;
     /**
      * The TYPE id of this entity. Different from the Object Id send in spawn packets when spawning miscs.
      */
-    @Getter
     private int typeId;
-    @Getter
     private com.github.retrooper.packetevents.protocol.entity.type.EntityType packetEntityType;
-    @Getter
     @Setter
     private Class<? extends FlagWatcher> watcherClass;
+    @Setter
+    private DisguiseValues entityInfo;
 
     DisguiseType() {
         this(null, null);

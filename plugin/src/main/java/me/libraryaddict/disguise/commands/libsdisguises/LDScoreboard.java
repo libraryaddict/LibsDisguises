@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.scoreboard.DisguiseScoreboardTeam;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -51,7 +52,7 @@ public class LDScoreboard implements LDCommand {
                         continue;
                     }
 
-                    DisguiseUtilities.DScoreTeam scoreboardName = ((PlayerDisguise) disguise).getScoreboardName();
+                    DisguiseScoreboardTeam scoreboardName = ((PlayerDisguise) disguise).getScoreboardName();
 
                     if (scoreboardName.getTeamName() == null) {
                         continue;
@@ -95,7 +96,7 @@ public class LDScoreboard implements LDCommand {
                             continue;
                         }
 
-                        if (!team.hasEntry(scoreboardName.getPlayer())) {
+                        if (!team.hasEntry(scoreboardName.getEntry())) {
                             if (issuesFound++ < 5) {
                                 sender.sendMessage(
                                     "The player disguise " + ((PlayerDisguise) disguise).getName().replace(ChatColor.COLOR_CHAR, '&') +

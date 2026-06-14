@@ -13,6 +13,7 @@ softdepend:
   - Vulcan
 api-version: '1.13'
 file-count: 0
+folia-supported: true
 commands:
   libsdisguises:
     aliases: [ libsdisg, ld ]

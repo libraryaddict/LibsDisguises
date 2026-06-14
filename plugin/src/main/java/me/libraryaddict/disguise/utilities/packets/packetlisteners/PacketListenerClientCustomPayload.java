@@ -10,7 +10,6 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 
@@ -33,25 +32,22 @@ public class PacketListenerClientCustomPayload extends SimplePacketListenerAbstr
             return;
         }
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!player.isOnline() || player.hasMetadata("ld_loggedin")) {
-                    return;
-                }
-
-                if (player.hasMetadata("ld_tabsend") && !player.getMetadata("ld_tabsend").isEmpty()) {
-                    ArrayList<PacketWrapper> packets = (ArrayList<PacketWrapper>) player.getMetadata("ld_tabsend").get(0).value();
-
-                    player.removeMetadata("ld_tabsend", LibsDisguises.getInstance());
-
-                    for (PacketWrapper packet : packets) {
-                        PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
-                    }
-                }
-
-                player.setMetadata("ld_loggedin", new FixedMetadataValue(LibsDisguises.getInstance(), true));
+        LibsDisguises.getScheduler().entity(player).runDelayed(task -> {
+            if (!player.isOnline() || player.hasMetadata("ld_loggedin")) {
+                return;
             }
-        }.runTaskLater(LibsDisguises.getInstance(), 20);
+
+            if (player.hasMetadata("ld_tabsend") && !player.getMetadata("ld_tabsend").isEmpty()) {
+                ArrayList<PacketWrapper> packets = (ArrayList<PacketWrapper>) player.getMetadata("ld_tabsend").get(0).value();
+
+                player.removeMetadata("ld_tabsend", LibsDisguises.getInstance());
+
+                for (PacketWrapper packet : packets) {
+                    PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
+                }
+            }
+
+            player.setMetadata("ld_loggedin", new FixedMetadataValue(LibsDisguises.getInstance(), true));
+        }, 20);
     }
 }

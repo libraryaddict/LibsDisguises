@@ -15,11 +15,11 @@ import me.libraryaddict.disguise.utilities.PlayerResolver;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.scoreboard.DisguiseScoreboardTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +33,7 @@ public class PlayerDisguise extends TargetedDisguise {
      * Has someone set name visible explicitly?
      */
     private boolean explicitNameVisible = false;
-    private transient DisguiseUtilities.DScoreTeam scoreboardName;
+    private transient DisguiseScoreboardTeam scoreboardName;
     @Getter
     private boolean deadmau5Ears;
 
@@ -118,14 +118,14 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     @Deprecated
-    public DisguiseUtilities.DScoreTeam getScoreboardName() {
+    public DisguiseScoreboardTeam getScoreboardName() {
         if (!DisguiseConfig.isScoreboardNames()) {
             throw new IllegalStateException("Cannot use this method when it's been disabled in config!");
         }
 
         if (scoreboardName == null) {
             if (isUpsideDown() || isDeadmau5Ears()) {
-                scoreboardName = new DisguiseUtilities.DScoreTeam(this, new String[]{"", getProfileName(), ""});
+                scoreboardName = DisguiseUtilities.getScoreboardManager().createScoreTeam(this, new String[]{"", getProfileName(), ""});
             } else {
                 scoreboardName = DisguiseUtilities.createExtendedName(this);
             }
@@ -139,7 +139,7 @@ public class PlayerDisguise extends TargetedDisguise {
             return;
         }
 
-        getScoreboardName().setSplit(split);
+        getScoreboardName().setNameParts(split);
     }
 
     private boolean isStaticName(String name) {
@@ -167,7 +167,7 @@ public class PlayerDisguise extends TargetedDisguise {
         } else if (isDeadmau5Ears()) {
             return "deadmau5";
         } else if (hasScoreboardName()) {
-            return getScoreboardName().getPlayer();
+            return getScoreboardName().getEntry();
         } else if (getName().isEmpty()) {
             return "§r";
         }
@@ -369,10 +369,10 @@ public class PlayerDisguise extends TargetedDisguise {
                 boolean resendDisguise = false;
 
                 if (DisguiseConfig.isScoreboardNames() && !isStaticName(name)) {
-                    DisguiseUtilities.DScoreTeam team = getScoreboardName();
-                    String[] split = DisguiseUtilities.getExtendedNameSplit(team.getPlayer(), name);
+                    DisguiseScoreboardTeam team = getScoreboardName();
+                    String[] split = DisguiseUtilities.getExtendedNameSplit(team.getEntry(), name);
 
-                    resendDisguise = !split[1].equals(team.getPlayer());
+                    resendDisguise = !split[1].equals(team.getEntry());
                     setScoreboardName(split);
                 }
 
@@ -407,8 +407,8 @@ public class PlayerDisguise extends TargetedDisguise {
             }
         } else {
             if (scoreboardName != null) {
-                DisguiseUtilities.DScoreTeam team = getScoreboardName();
-                String[] split = DisguiseUtilities.getExtendedNameSplit(team.getPlayer(), name);
+                DisguiseScoreboardTeam team = getScoreboardName();
+                String[] split = DisguiseUtilities.getExtendedNameSplit(team.getEntry(), name);
 
                 setScoreboardName(split);
             }
@@ -655,7 +655,7 @@ public class PlayerDisguise extends TargetedDisguise {
         boolean result = super.startDisguise(sender);
 
         if (result && hasScoreboardName()) {
-            DisguiseUtilities.registerExtendedName(this);
+            DisguiseUtilities.getScoreboardManager().registerExtendedName(this);
         }
 
         return result;
@@ -691,12 +691,9 @@ public class PlayerDisguise extends TargetedDisguise {
 
         if (hasScoreboardName()) {
             if (disguiseBeingReplaced) {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        DisguiseUtilities.unregisterExtendedName(PlayerDisguise.this);
-                    }
-                }.runTaskLater(LibsDisguises.getInstance(), 5);
+                LibsDisguises.getScheduler().global().runDelayed(task -> {
+                    DisguiseUtilities.unregisterExtendedName(PlayerDisguise.this);
+                }, 5);
             } else {
                 DisguiseUtilities.unregisterExtendedName(this);
             }

@@ -14,6 +14,13 @@
  */
 package me.libraryaddict.disguise.utilities.metrics;
 
+import javax.net.ssl.HttpsURLConnection;
+import me.libraryaddict.disguise.LibsDisguises;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -40,11 +47,6 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
-import javax.net.ssl.HttpsURLConnection;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 public class Metrics {
 
@@ -112,10 +114,7 @@ public class Metrics {
             serviceId,
             enabled,
             this::appendPlatformData,
-            this::appendServiceData,
-            isFolia
-                ? null
-                : submitDataTask -> Bukkit.getScheduler().runTask(plugin, submitDataTask),
+            this::appendServiceData, submitDataTask -> LibsDisguises.getScheduler().async().runNow(submitDataTask),
             plugin::isEnabled,
             (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error),
             (message) -> this.plugin.getLogger().log(Level.INFO, message),

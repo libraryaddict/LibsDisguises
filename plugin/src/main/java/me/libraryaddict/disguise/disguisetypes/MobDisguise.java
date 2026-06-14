@@ -35,7 +35,7 @@ public class MobDisguise extends TargetedDisguise {
 
     @Override
     public double getHeight() {
-        DisguiseValues values = DisguiseValues.getDisguiseValues(getType());
+        DisguiseValues values = getType().getEntityInfo();
 
         if (values == null || values.getAdultBox() == null) {
             return 0;

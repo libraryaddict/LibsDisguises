@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.commands.utils;
 
+import com.cjcrafter.foliascheduler.TaskImplementation;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -18,8 +19,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,18 +93,15 @@ public class GrabSkinCommand implements CommandExecutor {
 
         SkinUtils.SkinCallback callback = new SkinUtils.SkinCallback() {
             private final long cancelAt = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(3);
-            private final BukkitTask runnable = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (System.currentTimeMillis() > cancelAt) {
-                        cancel();
-                        LibsMsg.SKIN_API_TIMEOUT.send(sender);
-                        return;
-                    }
-
-                    LibsMsg.PLEASE_WAIT.send(sender);
+            private final TaskImplementation<Void> runnable = LibsDisguises.getScheduler().global().runAtFixedRate(task -> {
+                if (System.currentTimeMillis() > cancelAt) {
+                    task.cancel();
+                    LibsMsg.SKIN_API_TIMEOUT.send(sender);
+                    return;
                 }
-            }.runTaskTimer(LibsDisguises.getInstance(), 100, 100);
+
+                LibsMsg.PLEASE_WAIT.send(sender);
+            }, 100, 100);
 
             @Override
             public void onError(LibsMsg msg, Object... args) {

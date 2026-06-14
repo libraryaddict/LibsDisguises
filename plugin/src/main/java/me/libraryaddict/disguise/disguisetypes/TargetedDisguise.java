@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -60,6 +61,10 @@ public abstract class TargetedDisguise extends Disguise {
         }
 
         return this;
+    }
+
+    public boolean canSee(IWrappedPlayer player) {
+        return canSee(player.getName());
     }
 
     public boolean canSee(Player player) {

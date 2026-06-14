@@ -18,7 +18,6 @@ import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityDimensions;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -95,9 +94,6 @@ public class ReflectionManager extends ReflectionReusedNms {
                 entity = entityType.create(world);
             }
 
-            // Workaround for paper being 2 smart 4 me
-            entity.setPos(1.0, 1.0, 1.0);
-            entity.setPos(0.0, 0.0, 0.0);
             return entity;
         }
 
@@ -121,13 +117,6 @@ public class ReflectionManager extends ReflectionReusedNms {
         }
 
         return (ServerEntity) trackedEntityField.get(trackedEntity);
-    }
-
-    @Override
-    public float[] getSize(Entity entity) {
-        net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
-        EntityDimensions dimensions = nmsEntity.getDimensions(net.minecraft.world.entity.Pose.STANDING);
-        return new float[]{dimensions.width, nmsEntity.getEyeHeight()};
     }
 
     @Override
@@ -184,8 +173,8 @@ public class ReflectionManager extends ReflectionReusedNms {
 
     @SneakyThrows
     @Override
-    public ByteBuf getDataWatcherValues(Entity entity) {
-        SynchedEntityData watcher = ((CraftEntity) entity).getHandle().getEntityData();
+    public ByteBuf getDataWatcherValues(Object entity) {
+        SynchedEntityData watcher = ((net.minecraft.world.entity.Entity) entity).getEntityData();
         List<SynchedEntityData.DataItem<?>> dataItems = watcher.getAll();
 
         ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer();

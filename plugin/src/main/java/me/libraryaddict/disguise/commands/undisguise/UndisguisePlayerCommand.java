@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.undisguise;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
@@ -101,7 +102,9 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
         }
 
         if (DisguiseAPI.isDisguised(entityTarget)) {
-            DisguiseAPI.undisguiseToAll(sender, entityTarget);
+            Entity target = entityTarget;
+
+            LibsDisguises.getScheduler().entity(entityTarget).execute(() -> DisguiseAPI.undisguiseToAll(sender, target));
             LibsMsg.UNDISG_PLAYER.send(sender,
                 entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable());
         } else {

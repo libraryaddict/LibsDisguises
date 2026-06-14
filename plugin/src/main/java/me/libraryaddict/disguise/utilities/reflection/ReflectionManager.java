@@ -111,14 +111,12 @@ import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Ambient;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Chicken;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.Creature;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fish;
@@ -138,12 +136,10 @@ import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Salmon;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wolf;
-import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.profile.PlayerProfile;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -420,12 +416,6 @@ public class ReflectionManager {
         return getNmsReflection().getPlayerConnectionOrPlayer(player);
     }
 
-    public static FakeBoundingBox getBoundingBox(Entity entity) {
-        double[] boundingBox = getNmsReflection().getBoundingBox(entity);
-
-        return new FakeBoundingBox(boundingBox[0], boundingBox[1], boundingBox[2]);
-    }
-
     public static Object getPlayerFromPlayerConnection(Object nmsEntity) {
         return getNmsReflection().getPlayerFromPlayerConnection(nmsEntity);
     }
@@ -477,25 +467,29 @@ public class ReflectionManager {
     }
 
     public static ReflectionManagerAbstract getReflectionManager(NmsVersion nmsVersion) {
-        try {
-            String packageName = nmsVersion.name();
-
-            if (!packageName.contains("_R")) {
-                packageName += "_R1";
-            }
-
-            return createReflectionManager(packageName);
-        } catch (ClassNotFoundException ex) {
+        if (nmsVersion.isLegacy()) {
             try {
                 return new LegacyReflectionManager();
             } catch (Exception e) {
                 throw new IllegalStateException("Unable to load legacy reflection manager", e);
             }
-        } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
         }
 
-        return null;
+        String packageName = nmsVersion.name();
+
+        if (!packageName.contains("_R")) {
+            packageName += "_R1";
+        }
+
+        if (DisguiseUtilities.isRunningFolia()) {
+            packageName += "_Folia";
+        }
+
+        try {
+            return createReflectionManager(packageName);
+        } catch (ReflectiveOperationException ex) {
+            throw new IllegalStateException("Unable to load reflection manager for " + packageName, ex);
+        }
     }
 
     private static ReflectionManagerAbstract createReflectionManager(String packageName)
@@ -801,10 +795,6 @@ public class ReflectionManager {
 
     public static double getPing(Player player) {
         return getNmsReflection().getPing(player);
-    }
-
-    public static float[] getSize(Entity entity) {
-        return getNmsReflection().getSize(entity);
     }
 
     public static UserProfile getSkullBlob(UserProfile userProfile) {
@@ -1447,8 +1437,7 @@ public class ReflectionManager {
 
         for (DisguiseType disguiseType : DisguiseType.values()) {
             try {
-                if (LibsDisguises.getInstance() == null || !disguiseType.isValid() ||
-                    DisguiseValues.getDisguiseValues(disguiseType) != null) {
+                if (LibsDisguises.getInstance() == null || !disguiseType.isValid() || disguiseType.getEntityInfo() != null) {
                     continue;
                 }
 
@@ -1484,9 +1473,9 @@ public class ReflectionManager {
 
     private static void createNMSValues(DisguiseType disguiseType) {
         if (disguiseType == DisguiseType.UNKNOWN || disguiseType.isCustom()) {
-            DisguiseValues disguiseValues = new DisguiseValues(disguiseType, 0, 0);
-
+            DisguiseValues disguiseValues = new DisguiseValues(0, 0);
             disguiseValues.setAdultBox(new FakeBoundingBox(0, 0, 0));
+            disguiseType.setEntityInfo(disguiseValues);
 
             for (SoundGroup group : SoundGroup.getGroups(disguiseType.name())) {
                 group.setDamageAndIdleSoundVolume(1f);
@@ -1604,11 +1593,11 @@ public class ReflectionManager {
 
         Entity bukkitEntity = getBukkitEntity(nmsEntity);
 
-        DisguiseValues disguiseValues =
-            new DisguiseValues(disguiseType, bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0,
-                getNmsReflection().getAmbientSoundInterval(bukkitEntity));
+        DisguiseValues disguiseValues = getNmsReflection().constructValues(nmsEntity);
 
-        List<EntityData<?>> watcher = getEntityWatcher(bukkitEntity);
+        disguiseType.setEntityInfo(disguiseValues);
+
+        List<EntityData<?>> watcher = getEntityWatcher(nmsEntity);
         ArrayList<MetaIndex> indexes = MetaIndex.getMetaIndexes(disguiseType.getWatcherClass());
         boolean loggedName = false;
 
@@ -1715,26 +1704,13 @@ public class ReflectionManager {
                 }
             }
         }
-
-        // Get the bounding box
-        disguiseValues.setAdultBox(getBoundingBox(bukkitEntity));
-
-        if (bukkitEntity instanceof Ageable) {
-            ((Ageable) bukkitEntity).setBaby();
-
-            disguiseValues.setBabyBox(getBoundingBox(bukkitEntity));
-        } else if (bukkitEntity instanceof Zombie) {
-            ((Zombie) bukkitEntity).setBaby(true);
-
-            disguiseValues.setBabyBox(getBoundingBox(bukkitEntity));
-        } else if (bukkitEntity instanceof ArmorStand) {
-            ((ArmorStand) bukkitEntity).setSmall(true);
-
-            disguiseValues.setBabyBox(getBoundingBox(bukkitEntity));
-        }
     }
 
     public static List<EntityData<?>> getEntityWatcher(Entity entity) {
+        return getEntityWatcher(getNmsReflection().getNmsEntity(entity));
+    }
+
+    public static List<EntityData<?>> getEntityWatcher(Object entity) {
         try {
             ByteBuf buffer = getNmsReflection().getDataWatcherValues(entity);
 
@@ -1759,12 +1735,9 @@ public class ReflectionManager {
 
     private static void setScore(Scoreboard scoreboard, String name, int score, boolean canScheduleTask) {
         if (canScheduleTask && (!Bukkit.isPrimaryThread() || DisguiseUtilities.isRunningPaper())) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    setScore(scoreboard, name, score, false);
-                }
-            }.runTask(LibsDisguises.getInstance());
+            LibsDisguises.getScheduler().global().run(() -> {
+                setScore(scoreboard, name, score, false);
+            });
             return;
         }
 

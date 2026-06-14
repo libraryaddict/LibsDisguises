@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.commands.utils;
 
+import com.cjcrafter.foliascheduler.TaskImplementation;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.commands.utils.headresolvers.HeadResolver;
@@ -20,8 +21,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -90,18 +89,15 @@ public class GrabHeadCommand implements CommandExecutor {
         SkinUtils.SkinCallback callback = new SkinUtils.SkinCallback() {
             private final long cancelAt = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(3);
 
-            private final BukkitTask runnable = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (System.currentTimeMillis() > cancelAt) {
-                        cancel();
-                        LibsMsg.SKIN_API_TIMEOUT.send(sender);
-                        return;
-                    }
-
-                    LibsMsg.PLEASE_WAIT.send(sender);
+            private final TaskImplementation<Void> runnable = LibsDisguises.getScheduler().global().runAtFixedRate(task -> {
+                if (System.currentTimeMillis() > cancelAt) {
+                    task.cancel();
+                    LibsMsg.SKIN_API_TIMEOUT.send(sender);
+                    return;
                 }
-            }.runTaskTimer(LibsDisguises.getInstance(), 100, 100);
+
+                LibsMsg.PLEASE_WAIT.send(sender);
+            }, 100, 100);
 
             @Override
             public void onError(LibsMsg msg, Object... args) {
@@ -122,28 +118,25 @@ public class GrabHeadCommand implements CommandExecutor {
 
                 DisguiseUtilities.setGrabHeadCommandUsed();
 
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        ItemStack skull;
+                LibsDisguises.getScheduler().entity((Player) sender).run(() -> {
+                    ItemStack skull;
 
-                        if (NmsVersion.v1_13.isSupported()) {
-                            skull = new ItemStack(Material.PLAYER_HEAD);
-                        } else {
-                            // 1.12 does not have PLAYER_HEAD
-                            skull = new ItemStack(Material.valueOf("SKULL_ITEM"), 1, (short) 3);
-                        }
-
-                        SkullMeta meta = (SkullMeta) skull.getItemMeta();
-
-                        getHeadResolver().setProfile(meta, profile);
-
-                        skull.setItemMeta(meta);
-
-                        ((Player) sender).getInventory().addItem(skull);
-                        LibsMsg.GRAB_HEAD_SUCCESS.send(sender);
+                    if (NmsVersion.v1_13.isSupported()) {
+                        skull = new ItemStack(Material.PLAYER_HEAD);
+                    } else {
+                        // 1.12 does not have PLAYER_HEAD
+                        skull = new ItemStack(Material.valueOf("SKULL_ITEM"), 1, (short) 3);
                     }
-                }.runTask(LibsDisguises.getInstance());
+
+                    SkullMeta meta = (SkullMeta) skull.getItemMeta();
+
+                    getHeadResolver().setProfile(meta, profile);
+
+                    skull.setItemMeta(meta);
+
+                    ((Player) sender).getInventory().addItem(skull);
+                    LibsMsg.GRAB_HEAD_SUCCESS.send(sender);
+                });
             }
         };
 

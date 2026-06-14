@@ -8,9 +8,9 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 
 public class PacketHandlerSetPassengers implements IPacketHandler<WrapperPlayServerSetPassengers> {
     @Override
@@ -19,7 +19,8 @@ public class PacketHandlerSetPassengers implements IPacketHandler<WrapperPlaySer
     }
 
     @Override
-    public void handle(Disguise disguise, LibsPackets<WrapperPlayServerSetPassengers> packets, Player observer, Entity entity) {
+    public void handle(Disguise disguise, LibsPackets<WrapperPlayServerSetPassengers> packets, IWrappedPlayer observer,
+                       IWrappedEntity entity) {
         if (observer.getVehicle() == null) {
             DisguiseUtilities.removeInvisibleSlime(observer);
             return;
@@ -48,6 +49,6 @@ public class PacketHandlerSetPassengers implements IPacketHandler<WrapperPlaySer
         }
 
         packets.clear();
-        DisguiseUtilities.sendInvisibleSlime(observer, entity.getEntityId(), packet.getPassengers());
+        DisguiseUtilities.sendInvisibleSlime(observer, packets.getEntityId(), packet.getPassengers());
     }
 }

@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.SimplePacketListenerAbstract;
 import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
 import com.github.retrooper.packetevents.protocol.attribute.Attributes;
@@ -26,7 +25,8 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSound;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
-import org.bukkit.entity.Player;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
+import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,7 +89,7 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
         }
 
         try {
-            final Player observer = event.getPlayer();
+            final IWrappedPlayer observer = WrappedManager.getWrappedPlayer(event.getPlayer());
 
             if (observer == null) {
                 return;
@@ -104,17 +104,18 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
                 return;
             }
 
-            if (!DisguiseAPI.isSelfDisguised(observer)) {
+            if (!DisguiseUtilities.getSelfDisguised().contains(observer.getUniqueId())) {
                 return;
             }
 
-            final Disguise disguise = DisguiseAPI.getDisguise(observer, observer);
+            final Disguise disguise = DisguiseAPI.getDisguise(observer.getEntity(), observer.getEntity());
 
             if (disguise == null) {
                 return;
             }
 
-            if (conflictingPackets[event.getPacketType().ordinal()] && disguise.getInternals().shouldAvoidSendingPackets(observer)) {
+            if (conflictingPackets[event.getPacketType().ordinal()] &&
+                disguise.getInternals().shouldAvoidSendingPackets(observer.getUniqueId())) {
                 if (neverSend[event.getPacketType().ordinal()]) {
                     event.setCancelled(true);
                 } else if (observer.getEntityId() != entityId) {
@@ -126,13 +127,13 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
 
             // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
             LibsPackets<?> transformed =
-                PacketsManager.getPacketsManager().getPacketsHandler().transformPacket(wrapper, disguise, observer, observer);
+                PacketsManager.getPacketsManager().getPacketsHandler().transformPacket(wrapper, disguise, observer, entityId);
 
             if (transformed.isUnhandled()) {
                 transformed.addPacket(DisguiseUtilities.unsafeClone(event, wrapper));
             }
 
-            LibsPackets<?> selfTransformed = new LibsPackets(wrapper, disguise);
+            LibsPackets<?> selfTransformed = new LibsPackets(entityId, wrapper, disguise);
             selfTransformed.setSkinHandling(transformed.isSkinHandling());
 
             for (PacketWrapper newPacket : transformed.getPackets()) {
@@ -169,16 +170,17 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
             }
 
             if (disguise.isPlayerDisguise()) {
-                LibsDisguises.getInstance().getSkinHandler().handlePackets(observer, (PlayerDisguise) disguise, selfTransformed);
+                LibsDisguises.getInstance().getSkinHandler()
+                    .handlePackets(observer.getEntity(), (PlayerDisguise) disguise, selfTransformed);
             }
 
             if (event.getPacketType() == Server.SPAWN_PLAYER || event.getPacketType() == Server.SPAWN_ENTITY) {
                 // Add to 'is currently seeing'
-                disguise.getInternals().addSeen(observer, true);
+                disguise.getInternals().addSeen(observer.getUniqueId(), true);
             }
 
             for (PacketWrapper newPacket : selfTransformed.getPackets()) {
-                PacketEvents.getAPI().getPlayerManager().sendPacketSilently(observer, newPacket);
+                observer.sendPacketSilently(newPacket);
             }
 
             selfTransformed.sendDelayed(observer);
@@ -217,13 +219,13 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
             }
 
             double playerValue = prop.calcValue();
-            double max = disguise.getInternals().getPrevSelfDisguiseTallScaleMax();
+            double max = disguise.getInternals().getSelfDisguiseTallScaleMax();
 
+System.out.println("Player value: " + playerValue + " Max: " + max);
             // If the disguise height is under the max height
             if (playerValue <= max) {
                 break;
             }
-
             toSend.remove(prop);
             toSend.add(new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, max, new ArrayList<>()));
         }
@@ -231,7 +233,7 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
         attributes.setProperties(toSend);
     }
 
-    private void sendMetadata(Player player, PacketWrapper wrapper) {
+    private void sendMetadata(IWrappedPlayer player, PacketWrapper wrapper) {
         WrapperPlayServerEntityMetadata metadata = (WrapperPlayServerEntityMetadata) wrapper;
 
         if (metadata.getEntityId() != player.getEntityId()) {
@@ -251,7 +253,7 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
         }
     }
 
-    private void handleSpawn(PacketPlaySendEvent event, Player observer) {
+    private void handleSpawn(PacketPlaySendEvent event, IWrappedPlayer observer) {
         event.setCancelled(true);
 
         List<WatcherValue> watchableList = new ArrayList<>();
@@ -271,7 +273,7 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
 
         WrapperPlayServerEntityMetadata metaPacket = ReflectionManager.getMetadataPacket(observer.getEntityId(), watchableList);
 
-        PacketEvents.getAPI().getPlayerManager().sendPacket(observer, metaPacket);
+        observer.sendPacket(metaPacket);
     }
 
     private void handleAllNonWakeAnimation(PacketPlaySendEvent event, PacketWrapper wrapper) {
@@ -282,7 +284,7 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
         event.setCancelled(true);
     }
 
-    private void handleStatus(Player observer, Disguise disguise, PacketPlaySendEvent event, PacketWrapper wrapper) {
+    private void handleStatus(IWrappedPlayer observer, Disguise disguise, PacketPlaySendEvent event, PacketWrapper wrapper) {
         if (!disguise.isSelfDisguiseSoundsReplaced() || disguise.getType().isPlayer() ||
             ((WrapperPlayServerEntityStatus) wrapper).getStatus() != 2) {
             return;
@@ -307,7 +309,7 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
             sound.hasVolume() ? sound.getVolume() : 1f, sound.hasPitch() ? sound.getPitch() : 1f);
     }
 
-    private void handleDamage(Disguise disguise, PacketPlaySendEvent event, Player observer) {
+    private void handleDamage(Disguise disguise, PacketPlaySendEvent event, IWrappedPlayer observer) {
         if (!disguise.isSelfDisguiseSoundsReplaced()) {
             return;
         }
@@ -330,8 +332,8 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
             sound.hasVolume() ? sound.getVolume() : 1f, sound.hasPitch() ? sound.getPitch() : 1f);
     }
 
-    private void handleVelocity(PacketPlaySendEvent event, Player observer) {
-        if (DisguiseUtilities.isPlayerVelocity(observer)) {
+    private void handleVelocity(PacketPlaySendEvent event, IWrappedPlayer observer) {
+        if (DisguiseUtilities.isPlayerVelocity(observer.getEntity())) {
             return;
         }
 
@@ -339,6 +341,6 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
         // was no velocity event...
         event.setCancelled(true);
         // Clear old velocity, this should only occur once.
-        DisguiseUtilities.clearPlayerVelocity(observer);
+        DisguiseUtilities.clearPlayerVelocity(observer.getEntity());
     }
 }

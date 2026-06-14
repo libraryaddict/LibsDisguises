@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.utilities.movements;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityHeadLook;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityPositionSync;
@@ -9,62 +8,62 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import org.bukkit.entity.Player;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 
 public interface CloningMovementTracker extends MovementTracker {
     int getEntityId();
 
     @Override
-    default void onTeleport(Player receiver, WrapperPlayServerEntityTeleport teleport) {
+    default void onTeleport(IWrappedPlayer receiver, WrapperPlayServerEntityTeleport teleport) {
         teleport =
             new WrapperPlayServerEntityTeleport(getEntityId(), DisguiseUtilities.clone(teleport.getValues()), teleport.getRelativeFlags(),
                 teleport.isOnGround());
         teleport.setEntityId(getEntityId());
 
-        PacketEvents.getAPI().getPlayerManager().sendPacketSilently(receiver, teleport);
+        receiver.sendPacketSilently(teleport);
     }
 
     @Override
-    default void onSync(Player receiver, WrapperPlayServerEntityPositionSync sync) {
+    default void onSync(IWrappedPlayer receiver, WrapperPlayServerEntityPositionSync sync) {
         sync = new WrapperPlayServerEntityPositionSync(getEntityId(), DisguiseUtilities.clone(sync.getValues()), sync.isOnGround());
 
-        PacketEvents.getAPI().getPlayerManager().sendPacketSilently(receiver, sync);
+        receiver.sendPacketSilently(sync);
     }
 
     @Override
-    default void onRelativeMove(Player receiver, WrapperPlayServerEntityRelativeMove relativeMove) {
+    default void onRelativeMove(IWrappedPlayer receiver, WrapperPlayServerEntityRelativeMove relativeMove) {
         relativeMove = new WrapperPlayServerEntityRelativeMove(getEntityId(), relativeMove.getDeltaX(), relativeMove.getDeltaY(),
             relativeMove.getDeltaZ(), relativeMove.isOnGround());
 
-        PacketEvents.getAPI().getPlayerManager().sendPacketSilently(receiver, relativeMove);
+        receiver.sendPacketSilently(relativeMove);
     }
 
     @Override
-    default void onRelativeMoveLook(Player receiver, WrapperPlayServerEntityRelativeMoveAndRotation relativeMoveAndRotation) {
+    default void onRelativeMoveLook(IWrappedPlayer receiver, WrapperPlayServerEntityRelativeMoveAndRotation relativeMoveAndRotation) {
         relativeMoveAndRotation = new WrapperPlayServerEntityRelativeMoveAndRotation(getEntityId(), relativeMoveAndRotation.getDeltaX(),
             relativeMoveAndRotation.getDeltaY(), relativeMoveAndRotation.getDeltaZ(), relativeMoveAndRotation.getYaw(),
             relativeMoveAndRotation.getPitch(), relativeMoveAndRotation.isOnGround());
 
-        PacketEvents.getAPI().getPlayerManager().sendPacketSilently(receiver, relativeMoveAndRotation);
+        receiver.sendPacketSilently(relativeMoveAndRotation);
     }
 
     @Override
-    default void onRotation(Player receiver, WrapperPlayServerEntityRotation rotation) {
+    default void onRotation(IWrappedPlayer receiver, WrapperPlayServerEntityRotation rotation) {
         rotation = new WrapperPlayServerEntityRotation(getEntityId(), rotation.getYaw(), rotation.getPitch(), rotation.isOnGround());
 
-        PacketEvents.getAPI().getPlayerManager().sendPacketSilently(receiver, rotation);
+        receiver.sendPacketSilently(rotation);
     }
 
     @Override
-    default void onLook(Player receiver, WrapperPlayServerEntityHeadLook look) {
+    default void onLook(IWrappedPlayer receiver, WrapperPlayServerEntityHeadLook look) {
         look = new WrapperPlayServerEntityHeadLook(getEntityId(), look.getHeadYaw());
 
-        PacketEvents.getAPI().getPlayerManager().sendPacketSilently(receiver, look);
+        receiver.sendPacketSilently(look);
     }
 
     @Override
-    default void onDespawn(Player receiver, boolean fromDestroyPacket) {
-        PacketEvents.getAPI().getPlayerManager().sendPacketSilently(receiver, new WrapperPlayServerDestroyEntities(getEntityId()));
+    default void onDespawn(IWrappedPlayer receiver, boolean fromDestroyPacket) {
+        receiver.sendPacketSilently(new WrapperPlayServerDestroyEntities(getEntityId()));
     }
 
     @Override

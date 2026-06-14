@@ -5,7 +5,6 @@ import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseFiles;
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -60,12 +59,9 @@ public class ClassMappings {
             if (!updatingCache && LibsDisguises.getInstance() != null && LibsDisguises.getInstance().isEnabled()) {
                 // Run 10 seconds later
                 updatingCache = true;
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        ClassMappings.saveMappingsCache(LibsDisguises.getInstance().getDataFolder());
-                    }
-                }.runTaskLater(LibsDisguises.getInstance(), 10 * 20);
+                LibsDisguises.getScheduler().global().runDelayed(task -> {
+                    ClassMappings.saveMappingsCache(LibsDisguises.getInstance().getDataFolder());
+                }, 10 * 20);
             }
         }
         return location;

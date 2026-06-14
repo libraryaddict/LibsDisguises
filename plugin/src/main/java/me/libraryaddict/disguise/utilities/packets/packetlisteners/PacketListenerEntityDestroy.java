@@ -10,6 +10,8 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.movements.MovementTracker;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
+import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -40,7 +42,7 @@ public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
         }
     }
 
-    private int[] getToRemove(Disguise disguise, Player player, int entityId) {
+    private int[] getToRemove(Disguise disguise, IWrappedPlayer player, int entityId) {
         List<MovementTracker> trackers = disguise.getInternals().getTrackers();
         trackers.forEach(t -> t.onDespawn(player, true));
         int[] toRemove;
@@ -52,7 +54,7 @@ public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
         }
 
         // Remove from 'is seeing currently'
-        disguise.getInternals().addSeen(player, false);
+        disguise.getInternals().addSeen(player.getEntity(), false);
 
         for (MovementTracker tracker : trackers) {
             int[] remove = tracker.getOwnedEntityIds();
@@ -87,11 +89,10 @@ public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
             return;
         }
 
-        int[] toRemove = getToRemove(disguise, player, entityId);
+        int[] toRemove = getToRemove(disguise, WrappedManager.getWrappedPlayer(player), entityId);
 
-        if (toRemove == null || toRemove.length == 0 || (odd == null ? !(odd =
-            !LibsPremium.getPluginInformation().isPremium() || LibsPremium.getPluginInformation().getBuildNumber().matches("#\\d{4,}")) :
-            !odd)) {
+        if (toRemove == null || toRemove.length == 0 || (odd == null ? !(odd = !LibsPremium.getPluginInformation().isPremium() ||
+            LibsPremium.getPluginInformation().getBuildNumber().matches("#\\d{4,}")) : !odd)) {
             return;
         }
 

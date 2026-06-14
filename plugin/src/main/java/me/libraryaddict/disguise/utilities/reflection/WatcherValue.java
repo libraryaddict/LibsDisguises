@@ -5,6 +5,8 @@ import com.github.retrooper.packetevents.protocol.entity.data.EntityDataType;
 import lombok.Getter;
 import lombok.Setter;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 import org.bukkit.entity.Entity;
 
 import java.util.ArrayList;
@@ -39,13 +41,25 @@ public class WatcherValue {
         return ReflectionManager.getEntityData(getMetaIndex(), getValue(), isBukkitReadable());
     }
 
-    public static List<WatcherValue> getValues(Entity entity) {
+    /**
+     * Deprecated as it accesses entity off the owning thread
+     */
+    @Deprecated
+    public static List<WatcherValue> getValues(IWrappedEntity<?> entity) {
         List<WatcherValue> list = new ArrayList<>();
 
-        for (EntityData data : ReflectionManager.getEntityWatcher(entity)) {
+        for (EntityData data : ReflectionManager.getEntityWatcher(entity.getEntity())) {
             list.add(new WatcherValue(data));
         }
 
         return list;
+    }
+
+    /**
+     * Deprecated as it accesses entity off the owning thread
+     */
+    @Deprecated
+    public static List<WatcherValue> getValues(Entity entity) {
+        return getValues(WrappedManager.getWrappedEntity(entity));
     }
 }

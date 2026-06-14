@@ -15,6 +15,7 @@ json-version = "20250517"
 asm-version = "9.8"
 proguard-version = "7.8.0"
 vulcan-version = "1.0.0"
+foliascheduler-version = "0.7.5"
 
 net-kyori-adventure-api = "4.25.0"
 net-kyori-adventure-platform = "4.4.1"
@@ -23,7 +24,7 @@ placeholder-api = "2.11.6"
 
 org-spigotmc-spigot = "1.21.11-R0.1-SNAPSHOT"
 io-papermc-paper-api = "1.21.11-R0.1-SNAPSHOT"
-paperweight-version = "2.0.0-beta.19"
+paperweight-version = "2.0.0-beta.21"
 
 
 [libraries]
@@ -50,6 +51,7 @@ org-json = { module = "org.json:json", version.ref = "json-version" }
 org-ow2-asm = { module = "org.ow2.asm:asm", version.ref = "asm-version" }
 com-guardsquare-proguard = { module = "com.guardsquare:proguard-gradle", version.ref = "proguard-version" }
 me-frep-vulcan = { module = "me.frep.vulcan:vulcan-api", version.ref = "vulcan-version" }
+foliascheduler = { module = "com.cjcrafter:foliascheduler", version.ref = "foliascheduler-version" }
 
 [plugins]
 shadowjar = { id = "com.gradleup.shadow", version.ref = "shadowjar-version" }

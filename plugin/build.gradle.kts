@@ -20,11 +20,12 @@ dependencies {
     compileOnly(libs.io.netty.netty.codec)
     compileOnly(libs.commons.lang.commons.lang)
     compileOnly(libs.com.mojang.authlib.new)
-    compileOnly(libs.io.papermc.paper.paper.api);
+    compileOnly(libs.io.papermc.paper.paper.api)
     compileOnly(libs.com.retro.packetevents)
     compileOnly(libs.me.frep.vulcan)
     compileOnly(libs.it.unimi.dsi.fastutil)
     compileOnly(libs.placeholder.api)
+    implementation(libs.foliascheduler)
 }
 
 buildscript {
@@ -158,7 +159,7 @@ tasks.withType<Javadoc>().configureEach {
 
     javadocTool.set(
         javaToolchains.javadocToolFor {
-            setDestinationDir(file("../build/docs/javadoc"))
+            destinationDir = file("../build/docs/javadoc")
             languageVersion = JavaLanguageVersion.of(21)
             include(
                 "me/libraryaddict/disguise/*",
@@ -192,7 +193,7 @@ publishing {
                 }
             }
         } else {
-            mavenLocal();
+            mavenLocal()
         }
     }
 

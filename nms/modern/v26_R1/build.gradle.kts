@@ -5,11 +5,10 @@ plugins {
 description = "v26_R1"
 
 nmsModule {
-    craftbukkitVersion.set("26.1-R0.1-SNAPSHOT")
+    craftbukkitVersion.set("26.1.2.build.+")
     javaVersion.set(JavaVersion.VERSION_25)
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:${nmsModule.craftbukkitVersion.get()}")
-    compileOnly("org.spigotmc:spigot:${nmsModule.craftbukkitVersion.get()}")
+    paperweight.paperDevBundle(nmsModule.craftbukkitVersion.get())
 }

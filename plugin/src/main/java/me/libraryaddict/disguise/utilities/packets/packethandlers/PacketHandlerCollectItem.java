@@ -5,8 +5,8 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 
 public class PacketHandlerCollectItem implements IPacketHandler {
     @Override
@@ -15,7 +15,7 @@ public class PacketHandlerCollectItem implements IPacketHandler {
     }
 
     @Override
-    public void handle(Disguise disguise, LibsPackets packets, Player observer, Entity entity) {
+    public void handle(Disguise disguise, LibsPackets packets, IWrappedPlayer observer, IWrappedEntity entity) {
         // Else if the disguise is attempting to send players a forbidden packet
         if (disguise.getType().isMisc()) {
             packets.clear();

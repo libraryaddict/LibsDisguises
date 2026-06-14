@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise;
 
+import com.cjcrafter.foliascheduler.FoliaCompatibility;
+import com.cjcrafter.foliascheduler.ServerImplementation;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -54,6 +56,8 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.sounds.SoundManager;
 import me.libraryaddict.disguise.utilities.updates.PacketEventsUpdater;
 import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
+import me.libraryaddict.disguise.utilities.wrapped.listeners.DisguiseWrappedModernListener;
+import me.libraryaddict.disguise.utilities.wrapped.listeners.DisguiseWrappedListener;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -64,7 +68,6 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -78,7 +81,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class LibsDisguises extends JavaPlugin {
-    /**
+    @Getter
+    private static ServerImplementation scheduler;
+        /**
      * -- GETTER --
      * External APIs shouldn't actually need this instance. DisguiseAPI should be enough to handle most cases.
      *
@@ -117,6 +122,7 @@ public class LibsDisguises extends JavaPlugin {
             }
 
             instance = this;
+            scheduler = new FoliaCompatibility(this).getServerImplementation();
 
             DisguiseConfig.loadInternalConfig();
             DisguiseConfig.loadPreConfig();
@@ -211,9 +217,8 @@ public class LibsDisguises extends JavaPlugin {
             boolean attempt = updater.doUpdate();
 
             if (!attempt) {
-                getLogger().severe(
-                    "PacketEvents download has failed, please install PacketEvents manually from https://www.spigotmc" +
-                        ".org/resources/packetevents-api.80279/ or https://modrinth.com/plugin/packetevents");
+                getLogger().severe("PacketEvents download has failed, please install PacketEvents manually from https://www.spigotmc" +
+                    ".org/resources/packetevents-api.80279/ or https://modrinth.com/plugin/packetevents");
                 return;
             } else if (plugin != null) {
                 getLogger().severe("Please restart the server to complete the PacketEvents update!");
@@ -226,9 +231,8 @@ public class LibsDisguises extends JavaPlugin {
 
             Bukkit.getPluginManager().enablePlugin(plugin);
         } catch (Exception e) {
-            getLogger().severe(
-                "Looks like PacketEvents's site may be down! Try download it manually from https://www.spigotmc" +
-                    ".org/resources/packetevents-api.80279/ or https://modrinth.com/plugin/packetevents");
+            getLogger().severe("Looks like PacketEvents's site may be down! Try download it manually from https://www.spigotmc" +
+                ".org/resources/packetevents-api.80279/ or https://modrinth.com/plugin/packetevents");
             e.printStackTrace();
         }
     }
@@ -379,6 +383,12 @@ public class LibsDisguises extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new PaperDisguiseListener(), this);
         }
 
+        if (DisguiseUtilities.isRunningPaper() && NmsVersion.v1_20_R4.isSupported()) {
+            Bukkit.getPluginManager().registerEvents(new DisguiseWrappedModernListener(), this);
+        } else {
+            Bukkit.getPluginManager().registerEvents(new DisguiseWrappedListener(), this);
+        }
+
         try {
             if (Bukkit.getPluginManager().isPluginEnabled("Vulcan")) {
                 Bukkit.getPluginManager().registerEvents(new VulcanCompatibilityListener(), this);
@@ -438,8 +448,7 @@ public class LibsDisguises extends JavaPlugin {
         if (fileCount != expected) {
             getLogger().severe(
                 "Hi, this is libraryaddict from Lib's Disguises. It appears that another plugin has injected malware into Lib's Disguises" +
-                    ". As soon as it started on your server, it detected " +
-                    (fileCount - expected) +
+                    ". As soon as it started on your server, it detected " + (fileCount - expected) +
                     " unknown files were added to the jar. Please redownload Lib's Disguises from a trusted source such as SpigotMC. If " +
                     "this warning persists after updating, you can try https://www.spigotmc.org/resources/spigot-anti-malware.64982/, but" +
                     " you will most likely need to reinstall all your plugins, jars, and related files, as a single infected plugin can " +
@@ -501,9 +510,9 @@ public class LibsDisguises extends JavaPlugin {
             Plugin plugin = Bukkit.getPluginManager().getPlugin("packetevents");
             String version = plugin == null ? "[PacketEvents Plugin Missing]" : plugin.getDescription().getVersion();
 
-            BukkitRunnable runnable = createPacketEventsOutdatedRunnable(version, requiredPacketEvents);
+            Runnable runnable = createPacketEventsOutdatedRunnable(version, requiredPacketEvents);
             runnable.run();
-            runnable.runTaskLater(this, 20);
+            LibsDisguises.getScheduler().global().runDelayed(runnable, 20);
         }
 
         PacketEventsUpdater.doShadedWarning();
@@ -558,34 +567,29 @@ public class LibsDisguises extends JavaPlugin {
     }
 
     @NotNull
-    private BukkitRunnable createPacketEventsOutdatedRunnable(String version, String requiredPacketEvents) {
-        return new BukkitRunnable() {
-            private int timesRun;
+    private Runnable createPacketEventsOutdatedRunnable(String version, String requiredPacketEvents) {
+        return () -> {
+            if (isPacketEventsUpdateDownloaded()) {
+                getLogger().warning(
+                    "An update for PacketEvents has been downloaded and will be installed when the server restarts. When possible, " +
+                        "please restart the server. Lib's Disguises may not work correctly until you do so.");
+            } else {
+                getLogger().warning(
+                    "Update your PacketEvents! You are running " + version + " but the minimum version you should be on is " +
+                        requiredPacketEvents + "!");
+                getLogger().warning("Release Builds: https://modrinth.com/plugin/packetevents");
 
-            @Override
-            public void run() {
-                if (isPacketEventsUpdateDownloaded()) {
+                if (requiredPacketEvents.contains("SNAPSHOT")) {
                     getLogger().warning(
-                        "An update for PacketEvents has been downloaded and will be installed when the server restarts. When possible, " +
-                            "please restart the server. Lib's Disguises may not work correctly until you do so.");
-                } else {
-                    getLogger().warning(
-                        "Update your PacketEvents! You are running " + version + " but the minimum version you should be on is " +
-                            requiredPacketEvents + "!");
-                    getLogger().warning("Release Builds: https://modrinth.com/plugin/packetevents");
-
-                    if (requiredPacketEvents.contains("SNAPSHOT")) {
-                        getLogger().warning(
-                            "Minimum version is a SNAPSHOT build, it's possible that the features/bugfixes has not made it into the " +
-                                "releases yet. As such, you may need to use the dev builds instead. Using `/ld packetevents` will handle " +
-                                "it for you.");
-                        getLogger().warning("Snapshot Builds: https://ci.codemc.io/job/retrooper/job/packetevents/");
-                    }
-
-                    getLogger().warning(
-                        "Or! Use /ld packetevents - To have Lib's Disguises download the latest release (Or snapshot if release is " +
-                            "behind)");
+                        "Minimum version is a SNAPSHOT build, it's possible that the features/bugfixes has not made it into the " +
+                            "releases yet. As such, you may need to use the dev builds instead. Using `/ld packetevents` will handle " +
+                            "it for you.");
+                    getLogger().warning("Snapshot Builds: https://ci.codemc.io/job/retrooper/job/packetevents/");
                 }
+
+                getLogger().warning(
+                    "Or! Use /ld packetevents - To have Lib's Disguises download the latest release (Or snapshot if release is " +
+                        "behind)");
             }
         };
     }
@@ -631,6 +635,8 @@ public class LibsDisguises extends JavaPlugin {
         if (ClassMappings.isLoadedCache()) {
             ClassMappings.saveMappingsCache(getDataFolder());
         }
+
+        DisguiseUtilities.onDisable();
 
         reloaded = true;
     }

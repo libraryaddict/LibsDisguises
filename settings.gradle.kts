@@ -22,7 +22,7 @@ include("shared", "plugin")
 
 val nmsModules = listOf("legacy", "modern").flatMap { subfolder ->
     File(rootDir, "nms/$subfolder").listFiles()
-        ?.filter { it.isDirectory() && it.name.matches("v[\\d_]+R\\d+".toRegex()) }
+        ?.filter { it.isDirectory() && (it.name.matches("v[\\d_]+R\\d+".toRegex()) || it.name.contains("Folia")) }
         ?.map { ":nms:$subfolder:${it.name}" }
         ?: emptyList()
 }

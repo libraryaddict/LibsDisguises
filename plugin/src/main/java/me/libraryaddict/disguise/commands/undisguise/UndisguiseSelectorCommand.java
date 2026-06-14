@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.undisguise;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -60,7 +61,7 @@ public class UndisguiseSelectorCommand implements CommandExecutor {
 
         for (Entity entity : entities) {
             if (DisguiseAPI.isDisguised(entity)) {
-                DisguiseAPI.undisguiseToAll(sender, entity);
+                LibsDisguises.getScheduler().entity(entity).execute(() -> DisguiseAPI.undisguiseToAll(sender, entity));
                 disguisedEntitys++;
             }
         }

@@ -12,7 +12,6 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -187,15 +186,13 @@ public class LDUploadLogs implements LDCommand {
 
             sender.sendMessage(ChatColor.GOLD + "Now creating mclo.gs links...");
 
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    try {
-                        String disguiseText = disguises.exists() ? new String(Files.readAllBytes(disguises.toPath())) : null;
+            LibsDisguises.getScheduler().async().runNow(() -> {
+                try {
+                    String disguiseText = disguises.exists() ? new String(Files.readAllBytes(disguises.toPath())) : null;
 
-                        configText.append("\n\n================\n");
+                    configText.append("\n\n================\n");
 
-                        ArrayList<String> modified = DisguiseConfig.doOutput(true, true);
+                    ArrayList<String> modified = DisguiseConfig.doOutput(true, true);
 
                         for (String s : modified) {
                             configText.append("\n").append(s);
@@ -212,9 +209,7 @@ public class LDUploadLogs implements LDCommand {
 
                         lastUsed = System.currentTimeMillis();
 
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
+                    LibsDisguises.getScheduler().global().run(() -> {
                                 sender.sendMessage(ChatColor.GOLD + "Upload successful!");
 
                                 // Console can't click :(
@@ -232,14 +227,12 @@ public class LDUploadLogs implements LDCommand {
                                 builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, text));
 
                                 sender.spigot().sendMessage(builder.create());
-                            }
-                        }.runTask(LibsDisguises.getInstance());
+                    });
                     } catch (Exception e) {
                         e.printStackTrace();
                         sender.sendMessage(ChatColor.RED + "Unexpected error! Upload failed! " + e.getMessage());
                     }
-                }
-            }.runTaskAsynchronously(LibsDisguises.getInstance());
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }

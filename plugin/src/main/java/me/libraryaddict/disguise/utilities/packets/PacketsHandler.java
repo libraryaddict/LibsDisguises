@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.utilities.packets;
 
-import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
@@ -9,7 +8,6 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerAttributes;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerCollectItem;
@@ -22,8 +20,7 @@ import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerM
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerSetPassengers;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerSpawn;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerVelocity;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,16 +77,17 @@ public class PacketsHandler {
         }
     }
 
-    public LibsPackets transformPacket(PacketPlaySendEvent sentEvent, Disguise disguise, Player observer, Entity entity) {
+    public LibsPackets transformPacket(PacketWrapper sentPacket, Disguise disguise, IWrappedPlayer observer, int entityId) {
         if (disguise.getType() == DisguiseType.UNKNOWN) {
-            return new LibsPackets(null, disguise);
+            return new LibsPackets(entityId, null, disguise);
         }
 
-        return transformPacket(DisguiseUtilities.constructWrapper(sentEvent), disguise, observer, entity);
+        return transformPacket(new LibsPackets(entityId, sentPacket, disguise), observer);
     }
 
-    public LibsPackets transformPacket(PacketWrapper sentPacket, Disguise disguise, Player observer, Entity entity) {
-        LibsPackets packets = new LibsPackets(sentPacket, disguise);
+    public LibsPackets transformPacket(LibsPackets packets, IWrappedPlayer observer) {
+        Disguise disguise = packets.getDisguise();
+        PacketWrapper sentPacket = packets.getOriginalPacket();
 
         if (disguise.getType() == DisguiseType.UNKNOWN) {
             return packets;
@@ -101,7 +99,7 @@ public class PacketsHandler {
             IPacketHandler handler = packetHandlers[((Enum) sentPacket.getPacketTypeData().getPacketType()).ordinal()];
 
             if (handler != null) {
-                handler.handle(disguise, packets, observer, entity);
+                handler.handle(disguise, packets, observer, disguise.getInternals().getEntity());
             } else {
                 packets.setUnhandled(true);
             }

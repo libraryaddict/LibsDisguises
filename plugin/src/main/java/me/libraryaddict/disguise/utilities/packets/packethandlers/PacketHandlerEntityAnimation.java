@@ -9,8 +9,8 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.animations.DisguiseAnimation;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 
 public class PacketHandlerEntityAnimation implements IPacketHandler<WrapperPlayServerEntityAnimation> {
     @Override
@@ -19,7 +19,8 @@ public class PacketHandlerEntityAnimation implements IPacketHandler<WrapperPlayS
     }
 
     @Override
-    public void handle(Disguise disguise, LibsPackets<WrapperPlayServerEntityAnimation> packets, Player observer, Entity entity) {
+    public void handle(Disguise disguise, LibsPackets<WrapperPlayServerEntityAnimation> packets, IWrappedPlayer observer,
+                       IWrappedEntity entity) {
         // All misc disguises cannot have animation events
         if (disguise.isMiscDisguise()) {
             packets.clear();

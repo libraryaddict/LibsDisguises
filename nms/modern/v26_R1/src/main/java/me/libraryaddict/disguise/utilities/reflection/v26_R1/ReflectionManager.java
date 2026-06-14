@@ -12,6 +12,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.SneakyThrows;
+import me.libraryaddict.disguise.utilities.DisguiseValues;
+import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistrySynchronization;
@@ -31,13 +33,18 @@ import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.animal.wolf.WolfSoundVariant;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.ChatVisiblity;
 import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.ScoreHolder;
 import org.bukkit.Art;
@@ -152,13 +159,6 @@ public class ReflectionManager extends ReflectionReusedNms {
             entity = entityType.create(world, EntitySpawnReason.LOAD);
         }
 
-        if (entity == null) {
-            return null;
-        }
-
-        // Workaround for paper being 2 smart 4 me
-        entity.setPos(1.0, 1.0, 1.0);
-        entity.setPos(0.0, 0.0, 0.0);
         return entity;
     }
 
@@ -179,13 +179,6 @@ public class ReflectionManager extends ReflectionReusedNms {
         }
 
         return ((ChunkMap.TrackedEntity) trackedEntity).serverEntity;
-    }
-
-    @Override
-    public float[] getSize(Entity entity) {
-        net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
-        EntityDimensions dimensions = nmsEntity.getDimensions(net.minecraft.world.entity.Pose.STANDING);
-        return new float[]{dimensions.width(), nmsEntity.getEyeHeight()};
     }
 
     @Override
@@ -243,8 +236,8 @@ public class ReflectionManager extends ReflectionReusedNms {
 
     @SneakyThrows
     @Override
-    public ByteBuf getDataWatcherValues(Entity entity) {
-        SynchedEntityData watcher = ((CraftEntity) entity).getHandle().getEntityData();
+    public ByteBuf getDataWatcherValues(Object entity) {
+        SynchedEntityData watcher = ((net.minecraft.world.entity.Entity) entity).getEntityData();
         SynchedEntityData.DataItem[] dataItems = (SynchedEntityData.DataItem[]) dataItemsField.get(watcher);
 
         ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer();

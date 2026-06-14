@@ -90,26 +90,38 @@ abstract class NmsModulePlugin : Plugin<Project> {
                 relativePath =
                     RelativePath(true, *"$basePackagePath/${project.description}/$name".split("/").toTypedArray())
             }
-            filter(mapOf("tokens" to replacements), ReplaceTokens::class.java)
+            filter(
+                mapOf("tokens" to replacements, "beginToken" to "__", "endToken" to "__"),
+                ReplaceTokens::class.java
+            )
         }
 
         val usingPaperweight =
             providers.gradleProperty("${project.name}.usePaperweight").map(String::toBoolean).getOrElse(true)
+        val isFolia = project.name.endsWith("_Folia")
+        val isLegacy = project.name.contains(":legacy:")
+
         if (usingPaperweight) {
             apply(plugin = "io.papermc.paperweight.userdev")
 
-            (project.extensions.getByName("paperweight") as PaperweightUserExtension).reobfArtifactConfiguration =
+            val paperweight = project.extensions.getByName("paperweight") as PaperweightUserExtension
+            paperweight.reobfArtifactConfiguration =
                 io.papermc.paperweight.userdev.ReobfArtifactConfiguration.REOBF_PRODUCTION
 
-            tasks.named("assemble") {
-                dependsOn(tasks.named("reobfJar"))
+            if (isLegacy) {
+                tasks.named("assemble") {
+                    dependsOn(tasks.named("reobfJar"))
+                }
             }
         }
 
-        project.extensions.getByType<SourceSetContainer>().getByName("main").java.srcDir(generatedSourcesDir)
+        if (!isFolia) {
 
-        tasks.named<JavaCompile>("compileJava") {
-            dependsOn(generateSharedNmsSources)
+            project.extensions.getByType<SourceSetContainer>().getByName("main").java.srcDir(generatedSourcesDir)
+
+            tasks.named<JavaCompile>("compileJava") {
+                dependsOn(generateSharedNmsSources)
+            }
         }
 
         tasks.withType<JavaCompile>().configureEach {

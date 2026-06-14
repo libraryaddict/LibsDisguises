@@ -1,7 +1,5 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
@@ -30,6 +28,8 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.MethodHiddenFo
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodIgnoredBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsedBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -41,7 +41,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
@@ -69,6 +68,11 @@ public class FlagWatcher {
      */
     @Getter(value = AccessLevel.PROTECTED)
     private final Map<Integer, Object> backupEntityValues = new ConcurrentHashMap<>();
+    /**
+     * The metadata that was last sent to the client under this ID, if it's missing, assume it's the default
+     * Any values in here are direct from packetevents, and are not bukkit native
+     */
+    private final Map<Integer, Object> lastMetadataSent = new ConcurrentHashMap<>();
     @Getter
     private transient TargetedDisguise disguise;
     /**
@@ -130,12 +134,12 @@ public class FlagWatcher {
 
         Entity entity = getDisguise().getEntity();
 
-        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
+        for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             WrapperPlayServerEntityTeleport teleport =
                 new WrapperPlayServerEntityTeleport(entity.getEntityId(), SpigotConversionUtil.fromBukkitLocation(entity.getLocation()),
                     entity.isOnGround());
 
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, teleport);
+            player.sendPacket(teleport);
         }
     }
 
@@ -150,14 +154,14 @@ public class FlagWatcher {
             return;
         }
 
-        Entity entity = getDisguise().getEntity();
+        IWrappedEntity entity = getDisguise().getInternals().getEntity();
 
-        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
+        for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             WrapperPlayServerEntityTeleport teleport =
                 new WrapperPlayServerEntityTeleport(entity.getEntityId(), SpigotConversionUtil.fromBukkitLocation(entity.getLocation()),
                     entity.isOnGround());
 
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, teleport);
+            player.sendPacket(teleport);
         }
     }
 
@@ -194,14 +198,14 @@ public class FlagWatcher {
     }
 
     private void sendHeadPacket() {
-        Entity entity = getDisguise().getEntity();
+        IWrappedEntity entity = getDisguise().getInternals().getEntity();
         Location loc = entity.getLocation();
 
-        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
+        for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             WrapperPlayServerEntityRotation packet =
                 new WrapperPlayServerEntityRotation(entity.getEntityId(), loc.getYaw(), loc.getPitch(), entity.isOnGround());
 
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
+            player.sendPacket(packet);
         }
     }
 
@@ -312,9 +316,15 @@ public class FlagWatcher {
     }
 
     public List<WatcherValue> convert(Player player, List<WatcherValue> list) {
+        // It's sending the air metadata. This is the least commonly sent metadata which all entitys still share.
+        // I send my custom values if I see this!
+        // I'm not sure in which version only dirty values are sent, it was in at least 1.19.1
+        return convert(player, list, list.stream().anyMatch(v -> v.getIndex() == MetaIndex.ENTITY_AIR_TICKS.getIndex()), false);
+    }
+
+    public List<WatcherValue> convert(Player player, List<WatcherValue> list, boolean sendAllCustom, boolean isPacketMetadata) {
         List<WatcherValue> newList = new ArrayList<>();
         HashSet<Integer> sentValues = new HashSet<>();
-        boolean sendAllCustom = false;
 
         for (WatcherValue watch : list) {
             int id = watch.getIndex();
@@ -326,10 +336,8 @@ public class FlagWatcher {
                 continue;
             }
 
-            // It's sending the air metadata. This is the least commonly sent metadata which all entitys still share.
-            // I send my custom values if I see this!
-            if (index == MetaIndex.ENTITY_AIR_TICKS) {
-                sendAllCustom = true;
+            if (isPacketMetadata && !backupEntityValues.containsKey(id)) {
+                lastMetadataSent.put(id, watch.getValue());
             }
 
             Object value = null;
@@ -380,8 +388,9 @@ public class FlagWatcher {
                 float health = ((Number) watch.getValue()).floatValue();
 
                 String name = DisguiseConfig.isScoreboardNames() && ((PlayerDisguise) getDisguise()).hasScoreboardName() ?
-                    ((PlayerDisguise) getDisguise()).getScoreboardName().getPlayer() : ((PlayerDisguise) getDisguise()).getName();
+                    ((PlayerDisguise) getDisguise()).getScoreboardName().getEntry() : ((PlayerDisguise) getDisguise()).getName();
 
+                // TODO Migrate this over, ain't thread safe
                 ReflectionManager.setScore(player.getScoreboard(), name, (int) Math.ceil(health));
             }
         }
@@ -408,8 +417,9 @@ public class FlagWatcher {
                 }
 
                 String name = DisguiseConfig.isScoreboardNames() && ((PlayerDisguise) getDisguise()).hasScoreboardName() ?
-                    ((PlayerDisguise) getDisguise()).getScoreboardName().getPlayer() : ((PlayerDisguise) getDisguise()).getName();
+                    ((PlayerDisguise) getDisguise()).getScoreboardName().getEntry() : ((PlayerDisguise) getDisguise()).getName();
 
+                // TODO Migrate this over, ain't thread safe
                 ReflectionManager.setScore(player.getScoreboard(), name, (int) Math.ceil(health));
             }
         }
@@ -427,12 +437,9 @@ public class FlagWatcher {
                         if (newHealth > 0 && hasDied) {
                             hasDied = false;
 
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    DisguiseUtilities.sendSelfDisguise((Player) getDisguise().getEntity(), getDisguise());
-                                }
-                            }.runTaskLater(LibsDisguises.getInstance(), 2);
+                            LibsDisguises.getScheduler().entity(getDisguise().getEntity()).runDelayed(task -> {
+                                DisguiseUtilities.sendSelfDisguise((Player) getDisguise().getEntity(), getDisguise());
+                            }, 2);
                         } else if (newHealth <= 0 && !hasDied) {
                             hasDied = true;
                         }
@@ -496,28 +503,23 @@ public class FlagWatcher {
             return;
         }
 
-        if (!Bukkit.isPrimaryThread()) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    updateNameHeight();
-                }
-            }.runTask(LibsDisguises.getInstance());
+        if (!LibsDisguises.getScheduler().isOwnedByCurrentRegion(getDisguise().getEntity())) {
+            LibsDisguises.getScheduler().entity(getDisguise().getEntity()).run(this::updateNameHeight);
             return;
         }
 
         getDisguise().adjustTallSelfDisguiseScale();
 
-        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
+        for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             if (!DisguiseUtilities.isFancyHiddenTabs() && getDisguise().isPlayerDisguise() &&
-                LibsDisguises.getInstance().getSkinHandler().isSleeping(player, (PlayerDisguise) getDisguise())) {
+                LibsDisguises.getInstance().getSkinHandler().isSleeping(player.getEntity(), (PlayerDisguise) getDisguise())) {
                 continue;
             }
 
-            List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(getDisguise(), player, new String[0]);
+            List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(getDisguise(), player.getEntity(), new String[0]);
 
             for (PacketWrapper<?> packet : packets) {
-                PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
+                player.sendPacket(packet);
             }
         }
     }
@@ -874,7 +876,6 @@ public class FlagWatcher {
         }
 
         List<WatcherValue> list = new ArrayList<>();
-        List<EntityData<?>> realEntityData = null;
 
         for (MetaIndex index : dataValues) {
             if (index == null) {
@@ -892,20 +893,15 @@ public class FlagWatcher {
                 // If backup was not defined, then we did not need to ensure there was backup metadata
                 // In which case, we need to send the actual meta we expect
                 if (value == null) {
-                    // Ensure the list exists
-                    if (realEntityData == null) {
-                        realEntityData = ReflectionManager.getEntityWatcher(getDisguise().getEntity());
-                    }
-
                     // Find the metadata from the entity itself for that index
-                    EntityData<?> data = realEntityData.stream().filter(d -> d.getIndex() == index.getIndex()).findAny().orElse(null);
+                    Object lastAttemptedSend = lastMetadataSent.get(index.getIndex());
 
                     // If it does not exist, then it's either not valid, or it's not modified from vanilla
-                    if (data == null) {
+                    if (lastAttemptedSend == null) {
                         // Use the vanilla default
                         value = index.getDefault();
                     } else {
-                        value = data.getValue();
+                        value = lastAttemptedSend;
                         bukkitReadable = false;
                     }
                 }
@@ -919,20 +915,7 @@ public class FlagWatcher {
             if (isEntityAnimationsAdded() && DisguiseConfig.isMetaPacketsEnabled() &&
                 (index == MetaIndex.ENTITY_META || index == MetaIndex.LIVING_META)) {
 
-                byte b = (byte) index.getDefault();
-
-                if (realEntityData == null) {
-                    realEntityData = ReflectionManager.getEntityWatcher(getDisguise().getEntity());
-                }
-
-                for (EntityData d : realEntityData) {
-                    if (d.getIndex() != index.getIndex()) {
-                        continue;
-                    }
-
-                    b = (byte) d.getValue();
-                    break;
-                }
+                byte b = (byte) lastMetadataSent.getOrDefault(index.getIndex(), (byte) index.getDefault());
 
                 value = addEntityAnimations(index, (byte) value, b);
             }
@@ -944,16 +927,18 @@ public class FlagWatcher {
             return;
         }
 
-        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
-            if (getDisguise().getInternals().shouldAvoidSendingPackets(player)) {
+        IWrappedEntity entity = getDisguise().getInternals().getEntity();
+
+        for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
+            if (getDisguise().getInternals().shouldAvoidSendingPackets(player.getEntity())) {
                 continue;
             }
 
-            int entityId = player == getDisguise().getEntity() ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId();
+            int entityId = player == entity ? DisguiseAPI.getSelfDisguiseId() : entity.getEntityId();
 
             WrapperPlayServerEntityMetadata packet = ReflectionManager.getMetadataPacket(entityId, list);
 
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
+            player.sendPacket(packet);
         }
     }
 
@@ -1016,15 +1001,23 @@ public class FlagWatcher {
         }
 
         if (itemStack == null && getDisguise().getEntity() instanceof LivingEntity) {
+            if (!LibsDisguises.getScheduler().isOwnedByCurrentRegion(getDisguise().getEntity())) {
+                ItemStack item = itemStack;
+                LibsDisguises.getScheduler().entity(getDisguise().getEntity()).run(() -> sendItemStack(slot, item));
+                return;
+            }
+
             itemStack = DisguiseUtilities.getEquipment(slot, getDisguise().getEntity());
         }
 
-        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
+        IWrappedEntity entity = getDisguise().getInternals().getEntity();
+
+        for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             List<Equipment> list =
                 Collections.singletonList(new Equipment(DisguiseUtilities.getSlot(slot), DisguiseUtilities.fromBukkitItemStack(itemStack)));
-            WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(getDisguise().getEntity().getEntityId(), list);
+            WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(entity.getEntityId(), list);
 
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
+            player.sendPacket(packet);
         }
     }
 

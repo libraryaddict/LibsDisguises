@@ -34,8 +34,6 @@ public class DisguiseScaling {
          */
         boolean isScalePlayerToDisguise();
 
-        boolean isTallDisguise();
-
         double getUnscaledHeight();
 
         /**
@@ -49,9 +47,9 @@ public class DisguiseScaling {
          */
         double getPlayerScaleWithoutLibsDisguises();
 
-        double getPrevSelfDisguiseTallScaleMax();
-
         void setSelfDisguiseTallScaleMax(double newMax);
+
+        double getSelfDisguiseTallScaleMax();
     }
 
     @Getter
@@ -63,66 +61,39 @@ public class DisguiseScaling {
     private final DisguiseScalingInternals scalingInternals;
 
     public double getHeightOfDisguise() {
-        return getScalingInternals().getUnscaledHeight() * getScalingInternals().getDisguiseScale();
+        return scalingInternals.getUnscaledHeight() * scalingInternals.getDisguiseScale();
     }
 
     public void adjustScaling() {
-        // Get the scale, default to "not scaled" if not a player
-        double playerScaleWithoutLibsDisguises = getScalingInternals().getPlayerScaleWithoutLibsDisguises();
-        // This is the height of the disguise, along with the name height
-        double unscaledHeightOfDisguise = getScalingInternals().getUnscaledHeight();
-        double increasedNaturalHeightOfDisguise = getHeightOfDisguise();
+        double playerScaleWithoutLD = scalingInternals.getPlayerScaleWithoutLibsDisguises();
+        double unscaledHeight = scalingInternals.getUnscaledHeight();
+        double disguiseScale = scalingInternals.getDisguiseScale();
 
-        // Here we have the scale of the player itself, where they'd be scaled up or down to match the disguise's scale
-        // So a disguise that's 0.5 blocks high, will have the player be given something like 0.33 scale
-        double scalerToMakePlayerSeePerspective = 1;
+        double scalerToMakePlayerSeePerspective = 1.0;
 
-        if (getScalingInternals().isScalePlayerToDisguise()) {
-            scalerToMakePlayerSeePerspective =
-                getScaleToMakePlayerSeePerspective(increasedNaturalHeightOfDisguise, playerScaleWithoutLibsDisguises);
+        if (scalingInternals.isScalePlayerToDisguise()) {
+            scalerToMakePlayerSeePerspective = getHeightOfDisguise() / (playerHeight * playerScaleWithoutLD);
+            scalerToMakePlayerSeePerspective = Math.min(scalerToMakePlayerSeePerspective, DisguiseConfig.getScaleSelfDisguisesMax());
+            scalerToMakePlayerSeePerspective = Math.max(scalerToMakePlayerSeePerspective, DisguiseConfig.getScaleSelfDisguisesMin());
         }
 
-        // The max size the self disguise is allowed to be, as it'd hide the player's view
-        double prevTinyFigureScaleMax = getScalingInternals().getPrevSelfDisguiseTallScaleMax();
-        // Adjust so it's not blocking eyes. So smaller than normal
-        // And ofc, it's 1 if the disguise was not too tall to begin with
-        double newTinyFigureScaleMax =
-            getMaxTinyFigureHeight(getPlayerHeight() * playerScaleWithoutLibsDisguises * scalerToMakePlayerSeePerspective,
-                unscaledHeightOfDisguise);
-        // Clamp it so it's never bigger than before
-        newTinyFigureScaleMax =
-            Math.min(newTinyFigureScaleMax, Math.max(getScalingInternals().getDisguiseScale(), playerScaleWithoutLibsDisguises));
+        double finalPlayerHeight = playerHeight * playerScaleWithoutLD * scalerToMakePlayerSeePerspective;
 
-        getScalingInternals().setSelfDisguiseTallScaleMax(newTinyFigureScaleMax);
+        double newTinyFigureScaleMax = ((maxTinyFigureHeight / playerHeight) * finalPlayerHeight) / unscaledHeight;
+        newTinyFigureScaleMax = Math.min(newTinyFigureScaleMax, Math.max(disguiseScale, playerScaleWithoutLD));
 
-        if (!getScalingInternals().isScalingRelevant()) {
+        double prevTinyFigureScaleMax = scalingInternals.getSelfDisguiseTallScaleMax();
+        scalingInternals.setSelfDisguiseTallScaleMax(newTinyFigureScaleMax);
+
+        if (!scalingInternals.isScalingRelevant()) {
             return;
         }
 
-        // If scale has been changed
         if (prevTinyFigureScaleMax != newTinyFigureScaleMax) {
-            // If tiny figure can be scaled
-            if (getScalingInternals().isTinyFigureScaleable()) {
-                getScalingInternals().sendTinyFigureScale(newTinyFigureScaleMax);
-            } else {
-                getScalingInternals().sendTinyFigureScale(playerScaleWithoutLibsDisguises);
-            }
+            double scaleToSend = scalingInternals.isTinyFigureScaleable() ? newTinyFigureScaleMax : playerScaleWithoutLD;
+            scalingInternals.sendTinyFigureScale(scaleToSend);
         }
 
-        getScalingInternals().setPlayerScale(scalerToMakePlayerSeePerspective);
-    }
-
-    private static double getMaxTinyFigureHeight(double finalPlayerHeight, double naturalDisguiseHeight) {
-        return ((getMaxTinyFigureHeight() / getPlayerHeight()) * finalPlayerHeight) / naturalDisguiseHeight;
-    }
-
-    private static double getScaleToMakePlayerSeePerspective(double heightOfDisguise, double playerScaleWithoutLibsDisguises) {
-        double scalerToMakePlayerSeePerspective;
-        scalerToMakePlayerSeePerspective = heightOfDisguise / (getPlayerHeight() * playerScaleWithoutLibsDisguises);
-
-        // Clamp the scale to the min and max
-        scalerToMakePlayerSeePerspective = Math.min(scalerToMakePlayerSeePerspective, DisguiseConfig.getScaleSelfDisguisesMax());
-        scalerToMakePlayerSeePerspective = Math.max(scalerToMakePlayerSeePerspective, DisguiseConfig.getScaleSelfDisguisesMin());
-        return scalerToMakePlayerSeePerspective;
+        scalingInternals.setPlayerScale(scalerToMakePlayerSeePerspective);
     }
 }

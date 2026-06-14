@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
@@ -59,40 +60,42 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
 
             DisguiseUtilities.resetPluginTimer();
 
-            DisguiseAPI.disguiseEntity(p, entity, disguise);
-
             String disguiseName = disguise.getDisguiseName();
 
-            // Jeez, maybe I should redo my messages here
-            if (disguise.isDisguiseInUse()) {
-                if (disguise.isPlayerDisguise()) {
-                    if (entity instanceof Player) {
-                        LibsMsg.LISTEN_ENTITY_PLAYER_DISG_PLAYER.send(p, entityName, disguiseName);
+            LibsDisguises.getScheduler().entity(entity).execute(() -> {
+                DisguiseAPI.disguiseEntity(p, entity, disguise);
+
+                // Jeez, maybe I should redo my messages here
+                if (disguise.isDisguiseInUse()) {
+                    if (disguise.isPlayerDisguise()) {
+                        if (entity instanceof Player) {
+                            LibsMsg.LISTEN_ENTITY_PLAYER_DISG_PLAYER.send(p, entityName, disguiseName);
+                        } else {
+                            LibsMsg.LISTEN_ENTITY_ENTITY_DISG_PLAYER.send(p, entityName, disguiseName);
+                        }
                     } else {
-                        LibsMsg.LISTEN_ENTITY_ENTITY_DISG_PLAYER.send(p, entityName, disguiseName);
+                        if (entity instanceof Player) {
+                            LibsMsg.LISTEN_ENTITY_PLAYER_DISG_ENTITY.send(p, entityName, disguiseName);
+                        } else {
+                            LibsMsg.LISTEN_ENTITY_ENTITY_DISG_ENTITY.send(p, entityName, disguiseName);
+                        }
                     }
                 } else {
-                    if (entity instanceof Player) {
-                        LibsMsg.LISTEN_ENTITY_PLAYER_DISG_ENTITY.send(p, entityName, disguiseName);
+                    if (disguise.isPlayerDisguise()) {
+                        if (entity instanceof Player) {
+                            LibsMsg.LISTEN_ENTITY_PLAYER_DISG_PLAYER_FAIL.send(p, entityName, disguiseName);
+                        } else {
+                            LibsMsg.LISTEN_ENTITY_ENTITY_DISG_PLAYER_FAIL.send(p, entityName, disguiseName);
+                        }
                     } else {
-                        LibsMsg.LISTEN_ENTITY_ENTITY_DISG_ENTITY.send(p, entityName, disguiseName);
+                        if (entity instanceof Player) {
+                            LibsMsg.LISTEN_ENTITY_PLAYER_DISG_ENTITY_FAIL.send(p, entityName, disguiseName);
+                        } else {
+                            LibsMsg.LISTEN_ENTITY_ENTITY_DISG_ENTITY_FAIL.send(p, entityName, disguiseName);
+                        }
                     }
                 }
-            } else {
-                if (disguise.isPlayerDisguise()) {
-                    if (entity instanceof Player) {
-                        LibsMsg.LISTEN_ENTITY_PLAYER_DISG_PLAYER_FAIL.send(p, entityName, disguiseName);
-                    } else {
-                        LibsMsg.LISTEN_ENTITY_ENTITY_DISG_PLAYER_FAIL.send(p, entityName, disguiseName);
-                    }
-                } else {
-                    if (entity instanceof Player) {
-                        LibsMsg.LISTEN_ENTITY_PLAYER_DISG_ENTITY_FAIL.send(p, entityName, disguiseName);
-                    } else {
-                        LibsMsg.LISTEN_ENTITY_ENTITY_DISG_ENTITY_FAIL.send(p, entityName, disguiseName);
-                    }
-                }
-            }
+            });
         }
     }
 

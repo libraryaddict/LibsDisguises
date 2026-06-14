@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise;
 
+import com.cjcrafter.foliascheduler.TaskImplementation;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,8 +32,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -233,7 +232,7 @@ public class DisguiseConfig {
     private static Boolean autoUpdate;
     @Getter
     private static boolean notifyUpdate;
-    private static BukkitTask updaterTask;
+    private static TaskImplementation<Void> updaterTask;
     @Getter
     @Setter
     private static TallSelfDisguise tallSelfDisguisesVisibility;
@@ -433,12 +432,9 @@ public class DisguiseConfig {
         // Next update check will be in 30 minutes, or the timer - elapsed time. Whatever is greater
         timeSinceLast = Math.max(30 * 60 * 20, timer - timeSinceLast);
 
-        updaterTask = new BukkitRunnable() {
-            @Override
-            public void run() {
-                LibsDisguises.getInstance().getUpdateChecker().doAutoUpdateCheck();
-            }
-        }.runTaskTimerAsynchronously(LibsDisguises.getInstance(), timeSinceLast, timer);
+        updaterTask = LibsDisguises.getScheduler().async().runAtFixedRate(() -> {
+            LibsDisguises.getInstance().getUpdateChecker().doAutoUpdateCheck();
+        }, timeSinceLast, timer);
     }
 
     public static void setUsingReleaseBuilds(boolean useReleaseBuilds) {
@@ -545,10 +541,6 @@ public class DisguiseConfig {
     }
 
     public static Entry<DisguisePerm, Disguise> getCustomDisguise(String disguise) {
-        if (!Bukkit.isPrimaryThread()) {
-            throw new IllegalStateException("Custom Disguises should not be called async!");
-        }
-
         Entry<DisguisePerm, String> entry = getRawCustomDisguise(disguise);
 
         if (entry == null) {
@@ -566,10 +558,6 @@ public class DisguiseConfig {
     }
 
     public static Entry<DisguisePerm, Disguise> getCustomDisguise(Entity target, String disguise) throws Throwable {
-        if (!Bukkit.isPrimaryThread()) {
-            throw new IllegalStateException("Custom Disguises should not be called async!");
-        }
-
         Entry<DisguisePerm, String> entry = getRawCustomDisguise(disguise);
 
         if (entry == null) {
@@ -580,10 +568,6 @@ public class DisguiseConfig {
     }
 
     public static Entry<DisguisePerm, Disguise> getCustomDisguise(CommandSender invoker, Entity target, String disguise) throws Throwable {
-        if (!Bukkit.isPrimaryThread()) {
-            throw new IllegalStateException("Custom Disguises should not be called async!");
-        }
-
         Entry<DisguisePerm, String> entry = getRawCustomDisguise(disguise);
 
         if (entry == null) {
@@ -605,7 +589,7 @@ public class DisguiseConfig {
         for (DisguisePerm entry : customDisguises.keySet()) {
             String name = entry.toReadable();
 
-            if (!name.equalsIgnoreCase(disguise) && !name.replaceAll("_", "").equalsIgnoreCase(disguise)) {
+            if (!name.equalsIgnoreCase(disguise) && !name.replace("_", "").equalsIgnoreCase(disguise)) {
                 continue;
             }
 
@@ -618,7 +602,7 @@ public class DisguiseConfig {
         for (Entry<DisguisePerm, String> entry : customDisguises.entrySet()) {
             String name = entry.getKey().toReadable();
 
-            if (!name.equalsIgnoreCase(disguise) && !name.replaceAll("_", "").equalsIgnoreCase(disguise)) {
+            if (!name.equalsIgnoreCase(disguise) && !name.replace("_", "").equalsIgnoreCase(disguise)) {
                 continue;
             }
 
@@ -1136,10 +1120,6 @@ public class DisguiseConfig {
     }
 
     public static void addCustomDisguise(String disguiseName, String toParse) throws DisguiseParseException {
-        if (!Bukkit.isPrimaryThread()) {
-            throw new IllegalStateException("Custom Disguises should not be called async!");
-        }
-
         if (getRawCustomDisguise(toParse) != null) {
             throw new DisguiseParseException(LibsMsg.CUSTOM_DISGUISE_NAME_CONFLICT, disguiseName);
         }

@@ -8,6 +8,11 @@ plugins {
 }
 
 tasks {
+    test {
+        dependsOn("shadowJar")
+        dependsOn("compileShadedFiles")
+    }
+
     build {
         dependsOn("shadowJar")
         dependsOn("compileShadedFiles")
@@ -21,6 +26,7 @@ tasks {
 
     shadowJar {
         configurations = listOf(project.configurations.shadow.get())
+        relocate("com.cjcrafter.foliascheduler", "me.libraryaddict.disguise.utilities.foliascheduler")
         exclude("me/libraryaddict/disguise/utilities/compiler/**")
         exclude("META-INF/**")
     }
@@ -135,6 +141,7 @@ dependencies {
     shadow(project(":plugin")) {
         exclude("*")
     }
+    shadow(libs.foliascheduler)
     runtimeOnly(project(":plugin"))
     runtimeOnly(libs.com.retro.packetevents)
 
@@ -155,7 +162,7 @@ dependencies {
     implementation(rootProject.libs.io.papermc.paper.paper.api)
 
     // Dependencies that are used to compile, and will also be provided at test runtime
-    testImplementation(project(":shared"))
+    runtimeOnly(project(":shared"))
     testImplementation(project(":plugin"))
     testImplementation(project(":minimessage", "shadow"))
     testImplementation(libs.mockito)

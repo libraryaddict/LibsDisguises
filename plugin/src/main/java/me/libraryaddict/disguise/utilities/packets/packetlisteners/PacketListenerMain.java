@@ -1,9 +1,12 @@
 package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.SimplePacketListenerAbstract;
 import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnLivingEntity;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnPlayer;
 import lombok.RequiredArgsConstructor;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -11,7 +14,11 @@ import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
-import org.bukkit.entity.Player;
+import me.libraryaddict.disguise.utilities.wrapped.BundleContext;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
+import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
+
+import java.util.UUID;
 
 @RequiredArgsConstructor
 public class PacketListenerMain extends SimplePacketListenerAbstract {
@@ -28,13 +35,17 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
             return;
         }
 
-        if (!listenedPackets[event.getPacketType().ordinal()]) {
+        final IWrappedPlayer observer = WrappedManager.getWrappedPlayer(event.getPlayer());
+
+        if (observer == null) {
             return;
         }
 
-        final Player observer = event.getPlayer();
+        if (!listenedPackets[event.getPacketType().ordinal()]) {
+            if (event.getPacketType() == PacketType.Play.Server.BUNDLE) {
+                observer.getBundleContext().onBundle();
+            }
 
-        if (observer == null) {
             return;
         }
 
@@ -47,7 +58,25 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
             throw new IllegalStateException("Entity id should not be null on " + wrapper.getClass());
         }
 
-        final Disguise disguise = DisguiseUtilities.getDisguise(observer, entityId);
+        boolean spawnMetadata = false;
+        BundleContext ctx = observer.getBundleContext();
+
+        if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA && entityId == ctx.getPendingSpawnEntityId()) {
+            ctx.clearPendingSpawnMetadata();
+            spawnMetadata = true;
+        }
+
+        UUID uuid = null;
+
+        if (wrapper instanceof WrapperPlayServerSpawnEntity) {
+            uuid = ((WrapperPlayServerSpawnEntity) wrapper).getUUID().orElse(null);
+        } else if (wrapper instanceof WrapperPlayServerSpawnLivingEntity) {
+            uuid = ((WrapperPlayServerSpawnLivingEntity) wrapper).getEntityUUID();
+        } else if (wrapper instanceof WrapperPlayServerSpawnPlayer) {
+            uuid = ((WrapperPlayServerSpawnPlayer) wrapper).getUUID();
+        }
+
+        final Disguise disguise = DisguiseUtilities.getDisguise(observer.getEntity(), uuid, entityId);
 
         // If not disguised
         if (disguise == null) {
@@ -69,20 +98,23 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
             return;
         }
 
-        if (conflictingTypes[event.getPacketType().ordinal()] && disguise.getInternals().shouldAvoidSendingPackets(observer)) {
+        if (conflictingTypes[event.getPacketType().ordinal()] &&
+            disguise.getInternals().shouldAvoidSendingPackets(observer.getUniqueId())) {
             // This array is always an entity rewrite packet type
-            event.setCancelled(true);
+            if (event.getPacketType() != PacketType.Play.Server.UPDATE_ATTRIBUTES || observer.getEntityId() != entityId) {
+                event.setCancelled(true);
+            }
             return;
         }
 
-        LibsPackets<?> packets;
+        LibsPackets<?> packets = new LibsPackets(entityId, wrapper, disguise);
+        packets.setSpawnMetadata(spawnMetadata);
 
         try {
-            packets =
-                PacketsManager.getPacketsManager().getPacketsHandler().transformPacket(wrapper, disguise, observer, disguise.getEntity());
+            packets = PacketsManager.getPacketsManager().getPacketsHandler().transformPacket(packets, observer);
 
             if (disguise.isPlayerDisguise()) {
-                LibsDisguises.getInstance().getSkinHandler().handlePackets(observer, (PlayerDisguise) disguise, packets);
+                LibsDisguises.getInstance().getSkinHandler().handlePackets(observer.getEntity(), (PlayerDisguise) disguise, packets);
             }
         } catch (Throwable ex) {
             ex.printStackTrace();
@@ -104,7 +136,7 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
                 continue;
             }
 
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilently(observer, packet);
+            observer.sendPacketSilently(packet);
         }
 
         packets.sendDelayed(observer);
@@ -112,7 +144,7 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
         // If packet is spawn
         if (spawnPackets[event.getPacketType().ordinal()]) {
             // Add to 'is currently seeing'
-            disguise.getInternals().addSeen(observer, true);
+            disguise.getInternals().addSeen(observer.getUniqueId(), true);
         }
     }
 }

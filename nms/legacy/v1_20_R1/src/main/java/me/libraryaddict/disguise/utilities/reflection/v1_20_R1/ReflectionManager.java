@@ -100,13 +100,6 @@ public class ReflectionManager extends ReflectionReusedNms {
                 entity = entityType.create(world);
             }
 
-            if (entity == null) {
-                return null;
-            }
-
-            // Workaround for paper being 2 smart 4 me
-            entity.setPos(1.0, 1.0, 1.0);
-            entity.setPos(0.0, 0.0, 0.0);
             return entity;
         }
 
@@ -130,13 +123,6 @@ public class ReflectionManager extends ReflectionReusedNms {
         }
 
         return (ServerEntity) trackedEntityField.get(trackedEntity);
-    }
-
-    @Override
-    public float[] getSize(Entity entity) {
-        net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
-        EntityDimensions dimensions = nmsEntity.getDimensions(net.minecraft.world.entity.Pose.STANDING);
-        return new float[]{dimensions.width, nmsEntity.getEyeHeight()};
     }
 
     @Override
@@ -194,8 +180,8 @@ public class ReflectionManager extends ReflectionReusedNms {
 
     @SneakyThrows
     @Override
-    public ByteBuf getDataWatcherValues(Entity entity) {
-        SynchedEntityData watcher = ((CraftEntity) entity).getHandle().getEntityData();
+    public ByteBuf getDataWatcherValues(Object entity) {
+        SynchedEntityData watcher = ((net.minecraft.world.entity.Entity) entity).getEntityData();
         Int2ObjectMap<SynchedEntityData.DataItem<?>> dataItems = (Int2ObjectMap<SynchedEntityData.DataItem<?>>) dataItemsField.get(watcher);
 
         ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer();

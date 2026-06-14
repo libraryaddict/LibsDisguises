@@ -10,10 +10,10 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 
 public class PacketHandlerHeadLook implements IPacketHandler<WrapperPlayServerEntityHeadLook> {
     /**
@@ -28,7 +28,8 @@ public class PacketHandlerHeadLook implements IPacketHandler<WrapperPlayServerEn
     }
 
     @Override
-    public void handle(Disguise disguise, LibsPackets<WrapperPlayServerEntityHeadLook> packets, Player observer, Entity entity) {
+    public void handle(Disguise disguise, LibsPackets<WrapperPlayServerEntityHeadLook> packets, IWrappedPlayer observer,
+                       IWrappedEntity entity) {
         if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
             packets.clear();
             return;
@@ -52,7 +53,7 @@ public class PacketHandlerHeadLook implements IPacketHandler<WrapperPlayServerEn
 
         Location loc = entity.getLocation();
 
-        DisguiseType entityType = DisguiseType.getType(entity);
+        DisguiseType entityType = DisguiseType.getType(entity.getType());
 
         float pitch = 0;
         float yaw = 0;
@@ -120,7 +121,7 @@ public class PacketHandlerHeadLook implements IPacketHandler<WrapperPlayServerEn
         packets.clear();
 
         for (int i = 0; i < (riding ? 2 : 1); i++) {
-            int id = i == 0 ? entity.getEntityId() : DisguiseAPI.getEntityAttachmentId();
+            int id = i == 0 ? packets.getEntityId() : DisguiseAPI.getEntityAttachmentId();
 
             WrapperPlayServerEntityHeadLook yawPacket = new WrapperPlayServerEntityHeadLook(id, yaw);
             WrapperPlayServerEntityRelativeMoveAndRotation pitchYawPacket =

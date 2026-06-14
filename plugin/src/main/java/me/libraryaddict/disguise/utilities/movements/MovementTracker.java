@@ -7,25 +7,25 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMoveAndRotation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
-import org.bukkit.entity.Player;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 
 /**
  * Receives updates on movements
  */
 public interface MovementTracker {
-    void onTeleport(Player receiver, WrapperPlayServerEntityTeleport teleport);
+    void onTeleport(IWrappedPlayer receiver, WrapperPlayServerEntityTeleport teleport);
 
-    void onSync(Player receiver, WrapperPlayServerEntityPositionSync sync);
+    void onSync(IWrappedPlayer receiver, WrapperPlayServerEntityPositionSync sync);
 
-    void onRelativeMove(Player receiver, WrapperPlayServerEntityRelativeMove relativeMove);
+    void onRelativeMove(IWrappedPlayer receiver, WrapperPlayServerEntityRelativeMove relativeMove);
 
-    void onRelativeMoveLook(Player receiver, WrapperPlayServerEntityRelativeMoveAndRotation relativeMoveAndRotation);
+    void onRelativeMoveLook(IWrappedPlayer receiver, WrapperPlayServerEntityRelativeMoveAndRotation relativeMoveAndRotation);
 
-    void onRotation(Player receiver, WrapperPlayServerEntityRotation rotation);
+    void onRotation(IWrappedPlayer receiver, WrapperPlayServerEntityRotation rotation);
 
-    void onLook(Player receiver, WrapperPlayServerEntityHeadLook look);
+    void onLook(IWrappedPlayer receiver, WrapperPlayServerEntityHeadLook look);
 
-    void onSpawn(Player receiver, Location location);
+    void onSpawn(IWrappedPlayer receiver, Location location);
 
     /**
      * Invoked when the disguise is being deconstructed
@@ -33,7 +33,7 @@ public interface MovementTracker {
      * @param receiver          The player who is receiving the destroy entity packet
      * @param fromDestroyPacket If this was invoked from a packet, otherwise this was called via plugin operation
      */
-    void onDespawn(Player receiver, boolean fromDestroyPacket);
+    void onDespawn(IWrappedPlayer receiver, boolean fromDestroyPacket);
 
     /**
      * Called when the tracker is being started

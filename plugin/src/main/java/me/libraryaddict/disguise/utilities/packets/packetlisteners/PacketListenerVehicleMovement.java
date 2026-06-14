@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.SimplePacketListenerAbstract;
 import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
@@ -14,9 +13,10 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetPassengers;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
+import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -53,18 +53,18 @@ public class PacketListenerVehicleMovement extends SimplePacketListenerAbstract 
         trackerMap.remove(event.getPlayer().getUniqueId());
     }
 
-    private void refreshPosition(Player observer, int entityId) {
+    private void refreshPosition(IWrappedPlayer observer, int entityId) {
         refreshPosition(observer, entityId, null);
     }
 
-    private void refreshPosition(Player observer, int entityId, PacketWrapper sentPacket) {
-        Disguise disguise = DisguiseUtilities.getDisguise(observer, entityId);
+    private void refreshPosition(IWrappedPlayer observer, int entityId, PacketWrapper sentPacket) {
+        Disguise disguise = DisguiseUtilities.getDisguise(observer.getEntity(), entityId);
 
         if (disguise == null || disguise.getArmorstandIds().length == 0) {
             return;
         }
 
-        Entity entity = disguise.getEntity();
+        IWrappedEntity entity = WrappedManager.getWrappedEntity(disguise.getEntity());
 
         if (entity == null || !entity.isValid()) {
             return;
@@ -78,14 +78,15 @@ public class PacketListenerVehicleMovement extends SimplePacketListenerAbstract 
                     loc.getPitch()), true);
         }
 
-        List<PacketWrapper> wrappers = DisguiseUtilities.adjustNamePositions(disguise, Collections.singletonList(sentPacket));
+        List<PacketWrapper> wrappers =
+            DisguiseUtilities.adjustNamePositions(disguise, Collections.singletonList(sentPacket), observer.getUniqueId());
 
         if (wrappers == null) {
             return;
         }
 
         for (PacketWrapper wrapper : wrappers) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilently(observer, wrapper);
+            observer.sendPacketSilently(wrapper);
         }
     }
 
@@ -112,7 +113,8 @@ public class PacketListenerVehicleMovement extends SimplePacketListenerAbstract 
         }
     }
 
-    private void updatePassengersRecursive(int depth, Player player, PlayerTracker tracker, int[] passengers, PacketWrapper wrapper) {
+    private void updatePassengersRecursive(int depth, IWrappedPlayer player, PlayerTracker tracker, int[] passengers,
+                                           PacketWrapper wrapper) {
         // Basic sanity check
         if (depth > 15) {
             return;
@@ -133,7 +135,7 @@ public class PacketListenerVehicleMovement extends SimplePacketListenerAbstract 
 
     @Override
     public void onPacketPlaySend(PacketPlaySendEvent event) {
-        Player player = event.getPlayer();
+        IWrappedPlayer player = WrappedManager.getWrappedPlayer(event.getPlayer());
 
         if (player == null) {
             return;

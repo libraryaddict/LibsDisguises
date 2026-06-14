@@ -69,7 +69,7 @@ public class MiscDisguise extends TargetedDisguise {
 
     @Override
     public double getHeight() {
-        DisguiseValues values = DisguiseValues.getDisguiseValues(getType());
+        DisguiseValues values = getType().getEntityInfo();
 
         if (values == null || values.getAdultBox() == null) {
             return 0;
@@ -79,7 +79,7 @@ public class MiscDisguise extends TargetedDisguise {
     }
 
     @Override
-    public double getDisguiseScale() {
+    double getDisguiseScale() {
         if (getWatcher() instanceof DisplayWatcher) {
             return ((DisplayWatcher) getWatcher()).getScale().y;
         }

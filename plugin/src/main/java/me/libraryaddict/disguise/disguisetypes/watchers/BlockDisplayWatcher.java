@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMove;
@@ -14,9 +13,10 @@ import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodDescription;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodMappedAs;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Player;
 import org.joml.Vector3f;
 
 public class BlockDisplayWatcher extends DisplayWatcher implements GridLockedWatcher {
@@ -150,15 +150,17 @@ public class BlockDisplayWatcher extends DisplayWatcher implements GridLockedWat
         double y = conRel(loc.getY(), centerY);
         double z = conRel(loc.getZ(), centerZ);
 
-        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
-            int entityId = getDisguise().getEntity() == player ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId();
+        IWrappedEntity entity = getDisguise().getInternals().getEntity();
+
+        for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
+            int entityId = entity == player ? DisguiseAPI.getSelfDisguiseId() : entity.getEntityId();
 
             WrapperPlayServerEntityRelativeMove relMov = new WrapperPlayServerEntityRelativeMove(entityId, x, y, z, true);
 
             if (isGridLocked()) {
-                PacketEvents.getAPI().getPlayerManager().sendPacket(player, relMov);
+                player.sendPacket(relMov);
             } else {
-                PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, relMov);
+                player.sendPacketSilently(relMov);
             }
         }
     }

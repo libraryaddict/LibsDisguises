@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.scoreboard.DisguiseScoreboardTeam;
 
 public class PacketListenerScoreboardTeam extends SimplePacketListenerAbstract {
     @Override
@@ -26,7 +27,7 @@ public class PacketListenerScoreboardTeam extends SimplePacketListenerAbstract {
             return;
         }
 
-        DisguiseUtilities.DScoreTeam team = DisguiseUtilities.getTeams().get(name);
+        DisguiseScoreboardTeam team = DisguiseUtilities.getScoreboardManager().getTeams().get(name) ;
 
         if (team == null) {
             return;

@@ -6,7 +6,6 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.updates.PacketEventsUpdater;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -73,45 +72,36 @@ public class LDUpdatePacketEvents implements LDCommand {
             branch == UpdatesBranch.SNAPSHOTS ? "latest snapshot build for " : "") + "PacketEvents..");
         updateInProgress.set(true);
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                try {
-                    PacketEventsUpdater updater = new PacketEventsUpdater();
-                    boolean outcome;
+        LibsDisguises.getScheduler().async().runNow(() -> {
+            try {
+                PacketEventsUpdater updater = new PacketEventsUpdater();
+                boolean outcome;
 
-                    if (branch == UpdatesBranch.SNAPSHOTS) {
-                        outcome = updater.doSnapshotUpdate();
-                    } else if (branch == UpdatesBranch.RELEASES) {
-                        outcome = updater.doReleaseUpdate(null);
-                    } else {
-                        outcome = updater.doUpdate();
-                    }
-
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            if (outcome) {
-                                sendMessage(sender, "Packetevents download success! Restart server to finish update!");
-                            } else {
-                                sendMessage(sender, "Packetevents update failed, you may need to update PacketEvents");
-                            }
-                        }
-                    }.runTask(LibsDisguises.getInstance());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            sendMessage(sender, "Packetevents update failed, " + ex.getMessage());
-                        }
-                    }.runTask(LibsDisguises.getInstance());
-                } finally {
-                    updateInProgress.set(false);
+                if (branch == UpdatesBranch.SNAPSHOTS) {
+                    outcome = updater.doSnapshotUpdate();
+                } else if (branch == UpdatesBranch.RELEASES) {
+                    outcome = updater.doReleaseUpdate(null);
+                } else {
+                    outcome = updater.doUpdate();
                 }
+
+                LibsDisguises.getScheduler().global().run(() -> {
+                    if (outcome) {
+                        sendMessage(sender, "Packetevents download success! Restart server to finish update!");
+                    } else {
+                        sendMessage(sender, "Packetevents update failed, you may need to update PacketEvents");
+                    }
+                });
+            } catch (Exception ex) {
+                ex.printStackTrace();
+
+                LibsDisguises.getScheduler().global().run(() -> {
+                    sendMessage(sender, "Packetevents update failed, " + ex.getMessage());
+                });
+            } finally {
+                updateInProgress.set(false);
             }
-        }.runTaskAsynchronously(LibsDisguises.getInstance());
+        });
     }
 
     @Override

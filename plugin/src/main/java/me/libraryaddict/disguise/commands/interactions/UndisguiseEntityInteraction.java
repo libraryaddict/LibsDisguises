@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.interactions;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.LibsEntityInteract;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
@@ -19,7 +20,7 @@ public class UndisguiseEntityInteraction implements LibsEntityInteract {
         }
 
         if (DisguiseAPI.isDisguised(entity)) {
-            DisguiseAPI.undisguiseToAll(p, entity);
+            LibsDisguises.getScheduler().entity(entity).execute(() -> DisguiseAPI.undisguiseToAll(p, entity));
 
             if (entity instanceof Player) {
                 LibsMsg.LISTEN_UNDISG_PLAYER.send(p, entityName);

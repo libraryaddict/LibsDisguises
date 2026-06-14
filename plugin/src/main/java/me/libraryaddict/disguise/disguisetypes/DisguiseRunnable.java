@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import com.cjcrafter.foliascheduler.TaskImplementation;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMove;
@@ -18,22 +19,19 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSound;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
-import org.bukkit.Bukkit;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class DisguiseRunnable {
-    private static final List<DisguiseRunnable> runnables = new ArrayList<>();
+    private TaskImplementation<Void> task;
     @Getter
     private boolean inUse;
     private int blockX, blockY, blockZ, facing;
@@ -96,7 +94,7 @@ public class DisguiseRunnable {
     }
 
     public void resetAmbientSoundTime() {
-        DisguiseValues values = DisguiseValues.getDisguiseValues(disguise.getType());
+        DisguiseValues values = disguise.getType().getEntityInfo();
 
         if (values == null) {
             return;
@@ -146,21 +144,20 @@ public class DisguiseRunnable {
         }
 
         Vector disgLoc = disguise.getEntity().getLocation().toVector();
-        List<Player> toPlay = DisguiseUtilities.getTrackingPlayers(disguise);
+        List<IWrappedPlayer> toPlay = DisguiseUtilities.getTrackingPlayers(disguise);
 
         if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible() && disguise.isHearSelfDisguise()) {
-            toPlay.add((Player) disguise.getEntity());
+            toPlay.add((IWrappedPlayer) disguise.getInternals().getEntity());
         }
 
-        for (Player player : toPlay) {
+        for (IWrappedPlayer player : toPlay) {
             double dist = player.getLocation().toVector().distance(disgLoc);
 
             if (dist > volumeSquared) {
                 continue;
             }
 
-            player.playSound(disguise.getEntity().getLocation(),
-                NmsVersion.v1_16.isSupported() ? idleSound.toString() : idleSound.getKey(),
+            player.playSound(disguise.getEntity().getLocation(), NmsVersion.v1_16.isSupported() ? idleSound.toString() : idleSound.getKey(),
                 disguise.getEffectiveSoundCategory().getBukkitSoundCategory(disguise), volume, pitch);
         }
     }
@@ -229,8 +226,9 @@ public class DisguiseRunnable {
         return false;
     }
 
-    public void run(List<World> validWorlds) {
-        if (!disguise.isDisguiseInUse() || disguise.getEntity() == null || !validWorlds.contains(disguise.getEntity().getWorld())) {
+    public void run() {
+        if (!disguise.isDisguiseInUse() || disguise.getEntity() == null || !disguise.getEntity().getWorld()
+            .isChunkLoaded(disguise.getEntity().getLocation().getBlockX() >> 4, disguise.getEntity().getLocation().getBlockZ() >> 4)) {
             disguise.stopDisguise();
 
             // If still somehow not cancelled
@@ -285,18 +283,19 @@ public class DisguiseRunnable {
     }
 
     private void doExpMovements() {
-        for (Player player : DisguiseUtilities.getTrackingPlayers(disguise)) {
+        for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(disguise)) {
             WrapperPlayServerEntityRelativeMove packet;
+            IWrappedEntity entity = disguise.getInternals().getEntity();
 
-            if (disguise.getEntity() != player) {
-                packet = new WrapperPlayServerEntityRelativeMove(disguise.getEntity().getEntityId(), 0, 0, 0, true);
+            if (entity != player) {
+                packet = new WrapperPlayServerEntityRelativeMove(entity.getEntityId(), 0, 0, 0, true);
             } else if (disguise.isSelfDisguiseVisible() && disguise.getEntity() instanceof Player) {
                 packet = new WrapperPlayServerEntityRelativeMove(DisguiseAPI.getSelfDisguiseId(), 0, 0, 0, true);
             } else {
                 continue;
             }
 
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
+            player.sendPacketSilently(packet);
         }
     }
 
@@ -348,11 +347,11 @@ public class DisguiseRunnable {
 
         try {
 
-            for (Player player : DisguiseUtilities.getTrackingPlayers(disguise)) {
+            for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(disguise)) {
                 int entityId = entity.getEntityId();
 
                 // If the viewing player is the disguised player
-                if (entity == player) {
+                if (entity == player.getEntity()) {
                     // If not using self disguise, continue
                     if (!disguise.isSelfDisguiseVisible()) {
                         continue;
@@ -361,16 +360,16 @@ public class DisguiseRunnable {
                     // Write self disguise ID
                     entityId = DisguiseAPI.getSelfDisguiseId();
                 } else if (lookPacket != null) {
-                    PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player,
+                    player.sendPacketSilently(
                         new WrapperPlayServerEntityRotation(lookPacket.getEntityId(), lookPacket.getYaw(), lookPacket.getPitch(),
                             lookPacket.isOnGround()));
                 }
 
                 // The number isn't me trying to be funny
                 WrapperPlayServerEntityVelocity velocity = new WrapperPlayServerEntityVelocity(entityId,
-                    new Vector3d(vector.getX(), (vectorY * ReflectionManager.getPing(player)) * 0.069D, vector.getZ()));
+                    new Vector3d(vector.getX(), (vectorY * ReflectionManager.getPing(player.getEntity())) * 0.069D, vector.getZ()));
 
-                PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, velocity);
+                player.sendPacketSilently(velocity);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -384,47 +383,27 @@ public class DisguiseRunnable {
 
         inUse = true;
 
-        synchronized (runnables) {
-            runnables.add(this);
+        if (disguise.getEntity() == null) {
+            return;
         }
+
+        task = LibsDisguises.getScheduler().entity(disguise.getEntity()).runAtFixedRate(this::run, 1, 1);
     }
 
     public void stop() {
-        synchronized (runnables) {
-            if (!isInUse()) {
-                throw new IllegalStateException("Runnable not in use");
-            }
+        if (!isInUse()) {
+            throw new IllegalStateException("Runnable not in use");
+        }
 
-            inUse = false;
+        inUse = false;
+
+        if (task != null) {
+            task.cancel();
+            task = null;
         }
     }
 
     public static void startRunnable() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                synchronized (runnables) {
-                    Iterator<DisguiseRunnable> iterator = runnables.iterator();
-
-                    if (!iterator.hasNext()) {
-                        return;
-                    }
-
-                    List<World> worlds = Bukkit.getWorlds();
-
-                    while (iterator.hasNext()) {
-                        DisguiseRunnable runnable = iterator.next();
-
-                        if (!runnable.inUse) {
-                            iterator.remove();
-                            continue;
-                        }
-
-                        runnable.run(worlds);
-                    }
-                }
-            }
-        }.runTaskTimer(LibsDisguises.getInstance(), 1, 1);
     }
 }
 

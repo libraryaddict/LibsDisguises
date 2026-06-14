@@ -16,10 +16,10 @@ public class DisguiseScalingTest {
     static class DisguiseScalingImpl implements DisguiseScaling.DisguiseScalingInternals {
         // The Double's are null by default to represent that the the plugin never tried to send the scaling
         // Exposed for testing, the scale that the self disguise will use
-        private Double sentTinyFigureScale = null;
+        private double sentTinyFigureScale = 1;
         // Exposed for testing, the scale that the disguised player will use to meet that viewpoint
-        private Double sentPlayerScale = null;
-        private Double selfDisguiseTallScaleMax = null;
+        private double sentPlayerScale = 1;
+        private double selfDisguiseTallScaleMax = 1;
         private boolean tinyFigureScaleable = true;
         private boolean scalePlayerToDisguise = true;
         // The height of the observed disguise by other after scaling applied
@@ -49,11 +49,6 @@ public class DisguiseScalingTest {
         @Override
         public boolean isScalingRelevant() {
             return true;
-        }
-
-        @Override
-        public boolean isTallDisguise() {
-            return getUnscaledHeight() >= DisguiseScaling.getTallDisguiseAtHeight();
         }
 
         DisguiseScalingImpl withPlayerScaling(boolean playerScaling) {
@@ -128,9 +123,8 @@ public class DisguiseScalingTest {
         // If we're testing this
         if (results.getTinyFigureScale() == null || !Double.isNaN(results.getTinyFigureScale())) {
             // Ensure that the computed tiny figure scale matches expected
-            Assertions.assertEquals(results.getTinyFigureScale(), trim(
-                impl.sentTinyFigureScale != null ? Math.min(impl.sentTinyFigureScale, impl.selfDisguiseTallScaleMax) :
-                    impl.sentTinyFigureScale), "Mismatch when comparing tiny figure scale");
+            Assertions.assertEquals(results.getTinyFigureScale(), trim(Math.min(impl.sentTinyFigureScale, impl.selfDisguiseTallScaleMax)),
+                "Mismatch when comparing tiny figure scale");
         }
 
         // If we're testing this

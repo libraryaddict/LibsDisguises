@@ -15,11 +15,13 @@ import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListene
 import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerInventory;
 import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerMain;
 import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerScoreboardTeam;
+import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerScoreboardTracker;
 import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerSounds;
 import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerTabList;
 import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerVehicleMovement;
 import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerViewSelfDisguise;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.scoreboard.packetevents.PacketEventsScoreboardManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -38,6 +40,7 @@ public class PacketsManager {
     private boolean soundsListenerEnabled;
     private PacketListenerViewSelfDisguise viewDisguisesListener;
     private PacketListenerVehicleMovement vehicleMovement;
+    private PacketListenerScoreboardTeam scoreboardTeamListener;
     @Getter
     private boolean viewDisguisesListenerEnabled;
     @Getter
@@ -214,8 +217,14 @@ public class PacketsManager {
         PacketEvents.getAPI().getEventManager().registerListener(mainListener);
         PacketEvents.getAPI().getEventManager().registerListener(new PacketListenerEntityDestroy());
 
-        if (NmsVersion.v1_13.isSupported() && DisguiseConfig.getPlayerNameType().isScoreboardPacketListenerNeeded()) {
-            PacketEvents.getAPI().getEventManager().registerListener(new PacketListenerScoreboardTeam());
+        boolean modifyTeamPacket = NmsVersion.v1_13.isSupported() && DisguiseConfig.getPlayerNameType().isScoreboardPacketListenerNeeded();
+
+        if (modifyTeamPacket && scoreboardTeamListener == null) {
+            scoreboardTeamListener = new PacketListenerScoreboardTeam();
+            PacketEvents.getAPI().getEventManager().registerListener(scoreboardTeamListener);
+        } else if (!modifyTeamPacket && scoreboardTeamListener != null) {
+            PacketEvents.getAPI().getEventManager().unregisterListener(scoreboardTeamListener);
+            scoreboardTeamListener = null;
         }
 
         if (vehicleMovement == null && DisguiseConfig.getPlayerNameType().isFakeEntity()) {
@@ -224,6 +233,11 @@ public class PacketsManager {
             Bukkit.getPluginManager().registerEvents(vehicleMovement, LibsDisguises.getInstance());
             PacketEvents.getAPI().getEventManager().registerListener(vehicleMovement);
         }
+    }
+
+    public void registerScoreboardTeamListener(PacketEventsScoreboardManager scoreboardManager) {
+        // Stub used here to try get some consistency
+        PacketEvents.getAPI().getEventManager().registerListener(new PacketListenerScoreboardTracker(scoreboardManager));
     }
 
     /**

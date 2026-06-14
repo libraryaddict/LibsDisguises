@@ -7,6 +7,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import io.netty.buffer.ByteBuf;
+import me.libraryaddict.disguise.utilities.DisguiseValues;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -41,11 +42,7 @@ public abstract class ReflectionManagerAbstract {
         return createEntityInstance(entityName);
     }
 
-    public abstract int getAmbientSoundInterval(Entity entity);
-
     protected abstract Object createEntityInstance(String entityName);
-
-    public abstract double[] getBoundingBox(Entity entity);
 
     public abstract Object getPlayerFromPlayerConnection(Object nmsEntity);
 
@@ -61,17 +58,21 @@ public abstract class ReflectionManagerAbstract {
 
     public abstract double getPing(Player player);
 
-    public abstract float[] getSize(Entity entity);
-
     public abstract MinecraftSessionService getMinecraftSessionService();
 
     public abstract Float getSoundModifier(Object entity);
+
+    public abstract DisguiseValues constructValues(Object nmsEntity);
 
     public abstract void injectCallback(String playername, ProfileLookupCallback callback);
 
     public abstract void setBoundingBox(Entity entity, double x, double y, double z);
 
-    public abstract ByteBuf getDataWatcherValues(Entity entity);
+    public final ByteBuf getDataWatcherValues(Entity entity) {
+        return getDataWatcherValues(getNmsEntity(entity));
+    }
+
+    public abstract ByteBuf getDataWatcherValues(Object entity);
 
     public abstract Material getMaterial(String name);
 

@@ -5,8 +5,8 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsEntityInteract;
+import me.libraryaddict.disguise.utilities.scoreboard.DisguiseScoreboardTeam;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,11 +43,11 @@ public class LDDebugPlayer implements LDCommand {
                 return;
             }
 
-            DisguiseUtilities.DScoreTeam name = disg.getScoreboardName();
+            DisguiseScoreboardTeam name = disg.getScoreboardName();
 
             player.sendMessage(ChatColor.RED + String.format("Prefix: '%s', Suffix: '%s', Disguise Name: '%s', Team '%s'",
                 name.getPrefix().replace(ChatColor.COLOR_CHAR, '&'), name.getSuffix().replace(ChatColor.COLOR_CHAR, '&'),
-                name.getPlayer().replace(ChatColor.COLOR_CHAR, '&'), name.getTeamName()));
+                name.getEntry().replace(ChatColor.COLOR_CHAR, '&'), name.getTeamName()));
 
             if (disg.getInternals().getNameDisplayType().isFakeEntity()) {
                 player.sendMessage(ChatColor.AQUA + "Oh! You're using " + disg.getInternals().getNameDisplayType() +
@@ -69,7 +69,7 @@ public class LDDebugPlayer implements LDCommand {
             }
 
             player.sendMessage(ChatColor.RED + String.format("Prefix Matches: %s, Suffix Matches: %s, In Team: %s, Name Visibility: %s",
-                team.getPrefix().equals(name.getPrefix()), team.getSuffix().equals(name.getSuffix()), team.hasEntry(name.getPlayer()),
+                team.getPrefix().equals(name.getPrefix()), team.getSuffix().equals(name.getSuffix()), team.hasEntry(name.getEntry()),
                 team.getOption(Team.Option.NAME_TAG_VISIBILITY)));
         }
     }

@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.attribute.Attributes;
 import com.github.retrooper.packetevents.protocol.particle.Particle;
 import com.github.retrooper.packetevents.protocol.particle.data.ParticleColorData;
@@ -20,9 +19,9 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.MethodGroupTyp
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsedBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import org.bukkit.Color;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
@@ -87,41 +86,42 @@ public class LivingWatcher extends FlagWatcher {
         }
 
         updateNameHeight();
-        double scaleToSend;
 
-        if (getScale() != null) {
-            scaleToSend = getScale();
-        } else {
-            scaleToSend = DisguiseUtilities.getEntityScaleWithoutLibsDisguises(getDisguise().getEntity());
-        }
+        IWrappedEntity entity = getDisguise().getInternals().getEntity();
 
-        Entity entity = getDisguise().getEntity();
-
-        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
-            if (getDisguise().getInternals().shouldAvoidSendingPackets(player)) {
+        for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
+            if (getDisguise().getInternals().shouldAvoidSendingPackets(player.getEntity())) {
                 continue;
+            }
+
+            double scaleToSend;
+
+            if (getScale() != null) {
+                scaleToSend = getScale();
+            } else {
+                Double lastScale = getDisguise().getInternals().getLastTransmittedScale(player.getUniqueId());
+                scaleToSend = lastScale == null ? 1D : lastScale;
             }
 
             WrapperPlayServerUpdateAttributes packet = getWrapperPlayServerUpdateAttributes(player, entity, scaleToSend);
 
             if (player == getDisguise().getEntity()) {
-                PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
+                player.sendPacketSilently(packet);
             } else {
-                PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
+                player.sendPacket(packet);
             }
         }
     }
 
-    private @NotNull WrapperPlayServerUpdateAttributes getWrapperPlayServerUpdateAttributes(Player player, Entity entity,
+    private @NotNull WrapperPlayServerUpdateAttributes getWrapperPlayServerUpdateAttributes(IWrappedPlayer player, IWrappedEntity entity,
                                                                                             double scaleToSend) {
         double toSend = player == entity && getDisguise().isTallSelfDisguisesScaling() ?
-            Math.min(getDisguise().getInternals().getPrevSelfDisguiseTallScaleMax(), scaleToSend) : scaleToSend;
+            Math.min(getDisguise().getInternals().getSelfDisguiseTallScaleMax(), scaleToSend) : scaleToSend;
 
         WrapperPlayServerUpdateAttributes.Property property =
             new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, toSend, new ArrayList<>());
 
-        return new WrapperPlayServerUpdateAttributes(
-            player == getDisguise().getEntity() ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId(),
+        return new WrapperPlayServerUpdateAttributes(player == entity ? DisguiseAPI.getSelfDisguiseId() : entity.getEntityId(),
             Collections.singletonList(property));
     }
 
@@ -237,21 +237,23 @@ public class LivingWatcher extends FlagWatcher {
             return;
         }
 
-        for (Player player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
-            if (getDisguise().getInternals().shouldAvoidSendingPackets(player)) {
+        IWrappedEntity entity = getDisguise().getInternals().getEntity();
+
+        for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
+            if (getDisguise().getInternals().shouldAvoidSendingPackets(player.getEntity())) {
                 continue;
             }
 
             WrapperPlayServerUpdateAttributes.Property property =
                 new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_MAX_HEALTH, getMaxHealth(), new ArrayList<>());
-            WrapperPlayServerUpdateAttributes packet = new WrapperPlayServerUpdateAttributes(
-                player == getDisguise().getEntity() ? DisguiseAPI.getSelfDisguiseId() : getDisguise().getEntity().getEntityId(),
-                Collections.singletonList(property));
+            WrapperPlayServerUpdateAttributes packet =
+                new WrapperPlayServerUpdateAttributes(player == entity ? DisguiseAPI.getSelfDisguiseId() : entity.getEntityId(),
+                    Collections.singletonList(property));
 
-            if (player == getDisguise().getEntity()) {
-                PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
+            if (player == entity) {
+                player.sendPacketSilently(packet);
             } else {
-                PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
+                player.sendPacket(packet);
             }
         }
     }

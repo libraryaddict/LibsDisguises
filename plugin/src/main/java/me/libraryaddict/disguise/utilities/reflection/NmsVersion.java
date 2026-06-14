@@ -60,6 +60,10 @@ public enum NmsVersion {
         }
     }
 
+    public boolean isLegacy() {
+        return ordinal() < NmsVersion.v1_17.ordinal();
+    }
+
     @SneakyThrows
     private int getDeprecationStatus() {
         return deprecationStatus;

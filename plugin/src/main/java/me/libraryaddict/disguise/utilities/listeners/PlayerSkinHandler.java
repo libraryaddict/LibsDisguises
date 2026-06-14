@@ -28,6 +28,7 @@ import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
+import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -35,7 +36,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -92,12 +92,9 @@ public class PlayerSkinHandler implements Listener {
     private final boolean[] conflictingTypes = PacketsManager.getPacketsManager().createConflicting(true);
 
     public PlayerSkinHandler() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                getCache().asMap().forEach((key, value) -> doTeleport(key, value));
-            }
-        }.runTaskTimer(LibsDisguises.getInstance(), 1, 1);
+        LibsDisguises.getScheduler().global().runAtFixedRate(() -> {
+            getCache().asMap().forEach(this::doTeleport);
+        }, 1, 1);
     }
 
     public synchronized boolean isSleeping(Player player, PlayerDisguise disguise) {
@@ -324,36 +321,30 @@ public class PlayerSkinHandler implements Listener {
                         PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
                     }
                 } else {
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            if (!disguise.isDisguiseInUse()) {
-                                return;
-                            }
-
-                            boolean avoidSending = disguise.getInternals().shouldAvoidSendingPackets(player);
-
-                            for (PacketWrapper packet : entry.getValue()) {
-                                if (avoidSending && conflictingTypes[((Enum) packet.getPacketTypeData().getPacketType()).ordinal()]) {
-                                    continue;
-                                }
-
-                                PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
-                            }
+                    LibsDisguises.getScheduler().entity(player).runDelayed(task -> {
+                        if (!disguise.isDisguiseInUse()) {
+                            return;
                         }
-                    }.runTaskLater(LibsDisguises.getInstance(), entry.getKey());
+
+                        boolean avoidSending = disguise.getInternals().shouldAvoidSendingPackets(player);
+
+                        for (PacketWrapper packet : entry.getValue()) {
+                            if (avoidSending && conflictingTypes[((Enum) packet.getPacketTypeData().getPacketType()).ordinal()]) {
+                                continue;
+                            }
+
+                            PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
+                        }
+                    }, entry.getKey());
                 }
             }
 
             if (skin.isSleepPackets()) {
                 addTeleport(player, skin);
 
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        addMetadata(player, skin);
-                    }
-                }.runTask(LibsDisguises.getInstance());
+                LibsDisguises.getScheduler().entity(player).run(() -> {
+                    addMetadata(player, skin);
+                });
             }
 
             if (disguise.getInternals().getNameDisplayType().isFakeEntity() && disguise.isNameVisible() &&
@@ -361,7 +352,7 @@ public class PlayerSkinHandler implements Listener {
                 List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(disguise, player, new String[0]);
 
                 for (PacketWrapper p : packets) {
-                    PacketEvents.getAPI().getPlayerManager().sendPacket(player, p);
+                    WrappedManager.getWrappedPlayer(player).sendPacket(p);
                 }
             }
         }

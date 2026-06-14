@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.listeners;
 
+import com.cjcrafter.foliascheduler.TaskImplementation;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
@@ -22,6 +23,8 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.updates.PacketEventsUpdater;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
+import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -60,16 +63,16 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DisguiseListener implements Listener {
-    private final HashMap<String, LibsEntityInteract> interactions = new HashMap<>();
-    private final HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<>();
+    private final Map<String, LibsEntityInteract> interactions = new ConcurrentHashMap<>();
+    private final Map<String, TaskImplementation<Void>> disguiseRunnable = new ConcurrentHashMap<>();
     private final LibsDisguises plugin;
     @Getter
     @Setter
@@ -100,7 +103,7 @@ public class DisguiseListener implements Listener {
 
                 for (Disguise disguise : disguises) {
                     disguise.setEntity(entity);
-                    disguise.startDisguise();
+                    LibsDisguises.getScheduler().entity(entity).execute(() -> disguise.startDisguise());
                 }
             }
         }
@@ -131,7 +134,7 @@ public class DisguiseListener implements Listener {
     }
 
     public void cleanup() {
-        for (BukkitRunnable r : disguiseRunnable.values()) {
+        for (TaskImplementation<Void> r : disguiseRunnable.values()) {
             r.cancel();
         }
 
@@ -394,19 +397,21 @@ public class DisguiseListener implements Listener {
 
             for (Disguise disguise : disguises) {
                 disguise.setEntity(entity);
-                disguise.startDisguise();
+                LibsDisguises.getScheduler().entity(entity).execute(disguise::startDisguise);
             }
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onSpawn(EntitySpawnEvent event) {
-        DisguiseUtilities.onFutureDisguise(event.getEntity(), event.isCancelled());
+        DisguiseUtilities.onFutureDisguise(event.getEntity(), event.getEntity().getEntityId(), event.isCancelled());
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
+
+        IWrappedPlayer wPlayer = WrappedManager.getWrappedPlayer(p);
 
         p.removeMetadata("ld_loggedin", LibsDisguises.getInstance());
         DisguiseUtilities.removeSelfDisguiseScale(p);
@@ -418,17 +423,10 @@ public class DisguiseListener implements Listener {
             String requiredPacketEvents = PacketEventsUpdater.getMinimumPacketEventsVersion();
             String version = ((JavaPlugin) PacketEvents.getAPI().getPlugin()).getDescription().getVersion() +
                 ("1592".equals(LibsPremium.getUserID()) ? "-pirated" : "");
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (!p.isOnline()) {
-                        cancel();
-                        return;
-                    }
 
-                    DisguiseUtilities.sendPacketEventsUpdateMessage(p, version, requiredPacketEvents);
-                }
-            }.runTaskLater(LibsDisguises.getInstance(), 20);
+            LibsDisguises.getScheduler().entity(p).runDelayed(task -> {
+                DisguiseUtilities.sendPacketEventsUpdateMessage(p, version, requiredPacketEvents);
+            }, 20);
         }
 
         if (DisguiseConfig.isSavePlayerDisguises()) {
@@ -463,58 +461,39 @@ public class DisguiseListener implements Listener {
                 PlayerDisguise disguise = (PlayerDisguise) targetedDisguise;
 
                 if (disguise.isDisplayedInTab()) {
-                    PacketEvents.getAPI().getPlayerManager().sendPacket(p, DisguiseUtilities.createTablistAddPackets(disguise));
+                    wPlayer.sendPacket(DisguiseUtilities.createTablistAddPackets(disguise));
                 }
             }
         }
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!p.isOnline()) {
-                    return;
-                }
+        LibsDisguises.getScheduler().entity(p).runDelayed(task -> {
+            DisguiseUtilities.getScoreboardManager().registerTeams(p);
 
-                DisguiseUtilities.registerNoName(p.getScoreboard());
+            if (!p.hasMetadata("forge_mods")) {
+                Optional<ModdedEntity> required =
+                    ModdedManager.getEntities().values().stream().filter(c -> c.getMod() != null && c.getRequired() != null).findAny();
 
-                if (p.getScoreboard() != Bukkit.getScoreboardManager().getMainScoreboard()) {
-                    DisguiseUtilities.registerAllExtendedNames(p.getScoreboard());
-                    DisguiseUtilities.registerColors(p.getScoreboard());
-                }
+                required.ifPresent(customEntity -> p.kickPlayer(customEntity.getRequired()));
+            }
 
-                if (!p.hasMetadata("forge_mods")) {
-                    Optional<ModdedEntity> required =
-                        ModdedManager.getEntities().values().stream().filter(c -> c.getMod() != null && c.getRequired() != null).findAny();
+            if (DisguiseConfig.isSaveGameProfiles() && DisguiseConfig.isUpdateGameProfiles() &&
+                DisguiseUtilities.hasUserProfile(p.getName())) {
+                UserProfile profile = ReflectionManager.getUserProfile(p);
 
-                    required.ifPresent(customEntity -> p.kickPlayer(customEntity.getRequired()));
-                }
-
-                if (DisguiseConfig.isSaveGameProfiles() && DisguiseConfig.isUpdateGameProfiles() &&
-                    DisguiseUtilities.hasUserProfile(p.getName())) {
-                    UserProfile profile = ReflectionManager.getUserProfile(p);
-
-                    if (!profile.getTextureProperties().isEmpty()) {
-                        DisguiseUtilities.addUserProfile(p.getName(), profile);
-                    }
+                if (!profile.getTextureProperties().isEmpty()) {
+                    DisguiseUtilities.addUserProfile(p.getName(), profile);
                 }
             }
-        }.runTaskLater(LibsDisguises.getInstance(), 20);
+        }, 20);
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!p.isOnline()) {
-                    return;
-                }
+        LibsDisguises.getScheduler().entity(p).runDelayed(task -> {
+            if (!p.hasMetadata("forge_mods")) {
+                Optional<ModdedEntity> required =
+                    ModdedManager.getEntities().values().stream().filter(c -> c.getMod() != null && c.getRequired() != null).findAny();
 
-                if (!p.hasMetadata("forge_mods")) {
-                    Optional<ModdedEntity> required =
-                        ModdedManager.getEntities().values().stream().filter(c -> c.getMod() != null && c.getRequired() != null).findAny();
-
-                    required.ifPresent(customEntity -> p.kickPlayer(customEntity.getRequired()));
-                }
+                required.ifPresent(customEntity -> p.kickPlayer(customEntity.getRequired()));
             }
-        }.runTaskLater(LibsDisguises.getInstance(), 60);
+        }, 60);
     }
 
     /**
@@ -612,7 +591,7 @@ public class DisguiseListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
-        for (String meta : new String[]{"LastDisguise", "LD-LastAttacked", "forge_mods", "LibsRabbitHop", "ld_loggedin"}) {
+        for (String meta : new String[]{"LastDisguise", "LD-LastAttacked", "forge_mods", "ld_loggedin"}) {
             player.removeMetadata(meta, LibsDisguises.getInstance());
         }
 
@@ -630,6 +609,7 @@ public class DisguiseListener implements Listener {
         }*/
 
         DisguiseUtilities.saveDisguises(player);
+        WrappedManager.scheduleCleanup(event.getPlayer());
     }
 
     @EventHandler
@@ -743,16 +723,13 @@ public class DisguiseListener implements Listener {
 
                 PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
 
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (event.isCancelled() || !disguise.isDisguiseInUse()) {
-                            return;
-                        }
-
-                        DisguiseUtilities.sendSelfDisguise(player, (TargetedDisguise) disguise);
+                LibsDisguises.getScheduler().entity(player).runDelayed(task -> {
+                    if (event.isCancelled() || !disguise.isDisguiseInUse()) {
+                        return;
                     }
-                }.runTaskLater(LibsDisguises.getInstance(), 4);
+
+                    DisguiseUtilities.sendSelfDisguise(player, (TargetedDisguise) disguise);
+                }, 4);
             }
         } else if (from.getWorld() != to.getWorld()) {
             // Stupid hack to fix worldswitch invisibility bug & paper packet bug
@@ -764,12 +741,9 @@ public class DisguiseListener implements Listener {
                 if (disguise != null && disguise.isSelfDisguiseVisible()) {
                     disguise.setViewSelfDisguise(false);
 
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            disguise.setViewSelfDisguise(true);
-                        }
-                    }.runTaskLater(LibsDisguises.getInstance(), 20);
+                    LibsDisguises.getScheduler().entity(event.getPlayer()).runDelayed(task -> {
+                        disguise.setViewSelfDisguise(true);
+                    }, 20);
                 }
             }
         }
@@ -798,14 +772,11 @@ public class DisguiseListener implements Listener {
             final Disguise disguise = DisguiseAPI.getDisguise((Player) event.getExited(), event.getExited());
 
             if (disguise != null) {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        DisguiseUtilities.setupFakeDisguise(disguise);
+                LibsDisguises.getScheduler().entity(event.getExited()).runDelayed(task -> {
+                    DisguiseUtilities.setupFakeDisguise(disguise);
 
-                        ((Player) disguise.getEntity()).updateInventory();
-                    }
-                }.runTaskLater(LibsDisguises.getInstance(), 1);
+                    ((Player) disguise.getEntity()).updateInventory();
+                }, 1);
             }
         }
     }
@@ -836,12 +807,9 @@ public class DisguiseListener implements Listener {
                 if (disguise != null && disguise.isSelfDisguiseVisible()) {
                     disguise.setViewSelfDisguise(false);
 
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            disguise.setViewSelfDisguise(true);
-                        }
-                    }.runTaskLater(LibsDisguises.getInstance(), 20);
+                    LibsDisguises.getScheduler().entity(event.getPlayer()).runDelayed(task -> {
+                        disguise.setViewSelfDisguise(true);
+                    }, 20);
                 }
             }
         }
@@ -854,17 +822,22 @@ public class DisguiseListener implements Listener {
 
         interactions.put(playerName, interaction);
 
-        BukkitRunnable runnable = new BukkitRunnable() {
-            @Override
-            public void run() {
-                interactions.remove(playerName);
-                disguiseRunnable.remove(playerName);
-            }
+        Player player = Bukkit.getPlayer(playerName);
+
+        Runnable run = () -> {
+            interactions.remove(playerName);
+            disguiseRunnable.remove(playerName);
         };
 
-        runnable.runTaskLater(LibsDisguises.getInstance(), secondsExpire * 20L);
+        TaskImplementation<Void> task;
 
-        disguiseRunnable.put(playerName, runnable);
+        if (player != null) {
+            task = LibsDisguises.getScheduler().entity(player).runDelayed(run, secondsExpire * 20L);
+        } else {
+            task = LibsDisguises.getScheduler().global().runDelayed(run, secondsExpire * 20L);
+        }
+
+        disguiseRunnable.put(playerName, task);
     }
 
     @EventHandler

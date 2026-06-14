@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.commands.disguise;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
@@ -21,7 +22,6 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,11 +114,8 @@ public class DisguiseSelectorCommand extends DisguiseBaseCommand implements TabC
                     }
                 }
 
-                disguise.startDisguise(sender);
-
-                if (disguise.isDisguiseInUse()) {
-                    disguisedEntitys++;
-                }
+                disguisedEntitys++;
+                LibsDisguises.getScheduler().entity(entity).execute(() -> disguise.startDisguise(sender));
             }
 
             if (disguisedEntitys > 0) {

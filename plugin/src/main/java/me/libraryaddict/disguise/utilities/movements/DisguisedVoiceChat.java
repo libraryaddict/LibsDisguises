@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.utilities.movements;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.world.Location;
 import com.github.retrooper.packetevents.util.Vector3d;
@@ -15,7 +14,7 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
-import org.bukkit.entity.Player;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +41,7 @@ public class DisguisedVoiceChat implements CloningMovementTracker {
     }
 
     @Override
-    public void onSpawn(Player receiver, Location location) {
+    public void onSpawn(IWrappedPlayer receiver, Location location) {
         List<PacketWrapper> packets = new ArrayList<>();
 
         if (NmsVersion.v1_19_R1.isSupported() || !getDisguiseType().isMob()) {
@@ -55,7 +54,7 @@ public class DisguisedVoiceChat implements CloningMovementTracker {
                     location.getPitch(), Vector3d.zero(), getMetadata()));
         }
 
-        packets.forEach(p -> PacketEvents.getAPI().getPlayerManager().sendPacketSilently(receiver, p));
+        packets.forEach(receiver::sendPacketSilently);
     }
 
     private Object getMetadata(MetaIndex index) {

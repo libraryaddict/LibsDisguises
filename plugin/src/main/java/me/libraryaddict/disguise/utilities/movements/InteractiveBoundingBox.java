@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.utilities.movements;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.attribute.Attributes;
 import com.github.retrooper.packetevents.protocol.entity.EntityPositionData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
@@ -22,9 +21,9 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
@@ -94,20 +93,21 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
             return;
         }
 
-        for (Player player : getEffectedPlayers()) {
+        for (IWrappedPlayer player : getEffectedPlayers()) {
             WrapperPlayServerEntityMetadata packet =
                 ReflectionManager.getMetadataPacket(entityId, Collections.singletonList(new WatcherValue(index, getMetadata(index), true)));
 
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
+            player.sendPacketSilently(packet);
         }
     }
 
-    private List<Player> getEffectedPlayers() {
+    private List<IWrappedPlayer> getEffectedPlayers() {
         if (!disguise.isDisguiseInUse()) {
             return Collections.emptyList();
         }
 
-        return DisguiseUtilities.getTrackingPlayers(disguise).stream().filter(p -> p != disguise.getEntity()).collect(Collectors.toList());
+        return DisguiseUtilities.getTrackingPlayers(disguise).stream().filter(p -> p.getEntity() != disguise.getEntity())
+            .collect(Collectors.toList());
     }
 
     public InteractiveBoundingBox setSize(int size) {
@@ -146,8 +146,8 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
             return this;
         }
 
-        for (Player player : getEffectedPlayers()) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, createAttributes());
+        for (IWrappedPlayer player : getEffectedPlayers()) {
+            player.sendPacketSilently(createAttributes());
         }
 
         return this;
@@ -164,7 +164,7 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
             new com.github.retrooper.packetevents.protocol.world.Location(location.getX(), location.getY(), location.getZ(),
                 location.getYaw(), location.getPitch());
 
-        for (Player player : getEffectedPlayers()) {
+        for (IWrappedPlayer player : getEffectedPlayers()) {
             onSpawn(player, loc);
         }
     }
@@ -175,7 +175,7 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
             return;
         }
 
-        for (Player player : getEffectedPlayers()) {
+        for (IWrappedPlayer player : getEffectedPlayers()) {
             onDespawn(player, false);
         }
     }
@@ -213,7 +213,7 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
     }
 
     @Override
-    public void onSpawn(Player receiver, com.github.retrooper.packetevents.protocol.world.Location location) {
+    public void onSpawn(IWrappedPlayer receiver, com.github.retrooper.packetevents.protocol.world.Location location) {
         List<PacketWrapper> packets = new ArrayList<>();
         location =
             new com.github.retrooper.packetevents.protocol.world.Location(location.getX(), location.getY() + getYOffset(), location.getZ(),
@@ -232,7 +232,7 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
                 location.getPitch(), Vector3d.zero(), getMetadata()));
         }
 
-        packets.forEach(p -> PacketEvents.getAPI().getPlayerManager().sendPacketSilently(receiver, p));
+        packets.forEach(receiver::sendPacketSilently);
     }
 
     public String asString() {
@@ -266,7 +266,7 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
     }
 
     @Override
-    public void onTeleport(Player receiver, WrapperPlayServerEntityTeleport teleport) {
+    public void onTeleport(IWrappedPlayer receiver, WrapperPlayServerEntityTeleport teleport) {
         EntityPositionData values = DisguiseUtilities.clone(teleport.getValues());
 
         values.setPosition(values.getPosition().add(0, getYOffset(), 0));
@@ -274,11 +274,11 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
         teleport = new WrapperPlayServerEntityTeleport(getEntityId(), values, teleport.getRelativeFlags(), teleport.isOnGround());
         teleport.setEntityId(getEntityId());
 
-        PacketEvents.getAPI().getPlayerManager().sendPacketSilently(receiver, teleport);
+        receiver.sendPacketSilently(teleport);
     }
 
     @Override
-    public void onSync(Player receiver, WrapperPlayServerEntityPositionSync sync) {
+    public void onSync(IWrappedPlayer receiver, WrapperPlayServerEntityPositionSync sync) {
         EntityPositionData values = DisguiseUtilities.clone(sync.getValues());
 
         values.setPosition(values.getPosition().add(0, getYOffset(), 0));
@@ -286,6 +286,6 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
         sync = new WrapperPlayServerEntityPositionSync(getEntityId(), values, sync.isOnGround());
         sync.setId(getEntityId());
 
-        PacketEvents.getAPI().getPlayerManager().sendPacketSilently(receiver, sync);
+        receiver.sendPacketSilently(sync);
     }
 }

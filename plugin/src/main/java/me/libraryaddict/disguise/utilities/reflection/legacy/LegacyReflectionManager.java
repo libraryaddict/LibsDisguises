@@ -18,6 +18,8 @@ import io.netty.buffer.PooledByteBufAllocator;
 import lombok.SneakyThrows;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.DisguiseValues;
+import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
@@ -26,14 +28,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Ageable;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Cat;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -298,7 +303,6 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
     }
 
     @SneakyThrows
-    @Override
     public int getAmbientSoundInterval(Entity entity) {
         Object nmsEntity = getNmsEntity(entity);
 
@@ -308,6 +312,33 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
         }
 
         return (int) ambientSoundVolume.invoke(getNmsEntity(entity));
+    }
+
+    @Override
+    public DisguiseValues constructValues(Object nmsEntity) {
+        Entity bukkitEntity = getBukkitEntity(nmsEntity);
+        double maxHealth = bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0;
+        int soundInterval = getAmbientSoundInterval(bukkitEntity);
+        DisguiseValues disguiseValues = new DisguiseValues(maxHealth, soundInterval);
+
+        // Get the bounding box
+        disguiseValues.setAdultBox(getBoundingBox(bukkitEntity));
+
+        if (bukkitEntity instanceof Ageable) {
+            ((Ageable) bukkitEntity).setBaby();
+
+            disguiseValues.setBabyBox(getBoundingBox(bukkitEntity));
+        } else if (bukkitEntity instanceof Zombie) {
+            ((Zombie) bukkitEntity).setBaby(true);
+
+            disguiseValues.setBabyBox(getBoundingBox(bukkitEntity));
+        } else if (bukkitEntity instanceof ArmorStand) {
+            ((ArmorStand) bukkitEntity).setSmall(true);
+
+            disguiseValues.setBabyBox(getBoundingBox(bukkitEntity));
+        }
+
+        return disguiseValues;
     }
 
     @Override
@@ -446,8 +477,7 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
         throw new IllegalStateException("Not implemented");
     }
 
-    @Override
-    public double[] getBoundingBox(Entity entity) {
+    public FakeBoundingBox getBoundingBox(Entity entity) {
         try {
             Object boundingBox = boundingBoxMethod.invoke(getNmsEntity(entity));
 
@@ -485,7 +515,7 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
                 }
             }
 
-            return new double[]{x, y, z};
+            return new FakeBoundingBox(x, y, z);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -569,31 +599,6 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
         return 0;
     }
 
-    @Override
-    public float[] getSize(Entity entity) {
-        try {
-            if (NmsVersion.v1_14.isSupported()) {
-                Object size = entitySize.get(getNmsEntity(entity));
-
-                //float length = getNmsField("EntitySize", "length").getFloat(size);
-                float width = entitySizeWidth.getFloat(size);
-                float height = entityHeadHeight.getFloat(getNmsEntity(entity));
-
-                return new float[]{width, height};
-            } else {
-
-                //    float length = getNmsField("Entity", "length").getFloat(getNmsEntity(entity));
-                float width = entitySizeWidth.getFloat(getNmsEntity(entity));
-                float height = (Float) entityGetHeadHeight.invoke(getNmsEntity(entity));
-                return new float[]{width, height};
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return null;
-    }
-
     @SneakyThrows
     @Override
     public MinecraftSessionService getMinecraftSessionService() {
@@ -656,9 +661,9 @@ public class LegacyReflectionManager extends ReflectionManagerAbstract {
     }
 
     @Override
-    public ByteBuf getDataWatcherValues(Entity entity) {
+    public ByteBuf getDataWatcherValues(Object entity) {
         try {
-            Object datawatcher = getDatawatcher.invoke(getNmsEntity(entity));
+            Object datawatcher = getDatawatcher.invoke(entity);
             Map<Integer, Object> data = (Map<Integer, Object>) datawatcherData.get(datawatcher);
             ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer();
             Object nmsBuff = SpigotReflectionUtil.createPacketDataSerializer(buffer);

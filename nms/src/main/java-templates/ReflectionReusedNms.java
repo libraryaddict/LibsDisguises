@@ -1,7 +1,9 @@
-package me.libraryaddict.disguise.utilities.reflection.@PACKAGE@;
+package me.libraryaddict.disguise.utilities.reflection.__PACKAGE__;
 
 import com.mojang.authlib.GameProfile;
 import lombok.SneakyThrows;
+import me.libraryaddict.disguise.utilities.DisguiseValues;
+import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ChunkMap;
@@ -13,17 +15,22 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.monster.__zombie_package__Zombie;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.@NMS_VERSION@CraftServer;
-import org.bukkit.craftbukkit.@NMS_VERSION@CraftWorld;
-import org.bukkit.craftbukkit.@NMS_VERSION@block.data.CraftBlockData;
-import org.bukkit.craftbukkit.@NMS_VERSION@entity.CraftEntity;
-import org.bukkit.craftbukkit.@NMS_VERSION@inventory.CraftItemStack;
-import org.bukkit.craftbukkit.@NMS_VERSION@util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.__NMS_VERSION__CraftServer;
+import org.bukkit.craftbukkit.__NMS_VERSION__CraftWorld;
+import org.bukkit.craftbukkit.__NMS_VERSION__block.data.CraftBlockData;
+import org.bukkit.craftbukkit.__NMS_VERSION__entity.CraftEntity;
+import org.bukkit.craftbukkit.__NMS_VERSION__inventory.CraftItemStack;
+import org.bukkit.craftbukkit.__NMS_VERSION__util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -59,7 +66,7 @@ abstract class ReflectionReusedNms extends ReflectionManagerAbstract {
      */
     @Override
     public final void setImpulse(Entity entity) {
-        ((CraftEntity) entity).getHandle().@needs_sync@ = true;
+        ((CraftEntity) entity).getHandle().__needs_sync__ = true;
     }
 
     @Override
@@ -96,7 +103,7 @@ abstract class ReflectionReusedNms extends ReflectionManagerAbstract {
 
     @Override
     public final BlockData getBlockDataByCombinedId(int id) {
-        return CraftBlockData.fromData(Block.stateById(id));
+        return Block.stateById(id).__create_block_data__();
     }
 
     @Override
@@ -107,17 +114,6 @@ abstract class ReflectionReusedNms extends ReflectionManagerAbstract {
     @Override
     public final ServerLevel getWorldServer(World w) {
         return ((CraftWorld) w).getHandle();
-    }
-
-    @Override
-    public final int getAmbientSoundInterval(Entity entity) {
-        Object nmsEntity = getNmsEntity(entity);
-
-        if (!(nmsEntity instanceof Mob)) {
-            return -1;
-        }
-
-        return ((Mob) nmsEntity).getAmbientSoundInterval();
     }
 
     @Override
@@ -144,13 +140,6 @@ abstract class ReflectionReusedNms extends ReflectionManagerAbstract {
     @Override
     public final ServerGamePacketListenerImpl getPlayerConnectionOrPlayer(Player player) {
         return ((ServerPlayer) getNmsEntity(player)).connection;
-    }
-
-    @Override
-    public final double[] getBoundingBox(Entity entity) {
-        AABB aabb = ((net.minecraft.world.entity.Entity) getNmsEntity(entity)).getBoundingBox();
-
-        return new double[]{aabb.maxX - aabb.minX, aabb.maxY - aabb.minY, aabb.maxZ - aabb.minZ};
     }
 
     @Override
@@ -225,5 +214,31 @@ abstract class ReflectionReusedNms extends ReflectionManagerAbstract {
     @Override
     public final Set getTrackedEntities(Object trackedEntity) {
         return ((ChunkMap.TrackedEntity) trackedEntity).seenBy;
+    }
+
+    @Override
+    public DisguiseValues constructValues(Object nmsEntity) {
+        double maxHealth = nmsEntity instanceof LivingEntity ? ((LivingEntity) nmsEntity).getMaxHealth() : 0;
+        int ambientSoundInterval = nmsEntity instanceof Mob ? ((Mob) nmsEntity).getAmbientSoundInterval() : -1;
+        DisguiseValues disguiseValues = new DisguiseValues(maxHealth, ambientSoundInterval);
+
+        AABB aabb = ((net.minecraft.world.entity.Entity) nmsEntity).getBoundingBox();
+        disguiseValues.setAdultBox(new FakeBoundingBox(aabb.maxX - aabb.minX, aabb.maxY - aabb.minY, aabb.maxZ - aabb.minZ));
+
+        if (nmsEntity instanceof AgeableMob) {
+            ((AgeableMob) nmsEntity).setBaby(true);
+        } else if (nmsEntity instanceof Zombie) {
+            ((Zombie) nmsEntity).setBaby(true);
+        } else if (nmsEntity instanceof ArmorStand) {
+            ((ArmorStand) nmsEntity).setSmall(true);
+        } else {
+            // Early exit, continuing from here means there's a baby box
+            return disguiseValues;
+        }
+
+        aabb = ((net.minecraft.world.entity.Entity) nmsEntity).getBoundingBox();
+        disguiseValues.setBabyBox(new FakeBoundingBox(aabb.maxX - aabb.minX, aabb.maxY - aabb.minY, aabb.maxZ - aabb.minZ));
+
+        return disguiseValues;
     }
 }

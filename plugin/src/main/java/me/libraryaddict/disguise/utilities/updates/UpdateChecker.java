@@ -13,7 +13,6 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.InputStream;
@@ -163,14 +162,11 @@ public class UpdateChecker {
                 notifyUpdate(Bukkit.getConsoleSender());
             }
 
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    for (Player p : Bukkit.getOnlinePlayers()) {
-                        notifyUpdate(p);
-                    }
+            LibsDisguises.getScheduler().global().run(() -> {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    notifyUpdate(p);
                 }
-            }.runTask(LibsDisguises.getInstance());
+            });
         } catch (Exception ex) {
             LibsDisguises.getInstance().getLogger().warning(String.format("Failed to check for update: %s", ex.getMessage()));
         }

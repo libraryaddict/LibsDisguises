@@ -10,8 +10,8 @@ import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,8 @@ public class PacketHandlerMetadata implements IPacketHandler<WrapperPlayServerEn
     }
 
     @Override
-    public void handle(Disguise disguise, LibsPackets<WrapperPlayServerEntityMetadata> packets, Player observer, Entity entity) {
+    public void handle(Disguise disguise, LibsPackets<WrapperPlayServerEntityMetadata> packets, IWrappedPlayer observer,
+                       IWrappedEntity entity) {
         packets.clear();
 
         if (!DisguiseConfig.isMetaPacketsEnabled()) {
@@ -37,13 +38,14 @@ public class PacketHandlerMetadata implements IPacketHandler<WrapperPlayServerEn
             watcherValues.add(new WatcherValue(data));
         }
 
-        List<WatcherValue> watchableObjects = disguise.getWatcher().convert(observer, watcherValues);
+        List<WatcherValue> watchableObjects =
+            disguise.getWatcher().convert(observer.getEntity(), watcherValues, packets.isSpawnMetadata(), true);
 
         if (watchableObjects.isEmpty()) {
             return;
         }
 
-        WrapperPlayServerEntityMetadata metaPacket = ReflectionManager.getMetadataPacket(entity.getEntityId(), watchableObjects);
+        WrapperPlayServerEntityMetadata metaPacket = ReflectionManager.getMetadataPacket(packets.getEntityId(), watchableObjects);
 
         packets.addPacket(metaPacket);
     }

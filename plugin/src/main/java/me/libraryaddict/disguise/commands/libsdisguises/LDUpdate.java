@@ -8,7 +8,6 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -65,28 +64,31 @@ public class LDUpdate implements LDCommand {
             DisguiseConfig.setUsingReleaseBuilds(releaseBuilds);
         }
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                LibsMsg updateResult = checker.doUpdateCheck();
+        LibsDisguises.getScheduler().async().runNow(() -> {
+            LibsMsg updateResult = checker.doUpdateCheck();
 
-                if (checker.getUpdate() == null) {
+            if (checker.getUpdate() == null) {
+                LibsDisguises.getScheduler().global().run(() -> {
                     LibsMsg.UPDATE_FAILED.send(sender);
-                    return;
-                }
+                });
+                return;
+            }
 
-                if (checker.isOnLatestUpdate(true)) {
+            if (checker.isOnLatestUpdate(true)) {
+                LibsDisguises.getScheduler().global().run(() -> {
                     if (checker.getLastDownload() != null) {
                         LibsMsg.UPDATE_ALREADY_DOWNLOADED.send(sender);
                     } else {
                         LibsMsg.UPDATE_ON_LATEST.send(sender);
                     }
+                });
 
-                    return;
-                }
+                return;
+            }
 
-                LibsDisgInfo result = checker.doUpdate();
+            LibsDisgInfo result = checker.doUpdate();
 
+            LibsDisguises.getScheduler().global().run(() -> {
                 if (result == null) {
                     LibsMsg.UPDATE_FAILED.send(sender);
                     return;
@@ -101,8 +103,8 @@ public class LDUpdate implements LDCommand {
                         LibsDisguises.getInstance().getLogger().info(msg);
                     }
                 }
-            }
-        }.runTaskAsynchronously(LibsDisguises.getInstance());
+            });
+        });
     }
 
     @Override

@@ -8,8 +8,8 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 
 public class PacketHandlerVelocity implements IPacketHandler {
     @Override
@@ -18,15 +18,15 @@ public class PacketHandlerVelocity implements IPacketHandler {
     }
 
     @Override
-    public void handle(Disguise disguise, LibsPackets packets, Player observer, Entity entity) {
+    public void handle(Disguise disguise, LibsPackets packets, IWrappedPlayer observer, IWrappedEntity entity) {
         // If the disguise is not a misc type or the disguised is the same type
         if ((!disguise.getType().isMisc() && disguise.getType() != DisguiseType.SQUID) ||
-            DisguiseType.getType(entity) == disguise.getType()) {
+            DisguiseType.getType(entity.getType()) == disguise.getType()) {
             return;
         }
 
         packets.clear();
 
-        packets.addPacket(new WrapperPlayServerEntityVelocity(entity.getEntityId(), Vector3d.zero()));
+        packets.addPacket(new WrapperPlayServerEntityVelocity(packets.getEntityId(), Vector3d.zero()));
     }
 }

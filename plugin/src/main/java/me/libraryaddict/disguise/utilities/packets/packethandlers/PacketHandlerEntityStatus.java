@@ -10,8 +10,8 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.animations.DisguiseAnimation;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 
 public class PacketHandlerEntityStatus implements IPacketHandler<WrapperPlayServerEntityStatus> {
     @Override
@@ -20,13 +20,14 @@ public class PacketHandlerEntityStatus implements IPacketHandler<WrapperPlayServ
     }
 
     @Override
-    public void handle(Disguise disguise, LibsPackets<WrapperPlayServerEntityStatus> packets, Player observer, Entity entity) {
+    public void handle(Disguise disguise, LibsPackets<WrapperPlayServerEntityStatus> packets, IWrappedPlayer observer,
+                       IWrappedEntity entity) {
         // If the entity is updating their status, stop them from showing death
         if (packets.getOriginalPacket().getStatus() == 3) {
             packets.clear();
         } else if (DisguiseConfig.isSendAttackAnimations() && !disguise.isMiscDisguise()) {
-            DisguiseAnimation entityAnimation =
-                DisguiseAnimation.getAnimation(DisguiseType.getType(entity).getWatcherClass(), packets.getOriginalPacket().getStatus());
+            DisguiseAnimation entityAnimation = DisguiseAnimation.getAnimation(DisguiseType.getType(entity.getType()).getWatcherClass(),
+                packets.getOriginalPacket().getStatus());
 
             // If we don't know this status, or we know it is not an attack
             if (entityAnimation == null || !entityAnimation.isAttack()) {

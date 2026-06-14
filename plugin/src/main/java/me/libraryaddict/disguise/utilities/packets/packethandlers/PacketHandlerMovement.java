@@ -13,7 +13,6 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityStatus;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
 import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.GridLockedWatcher;
@@ -23,17 +22,16 @@ import me.libraryaddict.disguise.utilities.movements.MovementTracker;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.UUID;
 
 public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacketHandler<T> {
     private final boolean invalid = LibsPremium.getUserID().matches("\\d+") && Integer.parseInt(LibsPremium.getUserID()) < 2;
@@ -46,15 +44,15 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
     }
 
     @Override
-    public void handle(Disguise disguise, LibsPackets<T> packets, Player observer, Entity entity) {
+    public void handle(Disguise disguise, LibsPackets<T> packets, IWrappedPlayer observer, IWrappedEntity entity) {
         handleMovement(disguise, packets, observer, entity);
 
         if (disguise.getInternals().getNameDisplayType().isFakeEntity()) {
-            DisguiseUtilities.adjustNamePositions(disguise, packets);
+            DisguiseUtilities.adjustNamePositions(disguise, packets, observer);
         }
     }
 
-    private void handleMovement(Disguise disguise, LibsPackets<T> packets, Player observer, Entity entity) {
+    private void handleMovement(Disguise disguise, LibsPackets<T> packets, IWrappedPlayer observer, IWrappedEntity<?> entity) {
         if (invalid && RandomUtils.nextDouble() < 0.1) {
             packets.clear();
             return;
@@ -66,23 +64,18 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
             PacketWrapper wrapper = packets.getOriginalPacket();
 
             if (wrapper instanceof WrapperPlayServerEntityRotation) {
-               trackers
-                    .forEach(t -> t.onRotation(observer, (WrapperPlayServerEntityRotation) packets.getOriginalPacket()));
+                trackers.forEach(t -> t.onRotation(observer, (WrapperPlayServerEntityRotation) packets.getOriginalPacket()));
             } else if (wrapper instanceof WrapperPlayServerEntityHeadLook) {
-               trackers
-                    .forEach(t -> t.onLook(observer, (WrapperPlayServerEntityHeadLook) packets.getOriginalPacket()));
+                trackers.forEach(t -> t.onLook(observer, (WrapperPlayServerEntityHeadLook) packets.getOriginalPacket()));
             } else if (wrapper instanceof WrapperPlayServerEntityRelativeMove) {
-               trackers
-                    .forEach(t -> t.onRelativeMove(observer, (WrapperPlayServerEntityRelativeMove) packets.getOriginalPacket()));
+                trackers.forEach(t -> t.onRelativeMove(observer, (WrapperPlayServerEntityRelativeMove) packets.getOriginalPacket()));
             } else if (wrapper instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
-               trackers.forEach(
+                trackers.forEach(
                     t -> t.onRelativeMoveLook(observer, (WrapperPlayServerEntityRelativeMoveAndRotation) packets.getOriginalPacket()));
             } else if (wrapper instanceof WrapperPlayServerEntityPositionSync) {
-               trackers
-                    .forEach(t -> t.onSync(observer, (WrapperPlayServerEntityPositionSync) packets.getOriginalPacket()));
+                trackers.forEach(t -> t.onSync(observer, (WrapperPlayServerEntityPositionSync) packets.getOriginalPacket()));
             } else if (wrapper instanceof WrapperPlayServerEntityTeleport) {
-               trackers
-                    .forEach(t -> t.onTeleport(observer, (WrapperPlayServerEntityTeleport) packets.getOriginalPacket()));
+                trackers.forEach(t -> t.onTeleport(observer, (WrapperPlayServerEntityTeleport) packets.getOriginalPacket()));
             }
         }
 
@@ -94,7 +87,7 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
         if (disguise.getWatcher() instanceof GridLockedWatcher && ((GridLockedWatcher) disguise.getWatcher()).isGridLocked()) {
             handleGridLock(disguise, packets, entity, sentPacket, yMod);
             return;
-        } else if (disguise.getType() == DisguiseType.RABBIT && DisguiseType.getType(entity) != disguise.getType() &&
+        } else if (disguise.getType() == DisguiseType.RABBIT && DisguiseType.getType(entity.getType()) != disguise.getType() &&
             hasMoved(sentPacket)) {
             handleRabbitHop(packets, observer, entity);
         }
@@ -121,7 +114,7 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
         return false;
     }
 
-    private void handleRemainingMovement(Disguise disguise, LibsPackets<T> packets, Player observer, Entity entity,
+    private void handleRemainingMovement(Disguise disguise, LibsPackets<T> packets, IWrappedPlayer observer, IWrappedEntity<?> entity,
                                          PacketWrapper sentPacket, double yMod) {
         // If the packet has a head/body pitch/yaw
         if (!(sentPacket instanceof WrapperPlayServerEntityRelativeMove)) {
@@ -160,7 +153,7 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
 
             packets.addPacket(cloned);
 
-            if (entity == observer.getVehicle() && AbstractHorse.class.isAssignableFrom(disguise.getType().getEntityClass())) {
+            if (entity.getEntity() == observer.getVehicle() && entity.getEntity() instanceof AbstractHorse) {
                 WrapperPlayServerEntityRotation packet =
                     new WrapperPlayServerEntityRotation(DisguiseAPI.getEntityAttachmentId(), yawValue, pitchValue, false);
 
@@ -242,45 +235,38 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
         }
     }
 
-    private void handleRabbitHop(LibsPackets<T> packets, Player observer, Entity entity) {
+    private void handleRabbitHop(LibsPackets<T> packets, IWrappedPlayer observer, IWrappedEntity<?> entity) {
         // Syncronized so we're not modifying a map across different threads
         synchronized (this) {
-            Map<String, Long> rabbitHops;
+            Map<UUID, Long> rabbitHops = entity.getRabbitHops();
 
-            // If hop meta exists, set the last hop time
-            if (!entity.getMetadata("LibsRabbitHop").isEmpty()) {
-                rabbitHops = (Map<String, Long>) entity.getMetadata("LibsRabbitHop").get(0).value();
+            // Expire entries
+            Iterator<Map.Entry<UUID, Long>> iterator = rabbitHops.entrySet().iterator();
 
-                // Expire entries
-                Iterator<Map.Entry<String, Long>> iterator = rabbitHops.entrySet().iterator();
-
-                while (iterator.hasNext()) {
-                    if (iterator.next().getValue() + 500 > System.currentTimeMillis()) {
-                        continue;
-                    }
-
-                    iterator.remove();
+            while (iterator.hasNext()) {
+                if (iterator.next().getValue() + 500 > System.currentTimeMillis()) {
+                    continue;
                 }
-            } else {
-                entity.setMetadata("LibsRabbitHop",
-                    new FixedMetadataValue(LibsDisguises.getInstance(), rabbitHops = new ConcurrentHashMap<>()));
+
+                iterator.remove();
             }
 
             long lastHop =
-                rabbitHops.containsKey(observer.getName()) ? System.currentTimeMillis() - rabbitHops.get(observer.getName()) : 99999;
+                rabbitHops.containsKey(observer.getUniqueId()) ? System.currentTimeMillis() - rabbitHops.get(observer.getUniqueId()) :
+                    99999;
 
             // If last hop was less than 0.1 or more than 0.5 seconds ago
             if (lastHop < 100 || lastHop > 500) {
                 if (lastHop > 500) {
-                    rabbitHops.put(observer.getName(), System.currentTimeMillis());
+                    rabbitHops.put(observer.getUniqueId(), System.currentTimeMillis());
                 }
 
-                packets.addPacket(new WrapperPlayServerEntityStatus(entity.getEntityId(), 1));
+                packets.addPacket(new WrapperPlayServerEntityStatus(packets.getEntityId(), 1));
             }
         }
     }
 
-    private float getYaw(Disguise disguise, Entity entity, PacketWrapper sentPacket) {
+    private float getYaw(Disguise disguise, IWrappedEntity<?> entity, PacketWrapper sentPacket) {
         float yawValue;
 
         if (sentPacket instanceof WrapperPlayServerEntityRelativeMove) {
@@ -316,7 +302,7 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
         return yawValue;
     }
 
-    private float getPitch(Disguise disguise, Entity entity, PacketWrapper sentPacket) {
+    private float getPitch(Disguise disguise, IWrappedEntity<?> entity, PacketWrapper sentPacket) {
         float pitchValue;
 
         if (sentPacket instanceof WrapperPlayServerEntityRelativeMove) {
@@ -352,7 +338,8 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
         return pitchValue;
     }
 
-    private void handleGridLock(Disguise disguise, LibsPackets<T> packets, Entity entity, PacketWrapper sentPacket, double yMod) {
+    private void handleGridLock(Disguise disguise, LibsPackets<T> packets, IWrappedEntity<?> entity, PacketWrapper sentPacket,
+                                double yMod) {
         packets.clear();
         final float pitchValue = getPitch(disguise, entity, sentPacket);
         final float yawValue = getYaw(disguise, entity, sentPacket);

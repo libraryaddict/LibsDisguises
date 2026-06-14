@@ -17,9 +17,9 @@ import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -32,7 +32,8 @@ public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerE
     }
 
     @Override
-    public void handle(Disguise disguise, LibsPackets<WrapperPlayServerEntityEquipment> packets, Player observer, Entity entity) {
+    public void handle(Disguise disguise, LibsPackets<WrapperPlayServerEntityEquipment> packets, IWrappedPlayer observer,
+                       IWrappedEntity entity) {
         WrapperPlayServerEntityEquipment originalPacket = packets.getOriginalPacket();
         // This list is only actually used if we construct a new packet, because otherwise we're wasting time
         List<Equipment> equipmentBeingSent = new ArrayList<>();
@@ -79,7 +80,8 @@ public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerE
             MetaIndex toUse = NmsVersion.v1_13.isSupported() ? MetaIndex.LIVING_META : MetaIndex.ENTITY_META;
 
             if (DisguiseConfig.isMetaPacketsEnabled()) {
-                List<EntityData<?>> data = ReflectionManager.getEntityWatcher(entity);
+                // TODO This is not thread safe
+                List<EntityData<?>> data = ReflectionManager.getEntityWatcher(entity.getEntity());
                 byte b = (byte) toUse.getDefault();
 
                 for (EntityData d : data) {
@@ -93,7 +95,7 @@ public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerE
 
                 list.add(new WatcherValue(toUse, b, true));
 
-                list = disguise.getWatcher().convert(observer, list);
+                list = disguise.getWatcher().convert(observer.getEntity(), list);
             } else {
                 for (WatcherValue obj : disguise.getWatcher().getWatchableObjects()) {
                     if (obj.getIndex() != toUse.getIndex()) {
@@ -106,12 +108,12 @@ public class PacketHandlerEquipment implements IPacketHandler<WrapperPlayServerE
             }
 
             // Construct the packets to return
-            WrapperPlayServerEntityMetadata packetBlock = ReflectionManager.getMetadataPacket(entity.getEntityId(), list);
+            WrapperPlayServerEntityMetadata packetBlock = ReflectionManager.getMetadataPacket(packets.getEntityId(), list);
 
             list.forEach(v -> v.setValue(NmsVersion.v1_13.isSupported() ? (byte) 0 : (byte) ((byte) v.getValue() & ~(1 << 4))));
 
             // Make a packet to send the 'unblock'
-            WrapperPlayServerEntityMetadata packetUnblock = ReflectionManager.getMetadataPacket(entity.getEntityId(), list);
+            WrapperPlayServerEntityMetadata packetUnblock = ReflectionManager.getMetadataPacket(packets.getEntityId(), list);
 
             // Send the unblock before the itemstack change so that the 2nd metadata packet works. Why?
             // Scheduler delay.
