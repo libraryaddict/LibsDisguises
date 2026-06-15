@@ -315,6 +315,15 @@ public class LivingWatcher extends FlagWatcher {
         }
     }
 
+    @NmsAddedIn(NmsVersion.v1_20_R4)
+    public void setParticles(List<Particle<? extends ParticleData>> particles) {
+        if (!NmsVersion.v1_20_R4.isSupported()) {
+            return;
+        }
+
+        sendData(MetaIndex.LIVING_PARTICLES, particles);
+    }
+
     private int getPotions() {
         if (potionEffects.isEmpty()) {
             return 0;
