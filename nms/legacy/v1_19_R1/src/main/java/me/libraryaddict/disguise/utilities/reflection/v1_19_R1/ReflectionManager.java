@@ -40,10 +40,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ReflectionManager extends ReflectionReusedNms {
-    private final Field trackedEntityField;
-    private final Method itemMetaDeserialize;
-
+public class ReflectionManager extends ReflectionManagerLayered {
     @SneakyThrows
     public ReflectionManager() {
         super();
@@ -61,17 +58,6 @@ public class ReflectionManager extends ReflectionReusedNms {
 
         Class<?> aClass = Class.forName("org.bukkit.craftbukkit.v1_19_R1.inventory.CraftMetaItem$SerializableMeta");
         itemMetaDeserialize = aClass.getDeclaredMethod("deserialize", Map.class);
-    }
-
-    @Override
-    public boolean hasInvul(Entity entity) {
-        net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
-
-        if (nmsEntity instanceof net.minecraft.world.entity.LivingEntity) {
-            return nmsEntity.invulnerableTime > 0;
-        } else {
-            return nmsEntity.isInvulnerableTo(DamageSource.GENERIC);
-        }
     }
 
     @Override
@@ -97,90 +83,6 @@ public class ReflectionManager extends ReflectionReusedNms {
         }
 
         return null;
-    }
-
-    @Override
-    public ChunkMap.TrackedEntity getEntityTracker(Entity target) {
-        ServerLevel world = ((CraftWorld) target.getWorld()).getHandle();
-        ServerChunkCache chunkSource = world.getChunkSource();
-        ChunkMap chunkMap = chunkSource.chunkMap;
-        Int2ObjectMap<ChunkMap.TrackedEntity> entityMap = chunkMap.entityMap;
-
-        return entityMap.get(target.getEntityId());
-    }
-
-    @Override
-    public ServerEntity getTrackerEntryFromTracker(Object trackedEntity) throws Exception {
-        if (trackedEntity == null) {
-            return null;
-        }
-
-        return (ServerEntity) trackedEntityField.get(trackedEntity);
-    }
-
-    @Override
-    public MinecraftSessionService getMinecraftSessionService() {
-        return getMinecraftServer().getSessionService();
-    }
-
-    @Override
-    public void injectCallback(String playername, ProfileLookupCallback callback) {
-        Agent agent = Agent.MINECRAFT;
-        getMinecraftServer().getProfileRepository().findProfilesByNames(new String[]{playername}, agent, callback);
-    }
-
-    @Override
-    public String getItemName(Material material) {
-        return Registry.ITEM.getKey(CraftMagicNumbers.getItem(material)).getPath();
-    }
-
-    @Override
-    public ResourceLocation createMinecraftKey(String name) {
-        return new ResourceLocation(name);
-    }
-
-    @Override
-    public Object registerEntityType(NamespacedKey key) {
-        net.minecraft.world.entity.EntityType<net.minecraft.world.entity.Entity> newEntity =
-            new net.minecraft.world.entity.EntityType<>(null, null, false, false, false, false, null, null, 0, 0);
-        Registry.register(Registry.ENTITY_TYPE, CraftNamespacedKey.toMinecraft(key), newEntity);
-        newEntity.getDescriptionId();
-        return newEntity; // TODO ??? Some reflection in legacy that I'm unsure about
-    }
-
-    @Override
-    public int getEntityTypeId(Object entityTypes) {
-        net.minecraft.world.entity.EntityType entityType = (net.minecraft.world.entity.EntityType) entityTypes;
-        return Registry.ENTITY_TYPE.getId(entityType);
-    }
-
-    @Override
-    public Object getEntityType(NamespacedKey name) {
-        return Registry.ENTITY_TYPE.get(CraftNamespacedKey.toMinecraft(name));
-    }
-
-    @Override
-    public ItemMeta getDeserializedItemMeta(Map<String, Object> meta) {
-        try {
-            return (ItemMeta) itemMetaDeserialize.invoke(null, meta);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    @SneakyThrows
-    @Override
-    public ByteBuf getDataWatcherValues(Object entity) {
-        SynchedEntityData watcher = ((net.minecraft.world.entity.Entity) entity).getEntityData();
-        List<SynchedEntityData.DataItem<?>> dataItems = watcher.getAll();
-
-        ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer();
-
-        SynchedEntityData.pack(dataItems, new FriendlyByteBuf(buf));
-
-        return buf;
     }
 
     @Override

@@ -50,11 +50,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ReflectionManager extends ReflectionReusedNms {
-    private Field dataItemsField;
-    private final Field trackedEntityField;
-    private final Method itemMetaDeserialize;
-
+public class ReflectionManager extends ReflectionManagerLayered {
     @SneakyThrows
     public ReflectionManager() {
         super();
@@ -84,17 +80,6 @@ public class ReflectionManager extends ReflectionReusedNms {
     }
 
     @Override
-    public boolean hasInvul(Entity entity) {
-        net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
-
-        if (nmsEntity instanceof net.minecraft.world.entity.LivingEntity) {
-            return nmsEntity.invulnerableTime > 0;
-        } else {
-            return nmsEntity.isInvulnerableTo(nmsEntity.damageSources().generic());
-        }
-    }
-
-    @Override
     public net.minecraft.world.entity.Entity createEntityInstance(String entityName) {
         Optional<net.minecraft.world.entity.EntityType<?>> optional =
             net.minecraft.world.entity.EntityType.byString(entityName.toLowerCase(Locale.ENGLISH));
@@ -118,92 +103,8 @@ public class ReflectionManager extends ReflectionReusedNms {
     }
 
     @Override
-    public ChunkMap.TrackedEntity getEntityTracker(Entity target) {
-        ServerLevel world = ((CraftWorld) target.getWorld()).getHandle();
-        ServerChunkCache chunkSource = world.getChunkSource();
-        ChunkMap chunkMap = chunkSource.chunkMap;
-        Int2ObjectMap<ChunkMap.TrackedEntity> entityMap = chunkMap.entityMap;
-
-        return entityMap.get(target.getEntityId());
-    }
-
-    @Override
-    public ServerEntity getTrackerEntryFromTracker(Object trackedEntity) throws Exception {
-        if (trackedEntity == null) {
-            return null;
-        }
-
-        return (ServerEntity) trackedEntityField.get(trackedEntity);
-    }
-
-    @Override
-    public MinecraftSessionService getMinecraftSessionService() {
-        return getMinecraftServer().getSessionService();
-    }
-
-    @Override
     public void injectCallback(String playername, ProfileLookupCallback callback) {
         getMinecraftServer().getProfileRepository().findProfilesByNames(new String[]{playername}, callback);
-    }
-
-    @Override
-    public String getItemName(Material material) {
-        return BuiltInRegistries.ITEM.getKey(CraftMagicNumbers.getItem(material)).getPath();
-    }
-
-    @Override
-    public ResourceLocation createMinecraftKey(String name) {
-        return new ResourceLocation(name);
-    }
-
-    @Override
-    public Object registerEntityType(NamespacedKey key) {
-        net.minecraft.world.entity.EntityType<net.minecraft.world.entity.Entity> newEntity =
-            new net.minecraft.world.entity.EntityType<>(null, null, false, false, false, false, null, null, 0, 0, FeatureFlagSet.of());
-        Registry.register(BuiltInRegistries.ENTITY_TYPE, CraftNamespacedKey.toMinecraft(key), newEntity);
-        newEntity.getDescriptionId();
-        return newEntity; // TODO ??? Some reflection in legacy that I'm unsure about
-    }
-
-    @Override
-    public int getEntityTypeId(Object entityTypes) {
-        net.minecraft.world.entity.EntityType entityType = (net.minecraft.world.entity.EntityType) entityTypes;
-
-        return BuiltInRegistries.ENTITY_TYPE.getId(entityType);
-    }
-
-    @Override
-    public Object getEntityType(NamespacedKey name) {
-        return BuiltInRegistries.ENTITY_TYPE.get(CraftNamespacedKey.toMinecraft(name));
-    }
-
-    @Override
-    public ItemMeta getDeserializedItemMeta(Map<String, Object> meta) {
-        try {
-            return (ItemMeta) itemMetaDeserialize.invoke(null, meta);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    @SneakyThrows
-    @Override
-    public ByteBuf getDataWatcherValues(Object entity) {
-        SynchedEntityData watcher = ((net.minecraft.world.entity.Entity) entity).getEntityData();
-        Int2ObjectMap<SynchedEntityData.DataItem<?>> dataItems = (Int2ObjectMap<SynchedEntityData.DataItem<?>>) dataItemsField.get(watcher);
-
-        ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer();
-        FriendlyByteBuf serializer = new FriendlyByteBuf(buf);
-
-        for (SynchedEntityData.DataItem dataItem : dataItems.values()) {
-            dataItem.value().write(serializer);
-        }
-
-        serializer.writeByte(255);
-
-        return buf;
     }
 
     @Override

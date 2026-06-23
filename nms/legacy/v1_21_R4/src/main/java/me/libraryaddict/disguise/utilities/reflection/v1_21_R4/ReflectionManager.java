@@ -79,8 +79,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ReflectionManager extends ReflectionReusedNms {
-    private Field dataItemsField;
+public class ReflectionManager extends ReflectionManagerLayered {
     private Method wolfSoundVariantMethods;
 
     @SneakyThrows
@@ -119,17 +118,6 @@ public class ReflectionManager extends ReflectionReusedNms {
     }
 
     @Override
-    public boolean hasInvul(Entity entity) {
-        net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
-
-        if (nmsEntity instanceof net.minecraft.world.entity.LivingEntity) {
-            return nmsEntity.invulnerableTime > 0;
-        } else {
-            return nmsEntity.isInvulnerableToBase(nmsEntity.damageSources().generic());
-        }
-    }
-
-    @Override
     public net.minecraft.world.entity.Entity createEntityInstance(String entityName) {
         Optional<net.minecraft.world.entity.EntityType<?>> optional =
             net.minecraft.world.entity.EntityType.byString(entityName.toLowerCase(Locale.ENGLISH));
@@ -151,96 +139,6 @@ public class ReflectionManager extends ReflectionReusedNms {
         }
 
         return entity;
-    }
-
-    @Override
-    public ChunkMap.TrackedEntity getEntityTracker(Entity target) {
-        ServerLevel world = ((CraftWorld) target.getWorld()).getHandle();
-        ServerChunkCache chunkSource = world.getChunkSource();
-        ChunkMap chunkMap = chunkSource.chunkMap;
-        Int2ObjectMap<ChunkMap.TrackedEntity> entityMap = chunkMap.entityMap;
-
-        return entityMap.get(target.getEntityId());
-    }
-
-    @Override
-    public ServerEntity getTrackerEntryFromTracker(Object trackedEntity) {
-        if (trackedEntity == null) {
-            return null;
-        }
-
-        return ((ChunkMap.TrackedEntity) trackedEntity).serverEntity;
-    }
-
-    @Override
-    public MinecraftSessionService getMinecraftSessionService() {
-        return getMinecraftServer().getSessionService();
-    }
-
-    @Override
-    public void injectCallback(String playername, ProfileLookupCallback callback) {
-        getMinecraftServer().getProfileRepository().findProfilesByNames(new String[]{playername}, callback);
-    }
-
-    @Override
-    public String getItemName(Material material) {
-        return BuiltInRegistries.ITEM.getKey(CraftMagicNumbers.getItem(material)).getPath();
-    }
-
-    @Override
-    public ResourceLocation createMinecraftKey(String name) {
-        return ResourceLocation.withDefaultNamespace(name);
-    }
-
-    @Override
-    public Object registerEntityType(NamespacedKey key) {
-        net.minecraft.world.entity.EntityType<net.minecraft.world.entity.Entity> newEntity =
-            new net.minecraft.world.entity.EntityType<>(null, null, false, false, false, false, null, null, 0, 0, 0,
-                "descId." + key.toString(), Optional.empty(), FeatureFlagSet.of());
-        Registry.register(BuiltInRegistries.ENTITY_TYPE, CraftNamespacedKey.toMinecraft(key), newEntity);
-        newEntity.getDescriptionId();
-        return newEntity; // TODO ??? Some reflection in legacy that I'm unsure about
-    }
-
-    @Override
-    public int getEntityTypeId(Object entityTypes) {
-        net.minecraft.world.entity.EntityType entityType = (net.minecraft.world.entity.EntityType) entityTypes;
-
-        return BuiltInRegistries.ENTITY_TYPE.getIdOrThrow(entityType);
-    }
-
-    @Override
-    public Object getEntityType(NamespacedKey name) {
-        return BuiltInRegistries.ENTITY_TYPE.get(CraftNamespacedKey.toMinecraft(name));
-    }
-
-    @Override
-    public ItemMeta getDeserializedItemMeta(Map<String, Object> meta) {
-        try {
-            return SerializableMeta.deserialize(meta);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    @SneakyThrows
-    @Override
-    public ByteBuf getDataWatcherValues(Object entity) {
-        SynchedEntityData watcher = ((net.minecraft.world.entity.Entity) entity).getEntityData();
-        SynchedEntityData.DataItem[] dataItems = (SynchedEntityData.DataItem[]) dataItemsField.get(watcher);
-
-        ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer();
-        RegistryFriendlyByteBuf serializer = RegistryFriendlyByteBuf.decorator(this.getMinecraftServer().registryAccess()).apply(buf);
-
-        for (SynchedEntityData.DataItem dataItem : dataItems) {
-            dataItem.value().write(serializer);
-        }
-
-        serializer.writeByte(255);
-
-        return buf;
     }
 
     @Override
@@ -299,29 +197,6 @@ public class ReflectionManager extends ReflectionReusedNms {
         return super.getTypeFromInt(typeClass, typeId);
     }
 
-    @Override
-    public String getDataAsString(ItemStack itemStack) {
-        return itemStack.hasItemMeta() ? itemStack.getItemMeta().getAsComponentString() : null;
-    }
-
-    @Override
-    public boolean setScore(Scoreboard scoreboard, String criteria, String name, int score) {
-        net.minecraft.world.scores.Scoreboard handle = ((CraftScoreboard) scoreboard).getHandle();
-        ScoreHolder holder = () -> name;
-        boolean updated = false;
-
-        for (Objective objective : handle.getObjectives()) {
-            if (!objective.getCriteria().getName().equals(criteria)) {
-                continue;
-            }
-
-            handle.getOrCreatePlayerScore(holder, objective, true).set(score);
-            updated = true;
-        }
-
-        return updated;
-    }
-
     @SneakyThrows
     @Override
     public String getVariant(Entity entity, VersionedRegistry<? extends MappedEntity> registry) {
@@ -332,24 +207,5 @@ public class ReflectionManager extends ReflectionReusedNms {
         }
 
         return super.getVariant(entity, registry);
-    }
-
-    @Override
-    public List<ByteBuf> getRegistryPacketdata() {
-        DynamicOps<Tag> dynamicOps = getMinecraftServer().registries().compositeAccess().createSerializationContext(NbtOps.INSTANCE);
-        List<ByteBuf> registerBuf = new ArrayList<>();
-
-        RegistrySynchronization.packRegistries(dynamicOps, getMinecraftServer().registries().getAccessFrom(RegistryLayer.WORLDGEN),
-            new HashSet<>(), (resourceKey, list) -> {
-                ClientboundRegistryDataPacket packet = new ClientboundRegistryDataPacket(resourceKey, list);
-                ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer();
-                FriendlyByteBuf friendlyByteBuf = new FriendlyByteBuf(buf);
-
-                ClientboundRegistryDataPacket.STREAM_CODEC.encode(friendlyByteBuf, packet);
-
-                registerBuf.add(buf);
-            });
-
-        return registerBuf;
     }
 }

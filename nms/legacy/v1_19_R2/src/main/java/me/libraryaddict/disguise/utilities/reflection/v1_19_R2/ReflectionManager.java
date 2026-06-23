@@ -42,10 +42,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ReflectionManager extends ReflectionReusedNms {
+public class ReflectionManager extends ReflectionManagerLayered {
     private Field dataItemsField;
-    private final Field trackedEntityField;
-    private final Method itemMetaDeserialize;
 
     @SneakyThrows
     public ReflectionManager() {
@@ -76,17 +74,6 @@ public class ReflectionManager extends ReflectionReusedNms {
     }
 
     @Override
-    public boolean hasInvul(Entity entity) {
-        net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
-
-        if (nmsEntity instanceof net.minecraft.world.entity.LivingEntity) {
-            return nmsEntity.invulnerableTime > 0;
-        } else {
-            return nmsEntity.isInvulnerableTo(DamageSource.GENERIC);
-        }
-    }
-
-    @Override
     public net.minecraft.world.entity.Entity createEntityInstance(String entityName) {
         Optional<net.minecraft.world.entity.EntityType<?>> optional =
             net.minecraft.world.entity.EntityType.byString(entityName.toLowerCase(Locale.ENGLISH));
@@ -112,43 +99,8 @@ public class ReflectionManager extends ReflectionReusedNms {
     }
 
     @Override
-    public ChunkMap.TrackedEntity getEntityTracker(Entity target) {
-        ServerLevel world = ((CraftWorld) target.getWorld()).getHandle();
-        ServerChunkCache chunkSource = world.getChunkSource();
-        ChunkMap chunkMap = chunkSource.chunkMap;
-        Int2ObjectMap<ChunkMap.TrackedEntity> entityMap = chunkMap.entityMap;
-
-        return entityMap.get(target.getEntityId());
-    }
-
-    @Override
-    public ServerEntity getTrackerEntryFromTracker(Object trackedEntity) throws Exception {
-        if (trackedEntity == null) {
-            return null;
-        }
-
-        return (ServerEntity) trackedEntityField.get(trackedEntity);
-    }
-
-    @Override
-    public MinecraftSessionService getMinecraftSessionService() {
-        return getMinecraftServer().getSessionService();
-    }
-
-    @Override
-    public void injectCallback(String playername, ProfileLookupCallback callback) {
-        Agent agent = Agent.MINECRAFT;
-        getMinecraftServer().getProfileRepository().findProfilesByNames(new String[]{playername}, agent, callback);
-    }
-
-    @Override
     public String getItemName(Material material) {
         return BuiltInRegistries.ITEM.getKey(CraftMagicNumbers.getItem(material)).getPath();
-    }
-
-    @Override
-    public ResourceLocation createMinecraftKey(String name) {
-        return new ResourceLocation(name);
     }
 
     @Override
@@ -170,17 +122,6 @@ public class ReflectionManager extends ReflectionReusedNms {
     @Override
     public Object getEntityType(NamespacedKey name) {
         return BuiltInRegistries.ENTITY_TYPE.get(CraftNamespacedKey.toMinecraft(name));
-    }
-
-    @Override
-    public ItemMeta getDeserializedItemMeta(Map<String, Object> meta) {
-        try {
-            return (ItemMeta) itemMetaDeserialize.invoke(null, meta);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
     }
 
     @SneakyThrows

@@ -8,7 +8,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.SneakyThrows;
-import me.libraryaddict.disguise.utilities.reflection.v1_20_R4.ReflectionReusedNms;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistrySynchronization;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -66,10 +65,22 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ReflectionManager extends ReflectionReusedNms {
-    private Field dataItemsField;
-    private final Field trackedEntityField;
+import org.bukkit.craftbukkit.CraftArt;
+import org.bukkit.craftbukkit.CraftRegistry;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.entity.CraftCat;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftFrog;
+import org.bukkit.craftbukkit.entity.CraftWolf;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.inventory.SerializableMeta;
+import org.bukkit.craftbukkit.scoreboard.CraftScoreboard;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 
+public class ReflectionManager extends ReflectionManagerLayered {
     @SneakyThrows
     public ReflectionManager() {
         super();
@@ -96,77 +107,35 @@ public class ReflectionManager extends ReflectionReusedNms {
     }
 
     @Override
-    public boolean hasInvul(Entity entity) {
-        net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
-
-        if (nmsEntity instanceof net.minecraft.world.entity.LivingEntity) {
-            return nmsEntity.invulnerableTime > 0;
-        } else {
-            return nmsEntity.isInvulnerableTo(nmsEntity.damageSources().generic());
-        }
+    public final ItemStack getBukkitItem(Object nmsItem) {
+        return CraftItemStack.asBukkitCopy((net.minecraft.world.item.ItemStack) nmsItem);
     }
 
     @Override
-    public net.minecraft.world.entity.Entity createEntityInstance(String entityName) {
-        Optional<net.minecraft.world.entity.EntityType<?>> optional =
-            net.minecraft.world.entity.EntityType.byString(entityName.toLowerCase(Locale.ENGLISH));
-
-        if (optional.isEmpty()) {
-            return null;
-        }
-
-        net.minecraft.world.entity.EntityType<?> entityType = optional.get();
-        ServerLevel world = getWorldServer(Bukkit.getWorlds().get(0));
-        net.minecraft.world.entity.Entity entity;
-        if (entityType == net.minecraft.world.entity.EntityType.PLAYER) {
-            GameProfile gameProfile = new GameProfile(new UUID(0, 0), "Steve");
-            ClientInformation information =
-                new ClientInformation("english", 10, ChatVisiblity.FULL, true, 0, HumanoidArm.RIGHT, true, true);
-            entity = new ServerPlayer(getMinecraftServer(), world, gameProfile, information);
-        } else {
-            entity = entityType.create(world);
-        }
-
-        return entity;
+    public final ItemStack getCraftItem(ItemStack bukkitItem) {
+        return CraftItemStack.asCraftCopy(bukkitItem);
     }
 
     @Override
-    public ChunkMap.TrackedEntity getEntityTracker(Entity target) {
-        ServerLevel world = ((CraftWorld) target.getWorld()).getHandle();
-        ServerChunkCache chunkSource = world.getChunkSource();
-        ChunkMap chunkMap = chunkSource.chunkMap;
-        Int2ObjectMap<ChunkMap.TrackedEntity> entityMap = chunkMap.entityMap;
-
-        return entityMap.get(target.getEntityId());
+    public final DedicatedServer getMinecraftServer() {
+        return ((CraftServer) Bukkit.getServer()).getServer();
     }
 
     @Override
-    public ServerEntity getTrackerEntryFromTracker(Object trackedEntity) throws Exception {
-        if (trackedEntity == null) {
-            return null;
-        }
-
-        return (ServerEntity) trackedEntityField.get(trackedEntity);
+    public final Object getNmsEntity(Entity entity) {
+        return ((CraftEntity) entity).getHandle();
     }
 
     @Override
-    public MinecraftSessionService getMinecraftSessionService() {
-        return getMinecraftServer().getSessionService();
+    public final int getCombinedIdByBlockData(BlockData data) {
+        BlockState state = ((CraftBlockData) data).getState();
+        return Block.getId(state);
     }
 
     @Override
-    public void injectCallback(String playername, ProfileLookupCallback callback) {
-        getMinecraftServer().getProfileRepository().findProfilesByNames(new String[]{playername}, callback);
-    }
-
-    @Override
-    public String getItemName(Material material) {
-        return BuiltInRegistries.ITEM.getKey(CraftMagicNumbers.getItem(material)).getPath();
-    }
-
-    @Override
-    public ResourceLocation createMinecraftKey(String name) {
-        return new ResourceLocation(name);
+    public final int getCombinedIdByItemStack(ItemStack itemStack) {
+        Block block = CraftMagicNumbers.getBlock(itemStack.getType());
+        return Block.getId(block.defaultBlockState());
     }
 
     @Override
@@ -183,11 +152,6 @@ public class ReflectionManager extends ReflectionReusedNms {
         net.minecraft.world.entity.EntityType entityType = (net.minecraft.world.entity.EntityType) entityTypes;
 
         return BuiltInRegistries.ENTITY_TYPE.getIdOrThrow(entityType);
-    }
-
-    @Override
-    public Object getEntityType(NamespacedKey name) {
-        return BuiltInRegistries.ENTITY_TYPE.get(CraftNamespacedKey.toMinecraft(name));
     }
 
     @Override
@@ -260,24 +224,6 @@ public class ReflectionManager extends ReflectionReusedNms {
     @Override
     public String getDataAsString(ItemStack itemStack) {
         return itemStack.hasItemMeta() ? itemStack.getItemMeta().getAsComponentString() : null;
-    }
-
-    @Override
-    public boolean setScore(Scoreboard scoreboard, String criteria, String name, int score) {
-        net.minecraft.world.scores.Scoreboard handle = ((CraftScoreboard) scoreboard).getHandle();
-        ScoreHolder holder = () -> name;
-        boolean updated = false;
-
-        for (Objective objective : handle.getObjectives()) {
-            if (!objective.getCriteria().getName().equals(criteria)) {
-                continue;
-            }
-
-            handle.getOrCreatePlayerScore(holder, objective, true).set(score);
-            updated = true;
-        }
-
-        return updated;
     }
 
     @Override

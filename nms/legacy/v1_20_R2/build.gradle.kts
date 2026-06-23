@@ -7,6 +7,7 @@ description = "v1_20_R2"
 nmsModule {
     craftbukkitVersion.set("1.20.2-R0.1-SNAPSHOT")
     javaVersion.set(JavaVersion.VERSION_17)
+    layerFrom.set(":nms:legacy:v1_20_R1")
 }
 
 dependencies {
