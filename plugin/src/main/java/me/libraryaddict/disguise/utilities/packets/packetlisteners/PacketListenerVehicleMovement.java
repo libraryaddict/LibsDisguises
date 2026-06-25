@@ -58,7 +58,7 @@ public class PacketListenerVehicleMovement extends SimplePacketListenerAbstract 
     }
 
     private void refreshPosition(IWrappedPlayer observer, int entityId, PacketWrapper sentPacket) {
-        Disguise disguise = DisguiseUtilities.getDisguise(observer.getEntity(), entityId);
+        Disguise disguise = DisguiseUtilities.getDisguise(observer, entityId);
 
         if (disguise == null || disguise.getArmorstandIds().length == 0) {
             return;

@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities.wrapped;
 
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
@@ -20,6 +21,10 @@ public interface IWrappedEntity<E extends Entity> {
     UUID getUniqueId();
 
     Location getLocation();
+
+    default World getWorld() {
+        return getLocation().getWorld();
+    }
 
     EntityType getType();
 

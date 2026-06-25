@@ -221,7 +221,6 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
             double playerValue = prop.calcValue();
             double max = disguise.getInternals().getSelfDisguiseTallScaleMax();
 
-System.out.println("Player value: " + playerValue + " Max: " + max);
             // If the disguise height is under the max height
             if (playerValue <= max) {
                 break;

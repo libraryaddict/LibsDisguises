@@ -214,7 +214,7 @@ public class DisguiseUtilities {
     private static final Set<Integer> isNoInteract = ConcurrentHashMap.newKeySet();
     private static final Set<Integer> isSpecialInteract = ConcurrentHashMap.newKeySet();
     /**
-     * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
+     * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use.
      */
     @Getter
     private static final Map<Integer, Set<TargetedDisguise>> disguises = new ConcurrentHashMap<>();
@@ -3816,7 +3816,7 @@ public class DisguiseUtilities {
         return new double[]{getClampedScale(modifiedScale), getClampedScale(ldModified)};
     }
 
-    private static void findFutureDisguise(Player observer, UUID uuid, int entityId) {
+    private static void findFutureDisguise(IWrappedPlayer observer, UUID uuid, int entityId) {
         if (Bukkit.isPrimaryThread()) {
             findEntities(observer, uuid, entityId);
             return;
@@ -3846,10 +3846,18 @@ public class DisguiseUtilities {
     }
 
     public static Disguise getDisguise(Player observer, int entityId) {
-        return getDisguise(observer, null, entityId);
+        return getDisguise(WrappedManager.getWrappedPlayer(observer), null, entityId);
     }
 
     public static Disguise getDisguise(Player observer, UUID uuid, int entityId) {
+        return getDisguise(WrappedManager.getWrappedPlayer(observer), uuid, entityId);
+    }
+
+    public static Disguise getDisguise(IWrappedPlayer observer, int entityId) {
+        return getDisguise(observer, null, entityId);
+    }
+
+    public static Disguise getDisguise(IWrappedPlayer observer, UUID uuid, int entityId) {
         // If the entity ID is the same as self disguises' id, then it needs to be set to the observers id
         if (entityId == DisguiseAPI.getSelfDisguiseId()) {
             entityId = observer.getEntityId();
@@ -3897,7 +3905,7 @@ public class DisguiseUtilities {
         return null;
     }
 
-    private static void findEntities(Player observer, UUID uuid, int entityId) {
+    private static void findEntities(IWrappedPlayer observer, UUID uuid, int entityId) {
         Entity entity = Bukkit.getEntity(uuid);
 
         if (entity != null) {

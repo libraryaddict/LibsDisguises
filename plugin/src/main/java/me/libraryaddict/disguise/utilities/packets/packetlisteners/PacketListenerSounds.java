@@ -19,6 +19,8 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSound;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup.SoundType;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
+import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -60,6 +62,8 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             return;
         }
 
+        IWrappedPlayer wrappedPlayer = WrappedManager.getWrappedPlayer(observer);
+
         Sound sound;
         float volume;
         float pitch;
@@ -84,7 +88,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             ResourceLocation soundKey = sound.getSoundId();
 
             Vector3i loc = soundEffect.getEffectPosition();
-            World world = observer.getWorld();
+            World world = wrappedPlayer.getWorld();
 
             loop:
             for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
@@ -95,7 +99,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
                         continue;
                     }
 
-                    if (!entityDisguise.canSee(observer)) {
+                    if (!entityDisguise.canSee(wrappedPlayer)) {
                         continue;
                     }
 
@@ -131,7 +135,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
                 return;
             }
 
-            disguise = DisguiseUtilities.getDisguise(observer, entitySoundEffect.getEntityId());
+            disguise = DisguiseUtilities.getDisguise(wrappedPlayer, entitySoundEffect.getEntityId());
         }
 
         if (disguise == null || !disguise.isSoundsReplaced()) {
@@ -140,7 +144,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
 
         Entity entity = disguise.getEntity();
 
-        if (entity == observer && !disguise.isSelfDisguiseSoundsReplaced()) {
+        if (entity == wrappedPlayer.getEntity() && !disguise.isSelfDisguiseSoundsReplaced()) {
             return;
         }
 
@@ -205,7 +209,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             // Well then, api is lacking. May as well send via bukkit methods
             Location loc = entity.getLocation();
             // Namespace was a 1.16 thing, so 1.16+ we will include the 'minecraft:'
-            observer.playSound(loc, NmsVersion.v1_16.isSupported() ? newSound.toString() : newSound.getKey(),
+            wrappedPlayer.playSound(loc, NmsVersion.v1_16.isSupported() ? newSound.toString() : newSound.getKey(),
                 disguise.getEffectiveSoundCategory().getBukkitSoundCategory(disguise), volume, pitch);
             return;
         }

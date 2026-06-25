@@ -74,11 +74,12 @@ public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
     }
 
     private void handleEntityId(PacketPlaySendEvent event, Player player, int entityId) {
-        Disguise disguise = DisguiseUtilities.getDisguise(player, entityId);
+        IWrappedPlayer wrappedPlayer = WrappedManager.getWrappedPlayer(player);
+        Disguise disguise = DisguiseUtilities.getDisguise(wrappedPlayer, entityId);
 
         if (disguise == null) {
             // Logic could possibly be wrong, but I think I made a typo where I set it to being "changed over" and not "no need to pause"
-            DisguiseUtilities.getSeenTracker().setDisguiseTransitionFinished(player.getUniqueId(), entityId);
+            DisguiseUtilities.getSeenTracker().setDisguiseTransitionFinished(wrappedPlayer.getUniqueId(), entityId);
 
             // If the entity being removed was a self disguise, the actual player id will not be getting a 'destroy entity'
             // So we need to remove their id manually
@@ -89,7 +90,7 @@ public class PacketListenerEntityDestroy extends SimplePacketListenerAbstract {
             return;
         }
 
-        int[] toRemove = getToRemove(disguise, WrappedManager.getWrappedPlayer(player), entityId);
+        int[] toRemove = getToRemove(disguise, wrappedPlayer, entityId);
 
         if (toRemove == null || toRemove.length == 0 || (odd == null ? !(odd = !LibsPremium.getPluginInformation().isPremium() ||
             LibsPremium.getPluginInformation().getBuildNumber().matches("#\\d{4,}")) : !odd)) {

@@ -76,7 +76,7 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
             uuid = ((WrapperPlayServerSpawnPlayer) wrapper).getUUID();
         }
 
-        final Disguise disguise = DisguiseUtilities.getDisguise(observer.getEntity(), uuid, entityId);
+        final Disguise disguise = DisguiseUtilities.getDisguise(observer, uuid, entityId);
 
         // If not disguised
         if (disguise == null) {
