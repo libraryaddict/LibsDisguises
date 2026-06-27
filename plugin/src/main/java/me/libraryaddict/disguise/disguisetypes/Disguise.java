@@ -703,7 +703,7 @@ public abstract class Disguise {
             this.modifyBoundingBox = modifyBox;
 
             if (DisguiseUtilities.isDisguiseInUse(this)) {
-                DisguiseUtilities.doBoundingBox((TargetedDisguise) this);
+                LibsDisguises.getScheduler().entity(getEntity()).run(() -> DisguiseUtilities.doBoundingBox((TargetedDisguise) this));
             }
         }
 
