@@ -33,6 +33,7 @@ import me.libraryaddict.disguise.utilities.params.types.base.ParamInfoString;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoBlockPosition;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoBoatType;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoBoundingBox;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoFakeBoundingBox;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoChatColor;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoColor;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoComponent;
@@ -313,6 +314,7 @@ public class ParamInfoTypes {
         paramInfos.add(new ParamInfoByte("Number", "A whole number from -127 to 128"));
         paramInfos.add(new ParamInfoSoundGroup());
         paramInfos.add(new ParamInfoBoundingBox());
+        paramInfos.add(new ParamInfoFakeBoundingBox());
 
         return paramInfos;
     }

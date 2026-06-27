@@ -90,6 +90,7 @@ public class ConfigMigrator {
         list.add(new ConfigMigration_DisplayConfigDesc());
         // V.5
         list.add(new ConfigMigration_Sounds());
+        list.add(new ConfigMigration_DisabledMethods(6, "setServerBoundingBox"));
 
         return list;
     }

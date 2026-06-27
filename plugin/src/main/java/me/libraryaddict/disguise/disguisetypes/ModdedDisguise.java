@@ -124,8 +124,14 @@ public class ModdedDisguise extends TargetedDisguise {
     }
 
     @Override
+    @Deprecated
     public ModdedDisguise setModifyBoundingBox(boolean modifyBox) {
         return (ModdedDisguise) super.setModifyBoundingBox(modifyBox);
+    }
+
+    @Override
+    public ModdedDisguise setServerBoundingBox(me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox box) {
+        return (ModdedDisguise) super.setServerBoundingBox(box);
     }
 
     @Override
