@@ -1252,7 +1252,7 @@ public class DisguiseUtilities {
 
         checkConflicts(disguise, null);
 
-        if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS && disguise.isModifyBoundingBox()) {
+        if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS && disguise.isServerBoundingBoxEnabled()) {
             doBoundingBox(disguise);
         }
     }
@@ -1500,6 +1500,20 @@ public class DisguiseUtilities {
         }
     }
 
+    public static void scheduleDoBoundingBox(TargetedDisguise disguise) {
+        Entity entity = disguise.getEntity();
+
+        if (entity == null) {
+            return;
+        }
+
+        if (LibsDisguises.getScheduler().isOwnedByCurrentRegion(entity)) {
+            doBoundingBox(disguise);
+        } else {
+            LibsDisguises.getScheduler().entity(entity).run(() -> doBoundingBox(disguise));
+        }
+    }
+
     public static void doBoundingBox(TargetedDisguise disguise) {
         Entity entity = disguise.getEntity();
 
@@ -1507,14 +1521,18 @@ public class DisguiseUtilities {
             return;
         }
 
-        if (isDisguiseInUse(disguise)) {
-            DisguiseValues disguiseValues = disguise.getType().getEntityInfo();
-            FakeBoundingBox disguiseBox = disguiseValues.getAdultBox();
+        if (isDisguiseInUse(disguise) && disguise.isServerBoundingBoxEnabled()) {
+            FakeBoundingBox disguiseBox = disguise.getServerBoundingBox();
 
-            if (disguiseValues.getBabyBox() != null) {
-                if ((disguise.getWatcher() instanceof AgeableWatcher && ((AgeableWatcher) disguise.getWatcher()).isBaby()) ||
-                    (disguise.getWatcher() instanceof ZombieWatcher && ((ZombieWatcher) disguise.getWatcher()).isBaby())) {
-                    disguiseBox = disguiseValues.getBabyBox();
+            if (disguiseBox == null) {
+                DisguiseValues disguiseValues = disguise.getType().getEntityInfo();
+                disguiseBox = disguiseValues.getAdultBox();
+
+                if (disguiseValues.getBabyBox() != null) {
+                    if ((disguise.getWatcher() instanceof AgeableWatcher && ((AgeableWatcher) disguise.getWatcher()).isBaby()) ||
+                        (disguise.getWatcher() instanceof ZombieWatcher && ((ZombieWatcher) disguise.getWatcher()).isBaby())) {
+                        disguiseBox = disguiseValues.getBabyBox();
+                    }
                 }
             }
 
@@ -2320,7 +2338,7 @@ public class DisguiseUtilities {
 
             // If the disguise was removed and the bounding box was modified
             if (wasDisguiseRemoved.get() && disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS &&
-                disguise.isModifyBoundingBox()) {
+                disguise.isServerBoundingBoxEnabled()) {
                 doBoundingBox(disguise);
             }
 

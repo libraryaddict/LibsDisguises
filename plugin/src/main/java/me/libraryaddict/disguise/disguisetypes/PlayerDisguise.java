@@ -598,8 +598,14 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     @Override
+    @Deprecated
     public PlayerDisguise setModifyBoundingBox(boolean modifyBox) {
         return (PlayerDisguise) super.setModifyBoundingBox(modifyBox);
+    }
+
+    @Override
+    public PlayerDisguise setServerBoundingBox(me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox box) {
+        return (PlayerDisguise) super.setServerBoundingBox(box);
     }
 
     @Override

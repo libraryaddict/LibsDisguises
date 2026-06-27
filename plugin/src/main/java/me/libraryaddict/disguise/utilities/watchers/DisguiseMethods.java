@@ -13,6 +13,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
+import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherInfo;
@@ -204,7 +205,7 @@ public class DisguiseMethods {
             Arrays.asList("setSelfDisguiseVisible", "setHideHeldItemFromSelf", "setHideArmorFromSelf", "setHearSelfDisguise",
                 "setReplaceSounds", "setHidePlayer", "setExpires", "setNotifyBar", "setBossBarColor", "setBossBarStyle", "setDynamicName",
                 "setSoundGroup", "setDisguiseName", "setDeadmau5Ears", "setTallSelfDisguise", "setPlayIdleSounds", "setSoundCategory",
-                "setBoundingBox"));
+                "setBoundingBox", "setServerBoundingBox"));
 
         // Methods hidden by default, mainly so it doesn't throw an exception if used
         // This means that any options in this will be set in a disguise, but it won't be copied when a disguise is parsed to string
@@ -255,6 +256,9 @@ public class DisguiseMethods {
                         break;
                     case "setBoundingBox":
                         cl = InteractiveBoundingBox.class;
+                        break;
+                    case "setServerBoundingBox":
+                        cl = FakeBoundingBox.class;
                         break;
                     default:
                         break;
