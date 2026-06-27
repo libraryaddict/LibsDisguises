@@ -177,8 +177,8 @@ public abstract class Disguise {
         disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
         disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
         disguise.setVelocitySent(isVelocitySent());
-        disguise.setModifyBoundingBox(isModifyBoundingBox());
-        disguise.setServerBoundingBox(cloneFakeBoundingBox(getServerBoundingBox()));
+        disguise.modifyBoundingBox = isModifyBoundingBox();
+        disguise.serverBoundingBox = getServerBoundingBox() == null ? null : getServerBoundingBox().clone();
         disguise.multiName = Arrays.copyOf(multiName, multiName.length);
         disguise.setDynamicName(isDynamicName());
         disguise.setSoundGroup(getSoundGroup());
@@ -707,34 +707,41 @@ public abstract class Disguise {
      * Whether server-side hitbox modification is active for this disguise (type-default or custom {@link #getServerBoundingBox()}).
      */
     public boolean isServerBoundingBoxEnabled() {
-        return modifyBoundingBox || serverBoundingBox != null;
+        return modifyBoundingBox;
     }
 
     /**
      * Sets a custom server-side bounding box used for server hit detection (arrows, melee, etc.). Does not change what clients see.
      * <p>
+     * Invoking this with a non-null box also enables server-side hitbox modification ({@link #isModifyBoundingBox()}).
      * Use {@link #setBoundingBox(me.libraryaddict.disguise.utilities.movements.InteractiveBoundingBox)} for client-side interactive hitboxes.
      *
-     * @param box custom half-extents box, or {@code null} to clear a custom override
+     * @param box custom box dimensions, or {@code null} to clear a custom override (server hitboxes remain off unless
+     * {@link #setModifyBoundingBox(boolean)} is used)
      */
     public Disguise setServerBoundingBox(@Nullable FakeBoundingBox box) {
-        if (serverBoundingBox == box) {
+        FakeBoundingBox next = box == null ? null : box.clone();
+
+        if (serverBoundingBox == next) {
             return this;
         }
 
-        this.serverBoundingBox = box;
+        this.serverBoundingBox = next;
+
+        if (next != null) {
+            this.modifyBoundingBox = true;
+        }
 
         if (DisguiseUtilities.isDisguiseInUse(this)) {
-            DisguiseUtilities.doBoundingBox((TargetedDisguise) this);
+            DisguiseUtilities.scheduleDoBoundingBox((TargetedDisguise) this);
         }
 
         return this;
     }
 
     /**
-     * @deprecated Use {@link #setServerBoundingBox(FakeBoundingBox)} for a custom server hitbox, or enable type-default sizing via
-     * {@code setModifyBoundingBox(true)} until migrated. {@code true} applies the disguise type's default server box; default is no
-     * custom override ({@code null}).
+     * @deprecated Use {@link #setServerBoundingBox(FakeBoundingBox)} for a custom server hitbox. {@code true} enables the disguise type's
+     * default server box when no custom {@link #getServerBoundingBox()} is set; {@code false} disables server-side hitbox modification.
      */
     @Deprecated
     public Disguise setModifyBoundingBox(boolean modifyBox) {
@@ -742,20 +749,11 @@ public abstract class Disguise {
             this.modifyBoundingBox = modifyBox;
 
             if (DisguiseUtilities.isDisguiseInUse(this)) {
-                DisguiseUtilities.doBoundingBox((TargetedDisguise) this);
+                DisguiseUtilities.scheduleDoBoundingBox((TargetedDisguise) this);
             }
         }
 
         return this;
-    }
-
-    @Nullable
-    private static FakeBoundingBox cloneFakeBoundingBox(@Nullable FakeBoundingBox box) {
-        if (box == null) {
-            return null;
-        }
-
-        return new FakeBoundingBox(box.getX() * 2, box.getY(), box.getZ() * 2);
     }
 
     public boolean isPlayerDisguise() {
