@@ -1500,20 +1500,6 @@ public class DisguiseUtilities {
         }
     }
 
-    public static void scheduleDoBoundingBox(TargetedDisguise disguise) {
-        Entity entity = disguise.getEntity();
-
-        if (entity == null) {
-            return;
-        }
-
-        if (LibsDisguises.getScheduler().isOwnedByCurrentRegion(entity)) {
-            doBoundingBox(disguise);
-        } else {
-            LibsDisguises.getScheduler().entity(entity).run(() -> doBoundingBox(disguise));
-        }
-    }
-
     public static void doBoundingBox(TargetedDisguise disguise) {
         Entity entity = disguise.getEntity();
 

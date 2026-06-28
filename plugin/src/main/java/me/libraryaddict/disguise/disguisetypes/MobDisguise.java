@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
+import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -153,7 +154,7 @@ public class MobDisguise extends TargetedDisguise {
     }
 
     @Override
-    public MobDisguise setServerBoundingBox(me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox box) {
+    public MobDisguise setServerBoundingBox(FakeBoundingBox box) {
         return (MobDisguise) super.setServerBoundingBox(box);
     }
 

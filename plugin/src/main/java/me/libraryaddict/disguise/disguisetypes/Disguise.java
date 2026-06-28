@@ -720,14 +720,11 @@ public abstract class Disguise {
      * ({@link #setModifyBoundingBox(boolean)} can re-enable the disguise type's default server box)
      */
     public Disguise setServerBoundingBox(@Nullable FakeBoundingBox box) {
-        FakeBoundingBox next = box;
-
-        this.serverBoundingBox = next;
-
-        this.modifyBoundingBox = (next != null);
+        this.serverBoundingBox = box;
+        this.modifyBoundingBox = (box != null);
 
         if (DisguiseUtilities.isDisguiseInUse(this)) {
-            DisguiseUtilities.scheduleDoBoundingBox((TargetedDisguise) this);
+            LibsDisguises.getScheduler().entity(getEntity()).run(() -> DisguiseUtilities.doBoundingBox((TargetedDisguise) this));
         }
 
         return this;
@@ -743,7 +740,7 @@ public abstract class Disguise {
             this.modifyBoundingBox = modifyBox;
 
             if (DisguiseUtilities.isDisguiseInUse(this)) {
-                DisguiseUtilities.scheduleDoBoundingBox((TargetedDisguise) this);
+                LibsDisguises.getScheduler().entity(getEntity()).run(() -> DisguiseUtilities.doBoundingBox((TargetedDisguise) this));
             }
         }
 

@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
+import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Art;
@@ -215,7 +216,7 @@ public class MiscDisguise extends TargetedDisguise {
     }
 
     @Override
-    public MiscDisguise setServerBoundingBox(me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox box) {
+    public MiscDisguise setServerBoundingBox(FakeBoundingBox box) {
         return (MiscDisguise) super.setServerBoundingBox(box);
     }
 

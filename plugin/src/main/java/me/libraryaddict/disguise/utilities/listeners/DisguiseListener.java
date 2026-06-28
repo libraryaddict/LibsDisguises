@@ -507,8 +507,6 @@ public class DisguiseListener implements Listener {
             event.setCancelled(true);
         }
 
-        // If the bounding boxes are modified and the player moved more than a little
-        // The runnable in Disguise also calls it, so we should ignore smaller movements
         // If server hitboxes are in use and the player moved more than a little
         // The runnable in Disguise also calls it, so we should ignore smaller movements
         if (event.getFrom().distanceSquared(event.getTo()) > 0.2) {

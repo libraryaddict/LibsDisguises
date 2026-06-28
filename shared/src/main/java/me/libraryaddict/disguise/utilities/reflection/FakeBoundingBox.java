@@ -22,8 +22,4 @@ public class FakeBoundingBox {
     public double getZ() {
         return zMod / 2;
     }
-
-    public FakeBoundingBox clone() {
-        return new FakeBoundingBox(xMod, yMod, zMod);
-    }
 }
