@@ -178,7 +178,7 @@ public abstract class Disguise {
         disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
         disguise.setVelocitySent(isVelocitySent());
         disguise.modifyBoundingBox = isModifyBoundingBox();
-        disguise.serverBoundingBox = getServerBoundingBox() == null ? null : getServerBoundingBox().clone();
+        disguise.serverBoundingBox = getServerBoundingBox();
         disguise.multiName = Arrays.copyOf(multiName, multiName.length);
         disguise.setDynamicName(isDynamicName());
         disguise.setSoundGroup(getSoundGroup());
@@ -716,21 +716,15 @@ public abstract class Disguise {
      * Invoking this with a non-null box also enables server-side hitbox modification ({@link #isModifyBoundingBox()}).
      * Use {@link #setBoundingBox(me.libraryaddict.disguise.utilities.movements.InteractiveBoundingBox)} for client-side interactive hitboxes.
      *
-     * @param box custom box dimensions, or {@code null} to clear a custom override (server hitboxes remain off unless
-     * {@link #setModifyBoundingBox(boolean)} is used)
+     * @param box custom box dimensions, or {@code null} to clear a custom override and disable server-side hitbox modification
+     * ({@link #setModifyBoundingBox(boolean)} can re-enable the disguise type's default server box)
      */
     public Disguise setServerBoundingBox(@Nullable FakeBoundingBox box) {
-        FakeBoundingBox next = box == null ? null : box.clone();
-
-        if (serverBoundingBox == next) {
-            return this;
-        }
+        FakeBoundingBox next = box;
 
         this.serverBoundingBox = next;
 
-        if (next != null) {
-            this.modifyBoundingBox = true;
-        }
+        this.modifyBoundingBox = (next != null);
 
         if (DisguiseUtilities.isDisguiseInUse(this)) {
             DisguiseUtilities.scheduleDoBoundingBox((TargetedDisguise) this);
