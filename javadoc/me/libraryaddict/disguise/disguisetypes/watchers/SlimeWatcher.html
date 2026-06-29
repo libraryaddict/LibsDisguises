@@ -89,7 +89,9 @@ loadScripts(document, 'script');</script>
 <div class="inheritance"><a href="../FlagWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes">me.libraryaddict.disguise.disguisetypes.FlagWatcher</a>
 <div class="inheritance"><a href="LivingWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher</a>
 <div class="inheritance"><a href="InsentientWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">me.libraryaddict.disguise.disguisetypes.watchers.InsentientWatcher</a>
+<div class="inheritance"><a href="AgeableWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher</a>
 <div class="inheritance">me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher</div>
+</div>
 </div>
 </div>
 </div>
@@ -97,7 +99,7 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">SlimeWatcher</span>
-<span class="extends-implements">extends <a href="InsentientWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">InsentientWatcher</a></span></div>
+<span class="extends-implements">extends <a href="AgeableWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AgeableWatcher</a></span></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -140,12 +142,33 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getUnsafeSize()" class="member-name-link">getUnsafeSize</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSize(int)" class="member-name-link">setSize</a><wbr>(int&nbsp;size)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isAdult()" class="member-name-link">isAdult</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isAgeLocked()" class="member-name-link">isAgeLocked</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isBaby()" class="member-name-link">isBaby</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setUnsafeSize(int)" class="member-name-link">setUnsafeSize</a><wbr>(int&nbsp;size)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setAdult()" class="member-name-link">setAdult</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setAgeLocked(boolean)" class="member-name-link">setAgeLocked</a><wbr>(boolean&nbsp;ageLocked)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setBaby()" class="member-name-link">setBaby</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setBaby(boolean)" class="member-name-link">setBaby</a><wbr>(boolean&nbsp;isBaby)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSize(int)" class="member-name-link">setSize</a><wbr>(int&nbsp;size)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setUnsafeSize(int)" class="member-name-link">setUnsafeSize</a><wbr>(int&nbsp;size)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -208,6 +231,83 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="setUnsafeSize(int)">
 <h3>setUnsafeSize</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setUnsafeSize</span><wbr><span class="parameters">(int&nbsp;size)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="isAdult()">
+<h3>isAdult</h3>
+<div class="member-signature"><span class="annotations">@AvailableSince("26.2")
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isAdult</span>()</div>
+<dl class="notes">
+<dt>Overrides:</dt>
+<dd><code><a href="AgeableWatcher.html#isAdult()">isAdult</a></code>&nbsp;in class&nbsp;<code><a href="AgeableWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AgeableWatcher</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isBaby()">
+<h3>isBaby</h3>
+<div class="member-signature"><span class="annotations">@AvailableSince("26.2")
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isBaby</span>()</div>
+<dl class="notes">
+<dt>Overrides:</dt>
+<dd><code><a href="AgeableWatcher.html#isBaby()">isBaby</a></code>&nbsp;in class&nbsp;<code><a href="AgeableWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AgeableWatcher</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setBaby(boolean)">
+<h3>setBaby</h3>
+<div class="member-signature"><span class="annotations">@AvailableSince("26.2")
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setBaby</span><wbr><span class="parameters">(boolean&nbsp;isBaby)</span></div>
+<dl class="notes">
+<dt>Overrides:</dt>
+<dd><code><a href="AgeableWatcher.html#setBaby(boolean)">setBaby</a></code>&nbsp;in class&nbsp;<code><a href="AgeableWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AgeableWatcher</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setAdult()">
+<h3>setAdult</h3>
+<div class="member-signature"><span class="annotations">@AvailableSince("26.2")
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setAdult</span>()</div>
+<dl class="notes">
+<dt>Overrides:</dt>
+<dd><code><a href="AgeableWatcher.html#setAdult()">setAdult</a></code>&nbsp;in class&nbsp;<code><a href="AgeableWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AgeableWatcher</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setBaby()">
+<h3>setBaby</h3>
+<div class="member-signature"><span class="annotations">@AvailableSince("26.2")
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setBaby</span>()</div>
+<dl class="notes">
+<dt>Overrides:</dt>
+<dd><code><a href="AgeableWatcher.html#setBaby()">setBaby</a></code>&nbsp;in class&nbsp;<code><a href="AgeableWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AgeableWatcher</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setAgeLocked(boolean)">
+<h3>setAgeLocked</h3>
+<div class="member-signature"><span class="annotations">@AvailableSince("26.2")
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setAgeLocked</span><wbr><span class="parameters">(boolean&nbsp;ageLocked)</span></div>
+<dl class="notes">
+<dt>Overrides:</dt>
+<dd><code><a href="AgeableWatcher.html#setAgeLocked(boolean)">setAgeLocked</a></code>&nbsp;in class&nbsp;<code><a href="AgeableWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AgeableWatcher</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isAgeLocked()">
+<h3>isAgeLocked</h3>
+<div class="member-signature"><span class="annotations">@AvailableSince("26.2")
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isAgeLocked</span>()</div>
+<dl class="notes">
+<dt>Overrides:</dt>
+<dd><code><a href="AgeableWatcher.html#isAgeLocked()">isAgeLocked</a></code>&nbsp;in class&nbsp;<code><a href="AgeableWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">AgeableWatcher</a></code></dd>
+</dl>
 </section>
 </li>
 </ul>
