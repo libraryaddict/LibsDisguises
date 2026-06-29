@@ -7,9 +7,9 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.utilities.movements.InteractiveBoundingBox;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
+import me.libraryaddict.disguise.utilities.movements.InteractiveBoundingBox;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
@@ -27,14 +27,18 @@ import java.lang.invoke.MethodType;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DisguiseMethods {
     private final Map<Class<? extends FlagWatcher>, List<WatcherMethod>> watcherMethods = new HashMap<>();
     private final Map<Class<? extends Disguise>, List<WatcherMethod>> disguiseMethods = new HashMap<>();
+    private final Map<Class<? extends FlagWatcher>, Set<String>> unsupportedMethods = new HashMap<>();
     @Getter
     private final List<WatcherMethod> methods = new ArrayList<>();
 
@@ -46,10 +50,12 @@ public class DisguiseMethods {
         }
 
         if (c != FlagWatcher.class) {
+            Set<String> blocked = unsupportedMethods.getOrDefault(c, Collections.emptySet());
             // Only adds a method if the method name is not being used already
+            // And not blocked by a version override declared for this watcher class
             methods.addAll(
                 getMethods(c.getSuperclass()).stream().filter(m -> methods.stream().noneMatch(m1 -> m1.getName().equals(m.getName())))
-                    .collect(Collectors.toList()));
+                    .filter(m -> !blocked.contains(m.getName())).collect(Collectors.toList()));
         }
 
         return methods;
@@ -118,17 +124,23 @@ public class DisguiseMethods {
             for (int i = 0; i < watcherInfos.length; i++) {
                 WatcherInfo info = watcherInfos[i];
 
-                if (info == null || !info.isSupported()) {
-                    continue;
-                }
-
-                if (info.isDeprecated() && info.getAdded() != 0 && info.getRemoved() < 0) {
+                if (info == null) {
                     continue;
                 }
 
                 Class<? extends FlagWatcher> watcher = classes.get(info.getWatcher());
 
                 if (watcher == null) {
+                    continue;
+                }
+
+                if (!info.isSupported()) {
+                    // Add as unsupported so getMethods() doesn't let the parent flow through for this watcher
+                    unsupportedMethods.computeIfAbsent(watcher, k -> new HashSet<>()).add(info.getMethod());
+                    continue;
+                }
+
+                if (info.isDeprecated() && info.getAdded() != 0 && info.getRemoved() < 0) {
                     continue;
                 }
 

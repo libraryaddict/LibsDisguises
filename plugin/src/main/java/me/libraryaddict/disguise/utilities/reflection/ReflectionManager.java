@@ -1173,6 +1173,17 @@ public class ReflectionManager {
             }
         }
 
+        if (!NmsVersion.v26_R2.isSupported() && extendingClass != baseAbstractClass) {
+            // We want to make sure that SlimeWatcher does not say it is owned by AgeableWatcher
+
+            // If SlimeWatcher is extended by extendingClass
+            // If baseAbstractClass is or extends AgeableWatcher
+            // Then we can make it jump
+            if (SlimeWatcher.class.isAssignableFrom(extendingClass) && baseAbstractClass.isAssignableFrom(AgeableWatcher.class)) {
+                extendingClass = InsentientWatcher.class;
+            }
+        }
+
         // If adding more in here, don't forget to change getSuperClass
 
         return baseAbstractClass.isAssignableFrom(extendingClass);
@@ -1188,6 +1199,10 @@ public class ReflectionManager {
         }
 
         if (!NmsVersion.v1_21_R2.isSupported() && cl == AgeableAquaWatcher.class) {
+            return InsentientWatcher.class;
+        }
+
+        if (!NmsVersion.v26_R2.isSupported() && cl == SlimeWatcher.class) {
             return InsentientWatcher.class;
         }
 
