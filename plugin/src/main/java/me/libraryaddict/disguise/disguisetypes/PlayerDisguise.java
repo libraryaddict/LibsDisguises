@@ -13,6 +13,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.PlayerResolver;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.scoreboard.DisguiseScoreboardTeam;
@@ -598,8 +599,14 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     @Override
+    @Deprecated
     public PlayerDisguise setModifyBoundingBox(boolean modifyBox) {
         return (PlayerDisguise) super.setModifyBoundingBox(modifyBox);
+    }
+
+    @Override
+    public PlayerDisguise setServerBoundingBox(FakeBoundingBox box) {
+        return (PlayerDisguise) super.setServerBoundingBox(box);
     }
 
     @Override
