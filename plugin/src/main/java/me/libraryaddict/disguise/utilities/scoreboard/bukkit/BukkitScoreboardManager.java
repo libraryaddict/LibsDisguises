@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -111,7 +112,7 @@ public class BukkitScoreboardManager extends AbstractScoreboardManager {
     }
 
     @Override
-    public void setGlowColor(UUID uuid, ChatColor color) {
+    public void setGlowColor(UUID uuid, @Nullable ChatColor color) {
         if (!DisguiseConfig.isModifyScoreboards()) {
             return;
         }
@@ -169,7 +170,12 @@ public class BukkitScoreboardManager extends AbstractScoreboardManager {
 
             if (team == null) {
                 team = scoreboard.registerNewTeam(name);
-                team.setColor(color);
+            }
+
+            team.setColor(color);
+
+            if (DisguiseConfig.isModifyCollisions() && team.getOption(Team.Option.COLLISION_RULE) != Team.OptionStatus.NEVER) {
+                team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
             }
         }
     }

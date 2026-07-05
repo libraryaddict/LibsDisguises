@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -89,7 +90,7 @@ public class PacketEventsScoreboardManager extends AbstractScoreboardManager {
     }
 
     @Override
-    public void setGlowColor(UUID uuid, ChatColor color) {
+    public void setGlowColor(UUID uuid, @Nullable ChatColor color) {
         if (!DisguiseConfig.isModifyScoreboards()) {
             return;
         }

@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import org.bukkit.scoreboard.Scoreboard;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
@@ -25,7 +26,7 @@ public interface ScoreboardManager {
 
     void registerAllExtendedNames(Player player);
 
-    void setGlowColor(UUID uuid, ChatColor color);
+    void setGlowColor(UUID uuid, @Nullable ChatColor color);
 
     void registerColors(Player player);
 
