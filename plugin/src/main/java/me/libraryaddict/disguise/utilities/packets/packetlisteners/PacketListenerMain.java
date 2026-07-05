@@ -92,7 +92,7 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
             }
 
             return;
-        } else if (disguise.getEntity() == observer) {
+        } else if (disguise.getEntity() == observer.getEntity()) {
             // If the entity is the same as the sender. Don't do anything here!
             // Prevents problems and there is no advantage to be gained.
             return;

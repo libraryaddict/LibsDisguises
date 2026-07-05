@@ -37,7 +37,7 @@ public class PacketHandlerHeadLook implements IPacketHandler<WrapperPlayServerEn
 
         Float pitchLock = disguise.getWatcher().getPitchLock();
         Float yawLock = disguise.getWatcher().getYawLock();
-        boolean riding = observer.getVehicle() == entity;
+        boolean riding = observer.getVehicle() == entity.getEntity();
         WrapperPlayServerEntityHeadLook packet = packets.getOriginalPacket();
 
         if (pitchLock == null && yawLock == null && (!disguise.getType().isPlayer() || entity.getType() == EntityType.PLAYER)) {

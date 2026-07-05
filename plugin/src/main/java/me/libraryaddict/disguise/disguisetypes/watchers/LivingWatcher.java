@@ -105,7 +105,7 @@ public class LivingWatcher extends FlagWatcher {
 
             WrapperPlayServerUpdateAttributes packet = getWrapperPlayServerUpdateAttributes(player, entity, scaleToSend);
 
-            if (player == getDisguise().getEntity()) {
+            if (player.getEntity() == getDisguise().getEntity()) {
                 player.sendPacketSilently(packet);
             } else {
                 player.sendPacket(packet);
