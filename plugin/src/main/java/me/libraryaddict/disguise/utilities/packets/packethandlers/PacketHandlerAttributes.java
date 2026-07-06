@@ -58,7 +58,6 @@ public class PacketHandlerAttributes implements IPacketHandler<WrapperPlayServer
                 double attributeScale;
 
                 double computed = property.calcValue();
-                System.out.println("Computed: " + computed + " Scale: " + scale + " " + disguise.isSelfDisguiseVisible());
 
                 // Only if it is for the player, or self disguise not visible
                 if (entity == observer || !disguise.isSelfDisguiseVisible()) {
