@@ -704,7 +704,7 @@ public abstract class Disguise {
     }
 
     /**
-     * Whether server-side hitbox modification is active for this disguise (type-default or custom {@link #getServerBoundingBox()}).
+     * Whether server-side hitbox modification is active for this disguise (type-default or custom {@code getServerBoundingBox()}).
      */
     public boolean isServerBoundingBoxEnabled() {
         return modifyBoundingBox;
@@ -713,7 +713,7 @@ public abstract class Disguise {
     /**
      * Sets a custom server-side bounding box used for server hit detection (arrows, melee, etc.). Does not change what clients see.
      * <p>
-     * Invoking this with a non-null box also enables server-side hitbox modification ({@link #isModifyBoundingBox()}).
+     * Invoking this with a non-null box also enables server-side hitbox modification ({@code isModifyBoundingBox()}).
      * Use {@link #setBoundingBox(me.libraryaddict.disguise.utilities.movements.InteractiveBoundingBox)} for client-side interactive hitboxes.
      *
      * @param box custom box dimensions, or {@code null} to clear a custom override and disable server-side hitbox modification
@@ -732,7 +732,7 @@ public abstract class Disguise {
 
     /**
      * @deprecated Use {@link #setServerBoundingBox(FakeBoundingBox)} for a custom server hitbox. {@code true} enables the disguise type's
-     * default server box when no custom {@link #getServerBoundingBox()} is set; {@code false} disables server-side hitbox modification.
+     * default server box when no custom {@code getServerBoundingBox()} is set; {@code false} disables server-side hitbox modification.
      */
     @Deprecated
     public Disguise setModifyBoundingBox(boolean modifyBox) {
