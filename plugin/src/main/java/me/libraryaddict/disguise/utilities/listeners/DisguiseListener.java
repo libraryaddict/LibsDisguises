@@ -595,6 +595,13 @@ public class DisguiseListener implements Listener {
             player.removeMetadata(meta, LibsDisguises.getInstance());
         }
 
+        // The boss bar is serverwide registered, not bound to a player
+        if (NmsVersion.v1_13.isSupported()) {
+            for (Disguise disguise : DisguiseAPI.getDisguises(player)) {
+                Bukkit.removeBossBar(disguise.getInternals().getBossBar());
+            }
+        }
+
         // Removed as its not compatible with scoreboard teams
         /*if (player.hasPermission("libsdisguises.seethrough")) {
             for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
