@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.watchers.ModdedWatcher;
 import me.libraryaddict.disguise.utilities.modded.ModdedEntity;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
+import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -124,8 +125,14 @@ public class ModdedDisguise extends TargetedDisguise {
     }
 
     @Override
+    @Deprecated
     public ModdedDisguise setModifyBoundingBox(boolean modifyBox) {
         return (ModdedDisguise) super.setModifyBoundingBox(modifyBox);
+    }
+
+    @Override
+    public ModdedDisguise setServerBoundingBox(FakeBoundingBox box) {
+        return (ModdedDisguise) super.setServerBoundingBox(box);
     }
 
     @Override

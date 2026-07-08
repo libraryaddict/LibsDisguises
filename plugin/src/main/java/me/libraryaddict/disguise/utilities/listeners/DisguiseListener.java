@@ -507,14 +507,14 @@ public class DisguiseListener implements Listener {
             event.setCancelled(true);
         }
 
-        // If the bounding boxes are modified and the player moved more than a little
+        // If server hitboxes are in use and the player moved more than a little
         // The runnable in Disguise also calls it, so we should ignore smaller movements
-        if (DisguiseConfig.isModifyBoundingBox() && event.getFrom().distanceSquared(event.getTo()) > 0.2) {
+        if (event.getFrom().distanceSquared(event.getTo()) > 0.2) {
             // Only fetching one disguise as we cannot modify the bounding box of multiple disguises
             Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer());
 
-            // If disguise doesn't exist, or doesn't modify bounding box
-            if (disguise == null || !disguise.isModifyBoundingBox()) {
+            // If disguise doesn't exist, or doesn't use server-side hitbox modification
+            if (disguise == null || !disguise.isServerBoundingBoxEnabled()) {
                 return;
             }
 

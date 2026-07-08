@@ -264,7 +264,7 @@ public class DisguiseRunnable {
             DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
         }
 
-        if (disguise.isModifyBoundingBox()) {
+        if (disguise.isServerBoundingBoxEnabled()) {
             DisguiseUtilities.doBoundingBox((TargetedDisguise) disguise);
         }
 

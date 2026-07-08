@@ -49,3 +49,4 @@ DisabledMethods:
   - setInvisible
   - setUnsafeSize
   - setScalePlayerToDisguise
+  - setServerBoundingBox
