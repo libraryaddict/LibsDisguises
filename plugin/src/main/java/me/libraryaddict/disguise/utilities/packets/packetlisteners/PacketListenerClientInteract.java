@@ -38,7 +38,7 @@ import java.util.Random;
 public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
     private final boolean[] bucketableMobs = new boolean[DisguiseType.values().length];
 
-    PacketListenerClientInteract() {
+    public PacketListenerClientInteract() {
         for (DisguiseType type : new DisguiseType[]{DisguiseType.SALMON, DisguiseType.AXOLOTL, DisguiseType.COD, DisguiseType.TADPOLE,
             DisguiseType.TROPICAL_FISH, DisguiseType.PUFFERFISH}) {
             bucketableMobs[type.ordinal()] = true;
