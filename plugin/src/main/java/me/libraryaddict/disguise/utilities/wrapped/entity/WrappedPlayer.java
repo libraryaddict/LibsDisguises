@@ -22,10 +22,13 @@ public class WrappedPlayer extends WrappedEntity<Player> implements IWrappedPlay
     @Setter
     private volatile Entity spectatorTarget;
     private volatile Entity vehicle;
+    @Getter
+    private final boolean op;
 
     public WrappedPlayer(Player entity) {
         super(entity);
         this.name = entity.getName();
+        this.op = entity.isOp();
     }
 
     @Override

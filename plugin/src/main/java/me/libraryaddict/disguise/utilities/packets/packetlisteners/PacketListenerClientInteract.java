@@ -24,18 +24,26 @@ import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
 import me.libraryaddict.disguise.events.DisguiseInteractEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
+import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Random;
 
 public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
+    private final boolean[] bucketableMobs = new boolean[DisguiseType.values().length];
+
+    PacketListenerClientInteract() {
+        for (DisguiseType type : new DisguiseType[]{DisguiseType.SALMON, DisguiseType.AXOLOTL, DisguiseType.COD, DisguiseType.TADPOLE,
+            DisguiseType.TROPICAL_FISH, DisguiseType.PUFFERFISH}) {
+            bucketableMobs[type.ordinal()] = true;
+        }
+    }
 
     @Override
     public void onPacketPlayReceive(PacketPlayReceiveEvent event) {
@@ -46,7 +54,7 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
             return;
         }
 
-        Player observer = event.getPlayer();
+        IWrappedPlayer observer = WrappedManager.getWrappedPlayer(event.getPlayer());
 
         // If the player is temporary
         if (observer == null) {
@@ -103,7 +111,7 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
         boolean finalIsAttack = isAttack;
         InteractionHand finalHand = hand;
 
-        LibsDisguises.getScheduler().entity(observer).run(() -> {
+        LibsDisguises.getScheduler().entity(observer.getEntity()).run(() -> {
             handleSync(observer, finalEntityId, finalIsAttack, finalHand);
         });
     }
@@ -124,7 +132,7 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
         return packet.getHand();
     }
 
-    private void handleSync(Player observer, int entityId, boolean isAttack, InteractionHand hand) {
+    private void handleSync(IWrappedPlayer observer, int entityId, boolean isAttack, InteractionHand hand) {
         final Disguise disguise = DisguiseUtilities.getDisguise(observer, entityId);
 
         if (disguise == null) {
@@ -144,7 +152,7 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
                 handUsed = EquipmentSlot.HAND;
             }
 
-            LibsDisguises.getScheduler().entity(disguise.getEntity()).run(() -> {
+            LibsDisguises.getScheduler().entity(observer.getEntity()).run(() -> {
                 // Fire self interact event
                 DisguiseInteractEvent selfEvent = new DisguiseInteractEvent((TargetedDisguise) disguise, handUsed, isAttack);
                 Bukkit.getPluginManager().callEvent(selfEvent);
@@ -155,18 +163,29 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
             return;
         }
 
+        // If the disguise is one that can be bucketed
+        if (bucketableMobs[disguise.getType().ordinal()]) {
+            DisguiseType entityType = DisguiseType.getType(disguise.getEntity());
+
+            // If the entity isn't one that can be bucketed
+            if (entityType != null && !bucketableMobs[entityType.ordinal()]) {
+                LibsDisguises.getScheduler().entity(observer.getEntity()).run(() -> {
+                    ItemStack heldItem = this.getHeldItem(observer, hand);
+
+                    if (heldItem != null && heldItem.getType() == Material.WATER_BUCKET) {
+                        DisguiseUtilities.refreshTracker((TargetedDisguise) disguise, observer.getName());
+                        observer.getEntity().updateInventory(); // Remove their fake bucket
+                    }
+                });
+            }
+            return;
+        }
+
         switch (disguise.getType()) {
-            case AXOLOTL:
-                // They can't be picked up by a bucket sir if they are fake
-                if (!(disguise.getEntity() instanceof Axolotl)) {
-                    DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
-                    observer.updateInventory(); // Remove their fake bucket
-                }
-                break;
             case CAT:
             case WOLF:
             case SHEEP:
-                doDyeable(observer, disguise);
+                doDyeable(observer, disguise, hand);
                 break;
             case MULE:
             case DONKEY:
@@ -174,14 +193,14 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
             case ZOMBIE_HORSE:
             case SKELETON_HORSE:
                 if (DisguiseConfig.isHorseSaddleable()) {
-                    doSaddleable(observer, disguise);
+                    doSaddleable(observer, disguise, hand);
                 }
 
                 break;
             case LLAMA:
             case TRADER_LLAMA:
                 if (DisguiseConfig.isLlamaCarpetable()) {
-                    doCarpetable(observer, disguise);
+                    doCarpetable(observer, disguise, hand);
                 }
 
                 break;
@@ -197,11 +216,15 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
         return item == null || item.getType() == Material.AIR;
     }
 
-    private void doAllay(Player observer, Disguise disguise, InteractionHand hand) {
-        LibsDisguises.getScheduler().entity(disguise.getEntity()).run(() -> {
+    private ItemStack getHeldItem(IWrappedPlayer observer, InteractionHand hand) {
+        return hand == InteractionHand.MAIN_HAND ? observer.getEntity().getInventory().getItemInMainHand() :
+            observer.getEntity().getInventory().getItemInOffHand();
+    }
+
+    private void doAllay(IWrappedPlayer observer, Disguise disguise, InteractionHand hand) {
+        LibsDisguises.getScheduler().entity(observer.getEntity()).run(() -> {
             AllayWatcher watcher = (AllayWatcher) disguise.getWatcher();
-            ItemStack playerHand = hand == InteractionHand.MAIN_HAND ? observer.getInventory().getItemInMainHand() :
-                observer.getInventory().getItemInOffHand();
+            ItemStack playerHand = getHeldItem(observer, hand);
             ItemStack watcherItem = watcher.getItemInMainHand();
             ItemStack playerSeesItem = watcherItem == null && disguise.getEntity() instanceof LivingEntity ?
                 ((LivingEntity) disguise.getEntity()).getEquipment().getItemInMainHand() : watcherItem;
@@ -213,7 +236,7 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
             }
 
             // Ensure player knows they still have an item
-            observer.updateInventory();
+            observer.getEntity().updateInventory();
 
             // Set/update the item on the watcher
             if (DisguiseConfig.isAllayItemSwitchable()) {
@@ -229,86 +252,74 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
         });
     }
 
-    private void doSaddleable(Player observer, Disguise disguise) {
-        LibsDisguises.getScheduler().entity(disguise.getEntity()).run(() -> {
-            // If this is something the player can dye the disguise with
-            for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(),
-                observer.getInventory().getItemInOffHand()}) {
+    private void doSaddleable(IWrappedPlayer observer, Disguise disguise, InteractionHand hand) {
+        LibsDisguises.getScheduler().entity(observer.getEntity()).run(() -> {
+            ItemStack item = getHeldItem(observer, hand);
 
-                if (item == null || item.getType() != Material.SADDLE) {
-                    continue;
-                }
-
-                AbstractHorseWatcher watcher = (AbstractHorseWatcher) disguise.getWatcher();
-
-                watcher.setSaddled(true);
-                break;
+            if (item == null || item.getType() != Material.SADDLE) {
+                return;
             }
+
+            AbstractHorseWatcher watcher = (AbstractHorseWatcher) disguise.getWatcher();
+
+            watcher.setSaddled(true);
         });
     }
 
-    private void doCarpetable(Player observer, Disguise disguise) {
-        LibsDisguises.getScheduler().entity(disguise.getEntity()).run(() -> {
-            // If this is something the player can dye the disguise with
-            for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(),
-                observer.getInventory().getItemInOffHand()}) {
-                if (item == null || !item.getType().name().endsWith("_CARPET")) {
-                    continue;
-                }
+    private void doCarpetable(IWrappedPlayer observer, Disguise disguise, InteractionHand hand) {
+        LibsDisguises.getScheduler().entity(observer.getEntity()).run(() -> {
+            ItemStack item = getHeldItem(observer, hand);
 
-                AnimalColor color = AnimalColor.getColorByItem(item);
-
-                if (color == null) {
-                    continue;
-                }
-
-                LlamaWatcher llamaWatcher = (LlamaWatcher) disguise.getWatcher();
-
-                llamaWatcher.setSaddled(true);
-                llamaWatcher.setCarpet(color);
-                break;
+            if (item == null || !item.getType().name().endsWith("_CARPET")) {
+                return;
             }
+
+            AnimalColor color = AnimalColor.getColorByItem(item);
+
+            if (color == null) {
+                return;
+            }
+
+            LlamaWatcher llamaWatcher = (LlamaWatcher) disguise.getWatcher();
+
+            llamaWatcher.setSaddled(true);
+            llamaWatcher.setCarpet(color);
         });
     }
 
-    private void doDyeable(Player observer, Disguise disguise) {
-        LibsDisguises.getScheduler().entity(disguise.getEntity()).run(() -> {
-            // If this is something the player can dye the disguise with
-            for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(),
-                observer.getInventory().getItemInOffHand()}) {
-                if (item == null) {
-                    continue;
-                }
+    private void doDyeable(IWrappedPlayer observer, Disguise disguise, InteractionHand hand) {
+        LibsDisguises.getScheduler().entity(observer.getEntity()).run(() -> {
+            ItemStack item = getHeldItem(observer, hand);
 
-                AnimalColor color = AnimalColor.getColorByItem(item);
+            if (item == null) {
+                return;
+            }
 
-                if (color == null) {
-                    continue;
-                }
+            AnimalColor color = AnimalColor.getColorByItem(item);
 
-                if (disguise.getType() == DisguiseType.SHEEP) {
-                    SheepWatcher watcher = (SheepWatcher) disguise.getWatcher();
+            if (color == null) {
+                return;
+            }
 
-                    DyeColor toSet = DisguiseConfig.isSheepDyeable() ? color.getDyeColor() :
-                        watcher.hasValue(MetaIndex.SHEEP_WOOL) ? watcher.getColor() : null;
+            if (disguise.getType() == DisguiseType.SHEEP) {
+                SheepWatcher watcher = (SheepWatcher) disguise.getWatcher();
 
-                    watcher.setColor(toSet);
-                    break;
-                } else if (disguise.getType() == DisguiseType.WOLF) {
-                    WolfWatcher watcher = (WolfWatcher) disguise.getWatcher();
-                    DyeColor toSet = DisguiseConfig.isWolfDyeable() ? color.getDyeColor() :
-                        watcher.hasValue(MetaIndex.WOLF_COLLAR) ? watcher.getCollarColor() : null;
+                DyeColor toSet = DisguiseConfig.isSheepDyeable() ? color.getDyeColor() :
+                    watcher.hasValue(MetaIndex.SHEEP_WOOL) ? watcher.getColor() : null;
 
-                    watcher.setCollarColor(toSet);
-                    break;
-                } else if (disguise.getType() == DisguiseType.CAT) {
-                    CatWatcher watcher = (CatWatcher) disguise.getWatcher();
-                    DyeColor toSet = DisguiseConfig.isCatDyeable() ? color.getDyeColor() :
-                        watcher.hasValue(MetaIndex.CAT_COLLAR) ? watcher.getCollarColor() : null;
+                watcher.setColor(toSet);
+            } else if (disguise.getType() == DisguiseType.WOLF) {
+                WolfWatcher watcher = (WolfWatcher) disguise.getWatcher();
+                DyeColor toSet = DisguiseConfig.isWolfDyeable() ? color.getDyeColor() :
+                    watcher.hasValue(MetaIndex.WOLF_COLLAR) ? watcher.getCollarColor() : null;
 
-                    watcher.setCollarColor(toSet);
-                    break;
-                }
+                watcher.setCollarColor(toSet);
+            } else if (disguise.getType() == DisguiseType.CAT) {
+                CatWatcher watcher = (CatWatcher) disguise.getWatcher();
+                DyeColor toSet = DisguiseConfig.isCatDyeable() ? color.getDyeColor() :
+                    watcher.hasValue(MetaIndex.CAT_COLLAR) ? watcher.getCollarColor() : null;
+
+                watcher.setCollarColor(toSet);
             }
         });
     }

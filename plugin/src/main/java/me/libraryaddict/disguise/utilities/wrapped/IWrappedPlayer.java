@@ -36,4 +36,6 @@ public interface IWrappedPlayer extends IWrappedEntity<Player> {
     void setOnline(boolean online);
 
     boolean isOnline();
+
+    boolean isOp();
 }
