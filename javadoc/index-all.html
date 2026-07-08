@@ -1393,6 +1393,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoEulerAngle.html#fromString(java.lang.String)" class="member-name-link">fromString(String)</a> - Method in class me.libraryaddict.disguise.utilities.params.types.custom.<a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoEulerAngle.html" title="class in me.libraryaddict.disguise.utilities.params.types.custom">ParamInfoEulerAngle</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoFakeBoundingBox.html#fromString(java.lang.String)" class="member-name-link">fromString(String)</a> - Method in class me.libraryaddict.disguise.utilities.params.types.custom.<a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoFakeBoundingBox.html" title="class in me.libraryaddict.disguise.utilities.params.types.custom">ParamInfoFakeBoundingBox</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoItemProfile.html#fromString(java.lang.String)" class="member-name-link">fromString(String)</a> - Method in class me.libraryaddict.disguise.utilities.params.types.custom.<a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoItemProfile.html" title="class in me.libraryaddict.disguise.utilities.params.types.custom">ParamInfoItemProfile</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoItemStack.html#fromString(java.lang.String)" class="member-name-link">fromString(String)</a> - Method in class me.libraryaddict.disguise.utilities.params.types.custom.<a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoItemStack.html" title="class in me.libraryaddict.disguise.utilities.params.types.custom">ParamInfoItemStack</a></dt>
@@ -3305,6 +3307,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Can the disguised view themselves as the disguise</div>
 </dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/Disguise.html#isServerBoundingBoxEnabled()" class="member-name-link">isServerBoundingBoxEnabled()</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a></dt>
+<dd>
+<div class="block">Whether server-side hitbox modification is active for this disguise (type-default or custom <code>getServerBoundingBox()</code>).</div>
+</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/TextDisplayWatcher.html#isShadowed()" class="member-name-link">isShadowed()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/TextDisplayWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">TextDisplayWatcher</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/HoglinWatcher.html#isShaking()" class="member-name-link">isShaking()</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/HoglinWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">HoglinWatcher</a></dt>
@@ -4274,6 +4280,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoEulerAngle.html" class="type-name-link" title="class in me.libraryaddict.disguise.utilities.params.types.custom">ParamInfoEulerAngle</a> - Class in <a href="me/libraryaddict/disguise/utilities/params/types/custom/package-summary.html">me.libraryaddict.disguise.utilities.params.types.custom</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoEulerAngle.html#%3Cinit%3E(java.lang.Class,java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">ParamInfoEulerAngle(Class, String, String, String)</a> - Constructor for class me.libraryaddict.disguise.utilities.params.types.custom.<a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoEulerAngle.html" title="class in me.libraryaddict.disguise.utilities.params.types.custom">ParamInfoEulerAngle</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoFakeBoundingBox.html" class="type-name-link" title="class in me.libraryaddict.disguise.utilities.params.types.custom">ParamInfoFakeBoundingBox</a> - Class in <a href="me/libraryaddict/disguise/utilities/params/types/custom/package-summary.html">me.libraryaddict.disguise.utilities.params.types.custom</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoFakeBoundingBox.html#%3Cinit%3E()" class="member-name-link">ParamInfoFakeBoundingBox()</a> - Constructor for class me.libraryaddict.disguise.utilities.params.types.custom.<a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoFakeBoundingBox.html" title="class in me.libraryaddict.disguise.utilities.params.types.custom">ParamInfoFakeBoundingBox</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/params/types/base/ParamInfoFloat.html" class="type-name-link" title="class in me.libraryaddict.disguise.utilities.params.types.base">ParamInfoFloat</a> - Class in <a href="me/libraryaddict/disguise/utilities/params/types/base/package-summary.html">me.libraryaddict.disguise.utilities.params.types.base</a></dt>
 <dd>&nbsp;</dd>
@@ -5548,15 +5558,28 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/DisguiseConfig.html#setMiscDisguisesForLivingEnabled(boolean)" class="member-name-link">setMiscDisguisesForLivingEnabled(boolean)</a> - Static method in class me.libraryaddict.disguise.<a href="me/libraryaddict/disguise/DisguiseConfig.html" title="class in me.libraryaddict.disguise">DisguiseConfig</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/Disguise.html#setModifyBoundingBox(boolean)" class="member-name-link">setModifyBoundingBox(boolean)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="me/libraryaddict/disguise/disguisetypes/Disguise.html#setServerBoundingBox(me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox)"><code>Disguise.setServerBoundingBox(FakeBoundingBox)</code></a> for a custom server hitbox. <code>true</code> enables the disguise type's
+ default server box when no custom <code>getServerBoundingBox()</code> is set; <code>false</code> disables server-side hitbox modification.</div>
+</div>
+</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/MiscDisguise.html#setModifyBoundingBox(boolean)" class="member-name-link">setModifyBoundingBox(boolean)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/MiscDisguise.html" title="class in me.libraryaddict.disguise.disguisetypes">MiscDisguise</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/MobDisguise.html#setModifyBoundingBox(boolean)" class="member-name-link">setModifyBoundingBox(boolean)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/MobDisguise.html" title="class in me.libraryaddict.disguise.disguisetypes">MobDisguise</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/ModdedDisguise.html#setModifyBoundingBox(boolean)" class="member-name-link">setModifyBoundingBox(boolean)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/ModdedDisguise.html" title="class in me.libraryaddict.disguise.disguisetypes">ModdedDisguise</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/PlayerDisguise.html#setModifyBoundingBox(boolean)" class="member-name-link">setModifyBoundingBox(boolean)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/PlayerDisguise.html" title="class in me.libraryaddict.disguise.disguisetypes">PlayerDisguise</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/CreakingWatcher.html#setMovementAnimations(boolean)" class="member-name-link">setMovementAnimations(boolean)</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/CreakingWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">CreakingWatcher</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/DisguiseConfig.html#setMovementPacketsEnabled(boolean)" class="member-name-link">setMovementPacketsEnabled(boolean)</a> - Static method in class me.libraryaddict.disguise.<a href="me/libraryaddict/disguise/DisguiseConfig.html" title="class in me.libraryaddict.disguise">DisguiseConfig</a></dt>
@@ -5730,6 +5753,18 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/TextDisplayWatcher.html#setSeeThrough(boolean)" class="member-name-link">setSeeThrough(boolean)</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/TextDisplayWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">TextDisplayWatcher</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/Disguise.html#setSelfDisguiseVisible(boolean)" class="member-name-link">setSelfDisguiseVisible(boolean)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/Disguise.html#setServerBoundingBox(me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox)" class="member-name-link">setServerBoundingBox(FakeBoundingBox)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/Disguise.html" title="class in me.libraryaddict.disguise.disguisetypes">Disguise</a></dt>
+<dd>
+<div class="block">Sets a custom server-side bounding box used for server hit detection (arrows, melee, etc.).</div>
+</dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/MiscDisguise.html#setServerBoundingBox(me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox)" class="member-name-link">setServerBoundingBox(FakeBoundingBox)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/MiscDisguise.html" title="class in me.libraryaddict.disguise.disguisetypes">MiscDisguise</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/MobDisguise.html#setServerBoundingBox(me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox)" class="member-name-link">setServerBoundingBox(FakeBoundingBox)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/MobDisguise.html" title="class in me.libraryaddict.disguise.disguisetypes">MobDisguise</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/ModdedDisguise.html#setServerBoundingBox(me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox)" class="member-name-link">setServerBoundingBox(FakeBoundingBox)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/ModdedDisguise.html" title="class in me.libraryaddict.disguise.disguisetypes">ModdedDisguise</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/disguisetypes/PlayerDisguise.html#setServerBoundingBox(me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox)" class="member-name-link">setServerBoundingBox(FakeBoundingBox)</a> - Method in class me.libraryaddict.disguise.disguisetypes.<a href="me/libraryaddict/disguise/disguisetypes/PlayerDisguise.html" title="class in me.libraryaddict.disguise.disguisetypes">PlayerDisguise</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/disguisetypes/watchers/TextDisplayWatcher.html#setShadowed(boolean)" class="member-name-link">setShadowed(boolean)</a> - Method in class me.libraryaddict.disguise.disguisetypes.watchers.<a href="me/libraryaddict/disguise/disguisetypes/watchers/TextDisplayWatcher.html" title="class in me.libraryaddict.disguise.disguisetypes.watchers">TextDisplayWatcher</a></dt>
 <dd>&nbsp;</dd>
@@ -6433,6 +6468,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoWrappedBlockData.html#toString(java.lang.Object)" class="member-name-link">toString(Object)</a> - Method in class me.libraryaddict.disguise.utilities.params.types.custom.<a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoWrappedBlockData.html" title="class in me.libraryaddict.disguise.utilities.params.types.custom">ParamInfoWrappedBlockData</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoBoundingBox.html#toString(me.libraryaddict.disguise.utilities.movements.InteractiveBoundingBox)" class="member-name-link">toString(InteractiveBoundingBox)</a> - Method in class me.libraryaddict.disguise.utilities.params.types.custom.<a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoBoundingBox.html" title="class in me.libraryaddict.disguise.utilities.params.types.custom">ParamInfoBoundingBox</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoFakeBoundingBox.html#toString(me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox)" class="member-name-link">toString(FakeBoundingBox)</a> - Method in class me.libraryaddict.disguise.utilities.params.types.custom.<a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoFakeBoundingBox.html" title="class in me.libraryaddict.disguise.utilities.params.types.custom">ParamInfoFakeBoundingBox</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoComponent.html#toString(net.kyori.adventure.text.Component)" class="member-name-link">toString(Component)</a> - Method in class me.libraryaddict.disguise.utilities.params.types.custom.<a href="me/libraryaddict/disguise/utilities/params/types/custom/ParamInfoComponent.html" title="class in me.libraryaddict.disguise.utilities.params.types.custom">ParamInfoComponent</a></dt>
 <dd>&nbsp;</dd>
