@@ -40,7 +40,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GridLockedWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.listeners.PlayerSkinHandler;
 import me.libraryaddict.disguise.utilities.movements.MovementTracker;
@@ -99,7 +98,9 @@ public class PacketHandlerSpawn implements IPacketHandler {
     private void constructSpawnPackets(final IWrappedPlayer observer, LibsPackets packets, IWrappedEntity disguisedEntity) {
         Disguise disguise = packets.getDisguise();
 
-        Vector loc = disguisedEntity.getLocation().toVector();
+        Location entityLoc = getLocation(disguisedEntity, packets.getOriginalPacket());
+
+        Vector loc = new Vector(entityLoc.getX(), entityLoc.getY(), entityLoc.getZ());
         loc.setY(loc.getY() + DisguiseUtilities.getYModifier(disguise) + disguise.getWatcher().getYModifier());
 
         Float pitchLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getPitchLock() : null;
@@ -107,8 +108,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
         int entityId = observer == disguisedEntity ? DisguiseAPI.getSelfDisguiseId() : packets.getEntityId();
         boolean isOnGround = disguisedEntity.isOnGround();
 
-        float yaw = (yawLock == null ? disguisedEntity.getLocation().getYaw() : yawLock);
-        float pitch = (pitchLock == null ? disguisedEntity.getLocation().getPitch() : pitchLock);
+        float yaw = (yawLock == null ? entityLoc.getYaw() : yawLock);
+        float pitch = (pitchLock == null ? entityLoc.getPitch() : pitchLock);
 
         if (DisguiseConfig.isMovementPacketsEnabled()) {
             if (yawLock != null) {
@@ -153,13 +154,17 @@ public class PacketHandlerSpawn implements IPacketHandler {
             } else if (disguise.getType().isPlayer()) {
                 PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
                 boolean visibleOrNewCompat = playerDisguise.isNameVisible() || DisguiseConfig.isScoreboardNames();
-                double dist = observer.getLocation().toVector().distanceSquared(disguisedEntity.getLocation().toVector());
 
                 // If self disguise, or further than 50 blocks, or not in front of entity
                 inLineOfSight = DisguiseUtilities.isFancyHiddenTabs() || observer == disguisedEntity ||
-                    disguisedEntity.getPassengers().contains(observer) || dist > (50 * 50) ||
-                    (observer.getLocation().add(observer.getLocation().getDirection().normalize()).toVector()
-                        .distanceSquared(disguisedEntity.getLocation().toVector()) - dist) < 0.3;
+                    disguisedEntity.getPassengers().contains(observer);
+
+                if (!inLineOfSight) {
+                    org.bukkit.Location observerLoc = observer.getLocation();
+                    double dist = observerLoc.toVector().distanceSquared(loc);
+                    inLineOfSight = dist > (50 * 50) ||
+                        (observerLoc.add(observerLoc.getDirection().normalize()).toVector().distanceSquared(loc) - dist) < 0.3;
+                }
 
                 PlayerSkinHandler.PlayerSkin skin;
 
@@ -184,7 +189,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 PacketWrapper spawnPlayer;
 
                 if (NmsVersion.v1_20_R2.isSupported()) {
-                    spawnPlayer = constructLivingPacket(observer, packets, disguisedEntity, loc, pitch, yaw);
+                    spawnPlayer = constructLivingPacket(observer, packets, disguisedEntity, pLoc);
                 } else {
                     // Spawn them in front of the observer
                     Location spawnAt = inLineOfSight ? pLoc : SpigotConversionUtil.fromBukkitLocation(
@@ -228,7 +233,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     }
                 }
             } else if (disguise.isMobDisguise() || disguise.getType() == DisguiseType.ARMOR_STAND) {
-                PacketWrapper spawnEntity = constructLivingPacket(observer, packets, disguisedEntity, loc, pitch, yaw);
+                PacketWrapper spawnEntity = constructLivingPacket(observer, packets, disguisedEntity, pLoc);
 
                 if (NmsVersion.v1_15.isSupported()) {
                     if (NmsVersion.v1_19_R2.isSupported()) {
@@ -426,6 +431,32 @@ public class PacketHandlerSpawn implements IPacketHandler {
         }
     }
 
+    private Location getLocation(IWrappedEntity entity, PacketWrapper originalPacket) {
+        PacketTypeCommon type = originalPacket.getPacketTypeData().getPacketType();
+
+        if (type == Server.SPAWN_ENTITY) {
+            WrapperPlayServerSpawnEntity spawn = (WrapperPlayServerSpawnEntity) originalPacket;
+            Vector3d pos = spawn.getPosition();
+
+            return new Location(pos.getX(), pos.getY(), pos.getZ(), spawn.getYaw(), spawn.getPitch());
+        } else if (type == Server.SPAWN_LIVING_ENTITY) {
+            WrapperPlayServerSpawnLivingEntity spawn = (WrapperPlayServerSpawnLivingEntity) originalPacket;
+            Vector3d pos = spawn.getPosition();
+
+            return new Location(pos.getX(), pos.getY(), pos.getZ(), spawn.getYaw(), spawn.getPitch());
+        } else if (type == Server.SPAWN_PLAYER) {
+            WrapperPlayServerSpawnPlayer spawn = (WrapperPlayServerSpawnPlayer) originalPacket;
+            Vector3d pos = spawn.getPosition();
+
+            return new Location(pos.getX(), pos.getY(), pos.getZ(), spawn.getYaw(), spawn.getPitch());
+        }
+
+        // Fallback
+        org.bukkit.Location location = entity.getLocation();
+
+        return new Location(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+    }
+
     private void addSpawnMetadata(IWrappedPlayer observer, LibsPackets packets, int entityId, boolean inLineOfSight) {
         if (observer.getBundleContext().isInsideBundle()) {
             observer.getBundleContext().setPendingSpawnMetadata(packets.getDisguise(), entityId, inLineOfSight);
@@ -451,8 +482,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
         return stored != null ? stored : 1.0;
     }
 
-    private PacketWrapper constructLivingPacket(IWrappedPlayer observer, LibsPackets packets, IWrappedEntity disguisedEntity, Vector loc,
-                                                float pitch, float yaw) {
+    private PacketWrapper constructLivingPacket(IWrappedPlayer observer, LibsPackets packets, IWrappedEntity disguisedEntity,
+                                                Location pLoc) {
         Disguise disguise = packets.getDisguise();
         Vector vec = disguisedEntity.getVelocity();
 
@@ -463,14 +494,12 @@ public class PacketHandlerSpawn implements IPacketHandler {
         com.github.retrooper.packetevents.protocol.entity.type.EntityType entityType = getEntityType(disguise);
         PacketWrapper spawnEntity;
         int entityId = observer == disguisedEntity ? DisguiseAPI.getSelfDisguiseId() : packets.getEntityId();
-        com.github.retrooper.packetevents.protocol.world.Location location =
-            new com.github.retrooper.packetevents.protocol.world.Location(loc.getX(), loc.getY(), loc.getZ(), yaw, pitch);
 
         if (NmsVersion.v1_19_R1.isSupported()) {
-            spawnEntity = new WrapperPlayServerSpawnEntity(entityId, disguise.getUUID(), entityType, location, yaw, 0,
+            spawnEntity = new WrapperPlayServerSpawnEntity(entityId, disguise.getUUID(), entityType, pLoc, pLoc.getYaw(), 0,
                 new Vector3d(vec.getX(), vec.getY(), vec.getZ()));
         } else {
-            spawnEntity = new WrapperPlayServerSpawnLivingEntity(entityId, disguise.getUUID(), entityType, location, pitch,
+            spawnEntity = new WrapperPlayServerSpawnLivingEntity(entityId, disguise.getUUID(), entityType, pLoc, pLoc.getPitch(),
                 new Vector3d(vec.getX(), vec.getY(), vec.getZ()), new ArrayList<>());
         }
 

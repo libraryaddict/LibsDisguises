@@ -161,8 +161,20 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
             } else if (!NmsVersion.v1_21_R5.isSupported() &&
                 (cloned instanceof WrapperPlayServerEntityTeleport || cloned instanceof WrapperPlayServerEntityPositionSync) &&
                 disguise.getType().isArtDisplay()) {
-                Location loc = entity.getLocation();
-                int data = (int) (((loc.getYaw() % 360) + 720 + 45) / 90) % 4;
+                Vector3d loc;
+                float rawYaw;
+
+                if (sentPacket instanceof WrapperPlayServerEntityTeleport) {
+                    WrapperPlayServerEntityTeleport tele = (WrapperPlayServerEntityTeleport) sentPacket;
+                    loc = tele.getPosition();
+                    rawYaw = tele.getYaw();
+                } else {
+                    WrapperPlayServerEntityPositionSync sync = (WrapperPlayServerEntityPositionSync) sentPacket;
+                    loc = sync.getValues().getPosition();
+                    rawYaw = sync.getValues().getYaw();
+                }
+
+                int data = (int) (((rawYaw % 360) + 720 + 45) / 90) % 4;
 
                 Vector3d position;
 
@@ -360,25 +372,26 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
 
         PacketWrapper movePacket;
 
-        Location loc = entity.getLocation();
-
-        // If not relational movement
+        // If not relational movement, the absolute position is already on the packet
         if (sentPacket instanceof WrapperPlayServerEntityTeleport) {
             WrapperPlayServerEntityTeleport tele = (WrapperPlayServerEntityTeleport) sentPacket;
+            Vector3d pos = tele.getPosition();
+
             // Center the block
-            double x = GridLockedWatcher.center(loc.getX(), watcher.getWidthX());
-            double y = loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0);
-            double z = GridLockedWatcher.center(loc.getZ(), watcher.getWidthZ());
+            double x = GridLockedWatcher.center(pos.getX(), watcher.getWidthX());
+            double y = (int) Math.floor(pos.getY()) + (pos.getY() % 1 >= 0.85 ? 1 : pos.getY() % 1 >= 0.35 ? .5 : 0);
+            double z = GridLockedWatcher.center(pos.getZ(), watcher.getWidthZ());
 
             movePacket = new WrapperPlayServerEntityTeleport(tele.getEntityId(), new Vector3d(x, y + yMod, z), yawValue, pitchValue,
                 tele.isOnGround());
         } else if (sentPacket instanceof WrapperPlayServerEntityPositionSync) {
             WrapperPlayServerEntityPositionSync sync = (WrapperPlayServerEntityPositionSync) sentPacket;
+            Vector3d pos = sync.getValues().getPosition();
 
             // Center the block
-            double x = GridLockedWatcher.center(loc.getX(), watcher.getWidthX());
-            double y = loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0);
-            double z = GridLockedWatcher.center(loc.getZ(), watcher.getWidthZ());
+            double x = GridLockedWatcher.center(pos.getX(), watcher.getWidthX());
+            double y = (int) Math.floor(pos.getY()) + (pos.getY() % 1 >= 0.85 ? 1 : pos.getY() % 1 >= 0.35 ? .5 : 0);
+            double z = GridLockedWatcher.center(pos.getZ(), watcher.getWidthZ());
 
             EntityPositionData cloned = DisguiseUtilities.clone(sync.getValues());
             cloned.setPosition(new Vector3d(x, y + yMod, z));
@@ -387,6 +400,9 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
 
             movePacket = new WrapperPlayServerEntityPositionSync(sync.getId(), cloned, sync.isOnGround());
         } else {
+            // Relative move packets only carry a delta, so the entity's current absolute location is required here
+            Location loc = entity.getLocation();
+
             double x;
             double y;
             double z;

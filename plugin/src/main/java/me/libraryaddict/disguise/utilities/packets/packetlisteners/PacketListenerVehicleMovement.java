@@ -70,9 +70,9 @@ public class PacketListenerVehicleMovement extends SimplePacketListenerAbstract 
             return;
         }
 
-        Location loc = entity.getLocation();
-
         if (sentPacket == null) {
+            Location loc = entity.getLocation();
+
             sentPacket = new WrapperPlayServerEntityTeleport(entityId,
                 new com.github.retrooper.packetevents.protocol.world.Location(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(),
                     loc.getPitch()), true);
