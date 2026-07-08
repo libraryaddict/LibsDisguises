@@ -897,9 +897,9 @@ public class ReflectionManager {
     }
 
     public static void setBoundingBox(Entity entity, FakeBoundingBox newBox, double scale) {
-        double x = newBox.getX();
+        double x = newBox.getHalvedX();
         double y = newBox.getY();
-        double z = newBox.getZ();
+        double z = newBox.getHalvedZ();
 
         if (NmsVersion.v1_20_R4.isSupported()) {
             x *= scale;

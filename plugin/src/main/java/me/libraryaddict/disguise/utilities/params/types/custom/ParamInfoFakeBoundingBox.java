@@ -39,6 +39,6 @@ public class ParamInfoFakeBoundingBox extends ParamInfo<FakeBoundingBox> {
             return "null";
         }
 
-        return (object.getX() * 2) + "," + object.getY() + "," + (object.getZ() * 2);
+        return object.getX() + "," + object.getY() + "," + object.getZ();
     }
 }
