@@ -86,16 +86,11 @@ public class PacketHandlerAttributes implements IPacketHandler<WrapperPlayServer
                         modifiers.add(modifier);
                     }
 
-                    if (!modifiers.isEmpty()) {
-                        WrapperPlayServerUpdateAttributes.Property prop =
-                            new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, property.getValue(), modifiers);
+                    WrapperPlayServerUpdateAttributes.Property prop =
+                        new WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, property.getValue(), modifiers);
 
-                        attributes.add(prop);
-                        computed = prop.calcValue();
-                    } else {
-                        computed = 1D;
-                    }
-
+                    attributes.add(prop);
+                    computed = prop.calcValue();
                     attributeScale = computed;
                 }
 
