@@ -17,7 +17,13 @@ public class WatcherMethod {
     private WatcherMethod companionMethod;
     private final Class<? extends FlagWatcher> watcherClass;
     private final MethodHandle method;
+    /**
+     * The name of the method that is used externally, eg, permissions or display
+     */
     private final String mappedName;
+    /**
+     * The actual internal name of the method
+     */
     private final String name;
     private final Class returnType;
     private final Class param;
