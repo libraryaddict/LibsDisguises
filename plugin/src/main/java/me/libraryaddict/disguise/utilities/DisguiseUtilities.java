@@ -3369,7 +3369,8 @@ public class DisguiseUtilities {
             return flagWatcher.getWatchableObjects();
         }
 
-        return flagWatcher.convert(player.getEntity(), new ArrayList<>());
+        // This is called by spawn, send all custom meta
+        return flagWatcher.convert(player.getEntity(), new ArrayList<>(), true, false);
     }
 
     /**
