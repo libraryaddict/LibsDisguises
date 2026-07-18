@@ -5,7 +5,7 @@ plugins {
 description = "v26_R2_Folia"
 
 nmsModule {
-    craftbukkitVersion.set("26.2.build.60-beta")
+    craftbukkitVersion.set("26.2.build.+")
     javaVersion.set(JavaVersion.VERSION_25)
 }
 
