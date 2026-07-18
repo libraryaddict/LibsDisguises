@@ -67,13 +67,11 @@ public class ReflectionManager extends ReflectionManagerAbstract {
     protected Method entityDefaultSoundMethod;
     protected Field trackedEntityField;
     protected Method itemMetaDeserialize;
-    protected CraftMagicNumbers craftMagicNumbers;
+    protected CraftMagicNumbers craftMagicNumbers = initCraftMagicNumbers();
 
     @SneakyThrows
     public ReflectionManager() {
         super();
-
-        craftMagicNumbers = (CraftMagicNumbers) CraftMagicNumbers.class.getField("INSTANCE").get(null);
 
         Field entityCounter = net.minecraft.world.entity.Entity.class.getDeclaredField("b");
         entityCounter.setAccessible(true);
@@ -88,6 +86,11 @@ public class ReflectionManager extends ReflectionManagerAbstract {
 
         Class<?> aClass = Class.forName("org.bukkit.craftbukkit.v1_17_R1.inventory.CraftMetaItem$SerializableMeta");
         itemMetaDeserialize = aClass.getDeclaredMethod("deserialize", Map.class);
+    }
+
+    @SneakyThrows
+    private static CraftMagicNumbers initCraftMagicNumbers() {
+        return (CraftMagicNumbers) CraftMagicNumbers.class.getField("INSTANCE").get(null);
     }
 
     @Override
