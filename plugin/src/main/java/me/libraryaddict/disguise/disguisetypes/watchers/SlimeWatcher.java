@@ -56,13 +56,17 @@ public class SlimeWatcher extends AgeableWatcher {
     @NmsAddedIn(NmsVersion.v26_R2)
     @Override
     public boolean isAdult() {
-        return super.isAdult();
+        return !this.isBaby();
     }
 
     @ApiStatus.AvailableSince("26.2")
     @NmsAddedIn(NmsVersion.v26_R2)
     @Override
     public boolean isBaby() {
+        if (!NmsVersion.v26_R2.isSupported()) {
+            return false;
+        }
+
         return super.isBaby();
     }
 
@@ -100,5 +104,10 @@ public class SlimeWatcher extends AgeableWatcher {
     @Override
     public boolean isAgeLocked() {
         return getData(MetaIndex.AGEABLE_AGE_LOCKED);
+    }
+
+    @Override
+    public boolean isAgeable() {
+        return NmsVersion.v26_R2.isSupported();
     }
 }

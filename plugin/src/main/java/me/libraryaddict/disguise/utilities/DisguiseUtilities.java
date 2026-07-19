@@ -1515,7 +1515,8 @@ public class DisguiseUtilities {
                 disguiseBox = disguiseValues.getAdultBox();
 
                 if (disguiseValues.getBabyBox() != null) {
-                    if ((disguise.getWatcher() instanceof AgeableWatcher && ((AgeableWatcher) disguise.getWatcher()).isBaby()) ||
+                    if ((disguise.getWatcher() instanceof AgeableWatcher && ((AgeableWatcher) disguise.getWatcher()).isAgeable() &&
+                        ((AgeableWatcher) disguise.getWatcher()).isBaby()) ||
                         (disguise.getWatcher() instanceof ZombieWatcher && ((ZombieWatcher) disguise.getWatcher()).isBaby())) {
                         disguiseBox = disguiseValues.getBabyBox();
                     }

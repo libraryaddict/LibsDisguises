@@ -384,7 +384,7 @@ public abstract class Disguise {
 
         // Set the disguise if its a baby or not
         if (!isAdult) {
-            if (getWatcher() instanceof AgeableWatcher) {
+            if (getWatcher() instanceof AgeableWatcher && ((AgeableWatcher) getWatcher()).isAgeable()) {
                 ((AgeableWatcher) getWatcher()).setBaby(true);
             } else if (getWatcher() instanceof ZombieWatcher) {
                 ((ZombieWatcher) getWatcher()).setBaby(true);
@@ -714,10 +714,11 @@ public abstract class Disguise {
      * Sets a custom server-side bounding box used for server hit detection (arrows, melee, etc.). Does not change what clients see.
      * <p>
      * Invoking this with a non-null box also enables server-side hitbox modification ({@code isModifyBoundingBox()}).
-     * Use {@link #setBoundingBox(me.libraryaddict.disguise.utilities.movements.InteractiveBoundingBox)} for client-side interactive hitboxes.
+     * Use {@link #setBoundingBox(me.libraryaddict.disguise.utilities.movements.InteractiveBoundingBox)} for client-side interactive
+     * hitboxes.
      *
      * @param box custom box dimensions, or {@code null} to clear a custom override and disable server-side hitbox modification
-     * ({@link #setModifyBoundingBox(boolean)} can re-enable the disguise type's default server box)
+     *            ({@link #setModifyBoundingBox(boolean)} can re-enable the disguise type's default server box)
      */
     public Disguise setServerBoundingBox(@Nullable FakeBoundingBox box) {
         this.serverBoundingBox = box;

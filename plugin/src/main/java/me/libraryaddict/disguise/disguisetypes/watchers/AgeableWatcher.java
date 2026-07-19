@@ -41,4 +41,11 @@ public class AgeableWatcher extends InsentientWatcher {
     public boolean isAgeLocked() {
         return getData(MetaIndex.AGEABLE_AGE_LOCKED);
     }
+
+    /**
+     * Extended by downstream classes to declare that they are not ageable
+     */
+    public boolean isAgeable() {
+        return true;
+    }
 }
