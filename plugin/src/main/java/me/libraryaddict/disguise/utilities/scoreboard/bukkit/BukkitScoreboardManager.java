@@ -145,6 +145,10 @@ public class BukkitScoreboardManager extends AbstractScoreboardManager {
                 team.setColor(color);
             }
 
+            if (DisguiseConfig.isModifyCollisions() && team.getOption(Team.Option.COLLISION_RULE) != Team.OptionStatus.NEVER) {
+                team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
+            }
+
             team.addEntry(uuid.toString());
         }
     }
