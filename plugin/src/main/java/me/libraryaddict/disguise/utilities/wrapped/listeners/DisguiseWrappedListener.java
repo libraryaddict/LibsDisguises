@@ -1,5 +1,9 @@
 package me.libraryaddict.disguise.utilities.wrapped.listeners;
 
+import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseRunnable;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
@@ -64,23 +68,60 @@ public class DisguiseWrappedListener implements Listener {
         });
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onDeath(EntityDeathEvent event) {
         WrappedManager.getWrappedIfExists(event.getEntity()).ifPresent(e -> e.setValid(false));
+
+        for (Disguise disguise : DisguiseAPI.getDisguises(event.getEntity())) {
+            DisguiseRunnable runnable = disguise.getInternals().getRunnable();
+
+            if (runnable == null) {
+                continue;
+            }
+
+            runnable.markDead();
+        }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onDeath(PlayerDeathEvent event) {
-        getWrappedPlayer(event.getEntity()).ifPresent(e -> {
-            e.setValid(false);
-        });
+        getWrappedPlayer(event.getEntity()).ifPresent(e -> e.setValid(false));
+
+        for (Disguise disguise : DisguiseAPI.getDisguises(event.getEntity())) {
+            DisguiseRunnable runnable = disguise.getInternals().getRunnable();
+
+            if (runnable == null) {
+                continue;
+            }
+
+            runnable.markDead();
+        }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onRespawn(PlayerRespawnEvent event) {
-        getWrappedPlayer(event.getPlayer()).ifPresent(e -> {
-            e.setValid(true);
-        });
+        getWrappedPlayer(event.getPlayer()).ifPresent(e -> e.setValid(true));
+
+        Player player = event.getPlayer();
+
+        LibsDisguises.getScheduler().entity(player).runDelayed(task -> {
+            for (Disguise disguise : DisguiseAPI.getDisguises(player)) {
+                DisguiseRunnable runnable = disguise.getInternals().getRunnable();
+
+                // Skip any runnables that know the player died
+                if (runnable == null || !runnable.isHasDied()) {
+                    continue;
+                }
+
+                // The runnable knows the player died, if the disguise should not be kept..
+                if (disguise.isRemoveDisguiseOnDeath()) {
+                    disguise.removeDisguise();
+                } else {
+                    // Otherwise, the disguise is kept, and mark the player as alive
+                    runnable.markAlive();
+                }
+            }
+        }, 1);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)

@@ -36,6 +36,8 @@ public class DisguiseRunnable {
     private boolean inUse;
     private int blockX, blockY, blockZ, facing;
     private int deadTicks = 0;
+    @Getter
+    private boolean hasDied;
     private int actionBarTicks = -1;
     private int refreshRate;
     private long lastRefreshed = System.currentTimeMillis();
@@ -91,6 +93,18 @@ public class DisguiseRunnable {
         // Reset the flags, it'll be processed immediately
         lastValidCheckPassed = 0L;
         lastTicksLived = 0;
+    }
+
+    /**
+     * Players are always ticked when dead, so we use the event
+     */
+    public void markDead() {
+        hasDied = true;
+    }
+
+    public void markAlive() {
+        hasDied = false;
+        deadTicks = 0;
     }
 
     public void resetAmbientSoundTime() {
@@ -177,7 +191,7 @@ public class DisguiseRunnable {
             }
 
             return true;
-        } else if (isEntityInvalid()) {
+        } else if (hasDied || isEntityInvalid()) {
             // If it has been dead for 30+ ticks
             // This is to ensure that this disguise isn't removed while clients think its the real entity
             // The delay is because if it sends the destroy entity packets straight away, then it means no
