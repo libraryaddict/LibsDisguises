@@ -299,6 +299,9 @@ public enum DisguiseType {
 
     @NmsAddedIn(NmsVersion.v1_16) STRIDER,
 
+    @NmsAddedIn(NmsVersion.v26_R2)
+    SULFUR_CUBE,
+
     @NmsAddedIn(NmsVersion.v1_19_R1) TADPOLE,
 
     @NmsAddedIn(NmsVersion.v1_19_R3) TEXT_DISPLAY,

@@ -6,6 +6,7 @@ import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
+import com.github.retrooper.packetevents.util.LogManager;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.github.retrooper.packetevents.manager.server.ServerManagerImpl;
 import lombok.SneakyThrows;
@@ -32,6 +33,8 @@ public class DisguiseParamBlockStateTest {
         ServerManager impl = Mockito.spy(new ServerManagerImpl());
         doReturn(impl).when(PacketEvents.getAPI()).getServerManager();
         doReturn(ServerVersion.getLatest()).when(impl).getVersion();
+
+        doReturn(Mockito.mock(LogManager.class)).when(PacketEvents.getAPI()).getLogManager();
     }
 
     private void throwsTest(LibsMsg msg, String toParse) {

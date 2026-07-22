@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.manager.server.ServerManager;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
+import com.github.retrooper.packetevents.util.LogManager;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.github.retrooper.packetevents.manager.server.ServerManagerImpl;
 import lombok.SneakyThrows;
@@ -38,6 +39,7 @@ public class DisguiseParamUserProfileTest {
         ServerManager impl = Mockito.spy(new ServerManagerImpl());
         doReturn(impl).when(PacketEvents.getAPI()).getServerManager();
         doReturn(ServerVersion.getLatest()).when(impl).getVersion();
+        doReturn(Mockito.mock(LogManager.class)).when(PacketEvents.getAPI()).getLogManager();
 
         DisguiseUtilities.recreateGsonSerializer();
     }

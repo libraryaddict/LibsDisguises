@@ -123,6 +123,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.SnowmanWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SpiderWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.StriderWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SulfurCubeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TNTWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TadpoleWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TameableWatcher;
@@ -953,6 +954,10 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_16)
     @NmsRemovedIn(NmsVersion.v1_21_R4)
     public static MetaIndex<Boolean> STRIDER_SADDLED = new MetaIndex<>(StriderWatcher.class, 2, false);
+
+    public  static MetaIndex<Integer> SULFUR_CUBE_MAX_FUSE = new MetaIndex<>(SulfurCubeWatcher.class, 0, -1);
+
+    public  static MetaIndex<Boolean> SULFUR_CUBE_FROM_BUCKET = new MetaIndex<>(SulfurCubeWatcher.class, 1, false);
 
     public static MetaIndex<Byte> SPIDER_CLIMB = new MetaIndex<>(SpiderWatcher.class, 0, (byte) 0);
 
