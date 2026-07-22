@@ -172,7 +172,7 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
                 LibsDisguises.getScheduler().entity(observer.getEntity()).run(() -> {
                     ItemStack heldItem = this.getHeldItem(observer, hand);
 
-                    if (heldItem != null && heldItem.getType() == Material.BUCKET) {
+                    if (heldItem != null && (heldItem.getType() == Material.BUCKET || heldItem.getType() == Material.WATER_BUCKET)) {
                         DisguiseUtilities.refreshTracker((TargetedDisguise) disguise, observer.getName());
                         observer.getEntity().updateInventory(); // Remove their fake bucket
                     }
