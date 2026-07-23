@@ -350,6 +350,26 @@ public class DisguisePermissionsTest {
         DisguiseConfig.setExplicitDisguisePermissions(false);
     }
 
+    @TestTemplate
+    public void testExplictPermissionsWithSeparateNegation() {
+        DisguiseConfig.setExplicitDisguisePermissions(true);
+
+        // A plain grant (no options, so explicit mode should give zero options) combined with an unrelated
+        // negated permission on the same disguise should not accidentally unlock every other option
+        DisguisePermissions permissions =
+            createPermissions("Disguise", false, "libsdisguises.disguise.sheep", "-libsdisguises.disguise.sheep.setinvisible");
+
+        assertTrue(permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Sheep")), "The sheep disguise should be usable");
+
+        assertFalse(permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Sheep"), Collections.singletonList("setInvisible")),
+            "The sheep disguise should not be able to use setInvisible");
+
+        assertFalse(permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Sheep"), Collections.singletonList("setBurning")),
+            "The sheep disguise should not be able to use setBurning, as it was never explicitly granted");
+
+        DisguiseConfig.setExplicitDisguisePermissions(false);
+    }
+
     private Permissible createPermissionsHolder(boolean isOp, String... perms) {
         List<String> permitted = new ArrayList<>();
         List<String> negated = new ArrayList<>();

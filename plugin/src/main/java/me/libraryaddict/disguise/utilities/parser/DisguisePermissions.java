@@ -18,6 +18,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +35,9 @@ public class DisguisePermissions {
         private final List<String> negatedOptions = new ArrayList<>();
         private final Set<String> externalNegatedOptions = new HashSet<>();
         private boolean wildcardAllow = false;
+        // True once a permission explicitly granted this disguise with no options under ExplicitDisguisePermissions,
+        // meaning permittedOptions being empty is intentional and shouldn't be treated as an implicit wildcard
+        private boolean explicitZeroOptions = false;
 
         public PermissionStorage(DisguisePerm disguisePerm) {
             this.disguisePerm = disguisePerm;
@@ -366,6 +370,10 @@ public class DisguisePermissions {
                         // If this disguise has options defined, unless wildcard was explictly given then remove it
                     } else if (!storage.permittedOptions.contains("*")) {
                         storage.wildcardAllow = false;
+
+                        if (parsedPermission.options.isEmpty() && DisguiseConfig.isExplicitDisguisePermissions()) {
+                            storage.explicitZeroOptions = true;
+                        }
                     }
                 }
 
@@ -536,7 +544,7 @@ public class DisguisePermissions {
             // If their permitted options are defined, or the denied options are not defined
             // If they don't have permitted options defined, but they have denied options defined then they probably
             // have an invisible wildcard allow
-            if (!storage.permittedOptions.isEmpty() || storage.negatedOptions.isEmpty()) {
+            if (storage.explicitZeroOptions || !storage.permittedOptions.isEmpty() || storage.negatedOptions.isEmpty()) {
                 // Check if they're trying to use anything they shouldn't
                 for (String option : disguiseOptions) {
                     String lower = option.toLowerCase(Locale.ENGLISH);
