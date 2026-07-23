@@ -173,14 +173,14 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
                     packets.addPacket(DisguiseUtilities.createTablistAddPackets(playerDisguise));
 
-                    skin = LibsDisguises.getInstance().getSkinHandler().addPlayerSkin(observer.getEntity(), playerDisguise);
+                    skin = LibsDisguises.getInstance().getSkinHandler().addPlayerSkin(observer, playerDisguise);
                     skin.setDoTabList(!DisguiseUtilities.isFancyHiddenTabs());
 
                     if (LibsPremium.getPaidInformation() != null && !LibsPremium.getPaidInformation().getBuildNumber().matches("#?\\d+")) {
                         skin.getSleptPackets().computeIfAbsent(0, (a) -> new ArrayList<>()).add(new WrapperPlayServerHeldItemChange(0));
                     }
                 } else {
-                    skin = LibsDisguises.getInstance().getSkinHandler().addPlayerSkin(observer.getEntity(), playerDisguise);
+                    skin = LibsDisguises.getInstance().getSkinHandler().addPlayerSkin(observer, playerDisguise);
                     skin.setDoTabList(false);
                 }
 

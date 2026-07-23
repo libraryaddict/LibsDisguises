@@ -28,9 +28,10 @@ import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -75,7 +76,7 @@ public class PlayerSkinHandler implements Listener {
     }
 
     @Getter
-    private final Cache<Player, List<PlayerSkin>> cache = CacheBuilder.newBuilder().weakKeys()
+    private final Cache<IWrappedPlayer, List<PlayerSkin>> cache = CacheBuilder.newBuilder().weakKeys()
         .expireAfterWrite(DisguiseConfig.getPlayerDisguisesSkinExpiresMove() * 50L, TimeUnit.MILLISECONDS).removalListener((event) -> {
             if (event.getCause() != RemovalCause.EXPIRED) {
                 return;
@@ -84,7 +85,7 @@ public class PlayerSkinHandler implements Listener {
             List<PlayerSkin> skins = (List<PlayerSkin>) event.getValue();
 
             for (PlayerSkin skin : skins) {
-                doPacketRemoval((Player) event.getKey(), skin);
+                doPacketRemoval((IWrappedPlayer) event.getKey(), skin);
             }
 
             skins.clear();
@@ -107,7 +108,7 @@ public class PlayerSkinHandler implements Listener {
         return disguises.stream().anyMatch(d -> d.getDisguise().get() == disguise);
     }
 
-    public synchronized PlayerSkin addPlayerSkin(Player player, PlayerDisguise disguise) {
+    public synchronized PlayerSkin addPlayerSkin(IWrappedPlayer player, PlayerDisguise disguise) {
         tryProcess(player, false);
 
         List<PlayerSkin> skins = getCache().getIfPresent(player);
@@ -124,7 +125,7 @@ public class PlayerSkinHandler implements Listener {
         return toReturn;
     }
 
-    private synchronized void doTeleport(Player player, List<PlayerSkin> value) {
+    private synchronized void doTeleport(IWrappedPlayer player, List<PlayerSkin> value) {
         if (player == null || !player.isOnline()) {
             return;
         }
@@ -223,9 +224,9 @@ public class PlayerSkinHandler implements Listener {
 
         PlayerDisguise disguise = (PlayerDisguise) event.getDisguise();
 
-        ArrayList<Player> players = new ArrayList<>(getCache().asMap().keySet());
+        ArrayList<IWrappedPlayer> players = new ArrayList<>(getCache().asMap().keySet());
 
-        for (Player player : players) {
+        for (IWrappedPlayer player : players) {
             List<PlayerSkin> skins = getCache().getIfPresent(player);
 
             if (skins == null) {
@@ -248,14 +249,14 @@ public class PlayerSkinHandler implements Listener {
         }
     }
 
-    private synchronized void addMetadata(Player player, PlayerSkin skin) {
+    private synchronized void addMetadata(IWrappedPlayer player, PlayerSkin skin) {
         PlayerDisguise disguise = skin.getDisguise().get();
 
         if (!disguise.isDisguiseInUse() || disguise.getInternals().shouldAvoidSendingPackets(player)) {
             return;
         }
 
-        Entity entity = disguise.getEntity();
+        IWrappedEntity<?> entity = disguise.getInternals().getEntity();
 
         List<WatcherValue> watcherValues = DisguiseUtilities.createSanitizedWatcherValues(player, entity, disguise.getWatcher());
 
@@ -264,7 +265,7 @@ public class PlayerSkinHandler implements Listener {
         PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, metaPacket);
     }
 
-    private synchronized void addTeleport(Player player, PlayerSkin skin) {
+    private synchronized void addTeleport(IWrappedPlayer player, PlayerSkin skin) {
         PlayerDisguise disguise = skin.getDisguise().get();
 
         Location loc =
@@ -301,7 +302,7 @@ public class PlayerSkinHandler implements Listener {
         PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, teleport);
     }
 
-    private synchronized void doPacketRemoval(Player player, PlayerSkin skin) {
+    private synchronized void doPacketRemoval(IWrappedPlayer player, PlayerSkin skin) {
         PlayerDisguise disguise = skin.getDisguise().get();
 
         if (disguise == null) {
@@ -321,7 +322,7 @@ public class PlayerSkinHandler implements Listener {
                         PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
                     }
                 } else {
-                    LibsDisguises.getScheduler().entity(player).runDelayed(task -> {
+                    LibsDisguises.getScheduler().entity(player.getEntity()).runDelayed(task -> {
                         if (!disguise.isDisguiseInUse()) {
                             return;
                         }
@@ -342,17 +343,17 @@ public class PlayerSkinHandler implements Listener {
             if (skin.isSleepPackets()) {
                 addTeleport(player, skin);
 
-                LibsDisguises.getScheduler().entity(player).run(() -> {
+                LibsDisguises.getScheduler().entity(player.getEntity()).run(() -> {
                     addMetadata(player, skin);
                 });
             }
 
             if (disguise.getInternals().getNameDisplayType().isFakeEntity() && disguise.isNameVisible() &&
                 disguise.getMultiNameLength() > 0) {
-                List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(disguise, player, new String[0]);
+                List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(disguise, player.getEntity(), new String[0]);
 
                 for (PacketWrapper p : packets) {
-                    WrappedManager.getWrappedPlayer(player).sendPacket(p);
+                    player.sendPacket(p);
                 }
             }
         }
@@ -365,7 +366,7 @@ public class PlayerSkinHandler implements Listener {
         }
     }
 
-    private synchronized void tryProcess(Player player, boolean onMove) {
+    private synchronized void tryProcess(IWrappedPlayer player, boolean onMove) {
         List<PlayerSkin> skins = getCache().getIfPresent(player);
 
         if (skins == null) {
@@ -394,6 +395,6 @@ public class PlayerSkinHandler implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
-        tryProcess(event.getPlayer(), true);
+        tryProcess(WrappedManager.getWrappedPlayer(event.getPlayer()), true);
     }
 }

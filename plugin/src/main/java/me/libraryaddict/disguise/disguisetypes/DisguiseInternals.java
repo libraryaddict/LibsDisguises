@@ -140,6 +140,10 @@ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.Di
      * @param player
      * @return
      */
+    public synchronized boolean shouldAvoidSendingPackets(IWrappedPlayer player) {
+        return shouldAvoidSendingPackets(player.getUniqueId());
+    }
+
     public synchronized boolean shouldAvoidSendingPackets(Player player) {
         return shouldAvoidSendingPackets(player.getUniqueId());
     }
