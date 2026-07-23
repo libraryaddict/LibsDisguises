@@ -100,13 +100,19 @@ public class BukkitScoreboardManager extends AbstractScoreboardManager {
                     continue;
                 }
 
-                DisguiseScoreboardTeam name = ((PlayerDisguise) disguise).getScoreboardName();
+                PlayerDisguise pDisguise = (PlayerDisguise) disguise;
+
+                if (!pDisguise.hasScoreboardName()) {
+                    continue;
+                }
+
+                DisguiseScoreboardTeam name = pDisguise.getScoreboardName();
 
                 if (name == null || name.getTeamName() == null) {
                     continue;
                 }
 
-                applyTeam(scoreboard, name, ((PlayerDisguise) disguise).isNameVisible());
+                applyTeam(scoreboard, name, pDisguise.isNameVisible());
             }
         }
     }
