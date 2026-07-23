@@ -185,13 +185,16 @@ implements me.libraryaddict.disguise.utilities.scaling.DisguiseScaling.DisguiseS
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#shouldAvoidSendingPackets(java.util.UUID)" class="member-name-link">shouldAvoidSendingPackets</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#shouldAvoidSendingPackets(org.bukkit.entity.Player)" class="member-name-link">shouldAvoidSendingPackets</a><wbr>(org.bukkit.entity.Player&nbsp;player)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#shouldAvoidSendingPackets(me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer)" class="member-name-link">shouldAvoidSendingPackets</a><wbr>(me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">If the respective player has been sent the Spawn packets</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateEntityScale(double)" class="member-name-link">updateEntityScale</a><wbr>(double&nbsp;scaleInPacket)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#shouldAvoidSendingPackets(org.bukkit.entity.Player)" class="member-name-link">shouldAvoidSendingPackets</a><wbr>(org.bukkit.entity.Player&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateEntityScale(double)" class="member-name-link">updateEntityScale</a><wbr>(double&nbsp;scaleInPacket)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -258,15 +261,21 @@ implements me.libraryaddict.disguise.utilities.scaling.DisguiseScaling.DisguiseS
 </section>
 </li>
 <li>
-<section class="detail" id="shouldAvoidSendingPackets(org.bukkit.entity.Player)">
+<section class="detail" id="shouldAvoidSendingPackets(me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer)">
 <h3>shouldAvoidSendingPackets</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">shouldAvoidSendingPackets</span><wbr><span class="parameters">(org.bukkit.entity.Player&nbsp;player)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">shouldAvoidSendingPackets</span><wbr><span class="parameters">(me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer&nbsp;player)</span></div>
 <div class="block">If the respective player has been sent the Spawn packets</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>player</code> - </dd>
 <dt>Returns:</dt>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="shouldAvoidSendingPackets(org.bukkit.entity.Player)">
+<h3>shouldAvoidSendingPackets</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">shouldAvoidSendingPackets</span><wbr><span class="parameters">(org.bukkit.entity.Player&nbsp;player)</span></div>
 </section>
 </li>
 <li>
