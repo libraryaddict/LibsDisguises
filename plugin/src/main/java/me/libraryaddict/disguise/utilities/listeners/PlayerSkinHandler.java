@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.utilities.listeners;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
@@ -152,7 +151,7 @@ public class PlayerSkinHandler implements Listener {
 
             WrapperPlayServerEntityTeleport packet =
                 new WrapperPlayServerEntityTeleport(id, SpigotConversionUtil.fromBukkitLocation(loc), true);
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
+            player.sendPacketSilently(packet);
         }
     }
 
@@ -262,7 +261,7 @@ public class PlayerSkinHandler implements Listener {
 
         WrapperPlayServerEntityMetadata metaPacket = ReflectionManager.getMetadataPacket(entity.getEntityId(), watcherValues);
 
-        PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, metaPacket);
+        player.sendPacketSilently(metaPacket);
     }
 
     private synchronized void addTeleport(IWrappedPlayer player, PlayerSkin skin) {
@@ -299,7 +298,7 @@ public class PlayerSkinHandler implements Listener {
         WrapperPlayServerEntityTeleport teleport =
             new WrapperPlayServerEntityTeleport(id, new Vector3d(loc.getX(), loc.getY(), loc.getZ()), yaw, pitch,
                 disguise.getEntity().isOnGround());
-        PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, teleport);
+        player.sendPacketSilently(teleport);
     }
 
     private synchronized void doPacketRemoval(IWrappedPlayer player, PlayerSkin skin) {
@@ -319,7 +318,7 @@ public class PlayerSkinHandler implements Listener {
                             continue;
                         }
 
-                        PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
+                        player.sendPacketSilently(packet);
                     }
                 } else {
                     LibsDisguises.getScheduler().entity(player.getEntity()).runDelayed(task -> {
@@ -334,7 +333,7 @@ public class PlayerSkinHandler implements Listener {
                                 continue;
                             }
 
-                            PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet);
+                            player.sendPacketSilently(packet);
                         }
                     }, entry.getKey());
                 }
@@ -362,7 +361,7 @@ public class PlayerSkinHandler implements Listener {
             PacketWrapper packetContainer =
                 DisguiseUtilities.createTablistPacket(disguise, WrapperPlayServerPlayerInfo.Action.REMOVE_PLAYER);
 
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packetContainer);
+            player.sendPacket(packetContainer);
         }
     }
 
