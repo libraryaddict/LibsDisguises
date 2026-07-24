@@ -150,7 +150,7 @@ public class BlockDisplayWatcher extends DisplayWatcher implements GridLockedWat
         double y = conRel(loc.getY(), centerY);
         double z = conRel(loc.getZ(), centerZ);
 
-        IWrappedEntity entity = getDisguise().getInternals().getEntity();
+        IWrappedEntity entity = getDisguise().getWrappedEntity();
 
         for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             int entityId = entity == player ? DisguiseAPI.getSelfDisguiseId() : entity.getEntityId();

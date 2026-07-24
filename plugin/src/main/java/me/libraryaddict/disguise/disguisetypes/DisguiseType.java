@@ -14,6 +14,7 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsEntityName;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -299,8 +300,7 @@ public enum DisguiseType {
 
     @NmsAddedIn(NmsVersion.v1_16) STRIDER,
 
-    @NmsAddedIn(NmsVersion.v26_R2)
-    SULFUR_CUBE,
+    @NmsAddedIn(NmsVersion.v26_R2) SULFUR_CUBE,
 
     @NmsAddedIn(NmsVersion.v1_19_R1) TADPOLE,
 
@@ -353,6 +353,10 @@ public enum DisguiseType {
     ZOMBIE_VILLAGER,
 
     @NmsAddedIn(NmsVersion.v1_16) ZOMBIFIED_PIGLIN;
+
+    public static DisguiseType getType(IWrappedEntity<?> entity) {
+        return getType(entity.getType());
+    }
 
     public static DisguiseType getType(Entity entity) {
         return getType(entity.getType());

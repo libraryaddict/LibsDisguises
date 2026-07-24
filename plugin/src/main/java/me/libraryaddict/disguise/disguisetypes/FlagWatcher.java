@@ -132,7 +132,7 @@ public class FlagWatcher {
             return;
         }
 
-        Entity entity = getDisguise().getEntity();
+        IWrappedEntity<?> entity = getDisguise().getWrappedEntity();
 
         for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             WrapperPlayServerEntityTeleport teleport =
@@ -154,7 +154,7 @@ public class FlagWatcher {
             return;
         }
 
-        IWrappedEntity entity = getDisguise().getInternals().getEntity();
+        IWrappedEntity entity = getDisguise().getWrappedEntity();
 
         for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             WrapperPlayServerEntityTeleport teleport =
@@ -198,7 +198,7 @@ public class FlagWatcher {
     }
 
     private void sendHeadPacket() {
-        IWrappedEntity entity = getDisguise().getInternals().getEntity();
+        IWrappedEntity entity = getDisguise().getWrappedEntity();
         Location loc = entity.getLocation();
 
         for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
@@ -411,6 +411,7 @@ public class FlagWatcher {
                 if (hasValue(MetaIndex.LIVING_HEALTH)) {
                     health = ((LivingWatcher) this).getHealth();
                 } else if (getDisguise().getEntity() instanceof LivingEntity) {
+                    // TODO Not thread safe
                     health = (float) ((LivingEntity) getDisguise().getEntity()).getHealth();
                 } else {
                     health = MetaIndex.LIVING_HEALTH.getDefault();
@@ -927,7 +928,7 @@ public class FlagWatcher {
             return;
         }
 
-        IWrappedEntity entity = getDisguise().getInternals().getEntity();
+        IWrappedEntity entity = getDisguise().getWrappedEntity();
 
         for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             if (getDisguise().getInternals().shouldAvoidSendingPackets(player.getEntity())) {
@@ -1010,7 +1011,7 @@ public class FlagWatcher {
             itemStack = DisguiseUtilities.getEquipment(slot, getDisguise().getEntity());
         }
 
-        IWrappedEntity entity = getDisguise().getInternals().getEntity();
+        IWrappedEntity entity = getDisguise().getWrappedEntity();
 
         for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             List<Equipment> list =

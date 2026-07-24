@@ -1274,7 +1274,7 @@ public abstract class Disguise {
      */
     public void playAnimation(IWrappedPlayer observer, DisguiseAnimation animation) {
         PacketWrapper<?> packet;
-        IWrappedEntity<?> wrappedEntity = getInternals().getEntity();
+        IWrappedEntity<?> wrappedEntity = getWrappedEntity();
 
         if (animation == DisguiseAnimation.HURT) {
             packet = new WrapperPlayServerHurtAnimation(
@@ -1311,7 +1311,7 @@ public abstract class Disguise {
         }
 
         // No validation as there are some animation codes that overlap, and there's no hard reason not to try mismatch
-        int entityId = getInternals().getEntity().getEntityId();
+        int entityId = getWrappedEntity().getEntityId();
         int count = 0;
 
         for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(this)) {
@@ -1329,5 +1329,9 @@ public abstract class Disguise {
 
     public InteractiveBoundingBox getBoundingBox() {
         return getInternals().getInteractiveBoundingBox();
+    }
+
+    public IWrappedEntity<?> getWrappedEntity() {
+        return getInternals().getEntity();
     }
 }

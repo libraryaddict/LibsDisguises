@@ -87,10 +87,10 @@ public class LivingWatcher extends FlagWatcher {
 
         updateNameHeight();
 
-        IWrappedEntity entity = getDisguise().getInternals().getEntity();
+        IWrappedEntity entity = getDisguise().getWrappedEntity();
 
         for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
-            if (getDisguise().getInternals().shouldAvoidSendingPackets(player.getEntity())) {
+            if (getDisguise().getInternals().shouldAvoidSendingPackets(player)) {
                 continue;
             }
 
@@ -105,7 +105,7 @@ public class LivingWatcher extends FlagWatcher {
 
             WrapperPlayServerUpdateAttributes packet = getWrapperPlayServerUpdateAttributes(player, entity, scaleToSend);
 
-            if (player.getEntity() == getDisguise().getEntity()) {
+            if (player == entity) {
                 player.sendPacketSilently(packet);
             } else {
                 player.sendPacket(packet);
@@ -237,7 +237,7 @@ public class LivingWatcher extends FlagWatcher {
             return;
         }
 
-        IWrappedEntity entity = getDisguise().getInternals().getEntity();
+        IWrappedEntity entity = getDisguise().getWrappedEntity();
 
         for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             if (getDisguise().getInternals().shouldAvoidSendingPackets(player.getEntity())) {

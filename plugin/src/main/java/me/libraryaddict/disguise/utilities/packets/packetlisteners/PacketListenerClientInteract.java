@@ -165,7 +165,7 @@ public class PacketListenerClientInteract extends SimplePacketListenerAbstract {
 
         // If the disguise is one that can be bucketed
         if (bucketableMobs[disguise.getType().ordinal()]) {
-            DisguiseType entityType = DisguiseType.getType(disguise.getEntity());
+            DisguiseType entityType = DisguiseType.getType(disguise.getWrappedEntity());
 
             // If the entity isn't one that can be bucketed
             if (entityType != null && !bucketableMobs[entityType.ordinal()]) {

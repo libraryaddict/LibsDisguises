@@ -15,9 +15,9 @@ import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.entity.Ageable;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.HappyGhast;
 import org.bukkit.entity.Wolf;
 
@@ -235,19 +235,20 @@ public class SoundGroup {
         return getGroup(entityName, variantName);
     }
 
-    public static SoundGroup getGroup(Entity entity) {
+    public static SoundGroup getGroup(IWrappedEntity<?> entity) {
         String name = entity.getType().name();
         String variantName = null;
 
-        if (entity instanceof Wolf && NmsVersion.v1_21_R4.isSupported()) {
+        if (entity.getEntity() instanceof Wolf && NmsVersion.v1_21_R4.isSupported()) {
             // At the point of writing, spigot does not have a Wolf.SoundVariants
             // Paper on the contrary, has implemented it in their version
             if (DisguiseUtilities.isRunningPaper()) {
-                variantName = ((Wolf) entity).getSoundVariant().getKey().getKey();
+                variantName = ((Wolf) entity.getEntity()).getSoundVariant().getKey().getKey();
             } else {
-                variantName = ReflectionManager.getNmsReflection().getVariant(entity, WolfSoundVariants.getRegistry());
+                variantName = ReflectionManager.getNmsReflection().getVariant(entity.getEntity(), WolfSoundVariants.getRegistry());
             }
-        } else if (NmsVersion.v1_21_R5.isSupported() && entity instanceof HappyGhast && !((Ageable) entity).isAdult()) {
+        } else if (NmsVersion.v1_21_R5.isSupported() && entity.getEntity() instanceof HappyGhast &&
+            !((Ageable) entity.getEntity()).isAdult()) {
             name = "GHASTLING";
         }
 

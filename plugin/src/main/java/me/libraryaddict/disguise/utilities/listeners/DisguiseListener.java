@@ -444,7 +444,7 @@ public class DisguiseListener implements Listener {
 
         for (Set<TargetedDisguise> disguiseList : DisguiseUtilities.getDisguises().values()) {
             for (TargetedDisguise targetedDisguise : disguiseList) {
-                if (targetedDisguise.getEntity() == null) {
+                if (targetedDisguise.getWrappedEntity() == null) {
                     continue;
                 }
 

@@ -885,7 +885,7 @@ public class DisguiseUtilities {
         int disguisesSaved = 0;
 
         for (Set<TargetedDisguise> list : getDisguises().values()) {
-            TargetedDisguise disguise = list.stream().filter(d -> d.getEntity() != null).findAny().orElse(null);
+            TargetedDisguise disguise = list.stream().filter(d -> d.getWrappedEntity() != null).findAny().orElse(null);
 
             if (disguise == null) {
                 continue;
@@ -1197,7 +1197,7 @@ public class DisguiseUtilities {
     }
 
     private static void addNoInteract(Disguise disguise) {
-        Entity entity = disguise.getEntity();
+        IWrappedEntity<?> entity = disguise.getWrappedEntity();
 
         if (entity == null) {
             return;
@@ -1219,7 +1219,7 @@ public class DisguiseUtilities {
             }
         }
 
-        if (entity instanceof Wolf && disguise.getType() != DisguiseType.WOLF) {
+        if (entity.getEntity() instanceof Wolf && disguise.getType() != DisguiseType.WOLF) {
             isSpecialInteract.add(entityId);
         }
     }
@@ -1403,7 +1403,7 @@ public class DisguiseUtilities {
             return;
         }
 
-        Set<TargetedDisguise> disguises = getDisguises().get(disguise.getEntity().getEntityId());
+        Set<TargetedDisguise> disguises = getDisguises().get(disguise.getWrappedEntity().getEntityId());
 
         if (disguises == null) {
             return;
@@ -1493,7 +1493,7 @@ public class DisguiseUtilities {
                 List<MovementTracker> trackers = disguise.getInternals().getTrackers();
                 trackers.forEach(t -> t.onDespawn(WrappedManager.getWrappedPlayer(player), false));
 
-                PacketEvents.getAPI().getPlayerManager().sendPacket(player, getDestroyPacket(disguise.getEntity().getEntityId()));
+                PacketEvents.getAPI().getPlayerManager().sendPacket(player, getDestroyPacket(disguise.getWrappedEntity().getEntityId()));
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -2136,7 +2136,7 @@ public class DisguiseUtilities {
     }
 
     public static boolean isDisguiseInUse(Disguise disguise) {
-        if (disguise == null || disguise.getEntity() == null) {
+        if (disguise == null || disguise.getWrappedEntity() == null) {
             return false;
         }
 
@@ -2316,7 +2316,7 @@ public class DisguiseUtilities {
      * @return true if the disguise was active
      */
     public static boolean removeDisguise(TargetedDisguise disguise) {
-        int entityId = disguise.getEntity().getEntityId();
+        int entityId = disguise.getWrappedEntity().getEntityId();
         AtomicBoolean wasDisguiseRemoved = new AtomicBoolean(false);
 
         getDisguises().computeIfPresent(entityId, (key, disguises) -> {

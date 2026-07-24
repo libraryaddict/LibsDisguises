@@ -40,8 +40,8 @@ public enum DisguiseSoundCategory {
     }
 
     public org.bukkit.SoundCategory getBukkitSoundCategory(Disguise disguise) {
-        if (this == ACTUAL && disguise.getEntity() != null) {
-            return ReflectionManager.getBukkitSoundCategory(DisguiseType.getType(disguise.getEntity()));
+        if (this == ACTUAL && disguise.getWrappedEntity() != null) {
+            return ReflectionManager.getBukkitSoundCategory(DisguiseType.getType(disguise.getWrappedEntity()));
         } else if (this == DISGUISE) {
             return ReflectionManager.getBukkitSoundCategory(disguise.getType());
         }
@@ -50,8 +50,8 @@ public enum DisguiseSoundCategory {
     }
 
     public SoundCategory getSoundCategory(Disguise disguise) {
-        if (this == ACTUAL && disguise.getEntity() != null) {
-            return ReflectionManager.getSoundCategory(DisguiseType.getType(disguise.getEntity()));
+        if (this == ACTUAL && disguise.getWrappedEntity() != null) {
+            return ReflectionManager.getSoundCategory(DisguiseType.getType(disguise.getWrappedEntity()));
         } else if (this == DISGUISE) {
             return ReflectionManager.getSoundCategory(disguise.getType());
         }

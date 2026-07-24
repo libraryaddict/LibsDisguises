@@ -19,6 +19,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSound;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup.SoundType;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
 import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 import org.bukkit.Location;
@@ -93,7 +94,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             loop:
             for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
                 for (TargetedDisguise entityDisguise : disguises) {
-                    Entity entity = entityDisguise.getEntity();
+                    IWrappedEntity<?> entity = entityDisguise.getWrappedEntity();
 
                     if (entity == null || entity.getWorld() != world) {
                         continue;
@@ -142,9 +143,9 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             return;
         }
 
-        Entity entity = disguise.getEntity();
+        IWrappedEntity<?> entity = disguise.getWrappedEntity();
 
-        if (entity == wrappedPlayer.getEntity() && !disguise.isSelfDisguiseSoundsReplaced()) {
+        if (entity == wrappedPlayer && !disguise.isSelfDisguiseSoundsReplaced()) {
             return;
         }
 
@@ -194,7 +195,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
 
         if (newSound.hasPitch()) {
             pitch = newSound.getPitch();
-        } else if (disguise instanceof MobDisguise && entity instanceof LivingEntity && ((MobDisguise) disguise).doesDisguiseAge()) {
+        } else if (disguise instanceof MobDisguise && entity.getEntity() instanceof LivingEntity && ((MobDisguise) disguise).doesDisguiseAge()) {
             if (((MobDisguise) disguise).isAdult()) {
                 pitch = ((DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F) + 1.0F;
             } else {

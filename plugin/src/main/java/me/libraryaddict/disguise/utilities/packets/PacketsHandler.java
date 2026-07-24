@@ -99,7 +99,7 @@ public class PacketsHandler {
             IPacketHandler handler = packetHandlers[((Enum) sentPacket.getPacketTypeData().getPacketType()).ordinal()];
 
             if (handler != null) {
-                handler.handle(disguise, packets, observer, disguise.getInternals().getEntity());
+                handler.handle(disguise, packets, observer, disguise.getWrappedEntity());
             } else {
                 packets.setUnhandled(true);
             }

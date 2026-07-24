@@ -161,7 +161,7 @@ public class DisguiseRunnable {
         List<IWrappedPlayer> toPlay = DisguiseUtilities.getTrackingPlayers(disguise);
 
         if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible() && disguise.isHearSelfDisguise()) {
-            toPlay.add((IWrappedPlayer) disguise.getInternals().getEntity());
+            toPlay.add((IWrappedPlayer) disguise.getWrappedEntity());
         }
 
         for (IWrappedPlayer player : toPlay) {
@@ -299,7 +299,7 @@ public class DisguiseRunnable {
     private void doExpMovements() {
         for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(disguise)) {
             WrapperPlayServerEntityRelativeMove packet;
-            IWrappedEntity entity = disguise.getInternals().getEntity();
+            IWrappedEntity entity = disguise.getWrappedEntity();
 
             if (entity != player) {
                 packet = new WrapperPlayServerEntityRelativeMove(entity.getEntityId(), 0, 0, 0, true);

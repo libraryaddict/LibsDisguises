@@ -64,7 +64,7 @@ public class PacketListenerVehicleMovement extends SimplePacketListenerAbstract 
             return;
         }
 
-        IWrappedEntity entity = WrappedManager.getWrappedEntity(disguise.getEntity());
+        IWrappedEntity entity = disguise.getWrappedEntity();
 
         if (entity == null || !entity.isValid()) {
             return;

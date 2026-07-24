@@ -143,7 +143,8 @@ public class PlayerSkinHandler implements Listener {
                 continue;
             }
 
-            int id = disguise.getEntity().getEntityId();
+            IWrappedEntity<?> entity = disguise.getWrappedEntity();
+            int id = entity.getEntityId();
 
             if (id == player.getEntityId()) {
                 id = DisguiseAPI.getSelfDisguiseId();
@@ -255,7 +256,7 @@ public class PlayerSkinHandler implements Listener {
             return;
         }
 
-        IWrappedEntity<?> entity = disguise.getInternals().getEntity();
+        IWrappedEntity<?> entity = disguise.getWrappedEntity();
 
         List<WatcherValue> watcherValues = DisguiseUtilities.createSanitizedWatcherValues(player, entity, disguise.getWatcher());
 
@@ -266,9 +267,9 @@ public class PlayerSkinHandler implements Listener {
 
     private synchronized void addTeleport(IWrappedPlayer player, PlayerSkin skin) {
         PlayerDisguise disguise = skin.getDisguise().get();
+        IWrappedEntity<?> entity = disguise.getWrappedEntity();
 
-        Location loc =
-            disguise.getEntity().getLocation().add(0, disguise.getWatcher().getYModifier() + DisguiseUtilities.getYModifier(disguise), 0);
+        Location loc = entity.getLocation().add(0, disguise.getWatcher().getYModifier() + DisguiseUtilities.getYModifier(disguise), 0);
 
         Float pitchLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getPitchLock() : null;
         Float yawLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getYawLock() : null;
@@ -278,26 +279,25 @@ public class PlayerSkinHandler implements Listener {
 
         if (DisguiseConfig.isMovementPacketsEnabled()) {
             if (yawLock == null) {
-                yaw = DisguiseUtilities.getYaw(DisguiseType.getType(disguise.getEntity().getType()), yaw);
+                yaw = DisguiseUtilities.getYaw(DisguiseType.getType(entity.getType()), yaw);
             }
 
             if (pitchLock == null) {
-                pitch = DisguiseUtilities.getPitch(DisguiseType.getType(disguise.getEntity().getType()), pitch);
+                pitch = DisguiseUtilities.getPitch(DisguiseType.getType(entity.getType()), pitch);
             }
 
             yaw = DisguiseUtilities.getYaw(disguise.getType(), yaw);
             pitch = DisguiseUtilities.getPitch(disguise.getType(), pitch);
         }
 
-        int id = disguise.getEntity().getEntityId();
+        int id = entity.getEntityId();
 
         if (id == player.getEntityId()) {
             id = DisguiseAPI.getSelfDisguiseId();
         }
 
         WrapperPlayServerEntityTeleport teleport =
-            new WrapperPlayServerEntityTeleport(id, new Vector3d(loc.getX(), loc.getY(), loc.getZ()), yaw, pitch,
-                disguise.getEntity().isOnGround());
+            new WrapperPlayServerEntityTeleport(id, new Vector3d(loc.getX(), loc.getY(), loc.getZ()), yaw, pitch, entity.isOnGround());
         player.sendPacketSilently(teleport);
     }
 
@@ -349,11 +349,13 @@ public class PlayerSkinHandler implements Listener {
 
             if (disguise.getInternals().getNameDisplayType().isFakeEntity() && disguise.isNameVisible() &&
                 disguise.getMultiNameLength() > 0) {
-                List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(disguise, player.getEntity(), new String[0]);
+                LibsDisguises.getScheduler().entity(player.getEntity()).run(() -> {
+                    List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(disguise, player.getEntity(), new String[0]);
 
-                for (PacketWrapper p : packets) {
-                    player.sendPacket(p);
-                }
+                    for (PacketWrapper p : packets) {
+                        player.sendPacket(p);
+                    }
+                });
             }
         }
 

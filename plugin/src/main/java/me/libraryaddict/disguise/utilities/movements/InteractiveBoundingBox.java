@@ -75,7 +75,7 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
     }
 
     private boolean isValid() {
-        return disguise != null && disguise.getEntity() != null;
+        return disguise != null && disguise.getWrappedEntity() != null;
     }
 
     // Square = Slime size
@@ -159,7 +159,7 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
             return;
         }
 
-        Location location = disguise.getEntity().getLocation();
+        Location location = disguise.getWrappedEntity().getLocation();
         com.github.retrooper.packetevents.protocol.world.Location loc =
             new com.github.retrooper.packetevents.protocol.world.Location(location.getX(), location.getY(), location.getZ(),
                 location.getYaw(), location.getPitch());
