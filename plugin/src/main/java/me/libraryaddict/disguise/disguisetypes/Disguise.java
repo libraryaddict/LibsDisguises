@@ -934,6 +934,10 @@ public abstract class Disguise {
         return true;
     }
 
+    void setDisguiseInUse(boolean disguiseInUse) {
+        this.disguiseInUse = disguiseInUse;
+    }
+
     public Disguise setHearSelfDisguise(boolean hearSelfDisguise) {
         this.hearSelfDisguise = hearSelfDisguise;
 

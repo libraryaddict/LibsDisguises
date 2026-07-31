@@ -2325,7 +2325,7 @@ public class DisguiseUtilities {
 
             // If the disguise was removed and the bounding box was modified
             if (wasDisguiseRemoved.get() && disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS &&
-                disguise.isServerBoundingBoxEnabled()) {
+                disguise.isServerBoundingBoxEnabled() && LibsDisguises.getScheduler().isOwnedByCurrentRegion(disguise.getEntity())) {
                 doBoundingBox(disguise);
             }
 

@@ -23,6 +23,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.updates.PacketEventsUpdater;
+import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
 import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 import org.apache.commons.lang.math.RandomUtils;
@@ -64,6 +65,8 @@ import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -331,26 +334,50 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldUnload(WorldUnloadEvent event) {
-        if (!DisguiseConfig.isSaveEntityDisguises()) {
-            return;
-        }
-
+        boolean saveDisguises = DisguiseConfig.isSaveEntityDisguises();
         int disguisesSaved = 0;
+        World world = event.getWorld();
 
-        for (Entity entity : event.getWorld().getEntities()) {
-            if (entity instanceof Player) {
+        for (Set<TargetedDisguise> entityDisguises : new ArrayList<>(DisguiseUtilities.getDisguises().values())) {
+            TargetedDisguise anyDisguise = entityDisguises.stream().findAny().orElse(null);
+
+            if (anyDisguise == null) {
                 continue;
             }
 
-            Disguise[] disguises = DisguiseAPI.getDisguises(entity);
+            IWrappedEntity<?> wrappedEntity = anyDisguise.getWrappedEntity();
 
-            if (disguises.length > 0) {
-                disguisesSaved++;
+            if (wrappedEntity instanceof IWrappedPlayer || wrappedEntity == null || wrappedEntity.getWorld() != world) {
+                continue;
             }
 
-            DisguiseUtilities.saveDisguises(entity, disguises);
+            Entity entity = wrappedEntity.getEntity();
+            List<TargetedDisguise> disguisesSnapshot = new ArrayList<>(entityDisguises);
+
+            // If we do not own its thread, discard the disguise to remove it without going through the proper channels
+            if (!LibsDisguises.getScheduler().isOwnedByCurrentRegion(entity)) {
+                for (TargetedDisguise disguise : disguisesSnapshot) {
+                    disguise.getInternals().discardDisguise();
+                }
+
+                continue;
+            }
+
+            if (saveDisguises) {
+                disguisesSaved++;
+
+                try {
+                    DisguiseUtilities.saveDisguises(entity, disguisesSnapshot.toArray(new Disguise[0]));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            for (TargetedDisguise disguise : disguisesSnapshot) {
+                disguise.removeDisguise();
+            }
         }
 
         if (disguisesSaved > 0) {

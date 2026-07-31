@@ -226,6 +226,36 @@ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.Di
         runnable = null;
     }
 
+    /**
+     * Counterpart to removeDisguise() for when the entity's thread is practically inaccessible
+     *
+     * @return true if disguise was in use, and discarded
+     */
+    public boolean discardDisguise() {
+        if (!getDisguise().isDisguiseInUse()) {
+            return false;
+        }
+
+        // Mark this as in limbo for all the "currently seeing" entities
+        for (UUID sees : seesDisguise) {
+            DisguiseUtilities.getSeenTracker().setDisguiseBeingChangedOver(sees, getEntity().getEntityId());
+        }
+
+        // Clear the seen
+        seesDisguise.clear();
+        clearRememberedScaling();
+
+        if (runnable != null) {
+            runnable.stop();
+            runnable = null;
+        }
+
+        boolean disguiseWasActive = DisguiseUtilities.removeDisguise((TargetedDisguise) getDisguise());
+        getDisguise().setDisguiseInUse(false);
+
+        return disguiseWasActive;
+    }
+
     private void updateEntityScaleWithoutLibsDisguises() {
         double[] scales = DisguiseUtilities.getEntityScales(getEntity().getEntity());
         boolean changed = false;
