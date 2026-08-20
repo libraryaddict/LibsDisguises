@@ -569,12 +569,11 @@ public class DisguiseUtilities {
     }
 
     public static @Nullable List<PacketWrapper> adjustNamePositions(Disguise disguise, List<PacketWrapper> packets, UUID observerUUID) {
-        int len = disguise.getMultiNameLength();
-
-        if (len == 0) {
+        if (disguise.getMultiNameLength() == 0) {
             return null;
         }
 
+        int[] armorstandIds = disguise.getArmorstandIds();
         List<PacketWrapper> toAdd = new ArrayList<>();
         double height = (disguise.getHeight() + disguise.getWatcher().getNameYModifier());
         Double lastSeenScale = disguise.getInternals().getLastTransmittedScale(observerUUID);
@@ -591,8 +590,8 @@ public class DisguiseUtilities {
                 continue;
             }
 
-            for (int i = 0; i < len; i++) {
-                int standId = disguise.getArmorstandIds()[i];
+            for (int i = 0; i < armorstandIds.length; i++) {
+                int standId = armorstandIds[i];
                 PacketWrapper cloned;
                 double y = height + (getNameSpacing() * i);
 
@@ -3617,8 +3616,7 @@ public class DisguiseUtilities {
                 // Spawn packet
                 addSpawn(disguise, disguise.getEntity(), loc, startingY, standIds, 0, packets, newLine);
             } else {
-                // Metadata packet, 0 is the slime, 1 is the text
-                packets.add(constructMetadata(standIds[1], newLine));
+                packets.add(constructMetadata(standIds[0], newLine));
             }
         } else {
             for (int loop = 0; loop < newNames.length; loop++) {
