@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities.parser;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 
@@ -40,7 +41,15 @@ public class WatcherMethod {
     }
 
     public boolean isHidden(DisguiseType type) {
-        return !isUsable(type) || hiddenFor[type.ordinal()];
+        if (!isUsable(type) || hiddenFor[type.ordinal()]) {
+            return true;
+        }
+
+        if (getName().equalsIgnoreCase("setNameViewRange")) {
+            return DisguiseConfig.getPlayerNameType() != DisguiseConfig.PlayerNameType.TEXT_DISPLAY;
+        }
+
+        return false;
     }
 
     @Override

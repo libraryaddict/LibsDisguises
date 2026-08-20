@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
@@ -35,7 +36,6 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -99,6 +99,8 @@ public class FlagWatcher {
     private float yModifier;
     @Getter
     private float nameYModifier;
+    @Getter
+    private float nameViewRange = 1F;
     private static boolean canHear;
 
     public FlagWatcher(Disguise disguise) {
@@ -140,6 +142,28 @@ public class FlagWatcher {
                     entity.isOnGround());
 
             player.sendPacket(teleport);
+        }
+    }
+
+    /**
+     * Multiplies how far away the nametag can be seen from, vanilla default is 1.
+     * <p>
+     * Only takes effect when PlayerNames is set to TEXT_DISPLAY, as the metadata is only for display.
+     */
+    public void setNameViewRange(float nameViewRange) {
+        this.nameViewRange = nameViewRange;
+
+        if (!getDisguise().getInternals().getNameDisplayType().isTextDisplayType() || !getDisguise().isDisguiseInUse() ||
+            getDisguise().getMultiNameLength() == 0) {
+            return;
+        }
+
+        int entityId = getDisguise().getArmorstandIds()[0];
+        EntityData data = ReflectionManager.getEntityData(MetaIndex.DISPLAY_VIEW_RANGE, nameViewRange, true);
+        WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(entityId, Collections.singletonList(data));
+
+        for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
+            player.sendPacket(packet);
         }
     }
 

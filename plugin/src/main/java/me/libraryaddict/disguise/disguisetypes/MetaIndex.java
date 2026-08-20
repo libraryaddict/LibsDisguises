@@ -955,9 +955,9 @@ public class MetaIndex<Y> {
     @NmsRemovedIn(NmsVersion.v1_21_R4)
     public static MetaIndex<Boolean> STRIDER_SADDLED = new MetaIndex<>(StriderWatcher.class, 2, false);
 
-    public  static MetaIndex<Integer> SULFUR_CUBE_MAX_FUSE = new MetaIndex<>(SulfurCubeWatcher.class, 0, -1);
+    public static MetaIndex<Integer> SULFUR_CUBE_MAX_FUSE = new MetaIndex<>(SulfurCubeWatcher.class, 0, -1);
 
-    public  static MetaIndex<Boolean> SULFUR_CUBE_FROM_BUCKET = new MetaIndex<>(SulfurCubeWatcher.class, 1, false);
+    public static MetaIndex<Boolean> SULFUR_CUBE_FROM_BUCKET = new MetaIndex<>(SulfurCubeWatcher.class, 1, false);
 
     public static MetaIndex<Byte> SPIDER_CLIMB = new MetaIndex<>(SpiderWatcher.class, 0, (byte) 0);
 

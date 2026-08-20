@@ -3747,6 +3747,8 @@ public class DisguiseUtilities {
                 // val = new Vector3f(1.05f, 1.05f, 1.05f);
             } else if (index == MetaIndex.DISPLAY_BILLBOARD_RENDER_CONSTRAINTS) {
                 val = (byte) ReflectionManager.enumOrdinal(Display.Billboard.CENTER);
+            } else if (index == MetaIndex.DISPLAY_VIEW_RANGE) {
+                val = disguise.getWatcher().getNameViewRange();
             }
 
             watcherValues.add(new WatcherValue(index, val, true).getDataValue());

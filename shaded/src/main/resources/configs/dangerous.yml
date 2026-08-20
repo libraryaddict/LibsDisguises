@@ -46,6 +46,7 @@ DisabledDisguises:
 DisabledMethods:
   - setYModifier
   - setNameYModifier
+  - setNameViewRange
   - setInvisible
   - setUnsafeSize
   - setScalePlayerToDisguise
