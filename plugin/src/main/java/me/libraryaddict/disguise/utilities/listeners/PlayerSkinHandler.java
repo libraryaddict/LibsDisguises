@@ -117,6 +117,7 @@ public class PlayerSkinHandler implements Listener {
 
         PlayerSkin toReturn = new PlayerSkin(new WeakReference<>(disguise));
 
+        skins.removeIf(skin -> skin.getDisguise().get() == disguise);
         skins.add(toReturn);
         getCache().put(player, skins);
 
@@ -128,7 +129,7 @@ public class PlayerSkinHandler implements Listener {
             return;
         }
 
-        Location loc = player.getLocation();
+        Location loc = player.getLocation().clone();
         loc.add(loc.getDirection().normalize().multiply(10));
 
         for (PlayerSkin skin : new ArrayList<>(value)) {
@@ -268,7 +269,7 @@ public class PlayerSkinHandler implements Listener {
         PlayerDisguise disguise = skin.getDisguise().get();
         IWrappedEntity<?> entity = disguise.getWrappedEntity();
 
-        Location loc = entity.getLocation().add(0, disguise.getWatcher().getYModifier() + DisguiseUtilities.getYModifier(disguise), 0);
+        Location loc = entity.getLocation().clone().add(0, disguise.getWatcher().getYModifier() + DisguiseUtilities.getYModifier(disguise), 0);
 
         Float pitchLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getPitchLock() : null;
         Float yawLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getYawLock() : null;

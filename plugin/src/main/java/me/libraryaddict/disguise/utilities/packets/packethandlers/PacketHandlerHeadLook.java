@@ -51,7 +51,7 @@ public class PacketHandlerHeadLook implements IPacketHandler<WrapperPlayServerEn
             return;
         }
 
-        Location loc = entity.getLocation();
+        Location loc = entity.getLocation().clone();
 
         DisguiseType entityType = DisguiseType.getType(entity.getType());
 

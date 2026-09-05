@@ -160,7 +160,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     disguisedEntity.getPassengers().contains(observer);
 
                 if (!inLineOfSight) {
-                    org.bukkit.Location observerLoc = observer.getLocation();
+                    org.bukkit.Location observerLoc = observer.getLocation().clone();
                     double dist = observerLoc.toVector().distanceSquared(loc);
                     inLineOfSight = dist > (50 * 50) ||
                         (observerLoc.add(observerLoc.getDirection().normalize()).toVector().distanceSquared(loc) - dist) < 0.3;
@@ -193,7 +193,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 } else {
                     // Spawn them in front of the observer
                     Location spawnAt = inLineOfSight ? pLoc : SpigotConversionUtil.fromBukkitLocation(
-                        observer.getLocation().add(observer.getLocation().getDirection().normalize().multiply(10)));
+                        observer.getLocation().clone().add(observer.getLocation().getDirection().normalize().multiply(10)));
 
                     // Spawn the player
                     spawnPlayer = new WrapperPlayServerSpawnPlayer(entityId, playerDisguise.getUUID(), spawnAt, new ArrayList<>());

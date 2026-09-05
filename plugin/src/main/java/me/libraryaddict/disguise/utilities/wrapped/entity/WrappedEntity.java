@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.utilities.wrapped.entity;
 
 import lombok.Getter;
-import lombok.Setter;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -78,6 +77,9 @@ public class WrappedEntity<E extends Entity> extends BaseEntity<E> {
         return getEntity().isOnGround();
     }
 
+    /**
+     * Callers must use .clone() if they are modifying it
+     */
     @Override
     public Location getLocation() {
         if (location == null) {
