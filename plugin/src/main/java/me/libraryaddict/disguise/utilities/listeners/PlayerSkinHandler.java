@@ -251,7 +251,7 @@ public class PlayerSkinHandler implements Listener {
     private synchronized void addMetadata(IWrappedPlayer player, PlayerSkin skin) {
         PlayerDisguise disguise = skin.getDisguise().get();
 
-        if (!disguise.isDisguiseInUse() || disguise.getInternals().shouldAvoidSendingPackets(player)) {
+        if (disguise == null || !disguise.isDisguiseInUse() || disguise.getInternals().shouldAvoidSendingPackets(player)) {
             return;
         }
 
