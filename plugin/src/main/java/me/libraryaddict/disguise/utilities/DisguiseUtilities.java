@@ -3297,7 +3297,7 @@ public class DisguiseUtilities {
         }
 
         if (disguise.isPlayerDisguise()) {
-            LibsDisguises.getInstance().getSkinHandler().handlePackets(player, (PlayerDisguise) disguise, newPackets);
+            LibsDisguises.getInstance().getSkinHandler().handlePackets(iPlayer, (PlayerDisguise) disguise, newPackets);
         }
 
         for (PacketWrapper p : newPackets.getPackets()) {
