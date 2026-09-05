@@ -537,7 +537,7 @@ public class FlagWatcher {
 
         for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(getDisguise())) {
             if (!DisguiseUtilities.isFancyHiddenTabs() && getDisguise().isPlayerDisguise() &&
-                LibsDisguises.getInstance().getSkinHandler().isSleeping(player.getEntity(), (PlayerDisguise) getDisguise())) {
+                LibsDisguises.getInstance().getSkinHandler().isSleeping(player, (PlayerDisguise) getDisguise())) {
                 continue;
             }
 

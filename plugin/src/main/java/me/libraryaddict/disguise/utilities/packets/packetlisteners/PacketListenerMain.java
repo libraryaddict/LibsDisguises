@@ -114,7 +114,7 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
             packets = PacketsManager.getPacketsManager().getPacketsHandler().transformPacket(packets, observer);
 
             if (disguise.isPlayerDisguise()) {
-                LibsDisguises.getInstance().getSkinHandler().handlePackets(observer.getEntity(), (PlayerDisguise) disguise, packets);
+                LibsDisguises.getInstance().getSkinHandler().handlePackets(observer, (PlayerDisguise) disguise, packets);
             }
         } catch (Throwable ex) {
             ex.printStackTrace();

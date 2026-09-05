@@ -305,7 +305,7 @@ public abstract class Disguise {
 
         for (IWrappedPlayer player : DisguiseUtilities.getTrackingPlayers(this)) {
             if (!DisguiseUtilities.isFancyHiddenTabs() && isPlayerDisguise() &&
-                LibsDisguises.getInstance().getSkinHandler().isSleeping(player.getEntity(), (PlayerDisguise) this)) {
+                LibsDisguises.getInstance().getSkinHandler().isSleeping(player, (PlayerDisguise) this)) {
                 continue;
             }
 

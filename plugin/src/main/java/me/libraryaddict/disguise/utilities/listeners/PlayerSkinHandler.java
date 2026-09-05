@@ -31,7 +31,6 @@ import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
 import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -97,14 +96,14 @@ public class PlayerSkinHandler implements Listener {
         }, 1, 1);
     }
 
-    public synchronized boolean isSleeping(Player player, PlayerDisguise disguise) {
+    public synchronized boolean isSleeping(IWrappedPlayer player, PlayerDisguise disguise) {
         List<PlayerSkin> disguises = getCache().getIfPresent(player);
 
         if (disguises == null) {
             return false;
         }
 
-        return disguises.stream().anyMatch(d -> d.getDisguise().get() == disguise);
+        return disguises.stream().anyMatch(d -> d.isSleepPackets() && d.getDisguise().get() == disguise);
     }
 
     public synchronized PlayerSkin addPlayerSkin(IWrappedPlayer player, PlayerDisguise disguise) {
@@ -156,7 +155,7 @@ public class PlayerSkinHandler implements Listener {
         }
     }
 
-    public synchronized void handlePackets(Player player, PlayerDisguise disguise, LibsPackets<?> packets) {
+    public synchronized void handlePackets(IWrappedPlayer player, PlayerDisguise disguise, LibsPackets<?> packets) {
         boolean spawn = packets.isSkinHandling();
 
         List<PlayerSkin> skins = getCache().getIfPresent(player);
