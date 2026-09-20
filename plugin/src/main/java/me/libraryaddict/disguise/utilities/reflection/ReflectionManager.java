@@ -46,10 +46,8 @@ import com.github.retrooper.packetevents.wrapper.configuration.server.WrapperCon
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import com.google.common.collect.ImmutableMultimap;
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import com.mojang.authlib.yggdrasil.ProfileResult;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -175,7 +173,8 @@ public class ReflectionManager {
     private static ReflectionManagerAbstract nmsReflection;
     private static Field trackedPlayersMap;
     private static Method fillProfileProperties;
-    private static MinecraftSessionService sessionService;
+    private static Method fetchProfile, profileResultProfile;
+    private static Object sessionService;
     private static Method propertyName, propertyValue, propertySignature;
     private static Method gameProfileGetId, gameProfileGetName, gameProfileGetProperties;
     @Getter
@@ -276,6 +275,13 @@ public class ReflectionManager {
         // I don't think authlib is always going to be in sync enough that we can trust this to a specific nms version
         try {
             fillProfileProperties = sessionService.getClass().getMethod("fillProfileProperties", GameProfile.class, boolean.class);
+        } catch (Exception ignored) {
+        }
+
+        try {
+            // Authlib moved ProfileResult's package in later versions
+            fetchProfile = sessionService.getClass().getMethod("fetchProfile", UUID.class, boolean.class);
+            profileResultProfile = fetchProfile.getReturnType().getMethod("profile");
         } catch (Exception ignored) {
         }
 
@@ -800,13 +806,13 @@ public class ReflectionManager {
     public static UserProfile getSkullBlob(UserProfile userProfile) {
         try {
             if (fillProfileProperties == null) {
-                ProfileResult result = sessionService.fetchProfile(userProfile.getUUID(), true);
+                Object result = fetchProfile.invoke(sessionService, userProfile.getUUID(), true);
 
                 if (result == null) {
                     return null;
                 }
 
-                return getUserProfile(result.profile());
+                return getUserProfile((GameProfile) profileResultProfile.invoke(result));
             }
 
             GameProfile gameProfile = new GameProfile(userProfile.getUUID(), userProfile.getName());

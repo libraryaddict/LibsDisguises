@@ -5,7 +5,6 @@ import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
-import com.mojang.authlib.minecraft.MinecraftSessionService;
 import io.netty.buffer.ByteBuf;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
 import org.bukkit.Material;
@@ -58,7 +57,7 @@ public abstract class ReflectionManagerAbstract {
 
     public abstract double getPing(Player player);
 
-    public abstract MinecraftSessionService getMinecraftSessionService();
+    public abstract Object getMinecraftSessionService();
 
     public abstract Float getSoundModifier(Object entity);
 
