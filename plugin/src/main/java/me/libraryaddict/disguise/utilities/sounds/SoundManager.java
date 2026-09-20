@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 public class SoundManager {
     public void load() {
-        SoundGroup.getGroups().clear();
+        SoundGroup.clearGroups();
 
         loadSounds();
         loadCustomSounds();

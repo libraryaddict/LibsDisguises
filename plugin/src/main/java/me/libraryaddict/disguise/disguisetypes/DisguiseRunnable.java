@@ -16,6 +16,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.sounds.DisguiseChunkTracker;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSound;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
@@ -241,8 +242,10 @@ public class DisguiseRunnable {
     }
 
     public void run() {
-        if (!disguise.isDisguiseInUse() || disguise.getEntity() == null || !disguise.getEntity().getWorld()
-            .isChunkLoaded(disguise.getEntity().getLocation().getBlockX() >> 4, disguise.getEntity().getLocation().getBlockZ() >> 4)) {
+        Location loc;
+
+        if (!disguise.isDisguiseInUse() || disguise.getEntity() == null ||
+            !(loc = disguise.getEntity().getLocation()).getWorld().isChunkLoaded(loc.getBlockX() >> 4, loc.getBlockZ() >> 4)) {
             disguise.stopDisguise();
 
             // If still somehow not cancelled
@@ -251,6 +254,9 @@ public class DisguiseRunnable {
             }
             return;
         }
+
+        // WrappedEntities that don't store location are otherwise never updated, so we're updating the locations here
+        DisguiseChunkTracker.updateTrackedChunk(disguise.getWrappedEntity());
 
         if (++actionBarTicks % 15 == 0) {
             actionBarTicks = 0;

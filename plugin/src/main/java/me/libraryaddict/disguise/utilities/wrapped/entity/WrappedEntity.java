@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.sounds.DisguiseChunkTracker;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -95,6 +96,8 @@ public class WrappedEntity<E extends Entity> extends BaseEntity<E> {
         this.location = entity.getLocation();
         this.velocity = entity.getVelocity();
         this.onGround = entity.isOnGround();
+
+        DisguiseChunkTracker.updateTrackedChunk(this);
     }
 
     public void updatePassengers() {

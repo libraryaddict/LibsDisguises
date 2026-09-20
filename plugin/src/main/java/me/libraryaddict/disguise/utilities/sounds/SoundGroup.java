@@ -23,6 +23,7 @@ import org.bukkit.entity.Wolf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -39,6 +40,7 @@ public class SoundGroup {
 
     @Getter
     private final static LinkedHashMap<String, SoundGroup> groups = new LinkedHashMap<>();
+    private final static HashSet<ResourceLocation> allSounds = new HashSet<>();
     @Getter
     @Setter
     private float damageAndIdleSoundVolume = 1F;
@@ -73,7 +75,18 @@ public class SoundGroup {
         return soundCategory;
     }
 
+    public static void clearGroups() {
+        groups.clear();
+        allSounds.clear();
+    }
+
+    public static boolean isReplaceableSound(ResourceLocation sound) {
+        return allSounds.contains(sound);
+    }
+
     public void addRemappedSound(ResourceLocation oldSound, DisguiseSound disguiseSound) {
+        allSounds.add(oldSound);
+
         remappedSounds.compute(oldSound, (key, value) -> {
             if (disguiseSound == null) {
                 return new DisguiseSound[]{null};
@@ -97,6 +110,7 @@ public class SoundGroup {
     public void addSound(SoundType type, DisguiseSound disguiseSound) {
         if (disguiseSound != null) {
             disguiseSoundTypes.putIfAbsent(disguiseSound.getSound(), type);
+            allSounds.add(disguiseSound.getSound());
         }
 
         if (disguiseSounds.containsKey(type)) {

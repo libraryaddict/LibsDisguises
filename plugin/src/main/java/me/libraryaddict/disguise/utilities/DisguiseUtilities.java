@@ -109,6 +109,7 @@ import me.libraryaddict.disguise.utilities.scoreboard.DisguiseScoreboardTeam;
 import me.libraryaddict.disguise.utilities.scoreboard.ScoreboardManager;
 import me.libraryaddict.disguise.utilities.scoreboard.bukkit.BukkitScoreboardManager;
 import me.libraryaddict.disguise.utilities.scoreboard.packetevents.PacketEventsScoreboardManager;
+import me.libraryaddict.disguise.utilities.sounds.DisguiseChunkTracker;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.updates.PacketEventsUpdater;
 import me.libraryaddict.disguise.utilities.watchers.CompileMethodsIntfer;
@@ -1230,6 +1231,8 @@ public class DisguiseUtilities {
             return ConcurrentHashMap.newKeySet(1);
         }).add(disguise);
 
+        DisguiseChunkTracker.startTrackingChunk(disguise.getWrappedEntity());
+
         if ("a%%__USER__%%a".equals("a12345a") || (LibsPremium.getUserID().matches("\\d+") &&
             !("" + Integer.parseInt(LibsPremium.getUserID())).equals(LibsPremium.getUserID()))) {
             if (Bukkit.getOnlinePlayers().stream().noneMatch(p -> p.isOp() || p.hasPermission("*"))) {
@@ -2338,6 +2341,8 @@ public class DisguiseUtilities {
                 isNoInteract.remove(entityId);
                 isSpecialInteract.remove(entityId);
             }
+
+            DisguiseChunkTracker.stopTrackingChunk(disguise.getWrappedEntity());
 
             // Return null to remove from map
             return null;

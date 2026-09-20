@@ -16,6 +16,7 @@ import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.sounds.DisguiseChunkTracker;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSound;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup.SoundType;
@@ -24,7 +25,6 @@ import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -59,13 +59,14 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
 
         Player observer = event.getPlayer();
 
-        if (observer == null) {
+        if (observer == null || DisguiseUtilities.getDisguises().isEmpty()) {
             return;
         }
 
         IWrappedPlayer wrappedPlayer = WrappedManager.getWrappedPlayer(observer);
 
         Sound sound;
+        ResourceLocation soundId;
         float volume;
         float pitch;
         WrapperPlayServerSoundEffect soundEffect = null;
@@ -80,45 +81,46 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             pitch = soundEffect.getPitch();
             sound = soundEffect.getSound();
 
-            if (sound == null || sound.getSoundId() == null) {
+            if (sound == null || (soundId = sound.getSoundId()) == null) {
                 // Set to null so PE doesn't try to re-encode it
                 event.setLastUsedWrapper(null);
                 return;
             }
 
-            ResourceLocation soundKey = sound.getSoundId();
+            if (!SoundGroup.isReplaceableSound(soundId)) {
+                return;
+            }
 
             Vector3i loc = soundEffect.getEffectPosition();
             World world = wrappedPlayer.getWorld();
 
             loop:
-            for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
+            for (IWrappedEntity<?> entity : DisguiseChunkTracker.getDisguisedNearby(loc)) {
+                Location entityLocation = entity.getLocation();
+
+                if (entityLocation.getWorld() != world || !isNearby(loc, entityLocation, 2)) {
+                    continue;
+                }
+
+                Set<TargetedDisguise> disguises = DisguiseUtilities.getDisguises().get(entity.getEntityId());
+
+                if (disguises == null) {
+                    continue;
+                }
+
+                SoundGroup entityGroup = SoundGroup.getGroup(entity);
+
+                if (entityGroup == null || entityGroup.getSound(soundId) == null) {
+                    continue;
+                }
+
                 for (TargetedDisguise entityDisguise : disguises) {
-                    IWrappedEntity<?> entity = entityDisguise.getWrappedEntity();
-
-                    if (entity == null || entity.getWorld() != world) {
-                        continue;
-                    }
-
-                    if (!entityDisguise.canSee(wrappedPlayer)) {
-                        continue;
-                    }
-
-                    if (!isNearby(loc, entity.getLocation(), 2)) {
-                        continue;
-                    }
-
-                    group = SoundGroup.getGroup(entity);
-
-                    if (group == null) {
-                        continue;
-                    }
-
-                    if (group.getSound(soundKey) == null) {
+                    if (!entityDisguise.isSoundsReplaced() || !entityDisguise.canSee(wrappedPlayer)) {
                         continue;
                     }
 
                     disguise = entityDisguise;
+                    group = entityGroup;
 
                     break loop;
                 }
@@ -136,6 +138,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
                 return;
             }
 
+            soundId = sound.getSoundId();
             disguise = DisguiseUtilities.getDisguise(wrappedPlayer, entitySoundEffect.getEntityId());
         }
 
@@ -157,7 +160,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             return;
         }
 
-        SoundType soundType = group.getType(sound.getSoundId());
+        SoundType soundType = group.getType(soundId);
 
         if (soundType == null) {
             return;
@@ -179,7 +182,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             return;
         }
 
-        DisguiseSound newSound = disguiseSound.getSound(soundType, sound.getSoundId());
+        DisguiseSound newSound = disguiseSound.getSound(soundType, soundId);
 
         if (newSound == null || newSound.getSound() == null) {
             event.setCancelled(true);
@@ -195,7 +198,8 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
 
         if (newSound.hasPitch()) {
             pitch = newSound.getPitch();
-        } else if (disguise instanceof MobDisguise && entity.getEntity() instanceof LivingEntity && ((MobDisguise) disguise).doesDisguiseAge()) {
+        } else if (disguise instanceof MobDisguise && entity.getEntity() instanceof LivingEntity &&
+            ((MobDisguise) disguise).doesDisguiseAge()) {
             if (((MobDisguise) disguise).isAdult()) {
                 pitch = ((DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F) + 1.0F;
             } else {
