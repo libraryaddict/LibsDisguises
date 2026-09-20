@@ -186,6 +186,18 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
+val paperTestVersion = providers.gradleProperty("paperTestVersion").getOrElse(libs.versions.io.papermc.paper.api.test.get())
+
+listOf(configurations.testCompileClasspath, configurations.testRuntimeClasspath).forEach { configuration ->
+    configuration.configure {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "io.papermc.paper" && requested.name == "paper-api") {
+                useVersion(paperTestVersion)
+            }
+        }
+    }
+}
+
 buildscript {
     dependencies {
         classpath(libs.com.guardsquare.proguard)

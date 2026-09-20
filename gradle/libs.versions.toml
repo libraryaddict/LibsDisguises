@@ -24,6 +24,7 @@ placeholder-api = "2.11.6"
 
 org-spigotmc-spigot = "26.3-R0.1-SNAPSHOT"
 io-papermc-paper-api = "1.21.11-R0.1-SNAPSHOT"
+io-papermc-paper-api-test = "26.3.build.+"
 paperweight-version = "2.0.0-beta.21"
 
 
