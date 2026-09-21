@@ -931,6 +931,8 @@ public abstract class Disguise {
             DisguiseUtilities.saveDisguises(getEntity());
         }
 
+        WrappedManager.scheduleCleanup(getEntity());
+
         return true;
     }
 
@@ -1103,6 +1105,8 @@ public abstract class Disguise {
         // If they cancelled this disguise event. No idea why.
         // Just return.
         if (event.isCancelled()) {
+            WrappedManager.scheduleCleanup(getEntity());
+
             return false;
         }
 

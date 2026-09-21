@@ -16,6 +16,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.scaling.DisguiseScaling;
 import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
 import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
+import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
@@ -252,6 +253,8 @@ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.Di
 
         boolean disguiseWasActive = DisguiseUtilities.removeDisguise((TargetedDisguise) getDisguise());
         getDisguise().setDisguiseInUse(false);
+
+        WrappedManager.scheduleCleanup(getDisguise().getEntity());
 
         return disguiseWasActive;
     }

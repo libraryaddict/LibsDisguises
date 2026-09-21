@@ -4,7 +4,6 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseRunnable;
-import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 import me.libraryaddict.disguise.utilities.wrapped.entity.WrappedEntity;
@@ -128,14 +127,5 @@ public class DisguiseWrappedListener implements Listener {
                 }
             }
         }, 1);
-    }
-
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    public void onUndisguise(UndisguiseEvent event) {
-        if (event.isBeingReplaced() || event.getEntity() instanceof Player) {
-            return;
-        }
-
-        WrappedManager.scheduleCleanup(event.getEntity());
     }
 }
