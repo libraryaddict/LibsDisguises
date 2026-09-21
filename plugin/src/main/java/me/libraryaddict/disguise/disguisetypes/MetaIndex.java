@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import com.github.retrooper.packetevents.protocol.color.DyeColor;
 import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
 import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloState;
 import com.github.retrooper.packetevents.protocol.entity.cat.CatSoundVariant;
@@ -60,6 +61,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.CopperGolemWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CowWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CreakingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CreeperWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.CushionWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.DisplayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.DolphinWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
@@ -428,6 +430,8 @@ public class MetaIndex<Y> {
      * No visible effect
      */
     public static MetaIndex<Integer> CREEPER_STATE = new MetaIndex<>(CreeperWatcher.class, 0, -1);
+
+    public static MetaIndex<DyeColor> CUSHION_COLOR = new MetaIndex<>(CushionWatcher.class, 0, DyeColor.WHITE);
 
     public static MetaIndex<Integer> DISPLAY_INTERPOLATION_START_DELTA_TICKS = new MetaIndex<>(DisplayWatcher.class, 0, 0);
 

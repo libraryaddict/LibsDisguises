@@ -3475,11 +3475,14 @@ public class DisguiseUtilities {
             case OAK_CHEST_BOAT:
             case PALE_OAK_BOAT:
             case PALE_OAK_CHEST_BOAT:
+            case POPLAR_BOAT:
+            case POPLAR_CHEST_BOAT:
             case SPRUCE_BOAT:
             case SPRUCE_CHEST_BOAT:
             case BOAT:
             case ENDER_DRAGON:
             case WITHER_SKULL:
+                // TODO I think the boats are mixed up, need to figure out if it's always been wrong, or fixed in a newer version
                 return value - 180;
             case ARROW:
             case SPECTRAL_ARROW:

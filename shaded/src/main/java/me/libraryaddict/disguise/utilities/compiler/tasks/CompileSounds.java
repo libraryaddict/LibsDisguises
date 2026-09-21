@@ -54,10 +54,7 @@ public class CompileSounds {
                     soundValue = soundValue.substring(1);
 
                     if (variant != null) {
-                        // Get the second period, so entity.wolf<.>stuff.stuff
-                        int period = soundValue.indexOf(".", soundValue.indexOf(".") + 2);
-
-                        soundValue = soundValue.substring(0, period) + "_" + variant + soundValue.substring(period);
+                        soundValue = e.getVariantNamer().apply(soundValue, variant);
                     }
                 }
 

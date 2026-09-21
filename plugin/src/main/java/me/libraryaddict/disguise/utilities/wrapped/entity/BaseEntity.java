@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.wrapped.entity;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public abstract class BaseEntity<E extends Entity> implements IWrappedEntity<E> {
     private final Map<UUID, Long> rabbitHops = new ConcurrentHashMap<>();
+    private final Map<UUID, Vector3d> trackedPositions = new ConcurrentHashMap<>();
     private final E entity;
     private boolean usingInvisibleSlime;
 

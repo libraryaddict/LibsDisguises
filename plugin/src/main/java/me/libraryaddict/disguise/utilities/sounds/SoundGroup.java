@@ -61,7 +61,7 @@ public class SoundGroup {
         this.soundCategory = category;
 
         try {
-            DisguiseType.valueOf(name);
+            DisguiseType.valueOf(name.split("\\$")[0]);
         } catch (Exception ex) {
             customSounds = true;
         }

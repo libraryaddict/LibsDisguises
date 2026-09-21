@@ -85,7 +85,7 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
 
         // If grid locked watcher should be appearing in center of blocks
         if (disguise.getWatcher() instanceof GridLockedWatcher && ((GridLockedWatcher) disguise.getWatcher()).isGridLocked()) {
-            handleGridLock(disguise, packets, entity, sentPacket, yMod);
+            handleGridLock(disguise, packets, observer, entity, sentPacket, yMod);
             return;
         } else if (disguise.getType() == DisguiseType.RABBIT && DisguiseType.getType(entity.getType()) != disguise.getType() &&
             hasMoved(sentPacket)) {
@@ -350,8 +350,28 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
         return pitchValue;
     }
 
-    private void handleGridLock(Disguise disguise, LibsPackets<T> packets, IWrappedEntity<?> entity, PacketWrapper sentPacket,
-                                double yMod) {
+    private static Vector3d toGrid(GridLockedWatcher watcher, double yMod, Vector3d position) {
+        double y = position.getY();
+
+        return new Vector3d(GridLockedWatcher.center(position.getX(), watcher.getWidthX()),
+            Math.floor(y) + (y % 1 >= 0.85 ? 1 : y % 1 >= 0.35 ? .5 : 0) + yMod,
+            GridLockedWatcher.center(position.getZ(), watcher.getWidthZ()));
+    }
+
+    private static Vector3d getDelta(PacketWrapper packet) {
+        if (packet instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
+            WrapperPlayServerEntityRelativeMoveAndRotation move = (WrapperPlayServerEntityRelativeMoveAndRotation) packet;
+
+            return new Vector3d(move.getDeltaX(), move.getDeltaY(), move.getDeltaZ());
+        }
+
+        WrapperPlayServerEntityRelativeMove move = (WrapperPlayServerEntityRelativeMove) packet;
+
+        return new Vector3d(move.getDeltaX(), move.getDeltaY(), move.getDeltaZ());
+    }
+
+    private void handleGridLock(Disguise disguise, LibsPackets<T> packets, IWrappedPlayer observer, IWrappedEntity<?> entity,
+                                PacketWrapper sentPacket, double yMod) {
         packets.clear();
         final float pitchValue = getPitch(disguise, entity, sentPacket);
         final float yawValue = getYaw(disguise, entity, sentPacket);
@@ -361,7 +381,6 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
 
             // Reconstruct packet with modified look if needed
             if (rot.getYaw() != yawValue || rot.getPitch() != pitchValue) {
-                packets.clear();
                 packets.addPacket(new WrapperPlayServerEntityRotation(rot.getEntityId(), yawValue, pitchValue, rot.isOnGround()));
             }
 
@@ -371,96 +390,66 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
         GridLockedWatcher watcher = (GridLockedWatcher) disguise.getWatcher();
 
         PacketWrapper movePacket;
+        Vector3d trackedPosition;
 
         // If not relational movement, the absolute position is already on the packet
         if (sentPacket instanceof WrapperPlayServerEntityTeleport) {
             WrapperPlayServerEntityTeleport tele = (WrapperPlayServerEntityTeleport) sentPacket;
-            Vector3d pos = tele.getPosition();
 
-            // Center the block
-            double x = GridLockedWatcher.center(pos.getX(), watcher.getWidthX());
-            double y = (int) Math.floor(pos.getY()) + (pos.getY() % 1 >= 0.85 ? 1 : pos.getY() % 1 >= 0.35 ? .5 : 0);
-            double z = GridLockedWatcher.center(pos.getZ(), watcher.getWidthZ());
+            trackedPosition = tele.getPosition();
 
-            movePacket = new WrapperPlayServerEntityTeleport(tele.getEntityId(), new Vector3d(x, y + yMod, z), yawValue, pitchValue,
-                tele.isOnGround());
+            movePacket =
+                new WrapperPlayServerEntityTeleport(tele.getEntityId(), toGrid(watcher, yMod, trackedPosition), yawValue, pitchValue,
+                    tele.isOnGround());
         } else if (sentPacket instanceof WrapperPlayServerEntityPositionSync) {
             WrapperPlayServerEntityPositionSync sync = (WrapperPlayServerEntityPositionSync) sentPacket;
-            Vector3d pos = sync.getValues().getPosition();
 
-            // Center the block
-            double x = GridLockedWatcher.center(pos.getX(), watcher.getWidthX());
-            double y = (int) Math.floor(pos.getY()) + (pos.getY() % 1 >= 0.85 ? 1 : pos.getY() % 1 >= 0.35 ? .5 : 0);
-            double z = GridLockedWatcher.center(pos.getZ(), watcher.getWidthZ());
+            trackedPosition = sync.getValues().getPosition();
 
             EntityPositionData cloned = DisguiseUtilities.clone(sync.getValues());
-            cloned.setPosition(new Vector3d(x, y + yMod, z));
+            cloned.setPosition(toGrid(watcher, yMod, trackedPosition));
             cloned.setYaw(yawValue);
             cloned.setPitch(pitchValue);
 
             movePacket = new WrapperPlayServerEntityPositionSync(sync.getId(), cloned, sync.isOnGround());
         } else {
-            // Relative move packets only carry a delta, so the entity's current absolute location is required here
-            Location loc = entity.getLocation();
+            Vector3d delta = getDelta(sentPacket);
 
-            double x;
-            double y;
-            double z;
-            float oldYaw = yawValue;
-            float oldPitch = pitchValue;
+            Vector3d lastTracked = entity.getTrackedPositions().get(observer.getUniqueId());
 
-            if (sentPacket instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
-                WrapperPlayServerEntityRelativeMoveAndRotation rot = (WrapperPlayServerEntityRelativeMoveAndRotation) sentPacket;
-                x = rot.getDeltaX();
-                y = rot.getDeltaY();
-                z = rot.getDeltaZ();
+            if (lastTracked == null) {
+                Location loc = entity.getLocation();
 
-                oldYaw = yawValue;
-                oldPitch = pitchValue;
-            } else if (sentPacket instanceof WrapperPlayServerEntityRelativeMove) {
-                WrapperPlayServerEntityRelativeMove rot = (WrapperPlayServerEntityRelativeMove) sentPacket;
-                x = rot.getDeltaX();
-                y = rot.getDeltaY();
-                z = rot.getDeltaZ();
-            } else {
-                throw new IllegalStateException("Unknown packet " + sentPacket.getClass());
+                lastTracked = new Vector3d(loc.getX() - delta.getX(), loc.getY() - delta.getY(), loc.getZ() - delta.getZ());
             }
 
-            Location oldLoc = loc.clone().subtract(x, y, z);
+            trackedPosition = lastTracked.add(delta.getX(), delta.getY(), delta.getZ());
 
-            double oldY = oldLoc.getBlockY() + (oldLoc.getY() % 1 >= 0.85 ? 1 : oldLoc.getY() % 1 >= 0.35 ? .5 : 0);
-            double newY = loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0);
+            Vector3d from = toGrid(watcher, yMod, lastTracked);
+            Vector3d to = toGrid(watcher, yMod, trackedPosition);
 
-            double oldX = GridLockedWatcher.center(oldLoc.getX(), watcher.getWidthX());
-            double oldZ = GridLockedWatcher.center(oldLoc.getZ(), watcher.getWidthZ());
-            double newX = GridLockedWatcher.center(loc.getX(), watcher.getWidthX());
-            double newZ = GridLockedWatcher.center(loc.getZ(), watcher.getWidthZ());
+            double x = to.getX() - from.getX();
+            double y = to.getY() - from.getY();
+            double z = to.getZ() - from.getZ();
 
-            boolean sameBlock = oldX == newX && oldZ == newZ && newY == oldY && oldYaw == yawValue && oldPitch == pitchValue;
+            if (sentPacket instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
+                WrapperPlayServerEntityRelativeMoveAndRotation move = (WrapperPlayServerEntityRelativeMoveAndRotation) sentPacket;
 
-            if (sameBlock) {
-                // Make no modifications but don't send anything
-                return;
+                movePacket = new WrapperPlayServerEntityRelativeMoveAndRotation(move.getEntityId(), x, y, z, yawValue, pitchValue,
+                    move.isOnGround());
+            } else if (x != 0 || y != 0 || z != 0) {
+                WrapperPlayServerEntityRelativeMove move = (WrapperPlayServerEntityRelativeMove) sentPacket;
+
+                movePacket = new WrapperPlayServerEntityRelativeMove(move.getEntityId(), x, y, z, move.isOnGround());
             } else {
-                x = newX - oldX;
-                y = newY - oldY;
-                z = newZ - oldZ;
-
-                if (sentPacket instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
-                    WrapperPlayServerEntityRelativeMoveAndRotation rot = (WrapperPlayServerEntityRelativeMoveAndRotation) sentPacket;
-
-                    movePacket = new WrapperPlayServerEntityRelativeMoveAndRotation(rot.getEntityId(), x, y, z, yawValue, pitchValue,
-                        rot.isOnGround());
-                } else if (sentPacket instanceof WrapperPlayServerEntityRelativeMove) {
-                    WrapperPlayServerEntityRelativeMove rot = (WrapperPlayServerEntityRelativeMove) sentPacket;
-
-                    movePacket = new WrapperPlayServerEntityRelativeMove(rot.getEntityId(), x, y, z, rot.isOnGround());
-                } else {
-                    throw new IllegalStateException("Unknown packet " + sentPacket.getClass());
-                }
+                movePacket = null;
             }
         }
 
-        packets.addPacket(movePacket);
+        entity.getTrackedPositions().put(observer.getUniqueId(), trackedPosition);
+
+        if (movePacket != null) {
+            packets.addPacket(movePacket);
+        }
     }
 }

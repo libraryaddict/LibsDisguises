@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.wrapped;
 
+import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -13,6 +14,11 @@ import java.util.UUID;
 
 public interface IWrappedEntity<E extends Entity> {
     Map<UUID, Long> getRabbitHops();
+
+    /**
+     * The position each observer's client has for this entity, tracked from the movement packets
+     */
+    Map<UUID, Vector3d> getTrackedPositions();
 
     E getEntity();
 

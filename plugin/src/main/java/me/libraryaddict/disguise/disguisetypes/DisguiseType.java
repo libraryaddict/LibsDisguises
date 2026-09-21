@@ -92,6 +92,8 @@ public enum DisguiseType {
 
     CREEPER,
 
+    @NmsAddedIn(NmsVersion.v26_R3) CUSHION,
+
     @NmsAddedIn(NmsVersion.v1_21_R2) DARK_OAK_BOAT,
 
     @NmsAddedIn(NmsVersion.v1_21_R2) DARK_OAK_CHEST_BOAT,
@@ -251,6 +253,10 @@ public enum DisguiseType {
     PLAYER,
 
     POLAR_BEAR,
+
+    @NmsAddedIn(NmsVersion.v26_R3) POPLAR_BOAT,
+
+    @NmsAddedIn(NmsVersion.v26_R3) POPLAR_CHEST_BOAT,
 
     @NmsEntityName("tnt") PRIMED_TNT(50),
 

@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities.reflection;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
+import com.github.retrooper.packetevents.protocol.color.DyeColor;
 import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
 import com.github.retrooper.packetevents.protocol.entity.cat.CatVariant;
 import com.github.retrooper.packetevents.protocol.entity.cat.CatVariants;
@@ -1358,6 +1359,7 @@ public class ReflectionManager {
                 case MANGROVE_CHEST_BOAT:
                 case OAK_CHEST_BOAT:
                 case PALE_OAK_CHEST_BOAT:
+                case POPLAR_CHEST_BOAT:
                 case SPRUCE_CHEST_BOAT:
                     watcherClass = ChestBoatWatcher.class;
                     break;
@@ -1370,6 +1372,7 @@ public class ReflectionManager {
                 case MANGROVE_BOAT:
                 case OAK_BOAT:
                 case PALE_OAK_BOAT:
+                case POPLAR_BOAT:
                 case SPRUCE_BOAT:
                     watcherClass = BoatWatcher.class;
                     break;
@@ -1882,6 +1885,8 @@ public class ReflectionManager {
                 return EntityDataTypes.COPPER_GOLEM_STATE;
             } else if (type1 == WeatheringCopperState.class) {
                 return EntityDataTypes.WEATHERING_COPPER_STATE;
+            } else if (type1 == DyeColor.class) {
+                return EntityDataTypes.DYE_COLOR;
             } else if (type1 instanceof Class && Enum.class.isAssignableFrom((Class<?>) type1)) {
                 if (index.isByteValues()) {
                     return EntityDataTypes.BYTE;
