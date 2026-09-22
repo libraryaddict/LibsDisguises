@@ -20,6 +20,7 @@ import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.HappyGhast;
 import org.bukkit.entity.Wolf;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,11 +104,22 @@ public class SoundGroup {
         });
     }
 
-    public void addSound(SoundType type, ResourceLocation disguiseSound) {
+    /**
+     * Registers a sound as belonging to this type, without it becoming a sound this group plays.
+     * <p>
+     * Used for the regex entries in SOUND_MAPPINGS.txt, such as PLAYER's "^block\.[a-z_]+\.step" which matches every
+     * block's step sound.
+     */
+    public void addRecognizedSound(SoundType type, ResourceLocation sound) {
+        disguiseSoundTypes.putIfAbsent(sound, type);
+        allSounds.add(sound);
+    }
+
+    public void addSound(SoundType type, @Nullable ResourceLocation disguiseSound) {
         addSound(type, disguiseSound != null ? new DisguiseSound(disguiseSound) : null);
     }
 
-    public void addSound(SoundType type, DisguiseSound disguiseSound) {
+    public void addSound(SoundType type, @Nullable DisguiseSound disguiseSound) {
         if (disguiseSound != null) {
             disguiseSoundTypes.putIfAbsent(disguiseSound.getSound(), type);
             allSounds.add(disguiseSound.getSound());
@@ -134,16 +146,30 @@ public class SoundGroup {
         }
     }
 
-    public DisguiseSound getSound(SoundType type, ResourceLocation actualSound) {
+    /**
+     * The sound this group plays in place of one the disguised entity made.
+     *
+     * @param type        the type actualSound was recognized as, by entityGroup
+     * @param actualSound the sound the entity played
+     * @param entityGroup the group of the entity wearing this disguise
+     * @return the replacement, or null for the sound to be cancelled
+     */
+    public @Nullable DisguiseSound getSound(SoundType type, ResourceLocation actualSound, SoundGroup entityGroup) {
         if (remappedSounds.containsKey(actualSound)) {
             return getRandomSound(remappedSounds.get(actualSound));
+        }
+
+        // The entity already sounds like this disguise, eg a player disguise stone step
+        if (entityGroup == this) {
+            return new DisguiseSound(actualSound);
         }
 
         return getSound(type);
     }
 
-    public DisguiseSound getSound(SoundType type) {
-        if (type == null) {
+    public @Nullable DisguiseSound getSound(SoundType type) {
+        // Ignored sounds are registered so they can be silenced, not played back
+        if (type == null || type == SoundType.CANCEL) {
             return null;
         }
 

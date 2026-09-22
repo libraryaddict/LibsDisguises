@@ -17,7 +17,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class SoundManager {
     public void load() {
@@ -281,15 +280,13 @@ public class SoundManager {
                     for (String soundStr : sounds) {
                         // If sound is using regex, then try resolve via PE
                         if (soundStr.startsWith("^")) {
-                            Pattern pattern = Pattern.compile(soundStr);
-
                             for (com.github.retrooper.packetevents.protocol.sound.Sound s1 : Sounds.values()) {
                                 // If not registered for this server version, or regex does not match
                                 if (s1.getId(serverVersion) < 0 || !s1.getSoundId().getKey().matches(soundStr)) {
                                     continue;
                                 }
 
-                                group.addSound(type, s1.getSoundId());
+                                group.addRecognizedSound(type, s1.getSoundId());
                             }
                         } else {
                             group.addSound(type, new ResourceLocation(soundStr));

@@ -182,7 +182,7 @@ public class PacketListenerSounds extends SimplePacketListenerAbstract {
             return;
         }
 
-        DisguiseSound newSound = disguiseSound.getSound(soundType, soundId);
+        DisguiseSound newSound = disguiseSound.getSound(soundType, soundId, group);
 
         if (newSound == null || newSound.getSound() == null) {
             event.setCancelled(true);

@@ -5,8 +5,9 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup.SoundType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 
 @Getter
@@ -14,7 +15,8 @@ public class DisguiseSoundEnums {
     @Getter
     private static final List<DisguiseSoundEnums> values = new ArrayList<>();
     private final String name;
-    private final HashMap<String, SoundType> sounds = new HashMap<>();
+    // The first sound declared for a type is the one a disguise plays
+    private final Map<String, SoundType> sounds = new LinkedHashMap<>();
     private String[] variants;
     private BiFunction<String, String, String> variantNamer;
 
@@ -161,9 +163,9 @@ public class DisguiseSoundEnums {
                 "entity.dolphin.jump", "entity.fish.swim");
 
         register("DONKEY").setHurt("entity.donkey.hurt").setDeath("entity.donkey.death")
-            .setStep("block.grass.step", "entity.horse.step_wood").setIdle("entity.donkey.ambient")
+            .setStep("entity.horse.step", "entity.horse.step_wood", "block.grass.step").setIdle("entity.donkey.ambient")
             .setIgnored("entity.horse.gallop", "entity.horse.saddle", "entity.donkey.angry", "entity.horse.armor", "entity.horse.land",
-                "entity.horse.jump", "entity.horse.angry", "entity.donkey.chest");
+                "entity.horse.jump", "entity.donkey.jump", "entity.donkey.eat", "entity.donkey.chest", "item.saddle.unequip");
 
         register("DROWNED").setHurt("entity.drowned.hurt", "entity.drowned.hurt_water")
             .setDeath("entity.drowned.death", "entity.drowned.death_water").setStep("entity.drowned.step", "entity.drowned.swim")
@@ -231,8 +233,8 @@ public class DisguiseSoundEnums {
 
         register("HORSE").setHurt("entity.horse.hurt").setDeath("entity.horse.death").setStep("entity.horse.step", "entity.horse.step_wood")
             .setIdle("entity.horse.ambient")
-            .setIgnored("entity.horse.gallop", "entity.horse.saddle", "entity.donkey.angry", "entity.horse.armor", "entity.horse.land",
-                "entity.horse.jump", "entity.horse.angry", "entity.horse.eat", "entity.horse.breathe");
+            .setIgnored("entity.horse.gallop", "entity.horse.saddle", "entity.horse.armor", "entity.horse.land", "entity.horse.jump",
+                "entity.horse.angry", "entity.horse.eat", "entity.horse.breathe");
 
         register("HUSK").setHurt("entity.husk.hurt").setDeath("entity.husk.death").setStep("entity.husk.step")
             .setIdle("entity.husk.ambient").setIgnored("entity.husk.converted_to_zombie");
@@ -324,7 +326,10 @@ public class DisguiseSoundEnums {
         register("PILLAGER").setHurt("entity.pillager.hurt").setDeath("entity.pillager.death").setStep("block.grass.step")
             .setIdle("entity.pillager.ambient").setIgnored("entity.pillager.celebrate");
 
-        register("PLAYER").setHurt("entity.player.hurt").setDeath("entity.player.death").setStep("^block\\.[a-z_]+\\.step");
+        // Picking the accurate block's step sound would need block lookups or delayed sound packets
+        // So if we cannot resolve to a sound with regex, we pass through
+        register("PLAYER").setHurt("entity.player.hurt").setDeath("entity.player.death")
+            .setStep("block.grass.step", "^block\\.[a-z_]+\\.step");
 
         register("POLAR_BEAR").setHurt("entity.polar_bear.hurt").setDeath("entity.polar_bear.death").setStep("entity.polar_bear.step")
             .setIdle("entity.polar_bear.ambient", "entity.polar_bear.ambient_baby").setIgnored("entity.polar_bear.warning");
