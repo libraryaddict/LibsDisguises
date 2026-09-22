@@ -13,6 +13,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetPassengers;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.movements.MovementTracker;
 import me.libraryaddict.disguise.utilities.wrapped.IWrappedEntity;
 import me.libraryaddict.disguise.utilities.wrapped.IWrappedPlayer;
 import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
@@ -60,7 +61,13 @@ public class PacketListenerVehicleMovement extends SimplePacketListenerAbstract 
     private void refreshPosition(IWrappedPlayer observer, int entityId, PacketWrapper sentPacket) {
         Disguise disguise = DisguiseUtilities.getDisguise(observer, entityId);
 
-        if (disguise == null || disguise.getArmorstandIds().length == 0) {
+        if (disguise == null) {
+            return;
+        }
+
+        List<MovementTracker> trackers = disguise.getInternals().getTrackers();
+
+        if (trackers.isEmpty() && disguise.getArmorstandIds().length == 0) {
             return;
         }
 
@@ -78,6 +85,10 @@ public class PacketListenerVehicleMovement extends SimplePacketListenerAbstract 
                     loc.getPitch()), true);
         }
 
+        for (MovementTracker tracker : trackers) {
+            updateTracker(tracker, observer, sentPacket);
+        }
+
         List<PacketWrapper> wrappers =
             DisguiseUtilities.adjustNamePositions(disguise, Collections.singletonList(sentPacket), observer.getUniqueId());
 
@@ -87,6 +98,18 @@ public class PacketListenerVehicleMovement extends SimplePacketListenerAbstract 
 
         for (PacketWrapper wrapper : wrappers) {
             observer.sendPacketSilently(wrapper);
+        }
+    }
+
+    private void updateTracker(MovementTracker tracker, IWrappedPlayer observer, PacketWrapper packet) {
+        if (packet instanceof WrapperPlayServerEntityTeleport) {
+            tracker.onTeleport(observer, (WrapperPlayServerEntityTeleport) packet);
+        } else if (packet instanceof WrapperPlayServerEntityPositionSync) {
+            tracker.onSync(observer, (WrapperPlayServerEntityPositionSync) packet);
+        } else if (packet instanceof WrapperPlayServerEntityRelativeMove) {
+            tracker.onRelativeMove(observer, (WrapperPlayServerEntityRelativeMove) packet);
+        } else if (packet instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
+            tracker.onRelativeMoveLook(observer, (WrapperPlayServerEntityRelativeMoveAndRotation) packet);
         }
     }
 
