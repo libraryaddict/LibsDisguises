@@ -64,7 +64,7 @@ public class PacketEventsUpdater {
         // We use a futuristic version if the features we want are in the snapshot builds
         // Actually wait!...
         // If we require snapshot builds, we specify 'SNAPSHOT' in the version string so we don't confuse the users
-        return "2.14.0-SNAPSHOT";
+        return "2.14.0";
     }
 
     /**
@@ -72,7 +72,7 @@ public class PacketEventsUpdater {
      */
     public static Instant getMinimumPacketEventsBuildTimestamp() {
         // As taken from the most recent packetevents compiled jar
-        return Instant.ofEpochMilli(1789788643976L);
+        return Instant.ofEpochMilli(1790196757300L);
     }
 
     public static boolean isPacketEventsOutdated(Instant requiredTime) {
