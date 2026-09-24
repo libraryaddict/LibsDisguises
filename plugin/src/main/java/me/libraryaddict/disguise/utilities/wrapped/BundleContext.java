@@ -98,6 +98,10 @@ public class BundleContext {
         PendingState state = pendingNameSpawn;
         pendingNameSpawn = null;
 
+        if (!state.disguise.isDisguiseInUse()) {
+            return;
+        }
+
         if (!state.disguise.isPlayerDisguise() || state.inLineOfSight) {
             Double stored = state.disguise.getInternals().getLastTransmittedScale(getObserver().getUniqueId());
             double scale = stored != null ? stored : 1.0;

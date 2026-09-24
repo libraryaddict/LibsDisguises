@@ -350,6 +350,10 @@ public class PlayerSkinHandler implements Listener {
             if (disguise.getInternals().getNameDisplayType().isFakeEntity() && disguise.isNameVisible() &&
                 disguise.getMultiNameLength() > 0) {
                 LibsDisguises.getScheduler().entity(player.getEntity()).run(() -> {
+                    if (!disguise.isDisguiseInUse()) {
+                        return;
+                    }
+
                     List<PacketWrapper<?>> packets = DisguiseUtilities.getNamePackets(disguise, player.getEntity(), new String[0]);
 
                     for (PacketWrapper p : packets) {

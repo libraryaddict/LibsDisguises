@@ -75,7 +75,7 @@ public abstract class Disguise {
      * @return isDisguiseInUse
      */
     @Getter
-    private transient boolean disguiseInUse;
+    private transient volatile boolean disguiseInUse;
     private final DisguiseType disguiseType;
     /**
      * The entity that is disguised
