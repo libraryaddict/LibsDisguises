@@ -317,7 +317,7 @@ public abstract class Disguise {
         }
     }
 
-    public int[] getArmorstandIds() {
+    public synchronized int[] getArmorstandIds() {
         int desiredlength = getMultiNameLength();
 
         // If text display and there is a display
