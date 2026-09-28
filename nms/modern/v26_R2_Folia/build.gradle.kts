@@ -11,8 +11,6 @@ nmsModule {
 
 dependencies {
     implementation(project(":nms:modern:v26_R2"))
-    // Folia does not publish a 26.2 development bundle yet. This adapter only
-    // uses Moonrise's tracked-entity API, which is part of the Paper bundle too.
     paperweight.paperDevBundle(nmsModule.craftbukkitVersion.get())
 }
 
