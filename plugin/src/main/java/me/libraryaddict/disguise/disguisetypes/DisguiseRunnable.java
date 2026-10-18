@@ -407,7 +407,19 @@ public class DisguiseRunnable {
             return;
         }
 
-        task = LibsDisguises.getScheduler().entity(disguise.getEntity()).runAtFixedRate(this::run, 1, 1);
+        task = LibsDisguises.getScheduler().entity(disguise.getEntity()).runAtFixedRate(this::run, this::onRetired, 1, 1);
+    }
+
+    /**
+     * The entity scheduler is retired when the entity is removed, which drops this task before it can notice the entity is gone.
+     * Without this the disguise is never removed, leaking it along with any scoreboard teams it registered.
+     */
+    private void onRetired() {
+        task = null;
+
+        if (isInUse() && disguise.isDisguiseInUse()) {
+            disguise.removeDisguise();
+        }
     }
 
     public void stop() {
