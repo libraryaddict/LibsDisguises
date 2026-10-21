@@ -18,14 +18,14 @@ public class DisguisePerm {
 
     public DisguisePerm(DisguiseType disguiseType) {
         this.disguiseType = disguiseType;
-        regexedName = toReadable().replaceAll("[ |_]", "").toLowerCase(Locale.ENGLISH);
+        regexedName = toReadable().replace(" ", "").replace("_", "").toLowerCase(Locale.ENGLISH);
     }
 
     public DisguisePerm(DisguiseType disguiseType, String disguisePerm) {
         this.disguiseType = disguiseType;
         permName = disguisePerm;
         customDisguise = true;
-        regexedName = toReadable().replaceAll("[ |_]", "").toLowerCase(Locale.ENGLISH);
+        regexedName = toReadable().replace(" ", "").replace("_", "").toLowerCase(Locale.ENGLISH);
     }
 
     public Class getEntityClass() {

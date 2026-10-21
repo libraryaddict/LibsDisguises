@@ -745,7 +745,7 @@ public class DisguiseParser {
     }
 
     public static DisguisePerm getDisguisePerm(String name) {
-        name = name.replaceAll("[ |_]", "").toLowerCase(Locale.ENGLISH);
+        name = name.replace(" ", "").replace("_", "").toLowerCase(Locale.ENGLISH);
 
         for (DisguisePerm perm : getDisguisePerms()) {
             if (!perm.getRegexedName().equals(name)) {
