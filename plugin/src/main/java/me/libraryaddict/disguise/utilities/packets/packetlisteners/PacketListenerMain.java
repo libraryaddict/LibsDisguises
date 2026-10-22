@@ -35,17 +35,20 @@ public class PacketListenerMain extends SimplePacketListenerAbstract {
             return;
         }
 
+        boolean isBundle = event.getPacketType() == PacketType.Play.Server.BUNDLE;
+
+        if (!isBundle && !listenedPackets[event.getPacketType().ordinal()]) {
+            return;
+        }
+
         final IWrappedPlayer observer = WrappedManager.getWrappedPlayer(event.getPlayer());
 
         if (observer == null) {
             return;
         }
 
-        if (!listenedPackets[event.getPacketType().ordinal()]) {
-            if (event.getPacketType() == PacketType.Play.Server.BUNDLE) {
-                observer.getBundleContext().onBundle();
-            }
-
+        if (isBundle) {
+            observer.getBundleContext().onBundle();
             return;
         }
 
