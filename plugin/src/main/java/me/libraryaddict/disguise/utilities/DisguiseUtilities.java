@@ -2805,14 +2805,6 @@ public class DisguiseUtilities {
                     new WrapperPlayServerEntityVelocity(DisguiseAPI.getSelfDisguiseId(), new Vector3d(vel.getX(), vel.getY(), vel.getZ())));
             }
 
-            // Why would they even need this. Meh.
-            // Also, what's with the "entity id > id" check?
-            if (player.getVehicle() != null && entityId > player.getVehicle().getEntityId()) {
-                sendSelfPacket(player, entityId, new WrapperPlayServerAttachEntity(entityId, player.getVehicle().getEntityId(), false));
-            } else if (player.getPassenger() != null && entityId > player.getPassenger().getEntityId()) {
-                sendSelfPacket(player, entityId, new WrapperPlayServerAttachEntity(player.getPassenger().getEntityId(), entityId, false));
-            }
-
             if (DisguiseConfig.isEquipmentPacketsEnabled()) {
                 List<Equipment> list = new ArrayList<>();
 
@@ -3259,6 +3251,11 @@ public class DisguiseUtilities {
         return mappedEntity.getId(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion()) >= 0;
     }
 
+    public static void sendSelfDisguisePosition(Player player, Location location) {
+        sendSelfPacket(player, player.getEntityId(),
+            new WrapperPlayServerEntityTeleport(player.getEntityId(), SpigotConversionUtil.fromBukkitLocation(location), false));
+    }
+
     /**
      * Method to send a packet to the self disguise, translate their entity ID to the fake id.
      */
@@ -3343,7 +3340,7 @@ public class DisguiseUtilities {
 
         // If the disguised player can't see themselves. Return
         if (!disguise.isSelfDisguiseVisible() || !PacketsManager.getPacketsManager().isViewDisguisesListenerEnabled() ||
-            player.getVehicle() != null) {
+            (!DisguiseConfig.isSelfDisguiseVisibleWhenRiding() && player.getVehicle() != null)) {
             return;
         }
 

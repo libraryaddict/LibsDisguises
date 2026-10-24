@@ -14,6 +14,12 @@ ViewSelfDisguises: true
 # Default is true
 ViewSelfDisguisesDefault: true
 
+# Should self disguises be hidden while the disguised player is riding an entity?
+# When true, the self disguise is hidden until the player dismounts.
+# When false, the self disguise follows the vehicle, though will not actually be shown as sitting on the vehicle. This doesn't impact how other players see it.
+# Default is false
+HideSelfDisguisesWhenRiding: false
+
 # If this is enabled and the server is 1.20.6+, players will be given the scale attribute to scale them up/down to the disguise's size
 # This will only work on living disguises, and is false by default due to the possibility of abuse as it'd shrink hitboxes and the like
 # This may behave unexpectably if you're playing with other scaling modifiers outside of this plugin!

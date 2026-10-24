@@ -170,8 +170,7 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
             }
 
             if (disguise.isPlayerDisguise()) {
-                LibsDisguises.getInstance().getSkinHandler()
-                    .handlePackets(observer, (PlayerDisguise) disguise, selfTransformed);
+                LibsDisguises.getInstance().getSkinHandler().handlePackets(observer, (PlayerDisguise) disguise, selfTransformed);
             }
 
             if (event.getPacketType() == Server.SPAWN_PLAYER || event.getPacketType() == Server.SPAWN_ENTITY) {

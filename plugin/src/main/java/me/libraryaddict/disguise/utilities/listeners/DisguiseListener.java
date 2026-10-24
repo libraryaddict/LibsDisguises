@@ -785,34 +785,56 @@ public class DisguiseListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onVehicleEnter(VehicleEnterEvent event) {
-        if (!(event.getEntered() instanceof Player)) {
+        // in 1.20.5+ we handle EntityMountEvent instead
+        if (NmsVersion.v1_20_R4.isSupported()) {
             return;
         }
 
-        Disguise disguise = DisguiseAPI.getDisguise((Player) event.getEntered(), event.getEntered());
+        handleMount(event.getEntered());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onVehicleLeave(VehicleExitEvent event) {
+        // in 1.20.5+ we handle EntityDismountEvent instead
+        if (NmsVersion.v1_20_R4.isSupported()) {
+            return;
+        }
+
+        handleDismount(event.getExited());
+    }
+
+    static void handleMount(Entity entity) {
+        // If not a player, or we don't hide self disguise when riding
+        if (!(entity instanceof Player) || DisguiseConfig.isSelfDisguiseVisibleWhenRiding()) {
+            return;
+        }
+
+        Disguise disguise = DisguiseAPI.getDisguise((Player) entity, entity);
 
         if (disguise == null) {
             return;
         }
 
         DisguiseUtilities.removeSelfDisguise(disguise);
-
-        ((Player) event.getEntered()).updateInventory();
+        ((Player) entity).updateInventory();
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onVehicleLeave(VehicleExitEvent event) {
-        if (event.getExited() instanceof Player) {
-            final Disguise disguise = DisguiseAPI.getDisguise((Player) event.getExited(), event.getExited());
-
-            if (disguise != null) {
-                LibsDisguises.getScheduler().entity(event.getExited()).runDelayed(task -> {
-                    DisguiseUtilities.setupFakeDisguise(disguise);
-
-                    ((Player) disguise.getEntity()).updateInventory();
-                }, 1);
-            }
+    static void handleDismount(Entity entity) {
+        // If not a player, or we don't hide self disguise when riding
+        if (!(entity instanceof Player) || DisguiseConfig.isSelfDisguiseVisibleWhenRiding()) {
+            return;
         }
+
+        Disguise disguise = DisguiseAPI.getDisguise((Player) entity, entity);
+
+        if (disguise == null) {
+            return;
+        }
+
+        LibsDisguises.getScheduler().entity(entity).runDelayed(task -> {
+            DisguiseUtilities.setupFakeDisguise(disguise);
+            ((Player) entity).updateInventory();
+        }, 1);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

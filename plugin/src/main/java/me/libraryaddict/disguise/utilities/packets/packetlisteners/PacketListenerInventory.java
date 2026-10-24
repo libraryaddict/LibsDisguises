@@ -54,7 +54,8 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
 
             final Player player = event.getPlayer();
 
-            if (player.getVehicle() != null) {
+            // If they're not self disguised, due to it being hidden as they're in a vehicle
+            if (!DisguiseConfig.isSelfDisguiseVisibleWhenRiding() && player.getVehicle() != null) {
                 return;
             }
 
@@ -188,7 +189,8 @@ public class PacketListenerInventory extends SimplePacketListenerAbstract {
 
             Player player = event.getPlayer();
 
-            if (player == null || player.getVehicle() != null) {
+            // If they're not self disguised, as the disguise is hidden in a vehicle
+            if (player == null || (!DisguiseConfig.isSelfDisguiseVisibleWhenRiding() && player.getVehicle() != null)) {
                 return;
             }
 

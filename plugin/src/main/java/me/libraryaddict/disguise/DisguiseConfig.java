@@ -269,6 +269,9 @@ public class DisguiseConfig {
     private static boolean viewSelfDisguisesDefault;
     @Getter
     @Setter
+    private static boolean selfDisguiseVisibleWhenRiding;
+    @Getter
+    @Setter
     private static String lastGithubUpdateETag;
     @Getter
     @Setter
@@ -674,6 +677,7 @@ public class DisguiseConfig {
         setRandomDisguises(config.getBoolean("RandomDisguiseOptions"));
         setViewDisguises(config.getBoolean("ViewSelfDisguises"));
         setViewSelfDisguisesDefault(config.getBoolean("ViewSelfDisguisesDefault"));
+        setSelfDisguiseVisibleWhenRiding(!config.getBoolean("HideSelfDisguisesWhenRiding"));
         setScaleSelfDisguises(config.getBoolean("SelfDisguisesScaling"));
         setScaleSelfDisguisesMin(config.getDouble("SelfDisguisesScaleMin"));
         setScaleSelfDisguisesMax(config.getDouble("SelfDisguisesScaleMax"));

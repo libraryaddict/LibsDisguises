@@ -49,6 +49,7 @@ public class DisguiseRunnable {
     private long lastValidCheckPassed;
     private final Double vectorY;
     private final boolean alwaysSendVelocity, needsToUpdateMovementFrequently;
+    private Vector lastRidingPosition;
 
     public DisguiseRunnable(Disguise disguise) {
         this.disguise = disguise;
@@ -288,6 +289,12 @@ public class DisguiseRunnable {
             DisguiseUtilities.doBoundingBox((TargetedDisguise) disguise);
         }
 
+        // If the self disguise is visible when we're a passenger
+        if (DisguiseConfig.isSelfDisguiseVisibleWhenRiding()) {
+            // Send the movement
+            updateRidingSelfDisguise(loc);
+        }
+
         if (disguise.getType() == DisguiseType.BAT && !((BatWatcher) disguise.getWatcher()).isHanging()) {
             return;
         }
@@ -300,6 +307,30 @@ public class DisguiseRunnable {
             disguise.getEntity().getVelocity().lengthSquared() > 0) {
             ReflectionManager.getNmsReflection().setImpulse(disguise.getEntity());
         }
+    }
+
+    private void updateRidingSelfDisguise(Location loc) {
+        Entity entity = disguise.getEntity();
+
+        // If not riding something, or not self disguised
+        if (!entity.isInsideVehicle() || !DisguiseUtilities.getSelfDisguised().contains(entity.getUniqueId()) ||
+            // If the owning disguise is not this disguise
+            DisguiseAPI.getDisguise((Player) entity, entity) != disguise) {
+            lastRidingPosition = null;
+            return;
+        }
+
+        // Paper snaps the player onto the vehicle's position when the client steers it
+        Vector position = ReflectionManager.getNmsReflection().getRidingPosition(entity);
+
+        // Only update the movement if the location changed
+        if (position.equals(lastRidingPosition)) {
+            return;
+        }
+
+        lastRidingPosition = position;
+        // The server sends no movement for passengers
+        DisguiseUtilities.sendSelfDisguisePosition((Player) entity, position.toLocation(loc.getWorld(), loc.getYaw(), loc.getPitch()));
     }
 
     private void doExpMovements() {

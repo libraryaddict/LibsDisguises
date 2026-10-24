@@ -42,6 +42,7 @@ import me.libraryaddict.disguise.utilities.animations.DisguiseAnimation;
 import me.libraryaddict.disguise.utilities.config.DisguiseCommandConfig;
 import me.libraryaddict.disguise.utilities.listeners.DisguiseListener;
 import me.libraryaddict.disguise.utilities.listeners.DisguiseListener1_18;
+import me.libraryaddict.disguise.utilities.listeners.DisguiseListener1_20_5;
 import me.libraryaddict.disguise.utilities.listeners.PaperDisguiseListener;
 import me.libraryaddict.disguise.utilities.listeners.PlayerSkinHandler;
 import me.libraryaddict.disguise.utilities.listeners.VulcanCompatibilityListener;
@@ -377,6 +378,10 @@ public class LibsDisguises extends JavaPlugin {
 
         if (NmsVersion.v1_18_R1.isSupported()) {
             Bukkit.getPluginManager().registerEvents(new DisguiseListener1_18(), this);
+        }
+
+        if (NmsVersion.v1_20_R4.isSupported()) {
+            Bukkit.getPluginManager().registerEvents(new DisguiseListener1_20_5(), this);
         }
 
         if (DisguiseUtilities.isRunningPaper()) {

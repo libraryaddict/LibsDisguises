@@ -23,6 +23,7 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.ChatVisiblity;
 import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -38,6 +39,7 @@ import org.bukkit.entity.Cat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Frog;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -145,5 +147,14 @@ public class ReflectionManager extends ReflectionManagerLayered {
         registerBuf.add(friendlyByteBuf);
 
         return registerBuf;
+    }
+
+    @Override
+    public Vector getRidingPosition(Entity passenger) {
+        net.minecraft.world.entity.Entity nmsPassenger = ((CraftEntity) passenger).getHandle();
+        net.minecraft.world.entity.Entity vehicle = nmsPassenger.getVehicle();
+        Vec3 position = vehicle.getPassengerRidingPosition(nmsPassenger).add(0, nmsPassenger.getMyRidingOffset(vehicle), 0);
+
+        return new Vector(position.x, position.y, position.z);
     }
 }

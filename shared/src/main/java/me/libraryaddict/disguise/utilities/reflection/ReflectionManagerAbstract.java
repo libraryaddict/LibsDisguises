@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -170,4 +171,11 @@ public abstract class ReflectionManagerAbstract {
      * Set the impulse flag on the entity so that the tracker updates it. Meant for use with entities that need more frequent movements
      */
     public abstract void setImpulse(Entity entity);
+
+    /**
+     * The position the server places this passenger at on its vehicle
+     */
+    public Vector getRidingPosition(Entity passenger) {
+        return passenger.getLocation().toVector();
+    }
 }

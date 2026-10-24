@@ -2,8 +2,10 @@ package me.libraryaddict.disguise.utilities.wrapped.listeners;
 
 import com.destroystokyo.paper.event.player.PlayerStartSpectatingEntityEvent;
 import io.papermc.paper.event.entity.EntityMoveEvent;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
 import me.libraryaddict.disguise.utilities.wrapped.entity.WrappedEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.entity.EntityMountEvent;
@@ -23,14 +25,22 @@ public class DisguiseWrappedModernListener extends DisguiseWrappedListener {
 
     @EventHandler
     public void onMount(EntityMountEvent event) {
-        WrappedManager.getWrappedIfExists(event.getEntity()).ifPresent(e -> ((WrappedEntity) e).updatePassengers());
-        WrappedManager.getWrappedIfExists(event.getMount()).ifPresent(e -> ((WrappedEntity) e).updatePassengers());
+        schedulePassengersUpdate(event.getEntity());
+        schedulePassengersUpdate(event.getMount());
     }
 
     @EventHandler
     public void onDismount(EntityDismountEvent event) {
-        WrappedManager.getWrappedIfExists(event.getEntity()).ifPresent(e -> ((WrappedEntity) e).updatePassengers());
-        WrappedManager.getWrappedIfExists(event.getDismounted()).ifPresent(e -> ((WrappedEntity) e).updatePassengers());
+        schedulePassengersUpdate(event.getEntity());
+        schedulePassengersUpdate(event.getDismounted());
+    }
+
+    /**
+     * The event is called before the passengers change, not after. We need after.
+     */
+    private void schedulePassengersUpdate(Entity entity) {
+        WrappedManager.getWrappedIfExists(entity)
+            .ifPresent(e -> LibsDisguises.getScheduler().entity(entity).run(() -> ((WrappedEntity) e).updatePassengers()));
     }
 
     @EventHandler
