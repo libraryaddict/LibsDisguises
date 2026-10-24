@@ -135,9 +135,6 @@ dependencies {
     shadow(project(":minimessage", "shadow")) {
         exclude("*")
     }
-    shadow(project(":shared")) {
-        exclude("*")
-    }
     shadow(project(":plugin")) {
         exclude("*")
     }

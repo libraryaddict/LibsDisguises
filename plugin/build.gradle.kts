@@ -28,6 +28,17 @@ dependencies {
     implementation(libs.foliascheduler)
 }
 
+// Adds shared to the bundled jar
+val shared = project(":shared").the<SourceSetContainer>()["main"]
+
+tasks.jar {
+    from(shared.output)
+}
+
+tasks.javadoc {
+    source(shared.allJava)
+}
+
 buildscript {
     repositories {
         mavenCentral()
