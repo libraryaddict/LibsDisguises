@@ -3887,7 +3887,7 @@ public class DisguiseUtilities {
                 (disguise = disguises.stream().filter(d -> d != null && d.getEntity() != null).findAny().orElse(null)) != null) {
                 // Handle the future disguises
                 onFutureDisguise(disguise.getEntity(), entityId);
-            } else {
+            } else if (uuid != null) {
                 // Otherwise perform blocking operation to find a future disguise
                 findFutureDisguise(observer, uuid, entityId);
             }
