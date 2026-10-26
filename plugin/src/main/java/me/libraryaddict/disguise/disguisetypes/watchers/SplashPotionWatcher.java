@@ -26,7 +26,7 @@ public class SplashPotionWatcher extends FlagWatcher {
     public void setPotionId(int newPotionId) {
         this.potionId = newPotionId;
 
-        if (getDisguise().getEntity() != null && getDisguise().getWatcher() == this) {
+        if (getDisguise().isDisguiseInUse() && getDisguise().getEntity() != null && getDisguise().getWatcher() == this) {
             DisguiseUtilities.refreshTrackers(getDisguise());
         }
     }

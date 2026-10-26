@@ -44,7 +44,7 @@ public class PaintingWatcher extends HangingWatcher {
 
             this.painting = newPainting;
 
-            if (getDisguise().getEntity() != null && getDisguise().getWatcher() == this) {
+            if (getDisguise().isDisguiseInUse() && getDisguise().getEntity() != null && getDisguise().getWatcher() == this) {
                 DisguiseUtilities.refreshTrackers(getDisguise());
             }
         }
