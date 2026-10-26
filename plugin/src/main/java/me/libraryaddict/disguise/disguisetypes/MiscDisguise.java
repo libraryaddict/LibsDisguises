@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.disguisetypes;
 import me.libraryaddict.disguise.disguisetypes.watchers.DisplayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.FishingHookWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
@@ -110,7 +111,9 @@ public class MiscDisguise extends TargetedDisguise {
             case DROPPED_ITEM:
                 ((DroppedItemWatcher) getWatcher()).setItemStack(itemStack);
                 break;
-            case FISHING_HOOK: // Entity ID of whoever is holding fishing rod
+            case FISHING_HOOK:
+                ((FishingHookWatcher) getWatcher()).setOwner(id);
+                break;
             case ARROW: // Entity ID of shooter. Used for "Are they on this scoreboard team and do I render it moving
                 // through their body?"
             case SPECTRAL_ARROW:
@@ -159,6 +162,8 @@ public class MiscDisguise extends TargetedDisguise {
                 return data;
             case SPLASH_POTION:
                 return ((SplashPotionWatcher) getWatcher()).getPotionId();
+            case FISHING_HOOK:
+                return ((FishingHookWatcher) getWatcher()).getOwner();
             default:
                 return data;
         }
