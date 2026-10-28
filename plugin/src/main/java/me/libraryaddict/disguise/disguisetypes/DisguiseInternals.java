@@ -27,7 +27,6 @@ import org.bukkit.inventory.EquipmentSlotGroup;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -70,7 +69,7 @@ public class DisguiseInternals<D extends Disguise> implements DisguiseScaling.Di
     private final AtomicBoolean refreshingScaling = new AtomicBoolean(false);
     @Getter
     private transient DisguiseRunnable runnable;
-    private final Set<UUID> seesDisguise = new HashSet<>();
+    private final Set<UUID> seesDisguise = ConcurrentHashMap.newKeySet();
     @Getter
     private final List<MovementTracker> trackers = new ArrayList<>();
     @Getter
