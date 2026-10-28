@@ -35,6 +35,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntitySpawnRequest;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -122,5 +123,20 @@ public class ReflectionManager extends ReflectionManagerLayered {
             wolfSoundVariantMethods = net.minecraft.world.entity.animal.wolf.Wolf.class.getDeclaredMethod("getSoundVariant");
             wolfSoundVariantMethods.setAccessible(true);
         }
+    }
+
+    @Override
+    public net.minecraft.world.entity.Entity createEntityInstance(EntityType entityType, String entityName) {
+        ServerLevel world = getWorldServer(Bukkit.getWorlds().getFirst());
+
+        if (entityType == EntityType.PLAYER) {
+            GameProfile gameProfile = new GameProfile(new UUID(0, 0), "Steve");
+            ClientInformation information =
+                new ClientInformation("english", 10, ChatVisiblity.FULL, true, 0, HumanoidArm.RIGHT, true, true, ParticleStatus.ALL);
+            return new ServerPlayer(getMinecraftServer(), world, gameProfile, information);
+        }
+
+        // Set ignoreChecks to true, otherwise hostile mobs aren't created when the world is on peaceful
+        return getEntityType(entityType).create(world, new EntitySpawnRequest(EntitySpawnReason.LOAD, true));
     }
 }
