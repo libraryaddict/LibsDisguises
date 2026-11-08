@@ -25,24 +25,21 @@ public interface CloningMovementTracker extends MovementTracker {
 
     @Override
     default void onSync(IWrappedPlayer receiver, WrapperPlayServerEntityPositionSync sync) {
-        sync = new WrapperPlayServerEntityPositionSync(getEntityId(), DisguiseUtilities.clone(sync.getValues()), sync.isOnGround());
-
-        receiver.sendPacketSilently(sync);
+        receiver.sendPacketSilently(DisguiseUtilities.cloneSync(sync, getEntityId(), 0, sync.getYRot(), sync.getXRot()));
     }
 
     @Override
     default void onRelativeMove(IWrappedPlayer receiver, WrapperPlayServerEntityRelativeMove relativeMove) {
-        relativeMove = new WrapperPlayServerEntityRelativeMove(getEntityId(), relativeMove.getDeltaX(), relativeMove.getDeltaY(),
-            relativeMove.getDeltaZ(), relativeMove.isOnGround());
+        relativeMove = new WrapperPlayServerEntityRelativeMove(getEntityId(), relativeMove.getDelta(), relativeMove.isOnGround());
 
         receiver.sendPacketSilently(relativeMove);
     }
 
     @Override
     default void onRelativeMoveLook(IWrappedPlayer receiver, WrapperPlayServerEntityRelativeMoveAndRotation relativeMoveAndRotation) {
-        relativeMoveAndRotation = new WrapperPlayServerEntityRelativeMoveAndRotation(getEntityId(), relativeMoveAndRotation.getDeltaX(),
-            relativeMoveAndRotation.getDeltaY(), relativeMoveAndRotation.getDeltaZ(), relativeMoveAndRotation.getYaw(),
-            relativeMoveAndRotation.getPitch(), relativeMoveAndRotation.isOnGround());
+        relativeMoveAndRotation =
+            new WrapperPlayServerEntityRelativeMoveAndRotation(getEntityId(), relativeMoveAndRotation.getDelta(),
+                relativeMoveAndRotation.getYaw(), relativeMoveAndRotation.getPitch(), relativeMoveAndRotation.isOnGround());
 
         receiver.sendPacketSilently(relativeMoveAndRotation);
     }

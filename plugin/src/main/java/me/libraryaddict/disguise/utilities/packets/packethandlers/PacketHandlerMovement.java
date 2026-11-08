@@ -134,8 +134,8 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
                 WrapperPlayServerEntityRelativeMoveAndRotation rot = (WrapperPlayServerEntityRelativeMoveAndRotation) sentPacket;
 
                 cloned =
-                    new WrapperPlayServerEntityRelativeMoveAndRotation(rot.getEntityId(), rot.getDeltaX(), rot.getDeltaY(), rot.getDeltaZ(),
-                        yawValue, pitchValue, rot.isOnGround());
+                    new WrapperPlayServerEntityRelativeMoveAndRotation(rot.getEntityId(), rot.getDelta(), yawValue, pitchValue,
+                        rot.isOnGround());
             } else if (sentPacket instanceof WrapperPlayServerEntityRotation) {
                 WrapperPlayServerEntityRotation rot = (WrapperPlayServerEntityRotation) sentPacket;
 
@@ -143,10 +143,7 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
             } else if (sentPacket instanceof WrapperPlayServerEntityPositionSync) {
                 WrapperPlayServerEntityPositionSync sync = (WrapperPlayServerEntityPositionSync) sentPacket;
 
-                EntityPositionData values = DisguiseUtilities.clone(sync.getValues());
-                values.setYaw(yawValue);
-                values.setPitch(pitchValue);
-                cloned = new WrapperPlayServerEntityPositionSync(sync.getId(), values, sync.isOnGround());
+                cloned = DisguiseUtilities.cloneSync(sync, sync.getId(), 0, yawValue, pitchValue);
             } else {
                 throw new IllegalStateException("Unknown packet " + sentPacket.getClass());
             }
@@ -212,7 +209,7 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
 
             WrapperPlayServerEntityRelativeMove p = (WrapperPlayServerEntityRelativeMove) sentPacket;
             WrapperPlayServerEntityRelativeMove cloned =
-                new WrapperPlayServerEntityRelativeMove(p.getEntityId(), p.getDeltaX(), p.getDeltaY(), p.getDeltaZ(), false);
+                new WrapperPlayServerEntityRelativeMove(p.getEntityId(), p.getDelta(), false);
 
             packets.addPacket(cloned);
         }
@@ -234,15 +231,7 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
             } else if (sentPacket instanceof WrapperPlayServerEntityPositionSync) {
                 WrapperPlayServerEntityPositionSync sync = (WrapperPlayServerEntityPositionSync) packets.getPackets().get(0);
 
-                if (sync == sentPacket) {
-                    sync =
-                        new WrapperPlayServerEntityPositionSync(sync.getId(), DisguiseUtilities.clone(sync.getValues()), sync.isOnGround());
-
-                    packets.clear();
-                    packets.addPacket(sync);
-                } else {
-                    sync.getValues().setPosition(sync.getValues().getPosition().add(0, yMod, 0));
-                }
+                packets.getPackets().set(0, DisguiseUtilities.cloneSync(sync, sync.getId(), yMod, sync.getYRot(), sync.getXRot()));
             }
         }
     }
@@ -298,7 +287,7 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
         } else if (sentPacket instanceof WrapperPlayServerEntityPositionSync) {
             WrapperPlayServerEntityPositionSync sync = (WrapperPlayServerEntityPositionSync) sentPacket;
 
-            yawValue = sync.getValues().getYaw();
+            yawValue = sync.getYRot();
         } else {
             throw new IllegalStateException("Didn't handle packet " + sentPacket.getClass());
         }
@@ -334,7 +323,7 @@ public class PacketHandlerMovement<T extends PacketWrapper<T>> implements IPacke
         } else if (sentPacket instanceof WrapperPlayServerEntityPositionSync) {
             WrapperPlayServerEntityPositionSync sync = (WrapperPlayServerEntityPositionSync) sentPacket;
 
-            pitchValue = sync.getValues().getPitch();
+            pitchValue = sync.getXRot();
         } else {
             throw new IllegalStateException("Didn't handle packet " + sentPacket.getClass());
         }

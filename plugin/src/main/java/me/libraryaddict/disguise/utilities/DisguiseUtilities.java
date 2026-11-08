@@ -17,6 +17,9 @@ import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
+import com.github.retrooper.packetevents.protocol.vector.positionpath.LinearPositionPath;
+import com.github.retrooper.packetevents.protocol.vector.positionpath.PositionPath;
+import com.github.retrooper.packetevents.protocol.vector.positionpath.SteppedPositionPath;
 import com.github.retrooper.packetevents.protocol.world.Direction;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
@@ -569,6 +572,34 @@ public class DisguiseUtilities {
         return new Vector3d(vec.getX(), vec.getY(), vec.getZ());
     }
 
+    public static WrapperPlayServerEntityPositionSync cloneSync(WrapperPlayServerEntityPositionSync sync, int entityId, double yOffset,
+                                                                float yaw, float pitch) {
+        if (NmsVersion.v26_R3.isSupported()) {
+            return new WrapperPlayServerEntityPositionSync(entityId, addY(sync.getPosition(), yOffset), yaw, pitch, sync.isOnGround());
+        }
+
+        EntityPositionData data = clone(sync.getValues());
+        data.setPosition(data.getPosition().add(0, yOffset, 0));
+        data.setYaw(yaw);
+        data.setPitch(pitch);
+
+        return new WrapperPlayServerEntityPositionSync(entityId, data, sync.isOnGround());
+    }
+
+    private static PositionPath addY(PositionPath path, double y) {
+        if (!(path instanceof SteppedPositionPath)) {
+            return new LinearPositionPath(path.getEndPosition().add(0, y, 0));
+        }
+
+        List<SteppedPositionPath.Step> steps = new ArrayList<>();
+
+        for (SteppedPositionPath.Step step : ((SteppedPositionPath) path).getSteps()) {
+            steps.add(new SteppedPositionPath.Step(step.x(), step.y() + y, step.z(), step.tickOffset()));
+        }
+
+        return new SteppedPositionPath(steps);
+    }
+
     public static @Nullable List<PacketWrapper> adjustNamePositions(Disguise disguise, List<PacketWrapper> packets, UUID observerUUID) {
         if (disguise.getMultiNameLength() == 0) {
             return null;
@@ -603,17 +634,14 @@ public class DisguiseUtilities {
                         tele.isOnGround());
                 } else if (packet instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
                     WrapperPlayServerEntityRelativeMoveAndRotation rot = (WrapperPlayServerEntityRelativeMoveAndRotation) packet;
-                    cloned = new WrapperPlayServerEntityRelativeMoveAndRotation(standId, rot.getDeltaX(), rot.getDeltaY(), rot.getDeltaZ(),
-                        rot.getYaw(), rot.getPitch(), rot.isOnGround());
+                    cloned = new WrapperPlayServerEntityRelativeMoveAndRotation(standId, rot.getDelta(), rot.getYaw(), rot.getPitch(),
+                        rot.isOnGround());
                 } else if (packet instanceof WrapperPlayServerEntityRelativeMove) {
                     WrapperPlayServerEntityRelativeMove rot = (WrapperPlayServerEntityRelativeMove) packet;
-                    cloned = new WrapperPlayServerEntityRelativeMove(standId, rot.getDeltaX(), rot.getDeltaY(), rot.getDeltaZ(),
-                        rot.isOnGround());
+                    cloned = new WrapperPlayServerEntityRelativeMove(standId, rot.getDelta(), rot.isOnGround());
                 } else if (packet instanceof WrapperPlayServerEntityPositionSync) {
                     WrapperPlayServerEntityPositionSync sync = (WrapperPlayServerEntityPositionSync) packet;
-                    EntityPositionData data = clone(sync.getValues());
-                    data.setPosition(data.getPosition().add(0, y, 0));
-                    cloned = new WrapperPlayServerEntityPositionSync(standId, data, sync.isOnGround());
+                    cloned = cloneSync(sync, standId, y, sync.getYRot(), sync.getXRot());
                 } else {
                     // It seems that EntityStatus packet was being added at some point, probably in some other transformation
                     continue; //   throw new IllegalStateException("Unknown packet " + packet.getClass());

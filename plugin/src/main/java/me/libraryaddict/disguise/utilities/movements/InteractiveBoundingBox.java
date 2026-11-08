@@ -279,13 +279,6 @@ public class InteractiveBoundingBox implements CloningMovementTracker {
 
     @Override
     public void onSync(IWrappedPlayer receiver, WrapperPlayServerEntityPositionSync sync) {
-        EntityPositionData values = DisguiseUtilities.clone(sync.getValues());
-
-        values.setPosition(values.getPosition().add(0, getYOffset(), 0));
-
-        sync = new WrapperPlayServerEntityPositionSync(getEntityId(), values, sync.isOnGround());
-        sync.setId(getEntityId());
-
-        receiver.sendPacketSilently(sync);
+        receiver.sendPacketSilently(DisguiseUtilities.cloneSync(sync, getEntityId(), getYOffset(), sync.getYRot(), sync.getXRot()));
     }
 }
