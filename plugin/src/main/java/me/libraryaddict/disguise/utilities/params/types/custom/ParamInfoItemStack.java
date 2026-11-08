@@ -130,7 +130,7 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
 
             if (s.contains("{") || s.contains("[")) {
                 ItemStack clone = itemStack.clone();
-                Bukkit.getUnsafe().modifyItemStack(itemStack, s);
+                modifyItemStack(itemStack, s);
 
                 if (DisguiseUtilities.isDebuggingMode() && itemStack.equals(clone)) {
                     LibsDisguises.getInstance().getLogger().info(
@@ -143,6 +143,24 @@ public class ParamInfoItemStack<I extends ItemStack> extends ParamInfoEnum<Objec
         }
 
         return parseToItemstack(string.split("[:,]")); // Split on colon or comma
+    }
+
+    private static void modifyItemStack(ItemStack itemStack, String data) {
+        int start = data.indexOf('[');
+
+        if (!NmsVersion.v1_20_R4.isSupported() || start < 0) {
+            Bukkit.getUnsafe().modifyItemStack(itemStack, data);
+            return;
+        }
+
+        String components = data.substring(start);
+
+        try {
+            Bukkit.getUnsafe().modifyItemStack(itemStack, itemStack.getType().getKey() + components);
+        } catch (IllegalArgumentException ex) {
+            // Paper 26.1+ puts the item's key in front of the data itself
+            Bukkit.getUnsafe().modifyItemStack(itemStack, components);
+        }
     }
 
     @NotNull
