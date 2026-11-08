@@ -102,6 +102,7 @@ import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.plugin.LibsDisgInfo;
 import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -114,6 +115,7 @@ import me.libraryaddict.disguise.utilities.scoreboard.bukkit.BukkitScoreboardMan
 import me.libraryaddict.disguise.utilities.scoreboard.packetevents.PacketEventsScoreboardManager;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseChunkTracker;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import me.libraryaddict.disguise.utilities.updates.LDBackend;
 import me.libraryaddict.disguise.utilities.updates.PacketEventsUpdater;
 import me.libraryaddict.disguise.utilities.watchers.CompileMethodsIntfer;
 import me.libraryaddict.disguise.utilities.watchers.DisguiseMethods;
@@ -171,8 +173,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -206,7 +206,6 @@ public class DisguiseUtilities {
 
     private static class UsersData {
         String[] users;
-        long fetched;
     }
 
     private static final double TEXT_DISPLAY_OFFSET = 0.27;
@@ -2040,52 +2039,23 @@ public class DisguiseUtilities {
         }
 
         if (LibsPremium.isPremium()) {
-            boolean fetch = true;
             UsersData hard = getGson().fromJson(new String(Base64.getDecoder().decode(
                 "eyJ1c2VycyI6WyIwMDAwMCIsIjAwMDAxIiwiNzEzNDcyIiwiNTMyODg2Nzk2IiwiLTg1MjcyMzMyNiIsIjExMDAyNzQiLCIxMjEyMzg4IiwiNDcxMzIyIiwiODI1MjYgLSBDbGFpbXMgdG8gaGF2ZSBiZWVuIGhhY2tlZCwgYW5kIHJlY292ZXJlZCB0aGVpciBhY2NvdW50IGEgZmV3IG1vbnRocyBhZ28gMTkvMDkvMjAyMyIsIi0xMDA3MDcxNTE4IiwiNjgwNTYxIiwiMzAzNTk0OTcyIiwiMTAwNzU4IiwiLTc3ODYxMDk0NyIsIi0xNzMwMDk5NjUiLCI1MTA0NzI3NzYiLCIxMjQ4NDgyNDMxIiwiOTg4OTQ3IiwiLTQzMDcwNDI2OCIsIjE1OTIiLCIxNjMxNTU1IiwiODIyMDk3IiwiNjQ1NjgyIiwiMTQ0OTk2OTc0NyIsIjg4ODQ4MCIsIjE2ODU0NCIsIjE1MjM0NDAiLCIzODU0MDMiLCIzNTA3NzIiLCIzODQ2MjciLCIyMDgyMTAiLCIxOTY2OTkwIiwiMCIsIjQ3MzcxIiwiODI5MTc2IC0gc2F5cyBhbm90aGVyIHNlcnZlciBhZG1pbiB1cGxvYWRlZCwgbmV4dCBpcyB0aGUgc3BlY2lmaWMgZG93bmxvYWQgSUQgb2YgdGhhdCBqYXIiLCIxNTM2NDU5NjMiLCIyMTg0NTUzIl0sImZldGNoZWQiOjE3NDA1NDA1ODI3NDB9"),
                 StandardCharsets.UTF_8), UsersData.class);
 
-            try {
-                if (DisguiseConfig.getHashedData() != null) {
-                    UsersData data =
-                        getGson().fromJson(new String(Base64.getDecoder().decode(DisguiseConfig.getHashedData()), StandardCharsets.UTF_8),
-                            UsersData.class);
+            String[] users = hard.users;
+            LDBackend.ReceivedData lastUpdate = LDBackend.getLastUpdate();
 
-                    if (data != null && data.fetched > hard.fetched && data.fetched < System.currentTimeMillis() &&
-                        data.fetched + TimeUnit.DAYS.toMillis(3) > System.currentTimeMillis()) {
-                        doCheck(data.users);
-                        fetch = false;
-                    }
-                }
-            } catch (Exception ignored) {
+            if (lastUpdate != null && lastUpdate.isUserOutdated()) {
+                LibsDisgInfo info =
+                    LibsPremium.getPaidInformation() != null ? LibsPremium.getPaidInformation() : LibsPremium.getPluginInformation();
+
+                users = Arrays.copyOf(users, users.length + 2);
+                users[users.length - 2] = info.getUserID();
+                users[users.length - 1] = info.getDownloadID();
             }
 
-            if (fetch) {
-                LibsDisguises.getScheduler().async().runNow(() -> {
-                    try {
-                        String[] users = getBadUsers();
-
-                        if (users != null) {
-                            // Too many trimmed
-                            if (users.length < hard.users.length / 2) {
-                                users = hard.users;
-                            }
-
-                            UsersData data = new UsersData();
-                            data.users = users;
-                            data.fetched = System.currentTimeMillis();
-
-                            DisguiseConfig.setHashedData(
-                                Base64.getEncoder().encodeToString(getGson().toJson(data).getBytes(StandardCharsets.UTF_8)));
-                            DisguiseConfig.saveInternalConfig();
-                        }
-
-                        doCheck(users);
-                    } catch (Exception ignored) {
-                        doCheck(hard.users);
-                    }
-                });
-            }
+            doCheck(users);
         }
 
         if (whitelistedEnchantments.isEmpty()) {
@@ -2124,45 +2094,6 @@ public class DisguiseUtilities {
 
             LibsDisguises.getInstance().getUpdateChecker().setQuiet(true);
         }
-    }
-
-    private static String[] getBadUsers() {
-        if (LibsPremium.isBisectHosted() && (LibsPremium.getPaidInformation() == null || LibsPremium.getUserID().contains("%"))) {
-            return new String[0];
-        }
-
-        // List of bad users that need to redownload Libs Disguises
-
-        try {
-            // We're connecting to md_5's jenkins REST api
-            URL url = new URL("https://api.github.com/repos/libraryaddict/libsdisguises/issues/469");
-            // Creating a connection
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestProperty("User-Agent", "libraryaddict/LibsDisguises");
-            con.setRequestProperty("Accept", "application/vnd.github.v3+json");
-
-            HashMap<String, Object> map;
-
-            // Get the input stream, what we receive
-            try (InputStream input = con.getInputStream()) {
-                // Read it to string
-                String json =
-                    new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
-
-                map = new Gson().fromJson(json, HashMap.class);
-            }
-
-            con.disconnect();
-
-            if (!map.containsKey("body")) {
-                return new String[0];
-            }
-
-            return ((String) map.get("body")).split("([\\r\\n])+");
-        } catch (Exception ignored) {
-        }
-
-        return new String[0];
     }
 
     public static boolean isDisguiseInUse(Disguise disguise) {

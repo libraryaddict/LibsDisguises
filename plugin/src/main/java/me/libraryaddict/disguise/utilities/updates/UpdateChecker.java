@@ -30,10 +30,10 @@ public class UpdateChecker {
     @Getter
     private LibsDisgInfo lastDownload;
     private final AtomicBoolean downloading = new AtomicBoolean(false);
+    private final AtomicBoolean retryScheduled = new AtomicBoolean(false);
     @Getter
-    private DisguiseUpdate update;
-    private final LDGithub githubUpdater = new LDGithub(this);
-    private final LDJenkins jenkinsUpdater = new LDJenkins();
+    private LDBackend.ReceivedData update;
+    private boolean downloadRequested;
     @Getter
     private String[] updateMessage = new String[0];
     @Getter
@@ -115,6 +115,10 @@ public class UpdateChecker {
         return getUpdate() == null || getUpdate().getFetched().before(new Date(System.currentTimeMillis() - TimeUnit.HOURS.toMillis(1)));
     }
 
+    public boolean isUpdateDelayed() {
+        return getUpdate() != null && getUpdate().getRetryIn() != null;
+    }
+
     public boolean isUsingReleaseBuilds() {
         DisguiseConfig.UpdatesBranch builds = DisguiseConfig.getUpdatesBranch();
 
@@ -145,9 +149,30 @@ public class UpdateChecker {
             DisguiseUpdate oldUpdate = getUpdate();
 
             updateMessage = new String[0];
-            boolean alreadySilent = isQuiet();
 
-            doUpdateCheck();
+            doUpdateCheck(DisguiseConfig.isAutoUpdate());
+
+            if (getUpdate() == null) {
+                return;
+            }
+
+            if (isUpdateDelayed()) {
+                if (retryScheduled.compareAndSet(false, true)) {
+                    if (!isQuiet() && (DisguiseConfig.isAutoUpdate() || DisguiseConfig.isNotifyUpdate())) {
+                        LibsDisguises.getInstance().getLogger()
+                            .info("The update is still being prepared, checking again in " + getUpdate().getRetryIn() + " seconds..");
+                    }
+
+                    Runnable retry = () -> LibsDisguises.getScheduler().async().runNow(() -> {
+                        doAutoUpdateCheck();
+                        retryScheduled.set(false);
+                    });
+
+                    LibsDisguises.getScheduler().global().runDelayed(retry, getUpdate().getRetryIn() * 20L);
+                }
+
+                return;
+            }
 
             if (isOnLatestUpdate(true) || (oldUpdate != null && oldUpdate.getVersion().equals(getUpdate().getVersion()))) {
                 return;
@@ -155,7 +180,7 @@ public class UpdateChecker {
 
             notifyUpdate(Bukkit.getConsoleSender());
 
-            if (isQuiet() ? !alreadySilent : DisguiseConfig.isAutoUpdate()) {
+            if (DisguiseConfig.isAutoUpdate()) {
                 // Update message changed by download
                 grabJarDownload(getUpdate().getDownload());
 
@@ -173,31 +198,38 @@ public class UpdateChecker {
     }
 
     public LibsDisgInfo doUpdate() {
-        // If no update on file, or more than 6 hours hold. Check for update
-        if (getUpdate() == null || getUpdate().getFetched().before(new Date(System.currentTimeMillis() - TimeUnit.HOURS.toMillis(6)))) {
-            doUpdateCheck();
+        // If no update on file, more than 6 hours old, or it wasn't fetched for a download. Check for update
+        if (getUpdate() == null || !downloadRequested ||
+            getUpdate().getFetched().before(new Date(System.currentTimeMillis() - TimeUnit.HOURS.toMillis(6)))) {
+            doUpdateCheck(true);
         }
 
-        if (getUpdate() == null) {
+        if (getUpdate() == null || isUpdateDelayed()) {
             return null;
         }
 
         return grabJarDownload(getUpdate().getDownload());
     }
 
-    public LibsMsg doUpdateCheck() {
+    public LibsMsg doUpdateCheck(boolean download) {
+        downloadRequested = download;
         DisguiseConfig.setLastUpdateRequest(System.currentTimeMillis());
         DisguiseConfig.saveInternalConfig();
 
         downloading.set(true);
+        boolean logging = !isQuiet() && (DisguiseConfig.isAutoUpdate() || DisguiseConfig.isNotifyUpdate());
 
         try {
             update = null;
 
-            if (isUsingReleaseBuilds()) {
-                update = githubUpdater.getLatestRelease();
-            } else {
-                update = jenkinsUpdater.getLatestSnapshot();
+            if (logging) {
+                LibsDisguises.getInstance().getLogger().info("Now looking for an update..");
+            }
+
+            update = LDBackend.fetchUpdate(isUsingReleaseBuilds(), download);
+        } catch (Exception ex) {
+            if (logging) {
+                LibsDisguises.getInstance().getLogger().warning("Failed to check for an update: " + ex.getMessage());
             }
         } finally {
             downloading.set(false);
@@ -273,6 +305,8 @@ public class UpdateChecker {
             LibsDisgInfo result = LibsPremium.getInformation(dest);
             lastDownload = result;
 
+            grabPacketEventsDownload();
+
             updateMessage = new String[]{LibsMsg.UPDATE_SUCCESS.get(),
                 LibsMsg.UPDATE_INFO.get(result.getVersion(), result.getBuildNumber(), result.getParsedBuildDate().toString(),
                     result.getSize() / 1024)};
@@ -304,6 +338,22 @@ public class UpdateChecker {
         }
 
         return null;
+    }
+
+    private void grabPacketEventsDownload() {
+        LDBackend.PacketEventsDownload packetEvents = getUpdate().getPacketEvents();
+
+        if (packetEvents == null || DisguiseConfig.isNeverUpdatePacketEvents() || PacketEventsUpdater.isNotedShadedPlugin()) {
+            return;
+        }
+
+        try {
+            new PacketEventsUpdater().downloadFile(packetEvents.getDownload(), packetEvents.getDownloadName());
+        } catch (Exception ex) {
+            LibsDisguises.getInstance().getLogger()
+                .warning("Failed to download PacketEvents " + packetEvents.getVersion() + ", you may need to update it yourself.");
+            ex.printStackTrace();
+        }
     }
 
     private boolean isNewerVersion(String currentVersion, String newVersion) {

@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+// Bypassing or removing this premium check to unlock premium features without buying them breaks the repo LICENSE, which only allows personal forks that keep the anti-piracy protection
 public class LibsPremium {
     private static Boolean thisPluginIsPaidFor;
     /**
@@ -307,7 +308,7 @@ public class LibsPremium {
         } else {
             LibsDisguises.getInstance().getLogger().info("Registered to: " + getSanitizedUser(getUserID()));
 
-            boolean updateJar = getPluginInformation().isPaid();
+            boolean updateJar = getPluginInformation().isPaid() && !"backend".equals(DisguiseFiles.getPluginYAML(file).getString("source"));
 
             /* Let's not do any sanity checks since it won't affect legit users */
             for (File f : LibsDisguises.getInstance().getDataFolder().listFiles()) {
@@ -322,7 +323,7 @@ public class LibsPremium {
                         f.delete();
                         LibsDisguises.getInstance().getLogger().info("Unknown file detected and deleted: LibsDisguises/" + f.getName());
                         continue;
-                    } else if (Integer.parseInt(info.getBuildNumber().replace("#", "")) <
+                    } else if ((updateJar || !info.isPaid()) && Integer.parseInt(info.getBuildNumber().replace("#", "")) <
                         Integer.parseInt(LibsDisguises.getInstance().getBuildNo().replace("#", ""))) {
                         f.delete();
                         LibsDisguises.getInstance().getLogger().info("Outdated file deleted: LibsDisguises/" + f.getName());

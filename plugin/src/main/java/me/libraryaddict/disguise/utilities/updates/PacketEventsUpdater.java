@@ -85,6 +85,22 @@ public class PacketEventsUpdater {
         return true;
     }
 
+    public static String getPacketEventsVersion() {
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("packetevents");
+
+        return plugin == null ? null : plugin.getDescription().getVersion();
+    }
+
+    public static Long getPacketEventsBuildTimestamp() {
+        try {
+            return PEVersions.BUILD_TIMESTAMP.toEpochMilli();
+        } catch (Throwable ignored) {
+            // PacketEvents is missing, or too old to have the field
+        }
+
+        return null;
+    }
+
     private boolean isNotBukkitPlugin(String name) {
         return !name.toLowerCase(Locale.ENGLISH).matches(".*(bukkit|spigot|paper).*") || name.matches(".*(javadoc|sources).jar");
     }
@@ -310,7 +326,7 @@ public class PacketEventsUpdater {
         return new File(finalJarFolder, fileName);
     }
 
-    private void downloadFile(String fileUrl, String filename) throws IOException {
+    public void downloadFile(String fileUrl, String filename) throws IOException {
         LibsDisguises.getInstance().getLogger().info("Now downloading " + filename + " from " + fileUrl);
 
         URL url = new URL(fileUrl);

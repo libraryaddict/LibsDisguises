@@ -65,12 +65,19 @@ public class LDUpdate implements LDCommand {
         }
 
         LibsDisguises.getScheduler().async().runNow(() -> {
-            LibsMsg updateResult = checker.doUpdateCheck();
+            LibsMsg updateResult = checker.doUpdateCheck(true);
 
             if (checker.getUpdate() == null) {
                 LibsDisguises.getScheduler().global().run(() -> {
                     LibsMsg.UPDATE_FAILED.send(sender);
                 });
+                return;
+            }
+
+            if (checker.isUpdateDelayed()) {
+                int minutes = (checker.getUpdate().getRetryIn() + 59) / 60;
+
+                LibsDisguises.getScheduler().global().run(() -> LibsMsg.UPDATE_NOT_READY.send(sender, minutes));
                 return;
             }
 

@@ -368,6 +368,7 @@ public enum LibsMsg {
         "</aqua> to download the update!"),
     UPDATE_INFO("<dark_green>Lib's Disguises v%s, build %s, built %s and size %skb"),
     UPDATE_IN_PROGRESS("<dark_green>LibsDisguises is now downloading an update..."),
+    UPDATE_NOT_READY("<red>The update isn't ready yet, try again in %s minutes"),
     UPDATE_ON_LATEST("<red>You are already on the latest version of LibsDisguises!"),
     UPDATE_READY(
         "<red>[LibsDisguises]</red> <dark_red>There is an update ready to be downloaded! You are using <red>v%s</red>, the new version is" +

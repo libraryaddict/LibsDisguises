@@ -45,6 +45,10 @@ public class LDChangelog implements LDCommand {
         }
 
         for (String msg : checker.getUpdate().getChangelog()) {
+            if (!checker.getUpdate().isReleaseBuild()) {
+                msg = msg.replaceFirst(": ", ": " + ChatColor.YELLOW);
+            }
+
             sender.sendMessage(ChatColor.GOLD + msg);
         }
     }

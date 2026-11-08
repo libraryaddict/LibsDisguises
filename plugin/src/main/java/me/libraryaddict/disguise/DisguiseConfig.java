@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -254,8 +255,6 @@ public class DisguiseConfig {
     @Getter
     private static long lastUpdateRequest;
     @Getter
-    private static boolean hittingRateLimit;
-    @Getter
     @Setter
     private static boolean copyPlayerTeamInfo;
     @Getter
@@ -270,12 +269,6 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static boolean selfDisguiseVisibleWhenRiding;
-    @Getter
-    @Setter
-    private static String lastGithubUpdateETag;
-    @Getter
-    @Setter
-    private static String lastPluginUpdateVersion;
     @Getter
     @Setter
     private static int lastConfigVersion = ConfigMigrator.getLastMigrationVersion();
@@ -409,7 +402,7 @@ public class DisguiseConfig {
             return;
         }
 
-        boolean startTask = isAutoUpdate() || isNotifyUpdate() || "1592".equals(
+        boolean startTask = isAutoUpdate() || isNotifyUpdate() || LibsPremium.isPremium() || "1592".equals(
             (LibsPremium.getPaidInformation() == null ? LibsPremium.getPluginInformation() : LibsPremium.getPaidInformation()).getUserID());
 
         // Don't ever run the auto updater on a custom build..
@@ -427,13 +420,13 @@ public class DisguiseConfig {
             return;
         }
 
-        int timer = (int) (TimeUnit.HOURS.toSeconds(isHittingRateLimit() ? 36 : 12) * 20);
+        int timer = (int) (TimeUnit.HOURS.toSeconds(isAutoUpdate() || isNotifyUpdate() ? 12 : 14 * 24) * 20);
 
         // Get the ticks since last update
         long timeSinceLast = (System.currentTimeMillis() - getLastUpdateRequest()) / 50;
 
-        // Next update check will be in 30 minutes, or the timer - elapsed time. Whatever is greater
-        timeSinceLast = Math.max(30 * 60 * 20, timer - timeSinceLast);
+        // The random hour spreads out checks from servers that start at the same time
+        timeSinceLast = Math.max(30 * 60 * 20, timer - timeSinceLast) + ThreadLocalRandom.current().nextInt(60 * 60 * 20);
 
         updaterTask = LibsDisguises.getScheduler().async().runAtFixedRate(() -> {
             LibsDisguises.getInstance().getUpdateChecker().doAutoUpdateCheck();
@@ -447,16 +440,6 @@ public class DisguiseConfig {
 
         usingReleaseBuild = useReleaseBuilds;
         saveInternalConfig();
-    }
-
-    public static void setHittingRateLimit(boolean hitRateLimit) {
-        if (hitRateLimit == isHittingRateLimit()) {
-            return;
-        }
-
-        hittingRateLimit = hitRateLimit;
-        saveInternalConfig();
-        doUpdaterTask();
     }
 
     public static void setBisectHosted(boolean isBisectHosted, String serverIP) {
@@ -479,10 +462,7 @@ public class DisguiseConfig {
         bisectHosted = configuration.getBoolean("Bisect-Hosted", isBisectHosted());
         savedServerIp = configuration.getString("Server-IP", getSavedServerIp());
         usingReleaseBuild = configuration.getBoolean("ReleaseBuild", isUsingReleaseBuild());
-        lastUpdateRequest = configuration.getLong("LastUpdateRequest", 0L);
-        hittingRateLimit = configuration.getBoolean("HittingRateLimit", false);
-        lastGithubUpdateETag = configuration.getString("LastGithubETag", null);
-        lastPluginUpdateVersion = configuration.getString("LastPluginVersion", null);
+        lastUpdateRequest = configuration.getLong("LastUpdateCheck", 0L);
         lastConfigVersion = configuration.getInt("LastConfigVersion", -1);
         hashedData = configuration.getString("Data", null);
 
@@ -495,8 +475,8 @@ public class DisguiseConfig {
         String internalConfig = DisguiseFiles.getResourceAsString(LibsDisguises.getInstance().getFile(), "internal/internal.yml");
 
         // Bisect hosted, server ip, release builds
-        for (Object s : new Object[]{isBisectHosted(), getSavedServerIp(), isUsingReleaseBuild(), getLastUpdateRequest(),
-            isHittingRateLimit(), getLastGithubUpdateETag(), getLastPluginUpdateVersion(), getHashedData(), getLastConfigVersion()}) {
+        for (Object s : new Object[]{isBisectHosted(), getSavedServerIp(), isUsingReleaseBuild(), getLastUpdateRequest(), getHashedData(),
+            getLastConfigVersion()}) {
             internalConfig = internalConfig.replaceFirst("%data%", "" + s);
         }
 

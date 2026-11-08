@@ -38,6 +38,7 @@ public class LibsDisgInfo {
         return null;
     }
 
+    // Faking a paid jar here to get the paid features for free isn't allowed, the project's licence only permits personal forks with the piracy checks left intact
     public boolean isPaid() {
         return !"12345".equals(getUserID()) && getResourceID().equals("32453") && getUserID().matches("\\d+") &&
             getDownloadID().matches("-?\\d+");
