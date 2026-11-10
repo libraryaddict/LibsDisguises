@@ -11,7 +11,7 @@ plugins {
     `maven-publish`
 }
 
-version = "26.11.10"
+version = "26.11.10-SNAPSHOT"
 
 dependencies {
     compileOnly(project(":shared"))
