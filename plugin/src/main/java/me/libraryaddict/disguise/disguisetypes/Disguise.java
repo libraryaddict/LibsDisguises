@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.player.InteractionHand;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityAnimation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityStatus;
@@ -1288,6 +1289,10 @@ public abstract class Disguise {
             packet = new WrapperPlayServerHurtAnimation(
                 observer == wrappedEntity ? DisguiseAPI.getSelfDisguiseId() : wrappedEntity.getEntityId(),
                 wrappedEntity.getLocation().getYaw());
+        } else if (animation == DisguiseAnimation.SWING_MAIN_HAND || animation == DisguiseAnimation.SWING_OFF_HAND) {
+            packet = DisguiseUtilities.createSwingPacket(
+                observer == wrappedEntity ? DisguiseAPI.getSelfDisguiseId() : wrappedEntity.getEntityId(),
+                animation == DisguiseAnimation.SWING_MAIN_HAND ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
         } else if (animation.getAnimationType() != null) {
             packet = new WrapperPlayServerEntityAnimation(
                 observer == wrappedEntity ? DisguiseAPI.getSelfDisguiseId() : wrappedEntity.getEntityId(), animation.getAnimationType());

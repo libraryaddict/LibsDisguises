@@ -44,7 +44,7 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
 
         for (Server packet : new Server[]{Server.ATTACH_ENTITY, Server.SET_PASSENGERS, Server.ENTITY_RELATIVE_MOVE,
             Server.ENTITY_RELATIVE_MOVE_AND_ROTATION, Server.ENTITY_HEAD_LOOK, Server.ENTITY_POSITION_SYNC, Server.ENTITY_TELEPORT,
-            Server.ENTITY_ROTATION, Server.ENTITY_EQUIPMENT}) {
+            Server.ENTITY_ROTATION, Server.ENTITY_EQUIPMENT, Server.SWING_ANIMATION}) {
             neverSend[packet.ordinal()] = true;
         }
 
@@ -59,7 +59,7 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
             Server.SET_PASSENGERS, Server.ENTITY_RELATIVE_MOVE_AND_ROTATION, Server.ENTITY_RELATIVE_MOVE, Server.ENTITY_HEAD_LOOK,
             Server.ENTITY_ROTATION, Server.ENTITY_TELEPORT, Server.ENTITY_MOVEMENT, Server.ENTITY_METADATA, Server.ENTITY_EQUIPMENT,
             Server.ENTITY_ANIMATION, Server.ENTITY_EFFECT, Server.ENTITY_VELOCITY, Server.UPDATE_ATTRIBUTES, Server.ENTITY_STATUS,
-            Server.ENTITY_POSITION_SYNC, Server.DAMAGE_EVENT}) {
+            Server.ENTITY_POSITION_SYNC, Server.DAMAGE_EVENT, Server.SWING_ANIMATION}) {
             // Packet DAMAGE_EVENT does not have all mappings added for every version of Minecraft in PacketEvents
             // https://github.com/retrooper/packetevents/blob/2.0/mappings/damage/damagetype_mappings.json
             if (packet == Server.DAMAGE_EVENT) {

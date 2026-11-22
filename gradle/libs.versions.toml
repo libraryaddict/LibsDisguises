@@ -19,7 +19,7 @@ foliascheduler-version = "0.7.5"
 
 net-kyori-adventure-api = "4.25.0"
 net-kyori-adventure-platform = "4.4.1"
-com-retro-packetevents = "2.14.0-SNAPSHOT"
+com-retro-packetevents = "2.14.0"
 placeholder-api = "2.11.6"
 
 org-spigotmc-spigot = "26.3-R0.1-SNAPSHOT"

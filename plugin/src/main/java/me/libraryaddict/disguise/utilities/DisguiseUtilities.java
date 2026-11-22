@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
 import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
+import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemSwingAnimation;
 import com.github.retrooper.packetevents.protocol.entity.EntityPositionData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
@@ -15,6 +16,7 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.particle.Particle;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
+import com.github.retrooper.packetevents.protocol.player.InteractionHand;
 import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.protocol.vector.positionpath.LinearPositionPath;
@@ -55,6 +57,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSp
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnLivingEntity;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnPainting;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnPlayer;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSwingAnimation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateAttributes;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -2997,6 +3000,16 @@ public class DisguiseUtilities {
         return clone;
     }
 
+    public static PacketWrapper<?> createSwingPacket(int entityId, InteractionHand hand) {
+        if (NmsVersion.v26_R3.isSupported()) {
+            return new WrapperPlayServerSwingAnimation(entityId, hand, new ItemSwingAnimation(ItemSwingAnimation.Type.WHACK, 6));
+        }
+
+        return new WrapperPlayServerEntityAnimation(entityId,
+            hand == InteractionHand.MAIN_HAND ? WrapperPlayServerEntityAnimation.EntityAnimationType.SWING_MAIN_ARM :
+                WrapperPlayServerEntityAnimation.EntityAnimationType.SWING_OFF_HAND);
+    }
+
     public static PacketWrapper constructWrapper(PacketPlaySendEvent event) {
         switch (event.getPacketType()) {
             case SPAWN_ENTITY:
@@ -3025,6 +3038,8 @@ public class DisguiseUtilities {
                 return new WrapperPlayServerEntityEquipment(event);
             case ENTITY_ANIMATION:
                 return new WrapperPlayServerEntityAnimation(event);
+            case SWING_ANIMATION:
+                return new WrapperPlayServerSwingAnimation(event);
             case ENTITY_VELOCITY:
                 return new WrapperPlayServerEntityVelocity(event);
             case ENTITY_EFFECT:
@@ -3091,6 +3106,8 @@ public class DisguiseUtilities {
             return ((WrapperPlayServerEntityMovement) wrapper).getEntityId();
         } else if (wrapper instanceof WrapperPlayServerEntityAnimation) {
             return ((WrapperPlayServerEntityAnimation) wrapper).getEntityId();
+        } else if (wrapper instanceof WrapperPlayServerSwingAnimation) {
+            return ((WrapperPlayServerSwingAnimation) wrapper).getEntityId();
         } else if (wrapper instanceof WrapperPlayServerEntityRelativeMove) {
             return ((WrapperPlayServerEntityRelativeMove) wrapper).getEntityId();
         } else if (wrapper instanceof WrapperPlayServerEntityRelativeMoveAndRotation) {
@@ -3178,6 +3195,10 @@ public class DisguiseUtilities {
         } else if (wrapper instanceof WrapperPlayServerEntityAnimation) {
             if (((WrapperPlayServerEntityAnimation) wrapper).getEntityId() == playerId) {
                 ((WrapperPlayServerEntityAnimation) wrapper).setEntityId(DisguiseAPI.getSelfDisguiseId());
+            }
+        } else if (wrapper instanceof WrapperPlayServerSwingAnimation) {
+            if (((WrapperPlayServerSwingAnimation) wrapper).getEntityId() == playerId) {
+                ((WrapperPlayServerSwingAnimation) wrapper).setEntityId(DisguiseAPI.getSelfDisguiseId());
             }
         } else if (wrapper instanceof WrapperPlayServerEntityRelativeMove) {
             if (((WrapperPlayServerEntityRelativeMove) wrapper).getEntityId() == playerId) {

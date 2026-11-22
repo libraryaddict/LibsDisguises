@@ -2,11 +2,12 @@ package me.libraryaddict.disguise.utilities.packets.packethandlers;
 
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityAnimation;
+import com.github.retrooper.packetevents.protocol.player.InteractionHand;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityStatus;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.animations.DisguiseAnimation;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
@@ -42,8 +43,7 @@ public class PacketHandlerEntityStatus implements IPacketHandler<WrapperPlayServ
             }
 
             // Swing thy arm!
-            packets.addPacket(new WrapperPlayServerEntityAnimation(packets.getOriginalPacket().getEntityId(),
-                WrapperPlayServerEntityAnimation.EntityAnimationType.SWING_MAIN_ARM));
+            packets.addPacket(DisguiseUtilities.createSwingPacket(packets.getOriginalPacket().getEntityId(), InteractionHand.MAIN_HAND));
         }
     }
 }

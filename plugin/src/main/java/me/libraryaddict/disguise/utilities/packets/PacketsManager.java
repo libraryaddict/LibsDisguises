@@ -263,6 +263,7 @@ public class PacketsManager {
         // Add the packet that ensures if they are sleeping or not
         if (isntHighPerformance || DisguiseConfig.isAnimationPacketsEnabled()) {
             conflictingPackets[Server.ENTITY_ANIMATION.ordinal()] = true;
+            conflictingPackets[Server.SWING_ANIMATION.ordinal()] = true;
         }
 
         // Add the packet that makes sure that entities with armor do not send unpickupable armor on death
