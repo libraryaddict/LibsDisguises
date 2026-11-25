@@ -185,7 +185,7 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
             selfTransformed.sendDelayed(observer);
 
             if (event.getPacketType() == Server.ENTITY_METADATA) {
-                sendMetadata(observer, wrapper);
+                sendMetadata(observer, event, wrapper);
             } else if (event.getPacketType() == Server.SPAWN_PLAYER || event.getPacketType() == Server.SPAWN_ENTITY) {
                 handleSpawn(event, observer);
             } else if (event.getPacketType() == Server.ENTITY_ANIMATION) {
@@ -231,7 +231,7 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
         attributes.setProperties(toSend);
     }
 
-    private void sendMetadata(IWrappedPlayer player, PacketWrapper wrapper) {
+    private void sendMetadata(IWrappedPlayer player, PacketPlaySendEvent event, PacketWrapper wrapper) {
         WrapperPlayServerEntityMetadata metadata = (WrapperPlayServerEntityMetadata) wrapper;
 
         if (metadata.getEntityId() != player.getEntityId()) {
@@ -249,6 +249,7 @@ public class PacketListenerViewSelfDisguise extends SimplePacketListenerAbstract
 
             data.setValue(a);
         }
+        event.markForReEncode(true);
     }
 
     private void handleSpawn(PacketPlaySendEvent event, IWrappedPlayer observer) {
