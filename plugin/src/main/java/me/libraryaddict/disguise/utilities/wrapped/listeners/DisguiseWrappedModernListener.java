@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.wrapped.listeners;
 
 import com.destroystokyo.paper.event.player.PlayerStartSpectatingEntityEvent;
+import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
 import io.papermc.paper.event.entity.EntityMoveEvent;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.wrapped.WrappedManager;
@@ -47,6 +48,13 @@ public class DisguiseWrappedModernListener extends DisguiseWrappedListener {
     public void onPlayerSpectate(PlayerStartSpectatingEntityEvent event) {
         getWrappedPlayer(event.getPlayer()).ifPresent(e -> {
             e.setSpectatorTarget(event.getNewSpectatorTarget());
+        });
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerStopSpectating(PlayerStopSpectatingEntityEvent event) {
+        getWrappedPlayer(event.getPlayer()).ifPresent(e -> {
+            e.setSpectatorTarget(null);
         });
     }
 }
